@@ -260,7 +260,7 @@ GameObject:
   - component: {fileID: 1574236049}
   - component: {fileID: 1574236050}
   m_Layer: 0
-  m_Name: Academy
+  m_Name: Spawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -295,7 +295,7 @@ MonoBehaviour:
   agentSpawner:
     spawnableEnvDefinitions:
     - envId: jazz-dancer
-      envPrefab: {fileID: 8518467457834094124, guid: 387bf2f0cab8448578cc8bfd9e89f8ea,
+      envPrefab: {fileID: 4993543594474631292, guid: 5df12ad6b5dd7d143974f77708ba0994,
         type: 3}
     envIdDefault: jazz-dancer
     trainingNumEnvsDefault: 64

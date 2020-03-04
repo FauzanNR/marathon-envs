@@ -4,4 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/MarathonEnvs/Scenes/MarathonDancerEnvironment.unity
+    guid: 28f3a85ef87e26f4f86483bb5e693b7a
+  m_configObjects: {}
