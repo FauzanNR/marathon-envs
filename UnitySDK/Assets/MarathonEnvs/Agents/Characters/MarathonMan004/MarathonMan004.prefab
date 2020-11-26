@@ -184,9 +184,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 1
-  m_SwingZ: 1
-  m_Twist: 1
+  m_SwingY: 2
+  m_SwingZ: 2
+  m_Twist: 2
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -344,9 +344,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 1
-  m_SwingZ: 1
-  m_Twist: 1
+  m_SwingY: 2
+  m_SwingZ: 2
+  m_Twist: 2
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -1551,9 +1551,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 1
-  m_SwingZ: 1
-  m_Twist: 1
+  m_SwingY: 2
+  m_SwingZ: 2
+  m_Twist: 2
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -1792,9 +1792,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 1
-  m_SwingZ: 1
-  m_Twist: 1
+  m_SwingY: 2
+  m_SwingZ: 2
+  m_Twist: 2
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
