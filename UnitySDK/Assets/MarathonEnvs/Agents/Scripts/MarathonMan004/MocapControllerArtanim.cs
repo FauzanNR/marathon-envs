@@ -241,9 +241,9 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
             NormalizedTime = stateInfo.normalizedTime;
             IsLoopingAnimation = stateInfo.loop;
             var timeStep = stateInfo.length * stateInfo.normalizedTime;
-            var endTime = 1f;
-            if (IsLoopingAnimation)
-                endTime = 3f;
+            //var endTime = 1f;
+            //if (IsLoopingAnimation)
+            //    endTime = 3f;
             // if (NormalizedTime <= endTime) {
             // }       
         }

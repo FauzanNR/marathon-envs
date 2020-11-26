@@ -57,7 +57,7 @@ public class RagdollControllerArtanim : MonoBehaviour
     {
         if (SetUpConstraintsFromData) {
 
-            Debug.LogError("this automatic method to set up the constraints does NOT work yet");
+            //Debug.LogError("this automatic method to set up the constraints does NOT work yet");
             SetConstraints(data4constraints);
         }
 
@@ -73,16 +73,16 @@ public class RagdollControllerArtanim : MonoBehaviour
 
     void SetConstraints(ROMinfoCollector info) {
 
-        Set1Constraint("lower_waist", "mixamorig:Spine");
-        Set1Constraint("upper_waist", "mixamorig:Spine1");
-        Set1Constraint("torso", "mixamorig:Spine2");
-        Set1Constraint("head", "mixamorig:Head");
+        //Set1Constraint("lower_waist", "mixamorig:Spine");
+        //Set1Constraint("upper_waist", "mixamorig:Spine1");
+        //Set1Constraint("torso", "mixamorig:Spine2");
+        //Set1Constraint("head", "mixamorig:Head");
 
 
         Set1Constraint("left_shoulder_joint", "mixamorig:LeftShoulder");
 
         Set1Constraint("left_upper_arm_joint", "mixamorig:LeftArm");
-        Set1Constraint("left_larm_joint", "mixamorig:LeftForeArm");
+        //Set1Constraint("left_larm_joint", "mixamorig:LeftForeArm");
 
         //	Set1Constraint("left_hand", "mixamorig:LeftHand");
         // hands do not have rigidbodies
@@ -91,7 +91,7 @@ public class RagdollControllerArtanim : MonoBehaviour
         Set1Constraint("right_shoulder_joint", "mixamorig:RightShoulder");
 
         Set1Constraint("right_upper_arm_joint", "mixamorig:RightArm");
-        Set1Constraint("right_larm_joint", "mixamorig:RightForeArm");
+        /* Set1Constraint("right_larm_joint", "mixamorig:RightForeArm");
         //	Set1Constraint("right_hand", "mixamorig:RightHand");
 
         //			Set1Constraint("left_thigh", "mixamorig:LeftUpLeg");
@@ -114,7 +114,7 @@ public class RagdollControllerArtanim : MonoBehaviour
         //	Set1Constraint("left_right_foot", "mixamorig:RightToeBase");
 
 
-
+        */
 
 
 

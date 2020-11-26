@@ -13,4 +13,7 @@ public class ROMinfoCollector : ScriptableObject
 
     public string[] jointNames;
 
+   // public Vector3[][] allRotVals;
+
+
 }
