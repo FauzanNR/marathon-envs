@@ -49,9 +49,17 @@ public class RagDollAgent : Agent
     float[] _mocapTargets;
 
     [Space(16)]
+    [Header("Artanim Hacks")]
     [SerializeField]
     bool _isArtanimAgent = false;
+    [SerializeField]
+    bool _updateMotorFromVelocity;
+
+
+
+
     MocapControllerArtanim _mocapControllerArtanim;
+
 
     void Awake()
     {
@@ -437,45 +445,77 @@ public class RagDollAgent : Agent
         }
 
 
-        power *= _ragDollSettings.Stiffness;
-        float damping = _ragDollSettings.Damping;
-
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        if (!_updateMotorFromVelocity)
         {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x *scale);
-            drive.target = target;
-            drive.stiffness = power.x;
-            drive.damping = damping;
-            joint.xDrive = drive;
+
+            power *= _ragDollSettings.Stiffness;
+            float damping = _ragDollSettings.Damping;
+
+            if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = joint.xDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var target = midpoint + (targetNormalizedRotation.x * scale);
+                drive.target = target;
+                drive.stiffness = power.x;
+                drive.damping = damping;
+                joint.xDrive = drive;
+            }
+
+            if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = joint.yDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var target = midpoint + (targetNormalizedRotation.y * scale);
+                drive.target = target;
+                drive.stiffness = power.y;
+                drive.damping = damping;
+                joint.yDrive = drive;
+            }
+
+            if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = joint.zDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var target = midpoint + (targetNormalizedRotation.z * scale);
+                drive.target = target;
+                drive.stiffness = power.z;
+                drive.damping = damping;
+                joint.zDrive = drive;
+            }
+
+
+        }
+        else {
+            
+            //so, we want to make the updates from the velocities, not from the xDrive and such (see bug as shown in scene Assets/test-limits-articulation-body/ArticulationTestbed
+            //see script ArticulationTest, lines 46 and 51
+
+            Debug.LogError("This function has not been implemented!");
+
+            /*
+            Quaternion deltaRotation = Quaternion.Normalize(Quaternion.Inverse(body.transform.localRotation) * transform.rotation);
+            // Calculate drive velocity necessary to undo this delta in one fixed timestep
+            ArticulationReducedSpace driveTargetForce = new ArticulationReducedSpace(
+                ((Mathf.DeltaAngle(0, deltaRotation.eulerAngles.x) * Mathf.Deg2Rad) / Time.fixedDeltaTime) * Strength,
+                ((Mathf.DeltaAngle(0, deltaRotation.eulerAngles.y) * Mathf.Deg2Rad) / Time.fixedDeltaTime) * Strength,
+                ((Mathf.DeltaAngle(0, deltaRotation.eulerAngles.z) * Mathf.Deg2Rad) / Time.fixedDeltaTime) * Strength);
+
+            // Apply the force in local space (unlike AddTorque which is global space)
+            // Ideally we'd use inverse dynamics or jointVelocity, but jointVelocity is bugged in 2020.1a22
+            body.jointVelocity = driveTargetForce;
+            */
+
+
+
         }
 
-        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y *scale);
-            drive.target = target;
-            drive.stiffness = power.y;
-            drive.damping = damping;
-            joint.yDrive = drive;
-        }
 
-        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z *scale);
-            drive.target = target;
-            drive.stiffness = power.z;
-            drive.damping = damping;
-            joint.zDrive = drive;
-        }
-	}
+
+    }
 
     void FixedUpdate()
     {
