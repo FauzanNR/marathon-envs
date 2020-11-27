@@ -231,7 +231,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1467993922
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,7 +388,7 @@ MonoBehaviour:
       envPrefab: {fileID: 1802870815327278923, guid: 756f6ecffa94a46bab4f0c271abccd87,
         type: 3}
     - envId: ControllerArtanim-v4
-      envPrefab: {fileID: 4890684744258037759, guid: 039f5bf4e1cc0214ea4f370014f59897,
+      envPrefab: {fileID: 4890684744258037759, guid: 681e12fc3c7c5394ea4ce329b7d4cf73,
         type: 3}
     envIdDefault: ControllerArtanim-v4
     trainingNumEnvsDefault: 64
