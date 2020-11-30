@@ -490,12 +490,11 @@ public class RagDollAgent : Agent
 
         }
         else {
-            
+
             //so, we want to make the updates from the velocities, not from the xDrive and such (see bug as shown in scene Assets/test-limits-articulation-body/ArticulationTestbed
             //see script ArticulationTest, lines 46 and 51
 
-            Debug.LogError("This function has not been implemented!");
-
+            Debug.LogError("This method does NOT work well");
             
             Quaternion deltaRotation = Quaternion.Normalize(Quaternion.Inverse(joint.transform.localRotation) * transform.rotation);
             // Calculate drive velocity necessary to undo this delta in one fixed timestep
