@@ -496,9 +496,12 @@ public class RagDollAgent : Agent
 
             Debug.LogError("This function has not been implemented!");
 
-            /*
-            Quaternion deltaRotation = Quaternion.Normalize(Quaternion.Inverse(body.transform.localRotation) * transform.rotation);
+            
+            Quaternion deltaRotation = Quaternion.Normalize(Quaternion.Inverse(joint.transform.localRotation) * transform.rotation);
             // Calculate drive velocity necessary to undo this delta in one fixed timestep
+
+            float Strength = 1.0f;
+
             ArticulationReducedSpace driveTargetForce = new ArticulationReducedSpace(
                 ((Mathf.DeltaAngle(0, deltaRotation.eulerAngles.x) * Mathf.Deg2Rad) / Time.fixedDeltaTime) * Strength,
                 ((Mathf.DeltaAngle(0, deltaRotation.eulerAngles.y) * Mathf.Deg2Rad) / Time.fixedDeltaTime) * Strength,
@@ -506,8 +509,8 @@ public class RagDollAgent : Agent
 
             // Apply the force in local space (unlike AddTorque which is global space)
             // Ideally we'd use inverse dynamics or jointVelocity, but jointVelocity is bugged in 2020.1a22
-            body.jointVelocity = driveTargetForce;
-            */
+            joint.jointVelocity = driveTargetForce;
+            
 
 
 

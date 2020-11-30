@@ -388,7 +388,7 @@ MonoBehaviour:
       envPrefab: {fileID: 1802870815327278923, guid: 756f6ecffa94a46bab4f0c271abccd87,
         type: 3}
     - envId: ControllerArtanim-v4
-      envPrefab: {fileID: 4890684744258037759, guid: 681e12fc3c7c5394ea4ce329b7d4cf73,
+      envPrefab: {fileID: 4890684744258037759, guid: eef2068db1953644fb135501abafc55f,
         type: 3}
     envIdDefault: ControllerArtanim-v4
     trainingNumEnvsDefault: 64
