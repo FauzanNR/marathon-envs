@@ -1376,12 +1376,18 @@ I narrow down the constraints (branch feature/try-adjusting-constraints-from-mod
 There are also problems, for both cases:
 
 - In both cases, the first animation is not acceptable. Unclear why would be the case (T-pose switches abruptly?) 
-
 - In both cases, the left elbow does not move (a correspondence problem?).
-
 - The changes in direction make quite weird movements (may be used if transitions are continuous, using for example motion matching)
 
-  
+There is also a curious impact in learning speed:
+
+
+
+![](img/compare-with-and-without-constraints.png)
+
+
+
+
 
 #### Tasks done that do not work (or not yet)
 
