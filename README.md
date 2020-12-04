@@ -1389,6 +1389,20 @@ There is also a curious impact in learning speed:
 
 
 
+### Import new ragdoll
+
+04.12.2020
+
+Done:  imported **only**   *MarathonMan004Target* and *MarathonMan004*, then opened the environment where they were nested (*Agentmove-source* and *ControllerArtanim-v4*, respectively), and applied "revert all " to the prefab override option, for both cases.
+
+
+
+![prefab-where-overrides-are](img/prefab-where-overrides-are.png)
+
+The result looks like this:
+
+![prefab-no-overrides](img/prefab-no-overrides.png)
+
 #### Tasks done that do not work (or not yet)
 
 in branch *feature/fix-constraints-from-range-of-motion* I generate *marathon-env-v6* combining the constraints with the insight from Joe regarding configuring the prefab. Fail.
