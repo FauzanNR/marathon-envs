@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 using System.Linq;
 using static BodyHelper002;
+using ManyWorlds;
 
 public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
 {
@@ -20,46 +23,45 @@ public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
 	float fraction;
 	bool _hasLazyInitialized;
 
-	override public void CollectObservations()
+	override public void CollectObservations(VectorSensor sensor)
 	{
-		var sensor = this;
 		if (!_hasLazyInitialized)
 		{
-			AgentReset();
+			OnEpisodeBegin();
 		}
 
 		Vector3 normalizedVelocity = _bodyManager.GetNormalizedVelocity();
         var pelvis = _bodyManager.GetFirstBodyPart(BodyPartGroup.Hips);
         var shoulders = _bodyManager.GetFirstBodyPart(BodyPartGroup.Torso);
 
-        sensor.AddVectorObs(normalizedVelocity); 
-        sensor.AddVectorObs(pelvis.Rigidbody.transform.forward); // gyroscope 
-        sensor.AddVectorObs(pelvis.Rigidbody.transform.up);
+        sensor.AddObservation(normalizedVelocity); 
+        sensor.AddObservation(pelvis.Rigidbody.transform.forward); // gyroscope 
+        sensor.AddObservation(pelvis.Rigidbody.transform.up);
 
-        sensor.AddVectorObs(shoulders.Rigidbody.transform.forward); // gyroscope 
-        sensor.AddVectorObs(shoulders.Rigidbody.transform.up);
+        sensor.AddObservation(shoulders.Rigidbody.transform.forward); // gyroscope 
+        sensor.AddObservation(shoulders.Rigidbody.transform.up);
 
-		sensor.AddVectorObs(_bodyManager.GetSensorIsInTouch());
+		sensor.AddObservation(_bodyManager.GetSensorIsInTouch());
 		foreach (var bodyPart in _bodyManager.BodyParts)
 		{
 			bodyPart.UpdateObservations();
-			sensor.AddVectorObs(bodyPart.ObsLocalPosition);
-			sensor.AddVectorObs(bodyPart.ObsRotation);
-			sensor.AddVectorObs(bodyPart.ObsRotationVelocity);
-			sensor.AddVectorObs(bodyPart.ObsVelocity);
+			sensor.AddObservation(bodyPart.ObsLocalPosition);
+			sensor.AddObservation(bodyPart.ObsRotation);
+			sensor.AddObservation(bodyPart.ObsRotationVelocity);
+			sensor.AddObservation(bodyPart.ObsVelocity);
 		}
-		sensor.AddVectorObs(_bodyManager.GetSensorObservations());
+		sensor.AddObservation(_bodyManager.GetSensorObservations());
         
         (distances, fraction) = 
             _terrainGenerator.GetDistances2d(
                 pelvis.Rigidbody.transform.position, _bodyManager.ShowMonitor);
     
-        sensor.AddVectorObs(distances);
-        sensor.AddVectorObs(fraction);
+        sensor.AddObservation(distances);
+        sensor.AddObservation(fraction);
 		// _bodyManager.OnCollectObservationsHandleDebug(GetInfo());
 	}
 
-	public override void AgentAction(float[] vectorAction)
+	public override void OnActionReceived(float[] vectorAction)
 	{
 		if (!_hasLazyInitialized)
 		{
@@ -96,7 +98,7 @@ public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
 		int newXPosInMeters = (int) xpos;
         if (newXPosInMeters > lastXPosInMeters) {
             lastXPosInMeters = newXPosInMeters;
-            _stepCountAtLastMeter = this.GetStepCount();
+            _stepCountAtLastMeter = this.StepCount;
         }
 		if (newXPosInMeters > maxXPosInMeters)
 			maxXPosInMeters = newXPosInMeters;
@@ -108,7 +110,7 @@ public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
             terminate = true;
             AddReward(-1f);
 		}
-        if (this.GetStepCount()-_stepCountAtLastMeter >= (200*5))
+        if (this.StepCount-_stepCountAtLastMeter >= (200*5))
             terminate = true;
 		else if (xpos < 4f && _pain > 1f)
             terminate = true;
@@ -117,12 +119,12 @@ public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
 		else if (_pain > 2f)
             terminate = true;
         if (terminate){
-			Done();
+			EndEpisode();
 		}
         _pain = 0f;
 	}
 
-	public override void AgentReset()
+	public override void OnEpisodeBegin()
 	{
 		if (!_hasLazyInitialized)
 		{

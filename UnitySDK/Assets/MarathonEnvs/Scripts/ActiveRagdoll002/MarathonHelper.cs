@@ -1,7 +1,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     public static class MarathonHelper
     {

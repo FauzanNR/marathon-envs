@@ -3,13 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 
 public class OpenAIAntAgent : MarathonAgent
 {
-    public override void AgentReset()
+    public override void OnEpisodeBegin()
     {
-        base.AgentReset();
+        base.OnEpisodeBegin();
 
         // set to true this to show monitor while training
         //Monitor.SetActive(true);
@@ -22,24 +24,23 @@ public class OpenAIAntAgent : MarathonAgent
         SetupBodyParts();
     }
 
-    void ObservationsDefault()
+    void ObservationsDefault(VectorSensor sensor)
     {
-        var sensor = this;
         if (ShowMonitor)
         {
         }
 
         var pelvis = BodyParts["pelvis"];
         Vector3 normalizedVelocity = GetNormalizedVelocity(pelvis.velocity);
-        sensor.AddVectorObs(normalizedVelocity);
-        sensor.AddVectorObs(pelvis.transform.forward); // gyroscope 
-        sensor.AddVectorObs(pelvis.transform.up);
+        sensor.AddObservation(normalizedVelocity);
+        sensor.AddObservation(pelvis.transform.forward); // gyroscope 
+        sensor.AddObservation(pelvis.transform.up);
 
-        sensor.AddVectorObs(SensorIsInTouch);
-        JointRotations.ForEach(x => sensor.AddVectorObs(x));
-        sensor.AddVectorObs(JointVelocity);
+        sensor.AddObservation(SensorIsInTouch);
+        JointRotations.ForEach(x => sensor.AddObservation(x));
+        sensor.AddObservation(JointVelocity);
         Vector3 normalizedFootPosition = this.GetNormalizedPosition(pelvis.transform.position);
-        sensor.AddVectorObs(normalizedFootPosition.y);
+        sensor.AddObservation(normalizedFootPosition.y);
 
     }
 

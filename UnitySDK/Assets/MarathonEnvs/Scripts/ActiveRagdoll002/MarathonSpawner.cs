@@ -6,7 +6,7 @@ using System.Text;
 using System.Xml.Linq;
 using UnityEngine;
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     public class MarathonSpawner : MonoBehaviour
     {

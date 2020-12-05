@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MLAgents;
+using Unity.MLAgents;
 using UnityEngine;
+using ManyWorlds;
 
 public class Scorer : MonoBehaviour
 {

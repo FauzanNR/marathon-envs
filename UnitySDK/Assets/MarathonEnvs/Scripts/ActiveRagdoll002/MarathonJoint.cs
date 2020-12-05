@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     [System.Serializable]
     public class MarathonJoint

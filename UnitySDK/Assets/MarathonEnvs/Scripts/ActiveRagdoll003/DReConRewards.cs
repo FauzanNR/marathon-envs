@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MLAgents;
+using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.Assertions;
+using ManyWorlds;
+
 public class DReConRewards : MonoBehaviour
 {
     [Header("Reward")]
@@ -63,10 +65,20 @@ public class DReConRewards : MonoBehaviour
     Transform _mocapHead;
     Transform _ragDollHead;
 
-    bool _hasLazyInit;
-
+    bool _hasLazyInitialized;
     void Awake()
     {
+		if (!_hasLazyInitialized)
+		{
+			Initialize();
+		}        
+    }
+    void Initialize()
+    {
+		if (_hasLazyInitialized)
+            return;
+        _hasLazyInitialized = true;
+
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         Assert.IsNotNull(_spawnableEnv);
 
@@ -116,7 +128,7 @@ public class DReConRewards : MonoBehaviour
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
         _ragDollBodyStats.OnAwake(transform, _mocapBodyStats);      
 
-        _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);      
+        _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);    
     }
 
     // Update is called once per frame
@@ -196,6 +208,10 @@ public class DReConRewards : MonoBehaviour
     }
     public void OnReset()
     {
+		if (!_hasLazyInitialized)
+		{
+			Initialize();
+		}           
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;

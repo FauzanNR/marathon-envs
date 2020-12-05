@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using MLAgents;
+using Unity.MLAgents;
 using UnityEngine;
 
 public class DomainRandomization : MonoBehaviour

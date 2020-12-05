@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MLAgents;
+using Unity.MLAgents;
 using UnityEngine;
+using ManyWorlds;
 
 public class DReConObservations : MonoBehaviour
 {
@@ -46,11 +47,23 @@ public class DReConObservations : MonoBehaviour
     SpawnableEnv _spawnableEnv;
     DReConObservationStats _mocapBodyStats;
     DReConObservationStats _ragDollBodyStats;
+    bool _hasLazyInitialized;
 
 
     // Start is called before the first frame update
     void Awake()
     {
+		if (!_hasLazyInitialized)
+		{
+			Initialize();
+		}        
+    }
+    void Initialize()
+    {
+		if (_hasLazyInitialized)
+            return;
+        _hasLazyInitialized = true;
+
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         BodyPartDifferenceStats = BodyPartsToTrack
@@ -79,7 +92,6 @@ public class DReConObservations : MonoBehaviour
             }
 
         }
- 
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
         _mocapBodyStats.OnAwake(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);
@@ -98,6 +110,10 @@ public class DReConObservations : MonoBehaviour
     }
     public void OnReset()
     {
+		if (!_hasLazyInitialized)
+		{
+			Initialize();
+		}        
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;

@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
+using ManyWorlds;
 
-namespace MLAgents
+namespace Unity.MLAgents
 {
     public class MarathonAgent : Agent
     {
@@ -22,7 +25,7 @@ namespace MLAgents
         public bool ShowMonitor;
 
         //
-        // Parms to set in subclass.AgentReset() 
+        // Parms to set in subclass.OnEpisodeBegin() 
         [Tooltip("Reward value to set on termination")]
         /**< \brief Reward value to set on termination*/
         protected float OnTerminateRewardValue = -1;
@@ -37,8 +40,7 @@ namespace MLAgents
 
         [Tooltip("Function which collections observations")]
         /**< \brief Function which collections observations*/
-        protected Action ObservationsFunction;
-        //protected Action<VectorSensor> ObservationsFunction;
+        protected Action<VectorSensor> ObservationsFunction;
 
         [Tooltip("Optional Function for additional reward at end of Episode")]
         /**< \brief Optional Function for additional reward at end of Episode*/
@@ -135,7 +137,7 @@ namespace MLAgents
     	bool _isDone;
         bool _hasLazyInitialized;
 
-        public override void AgentReset()
+        public override void OnEpisodeBegin()
         {
             if (!_hasLazyInitialized)
             {
@@ -238,15 +240,14 @@ namespace MLAgents
             }
         }
 
-        public override void CollectObservations()
+        public override void CollectObservations(VectorSensor sensor)
         {
-            var sensor = this;
             if (!_hasLazyInitialized)
             {
-                AgentReset();
+                OnEpisodeBegin();
             }
             UpdateQ();
-            ObservationsFunction();
+            ObservationsFunction(sensor);
 
             // var info = GetInfo();
             // if (Observations?.Count != info.vectorObservation.Count)
@@ -265,7 +266,7 @@ namespace MLAgents
             //     MaxObservationNormalizedErrors = ObservationNormalizedErrors;
         }
 
-        public override void AgentAction(float[] vectorAction)
+        public override void OnActionReceived(float[] vectorAction)
         {
             if (!_hasLazyInitialized)
             {
@@ -295,7 +296,7 @@ namespace MLAgents
 
                 if (done)
                 {
-                    Done();
+                    EndEpisode();
                     SetReward(OnTerminateRewardValue);
                 }
                 else if (StepRewardFunction != null)
@@ -303,7 +304,7 @@ namespace MLAgents
                     SetReward(StepRewardFunction());
                 }
 
-                done |= (this.GetStepCount() >= maxStep && maxStep > 0);
+                done |= (this.StepCount >= MaxStep && MaxStep > 0);
                 if (done && OnEpisodeCompleteGetRewardFunction != null)
                     AddReward(OnEpisodeCompleteGetRewardFunction());
             }
@@ -368,7 +369,7 @@ namespace MLAgents
         internal Vector3 GetNormalizedVelocity(Vector3 metersPerSecond)
         {
             var maxMetersPerSecond = _spawnableEnv.bounds.size
-                / maxStep
+                / MaxStep
                 / Time.fixedDeltaTime;
             var maxXZ = Mathf.Max(maxMetersPerSecond.x, maxMetersPerSecond.z);
             maxMetersPerSecond.x = maxXZ;

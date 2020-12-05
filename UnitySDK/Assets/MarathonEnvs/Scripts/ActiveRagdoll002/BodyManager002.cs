@@ -1,10 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
+using Unity.MLAgents.Actuators;
+using Unity.MLAgents.Sensors;
 using System.Linq;
 using static BodyHelper002;
 using System;
+using ManyWorlds;
 
 public class BodyManager002 : MonoBehaviour, IOnSensorCollision
 {
@@ -404,7 +407,7 @@ public class BodyManager002 : MonoBehaviour, IOnSensorCollision
     public void SetDebugFrameReward(float reward)
 	{
 		FrameReward = reward;
-		var stepCount = _agent.GetStepCount() > 0 ? _agent.GetStepCount() : 1;
+		var stepCount = _agent.StepCount > 0 ? _agent.StepCount : 1;
 		if (_decisionRequester?.DecisionPeriod > 1)
 			stepCount /= _decisionRequester.DecisionPeriod;
 		AverageReward = _agent.GetCumulativeReward() / (float) stepCount;		
@@ -421,18 +424,18 @@ public class BodyManager002 : MonoBehaviour, IOnSensorCollision
 	// 	foreach (var bodyPart in BodyParts)
 	// 	{
 	// 		bodyPart.UpdateObservations();
-	// 		// _agent.sensor.AddVectorObs(bodyPart.ObsRotation);
+	// 		// _agent.sensor.AddObservation(bodyPart.ObsRotation);
     //         vectorObservation.Add(bodyPart.ObsRotation.x);
     //         vectorObservation.Add(bodyPart.ObsRotation.y);
     //         vectorObservation.Add(bodyPart.ObsRotation.z);
     //         vectorObservation.Add(bodyPart.ObsRotation.w);
 
-	// 		// _agent.sensor.AddVectorObs(bodyPart.ObsRotationVelocity);
+	// 		// _agent.sensor.AddObservation(bodyPart.ObsRotationVelocity);
     //         vectorObservation.Add(bodyPart.ObsRotationVelocity.x);
     //         vectorObservation.Add(bodyPart.ObsRotationVelocity.y);
     //         vectorObservation.Add(bodyPart.ObsRotationVelocity.z);
 
-	// 		// _agent.sensor.AddVectorObs(GetNormalizedVelocity(bodyPart.ObsVelocity));
+	// 		// _agent.sensor.AddObservation(GetNormalizedVelocity(bodyPart.ObsVelocity));
     //         var normalizedVelocity = GetNormalizedVelocity(bodyPart.ObsVelocity);
     //         vectorObservation.Add(normalizedVelocity.x);
     //         vectorObservation.Add(normalizedVelocity.y);
@@ -559,7 +562,7 @@ public class BodyManager002 : MonoBehaviour, IOnSensorCollision
 	public Vector3 GetNormalizedVelocity(Vector3 metersPerSecond)
 	{
 		var maxMetersPerSecond = _spawnableEnv.bounds.size
-			/ _agent.maxStep
+			/ _agent.MaxStep
 			/ Time.fixedDeltaTime;
 		var maxXZ = Mathf.Max(maxMetersPerSecond.x, maxMetersPerSecond.z);
 		maxMetersPerSecond.x = maxXZ;

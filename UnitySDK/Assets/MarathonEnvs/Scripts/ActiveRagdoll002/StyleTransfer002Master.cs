@@ -7,9 +7,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using MLAgents;
+using Unity.MLAgents;
 using System;
-
+using ManyWorlds;
 
 public class StyleTransfer002Master : MonoBehaviour {
 
@@ -291,7 +291,7 @@ public class StyleTransfer002Master : MonoBehaviour {
 			if (!DebugShowWithOffset)
 				AnimationIndex++;
 			if (AnimationIndex>=_muscleAnimator.AnimationSteps.Count) {
-				Done();
+				EndEpisode();
 				AnimationIndex--;
 			}
 		}
@@ -368,7 +368,7 @@ public class StyleTransfer002Master : MonoBehaviour {
 		return _isDone;
 	}
 
-	void Done()
+	void EndEpisode()
 	{
 		_isDone = true;
 	}
