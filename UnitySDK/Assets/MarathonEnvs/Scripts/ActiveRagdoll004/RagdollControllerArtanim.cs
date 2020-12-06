@@ -53,21 +53,13 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 
 	// Start is called before the first frame update
-	void Start()
+	public void Start()
     {
         if (SetUpConstraintsFromData) {
 
             Debug.LogError("this automatic method to set up the constraints does NOT work yet");
             SetConstraints(data4constraints);
         }
-
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
 
@@ -112,12 +104,6 @@ public class RagdollControllerArtanim : MonoBehaviour
 
         Set1Constraint("left_left_foot", "mixamorig:RightToeBase");
         //	Set1Constraint("left_right_foot", "mixamorig:RightToeBase");
-
-
-
-
-
-
     }
 
 

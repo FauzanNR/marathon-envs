@@ -25,7 +25,7 @@ public class TrackBodyStatesInWorldSpace : MonoBehaviour
     internal List<Rigidbody> _rigidbodies;
 
     // Start is called before the first frame update
-    void Awake()
+    public void OnAgentInitialize()
     {
         _rigidbodies = GetComponentsInChildren<Rigidbody>().ToList();
         Stats = _rigidbodies

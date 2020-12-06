@@ -53,7 +53,7 @@ public class DReConRewards : MonoBehaviour
     public int ObjectForPointDistancesGizmo;
 
     SpawnableEnv _spawnableEnv;
-    GameObject _mocap;
+    MocapControllerArtanim _mocap;
     GameObject _ragDoll;
     InputController _inputController;
 
@@ -66,34 +66,18 @@ public class DReConRewards : MonoBehaviour
     Transform _ragDollHead;
 
     bool _hasLazyInitialized;
-    void Awake()
+
+    public void OnAgentInitialize()
     {
-		if (!_hasLazyInitialized)
-		{
-			Initialize();
-		}        
-    }
-    void Initialize()
-    {
-		if (_hasLazyInitialized)
-            return;
+        Assert.IsFalse(_hasLazyInitialized);
+
         _hasLazyInitialized = true;
 
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         Assert.IsNotNull(_spawnableEnv);
 
-        MocapController temp = _spawnableEnv.GetComponentInChildren<MocapController>();
-        MocapControllerArtanim temp2 = null;
-        if (temp != null)
-            _mocap = temp.gameObject;
-        else {
-            temp2 = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
-            if (temp2 != null)
-                _mocap = temp2.gameObject;
-            else
-                Debug.LogError("I could not find component Mocap Controller nor component Mocap Controller Artanim");
+        _mocap = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
 
-        }
         _ragDoll = _spawnableEnv.GetComponentInChildren<RagDollAgent>().gameObject;
         Assert.IsNotNull(_mocap);
         Assert.IsNotNull(_ragDoll);
@@ -109,24 +93,15 @@ public class DReConRewards : MonoBehaviour
             .First(x => x.name == "head");
         _mocapBodyStats = new GameObject("MocapDReConRewardStats").AddComponent<DReConRewardStats>();
 
-        //below does not work because in some cases we use MocapControllerArtanim
-        if (temp != null) { 
-           var mocapController = temp ;
-           _mocapBodyStats.ObjectToTrack = mocapController;
-        }else if(temp2 !=null){
-            var mocapController = temp2;
-            _mocapBodyStats.ObjectToTrack = mocapController;
-        }
-        else
-          Debug.LogError("I could not find component Mocap Controller nor component Mocap Controller Artanim");
+        _mocapBodyStats.ObjectToTrack = _mocap;
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _mocapBodyStats.OnAwake(_mocapBodyStats.ObjectToTrack.transform);
+        _mocapBodyStats.OnAgentInitialize(_mocapBodyStats.ObjectToTrack.transform);
 
         _ragDollBodyStats= new GameObject("RagDollDReConRewardStats").AddComponent<DReConRewardStats>();
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _ragDollBodyStats.OnAwake(transform, _mocapBodyStats);      
+        _ragDollBodyStats.OnAgentInitialize(transform, _mocapBodyStats);      
 
         _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);    
     }
@@ -208,10 +183,8 @@ public class DReConRewards : MonoBehaviour
     }
     public void OnReset()
     {
-		if (!_hasLazyInitialized)
-		{
-			Initialize();
-		}           
+        Assert.IsTrue(_hasLazyInitialized);
+       
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;

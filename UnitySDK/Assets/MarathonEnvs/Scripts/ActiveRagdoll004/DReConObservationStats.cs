@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.MLAgents;
 using UnityEngine;
 using ManyWorlds;
+using UnityEngine.Assertions;
 
 public class DReConObservationStats : MonoBehaviour
 {
@@ -59,9 +60,13 @@ public class DReConObservationStats : MonoBehaviour
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
     InputController _inputController;
+    bool _hasLazyInitialized;
 
-    public void OnAwake(List<string> bodyPartsToTrack, Transform defaultTransform)
+    public void OnAgentInitialize(List<string> bodyPartsToTrack, Transform defaultTransform)
     {
+        Assert.IsFalse(_hasLazyInitialized);
+        _hasLazyInitialized = true;
+
         _bodyPartsToTrack = bodyPartsToTrack;
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
@@ -96,6 +101,7 @@ public class DReConObservationStats : MonoBehaviour
 
     public void OnReset()
     {
+        Assert.IsTrue(_hasLazyInitialized);
         ResetStatus();
         foreach (var bodyPart in Stats)
         {

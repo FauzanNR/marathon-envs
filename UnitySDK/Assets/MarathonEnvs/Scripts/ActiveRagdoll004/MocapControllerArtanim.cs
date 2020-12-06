@@ -172,9 +172,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 	//public bool UsingMocapAnimatorController { get => _usingMocapAnimatorController;  }
 
-	void Awake()
+	public void OnAgentInitialize()
     {
-
 		try
 		{
 			_mocapAnimController = GetComponent<MocapAnimatorController>();
@@ -182,12 +181,9 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			_usingMocapAnimatorController = true;
 		}
 		catch(Exception e) {
-
 			_usingMocapAnimatorController = false;
 			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController");
-
 		}
-
 
         SetupSensors();
 

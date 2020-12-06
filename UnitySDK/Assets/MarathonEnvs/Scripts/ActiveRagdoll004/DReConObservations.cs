@@ -4,6 +4,7 @@ using System.Linq;
 using Unity.MLAgents;
 using UnityEngine;
 using ManyWorlds;
+using UnityEngine.Assertions;
 
 public class DReConObservations : MonoBehaviour
 {
@@ -49,19 +50,9 @@ public class DReConObservations : MonoBehaviour
     DReConObservationStats _ragDollBodyStats;
     bool _hasLazyInitialized;
 
-
-    // Start is called before the first frame update
-    void Awake()
+    public void OnAgentInitialize()
     {
-		if (!_hasLazyInitialized)
-		{
-			Initialize();
-		}        
-    }
-    void Initialize()
-    {
-		if (_hasLazyInitialized)
-            return;
+        Assert.IsFalse(_hasLazyInitialized);
         _hasLazyInitialized = true;
 
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
@@ -72,48 +63,27 @@ public class DReConObservations : MonoBehaviour
 
         _mocapBodyStats= new GameObject("MocapDReConObservationStats").AddComponent<DReConObservationStats>();
 
-        MocapController temp = _spawnableEnv.GetComponentInChildren<MocapController>();
-        if (temp != null)
-        {
-            _mocapBodyStats.ObjectToTrack = temp;
-
-        }
-        else //so it is null
-        {
-            MocapControllerArtanim temp2 = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
-            if (temp2 != null)
-            {
-                _mocapBodyStats.ObjectToTrack = temp2;
-
-            }
-            else {
-                Debug.LogError("I could not find a MocapController nor a MocapControlerArtanim  within the environment");
-            
-            }
-
-        }
+        _mocapBodyStats.ObjectToTrack = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _mocapBodyStats.OnAwake(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);
+        _mocapBodyStats.OnAgentInitialize(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);
 
         _ragDollBodyStats= new GameObject("RagDollDReConObservationStats").AddComponent<DReConObservationStats>();
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _ragDollBodyStats.OnAwake(BodyPartsToTrack, transform);
+        _ragDollBodyStats.OnAgentInitialize(BodyPartsToTrack, transform);
     }
 
     public void OnStep(float timeDelta)
     {
+        Assert.IsTrue(_hasLazyInitialized);
         _mocapBodyStats.SetStatusForStep(timeDelta);
         _ragDollBodyStats.SetStatusForStep(timeDelta);
         UpdateObservations(timeDelta);
     }
     public void OnReset()
     {
-		if (!_hasLazyInitialized)
-		{
-			Initialize();
-		}        
+        Assert.IsTrue(_hasLazyInitialized);
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;

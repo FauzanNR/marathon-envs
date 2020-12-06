@@ -43,9 +43,13 @@ public class DReConRewardStats : MonoBehaviour
     public List<string> ColliderNames;
     public List<string> RotationNames;
     public List<string> BodyPartNames;
+    bool _hasLazyInitialized;
 
-    public void OnAwake(Transform defaultTransform, DReConRewardStats orderToCopy = null)
+    public void OnAgentInitialize(Transform defaultTransform, DReConRewardStats orderToCopy = null)
     {
+        Assert.IsFalse(_hasLazyInitialized);
+        _hasLazyInitialized = true;
+                
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _articulationBodyParts = ObjectToTrack
             .GetComponentsInChildren<ArticulationBody>()
@@ -112,7 +116,7 @@ public class DReConRewardStats : MonoBehaviour
     }
     public void OnReset()
     {
-        OnAwake(this.transform, this);
+        Assert.IsTrue(_hasLazyInitialized);
         ResetStatus();
         LastIsSet = false;
     }

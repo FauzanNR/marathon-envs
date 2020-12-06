@@ -50,7 +50,7 @@ public class MocapAnimatorController : MonoBehaviour
     }
 
 
-	void Awake()
+	public void OnAgentInitialize()
     {
         _anim = GetComponent<Animator>();
         _characterController = GetComponent<CharacterController>();
@@ -61,11 +61,6 @@ public class MocapAnimatorController : MonoBehaviour
         _layerMask = 1<<ragDoll.gameObject.layer;
         _layerMask |= 1<<this.gameObject.layer;
         _layerMask = ~(_layerMask);
-
-
-
-
-
     }
 
     void Update()
