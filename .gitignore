@@ -99,3 +99,4 @@ mono_crash.*
 UnitySDK/Assets/ML-Agents/Timers
 Timers.meta
 ML-Agents.meta
+results/
