@@ -139,19 +139,23 @@ behaviors:
     #     beta: .003
     #     max_steps: 1.e7 
 
-    # Hopper-v0:
-    #     num_epoch: 10 
-    #     time_horizon: 100 
-    #     summary_freq: 10000
+    Hopper-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 10 
+            beta: .003
+            learning_rate: 1e-3
+            batch_size: 16
+            buffer_size: 5120
+        time_horizon: 100 
+        summary_freq: 10000
+        network_settings:
+            num_layers: 2
+            normalize: false 
+            hidden_units: 64
     #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 1e-3
-    #     batch_size: 16
-    #     buffer_size: 5120
-    #     max_steps: 1e6
-    #     beta: .003
+        max_steps: 1e6 
+        threaded: true
 
     # Walker2d-v0:
     #     num_epoch: 10 
@@ -237,33 +241,23 @@ behaviors:
     #     beta: .1
     #     max_steps: 50e6
 
-    # ControllerMarathonMan-v0:
-    #     # num_epoch: 4
-    #     # time_horizon: 100
-    #     # summary_freq: 10000
-    #     # use_recurrent: false
-    #     # normalize: true 
-    #     # num_layers: 2
-    #     # hidden_units: 128
-    #     # learning_rate: 3e-4
-    #     # batch_size: 10000 # buffer_size/4
-    #     # buffer_size: 40000
-    #     # beta: .00001
-    #     # max_steps: 100e6
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 3e-4
-    #     time_horizon: 100
-    #     max_steps: 128e6
-    #     batch_size: 768 
-    #     # buffer_size: 21504 # 768 * 28
-    #     buffer_size: 3072 # 768 * 4
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256    
-        
-        
+    ControllerMarathonMan-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 3e-4
+            batch_size: 768 
+            # buffer_size: 21504 # 768 * 28
+            buffer_size: 3072 # 768 * 4
+        summary_freq: 100000
+        checkpoint_interval: 5000000
+        network_settings:
+            num_layers: 2
+            hidden_units: 256    
+            normalize: true
+        max_steps: 128e6
+        time_horizon: 100  
         
     ControllerArtanim-v4:
         trainer_type: ppo
