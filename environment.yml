@@ -5,7 +5,7 @@ dependencies:
   - pytorch 
   - torchvision 
   - torchaudio 
-  - cudatoolkit=10.2
+  # - cudatoolkit=10.2
   - numpy
   - pip:
     - mlagents==0.22
