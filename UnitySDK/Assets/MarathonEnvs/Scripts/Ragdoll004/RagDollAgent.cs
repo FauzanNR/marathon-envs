@@ -36,7 +36,7 @@ public class RagDollAgent : Agent
     SpawnableEnv _spawnableEnv;
     DReConObservations _dReConObservations;
     DReConRewards _dReConRewards;
-    RagDoll003 _ragDollSettings;
+    RagDoll004 _ragDollSettings;
     TrackBodyStatesInWorldSpace _trackBodyStatesInWorldSpace;
     List<ArticulationBody> _motors;
     MarathonTestBedController _debugController;  
@@ -260,7 +260,7 @@ public class RagDollAgent : Agent
 
         _trackBodyStatesInWorldSpace = _mocapControllerArtanim.GetComponent<TrackBodyStatesInWorldSpace>();
 
-        _ragDollSettings = GetComponent<RagDoll003>();
+        _ragDollSettings = GetComponent<RagDoll004>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _sensorObservations = GetComponent<SensorObservations>();
 

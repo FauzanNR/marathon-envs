@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class RagDoll003 : MonoBehaviour {
+public class RagDoll004 : MonoBehaviour {
 
     [System.Serializable]
     public class MusclePower

@@ -290,7 +290,7 @@ PrefabInstance:
     - target: {fileID: 8081357739622870871, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
       propertyPath: m_Name
-      value: ControllerArtanimEnv-v4
+      value: ControllerMarathonManEnv-v1
       objectReference: {fileID: 0}
     - target: {fileID: 8081357739622870871, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
@@ -363,16 +363,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1714340263721781765}
     m_Modifications:
-    - target: {fileID: 114263248370519032, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: m_BrainParameters.vectorObservationSize
-      value: 124
-      objectReference: {fileID: 0}
-    - target: {fileID: 114263248370519032, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: m_BrainParameters.vectorActionSize.Array.data[0]
-      value: 31
-      objectReference: {fileID: 0}
     - target: {fileID: 2015231249865073876, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
       propertyPath: m_ParentAnchorPosition.x
