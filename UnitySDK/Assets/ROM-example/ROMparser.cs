@@ -61,7 +61,7 @@ public class ROMparser : MonoBehaviour
 
         for (int i = 0; i< joints.Length; i++) {
 
-            if (info2store.maxRotations[i].x < joints[i].rotation.eulerAngles.x)
+            if (info2store.maxRotations[i].x < joints[i].localRotation.eulerAngles.x)
                 info2store.maxRotations[i].x = joints[i].rotation.eulerAngles.x;
             if (info2store.maxRotations[i].y < joints[i].rotation.eulerAngles.y)
                 info2store.maxRotations[i].y = joints[i].rotation.eulerAngles.y;
