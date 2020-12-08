@@ -1403,6 +1403,24 @@ The result looks like this:
 
 ![prefab-no-overrides](img/prefab-no-overrides.png)
 
+
+
+![image-20201208095514402](img/training-character-no-collisions.png)
+
+
+
+08.12.2020
+
+in branch *feature/character-wtih-no-overlap* I imported a new character that has no collisions. The training curve in grey corresponds to that. The pink one corresponds to the behaviour of the old with additional constraints (in branch *feature/try-adjusting-constraints-from-model-that-trains*)
+
+Result:
+
+
+
+
+
+<video src="img/2020-12-08 10-20-17-new-ragdoll-no-collisions.mkv"></video>
+
 #### Tasks done that do not work (or not yet)
 
 in branch *feature/fix-constraints-from-range-of-motion* I generate *marathon-env-v6* combining the constraints with the insight from Joe regarding configuring the prefab. Fail.
