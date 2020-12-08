@@ -87,7 +87,39 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 
 ## 1. Install and Troubleshooting
 
-### 1.1 Using pip and conda
+### 1.1 Installation
+
+These training environments are based on the *ml-agents* packages. The latest version of marathon-envs works with release 10. To install the software environment to get training working, you can check the basic steps to install the training framework are explained in the ml-agents repository:
+
+https://github.com/Unity-Technologies/ml-agents/blob/release_10_docs/docs/Installation.md
+
+### 1.2 The right combination of pip and conda
+
+On windows, it turns out there are some tiny challenging things in the previous instructions. A combination that has worked for me is:
+
+``` shell
+conda create --name mlagents-release10-v2 python=3.6
+
+ conda activate  mlagents-release10-v2
+
+ pip3 install mlagents 
+```
+
+
+
+
+
+Note: `conda install mlagents` does not seem to work perfectly,  it does complain with the following message: 
+
+``` shell
+ERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts. torch 1.7.0 requires future, which is not installed.
+
+```
+ Which I solve using:`pip3 install future` The resulting environment trains well the latest version of the marathon-environments found in this repository
+
+
+### 1.3 OLD Using pip and conda
+
 When installing mlagents: I have had trouble setting the required version of mlagents using anaconda in Windows 10. Specifically, the problem I found was that when I ran
 
     pip install mlagents==0.14.1
@@ -121,7 +153,7 @@ After that, install mlagents with the instruction:
 Doing it like this, when running the training instruction it works directly
 
 
-### 1.2. Going around problem with tensorflow not compiled for AVX and AVX2
+### 1.4. (OLD) Going around problem with tensorflow not compiled for AVX and AVX2
 
 It seems like version 1.7.1 is super old.
 Another option:
@@ -1388,6 +1420,38 @@ There is also a curious impact in learning speed:
 
 
 
+
+### Import new ragdoll
+
+04.12.2020
+
+Done:  imported **only**   *MarathonMan004Target* and *MarathonMan004*, then opened the environment where they were nested (*Agentmove-source* and *ControllerArtanim-v4*, respectively), and applied "revert all " to the prefab override option, for both cases.
+
+
+
+![prefab-where-overrides-are](img/prefab-where-overrides-are.png)
+
+The result looks like this:
+
+![prefab-no-overrides](img/prefab-no-overrides.png)
+
+
+
+![image-20201208095514402](img/training-character-no-collisions.png)
+
+
+
+08.12.2020
+
+in branch *feature/character-wtih-no-overlap* I imported a new character that has no collisions. The training curve in grey corresponds to that. The pink one corresponds to the behaviour of the old with additional constraints (in branch *feature/try-adjusting-constraints-from-model-that-trains*)
+
+Result:
+
+
+
+
+
+<video src="img/2020-12-08 10-20-17-new-ragdoll-no-collisions.mkv"></video>
 
 #### Tasks done that do not work (or not yet)
 
