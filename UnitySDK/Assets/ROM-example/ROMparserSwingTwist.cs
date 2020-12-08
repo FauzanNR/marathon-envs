@@ -21,7 +21,13 @@ public class ROMparserSwingTwist : MonoBehaviour
 
  
     [SerializeField]
-    ROMinfoCollector info2store;
+    public ROMinfoCollector info2store;
+
+
+    //this is only if we want to generate a prefab from a bunch of articulated bodies and the constraints parsed
+    [SerializeField]
+    public Transform targetRoot;
+
 
 
     // Start is called before the first frame update
