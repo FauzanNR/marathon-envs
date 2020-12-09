@@ -481,7 +481,13 @@ ControllerArtanim-v4:
     
 ```
 
-To see the results, when training with the engine in repository marathon man, since you are using ml-agents in version 0.14.1, you have to use:
+To see the results, when training with the engine in repository marathon man, 
+
+```shell
+tensorboard --logdir results --port 6006
+```
+
+in the old version, using ml-agents in version 0.14.1, you had to use:
 
  ```
  tensorboard --logdir=summaries --port=6006

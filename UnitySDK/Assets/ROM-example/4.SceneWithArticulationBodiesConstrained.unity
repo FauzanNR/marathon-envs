@@ -123,6 +123,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!171741748 &366606882 stripped
+ArticulationBody:
+  m_CorrespondingSourceObject: {fileID: 1974631448580122861, guid: fc807170aca4bfa469848f6ef2798158,
+    type: 3}
+  m_PrefabInstance: {fileID: 976860706}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &432972962
 GameObject:
   m_ObjectHideFlags: 0
@@ -182,8 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72feaaaf89f21a142b5c0c9f1734d983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
-  jointMode: 1
+  body: {fileID: 471171460}
+  jointMode: 0
   Strength: 1
   jointPosition: {x: 0, y: 0, z: 0}
 --- !u!23 &432972966
@@ -235,6 +241,18 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 432972962}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!171741748 &471171460 stripped
+ArticulationBody:
+  m_CorrespondingSourceObject: {fileID: 1974631448949082899, guid: fc807170aca4bfa469848f6ef2798158,
+    type: 3}
+  m_PrefabInstance: {fileID: 976860706}
+  m_PrefabAsset: {fileID: 0}
+--- !u!171741748 &777267729 stripped
+ArticulationBody:
+  m_CorrespondingSourceObject: {fileID: 1974631448656230489, guid: fc807170aca4bfa469848f6ef2798158,
+    type: 3}
+  m_PrefabInstance: {fileID: 976860706}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &976860706
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -488,8 +506,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72feaaaf89f21a142b5c0c9f1734d983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
-  jointMode: 1
+  body: {fileID: 777267729}
+  jointMode: 0
   Strength: 1
   jointPosition: {x: 0, y: 0, z: 0}
 --- !u!23 &1162455327
@@ -692,8 +710,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72feaaaf89f21a142b5c0c9f1734d983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
-  jointMode: 1
+  body: {fileID: 366606882}
+  jointMode: 0
   Strength: 1
   jointPosition: {x: 0, y: 0, z: 0}
 --- !u!23 &1324678253
@@ -887,8 +905,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72feaaaf89f21a142b5c0c9f1734d983, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  body: {fileID: 0}
-  jointMode: 1
+  body: {fileID: 1590724719}
+  jointMode: 0
   Strength: 1
   jointPosition: {x: 0, y: 0, z: 0}
 --- !u!23 &1590105650
@@ -940,6 +958,12 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1590105646}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!171741748 &1590724719 stripped
+ArticulationBody:
+  m_CorrespondingSourceObject: {fileID: 1974631448034290383, guid: fc807170aca4bfa469848f6ef2798158,
+    type: 3}
+  m_PrefabInstance: {fileID: 976860706}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &9171100353762597
 GameObject:
   m_ObjectHideFlags: 0
