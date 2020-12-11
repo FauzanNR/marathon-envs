@@ -279,7 +279,9 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			SetOffsetSourcePose2RB("articulation:Spine", "mixamorig:Spine");
 			SetOffsetSourcePose2RB("articulation:Spine1", "mixamorig:Spine1");
 			SetOffsetSourcePose2RB("articulation:Spine2", "mixamorig:Spine2");
-			SetOffsetSourcePose2RB("articulation:Head", "mixamorig:Head");
+            SetOffsetSourcePose2RB("articulation:Neck", "mixamorig:Neck");
+
+            SetOffsetSourcePose2RB("head", "mixamorig:Head");
 
 
 			SetOffsetSourcePose2RB("articulation:LeftShoulder", "mixamorig:LeftShoulder");

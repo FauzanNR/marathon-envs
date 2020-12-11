@@ -100,7 +100,7 @@ public class DReConRewardStats : MonoBehaviour
             .ToList();
         if (_root == null)
         {
-            _root = _bodyParts.First(x=>x.name=="butt");
+            _root = _bodyParts.First(x=>x.name== "articulation:Hips");
         }        
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;

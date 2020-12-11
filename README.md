@@ -77,11 +77,29 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 - *feature/fix-constraints-from-range-of-motion* is in progress, and does not work. It tries to fix the boundaries of the ArticulationBody ragdoll joints from a range-of-motion animation file mapped to the default .fbx character (from mixamo)
 - *feature/try-adjusting-constraints-from-model-that-trains* shows a model trained with more constrained ArticulationBody ragdoll joints
 
-#### 0.4 Current limitations (out from the scope of this reop)
+#### 0.4 Current limitations (out from the scope of this repo)
 
 - Running several environments together does not work. Indeed, if I try to run it with the previous version, in parallel, it complains of socket conflicts.
 - Using TF2 does not work. 
 - An upgrade to MLAgents 1.0 is more than desirable
+
+
+
+
+
+#### 0.5 How to train
+
+macOS format:
+
+```
+mlagents-learn config/marathon_envs_config.yaml --env="envs/MarathonEnvs" --num-envs=10 --run-id=Hopper-001 --no-graphics --env-args --spawn-env=Hopper-v0 --num-spawn-envs=50
+```
+
+Windows format:
+
+```
+mlagents-learn config\marathon_envs_config.yaml --env="envs\MarathonEnvs\Marathon Environments.exe" --num-envs=25 --run-id=newMlAgents-007 --no-graphics --env-args --spawn-env=ControllerMarathonMan-v1 --num-spawn-envs=35
+```
 
 
 

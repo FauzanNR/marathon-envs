@@ -93,7 +93,7 @@ public class DReConObservationStats : MonoBehaviour
             .ToList();
         if (_root == null)
         {
-            _root = _bodyParts.First(x=>x.name=="butt").gameObject;
+            _root = _bodyParts.First(x=>x.name== "articulation:Hips").gameObject;
         }             
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
