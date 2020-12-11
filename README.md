@@ -109,7 +109,7 @@ mlagents-learn config\marathon_envs_config.yaml --env="envs\MarathonEnvs\Maratho
 
 1. Install conda. 
 2. In the conda command prompt, go to the home of this repo
-3. Run `conda -f environment.yml`
+3. Run `conda env create -f environment.yml `
 
 
 
