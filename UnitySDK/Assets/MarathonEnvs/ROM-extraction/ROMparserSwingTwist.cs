@@ -25,8 +25,14 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
     //this is only if we want to generate a prefab from a bunch of articulated bodies and the constraints parsed
-    [SerializeField]
+
+
+    //[SerializeField]
     public Transform targetRoot;
+    
+    [Tooltip("Leave blanc if you want to apply on all the children of targetRoot")]
+    [SerializeField]
+    public Transform[] targetJoints;
 
 
 

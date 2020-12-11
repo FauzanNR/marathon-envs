@@ -52,11 +52,18 @@ public class ROMparserSwingTwistEditor: Editor
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
 
-        Transform targetRoot = t.targetRoot;
         ROMinfoCollector infoStored = t.info2store;
 
+        Transform targetRoot = t.targetRoot;
+        
+       
+        
+        Transform[] joints = t.targetJoints;
+        //we want them all:
+        if (joints.Length == 0)
+            joints = targetRoot.GetComponentsInChildren<Transform>();
 
-        Transform[] joints = targetRoot.GetComponentsInChildren<Transform>();
+
         List<ArticulationBody> temp = new List<ArticulationBody>();
         for (int i = 0; i < joints.Length; i++)
         {
