@@ -18,6 +18,12 @@ public class RagDoll004 : MonoBehaviour {
     public float Stiffness = 100f;
     public float Damping = 100f;
 
+
+    [Header("Debug Collisions")]
+    [SerializeField]
+    bool skipCollisionSetup;
+
+
 	// Use this for initialization
 	void Start () {
 		Setup();
@@ -29,18 +35,22 @@ public class RagDoll004 : MonoBehaviour {
 	}
 
 	void Setup () {
+
+        if (!skipCollisionSetup) { 
+
 		// handle collision overlaps
-        IgnoreCollision("torso", new []{"left_upper_arm", "right_upper_arm"});
-        IgnoreCollision("butt", new []{"left_thigh", "right_thigh"});
+        IgnoreCollision("articulation:Spine2", new []{ "LeftArm", "RightArm"});
+        IgnoreCollision("articulation:Hips", new []{ "RightUpLeg", "LeftUpLeg" });
 
-        IgnoreCollision("left_larm", new []{"left_upper_arm"});
-        IgnoreCollision("right_larm", new []{"right_upper_arm"});
-        IgnoreCollision("left_shin", new []{"left_thigh"});
-        IgnoreCollision("right_shin", new []{"right_thigh"});
+        IgnoreCollision("LeftForeArm", new []{ "LeftArm" });
+        IgnoreCollision("RightForeArm", new []{ "RightArm" });
+        IgnoreCollision("RightLeg", new []{ "RightUpLeg" });
+        IgnoreCollision("LeftLeg", new[] { "LeftUpLeg" });
 
-        IgnoreCollision("right_shin", new []{"right_right_foot"});
-        IgnoreCollision("left_shin", new []{"left_left_foot"});
+        IgnoreCollision("RightLeg", new []{"RightFoot"});
+        IgnoreCollision("LeftLeg", new []{"LeftFoot"});
 
+        }
 
         //
         var joints = GetComponentsInChildren<Joint>().ToList();

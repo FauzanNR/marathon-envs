@@ -77,7 +77,7 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 - *feature/fix-constraints-from-range-of-motion* is in progress, and does not work. It tries to fix the boundaries of the ArticulationBody ragdoll joints from a range-of-motion animation file mapped to the default .fbx character (from mixamo)
 - *feature/try-adjusting-constraints-from-model-that-trains* shows a model trained with more constrained ArticulationBody ragdoll joints
 
-#### 0.4 Current limitations (out from the scope of this reop)
+#### 0.4 Current limitations (out from the scope of this repo)
 
 - Running several environments together does not work. Indeed, if I try to run it with the previous version, in parallel, it complains of socket conflicts.
 - Using TF2 does not work. 
@@ -85,9 +85,39 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 
 
 
+
+
+#### 0.5 How to train
+
+macOS format:
+
+```
+mlagents-learn config/marathon_envs_config.yaml --env="envs/MarathonEnvs" --num-envs=10 --run-id=Hopper-001 --no-graphics --env-args --spawn-env=Hopper-v0 --num-spawn-envs=50
+```
+
+Windows format:
+
+```
+mlagents-learn config\marathon_envs_config.yaml --env="envs\MarathonEnvs\Marathon Environments.exe" --num-envs=25 --run-id=newMlAgents-007 --no-graphics --env-args --spawn-env=ControllerMarathonMan-v1 --num-spawn-envs=35
+```
+
+
+
 ## 1. Install and Troubleshooting
 
-### 1.1 Installation
+### 1.0 Installation with conda environment file
+
+1. Install conda. 
+2. In the conda command prompt, go to the home of this repo
+3. Run `conda env create -f environment.yml `
+
+
+
+If you had trouble using the previous, you can: 
+
+
+
+### 1.1 Installation info online
 
 These training environments are based on the *ml-agents* packages. The latest version of marathon-envs works with release 10. To install the software environment to get training working, you can check the basic steps to install the training framework are explained in the ml-agents repository:
 
@@ -211,6 +241,36 @@ pip install mlagents==0.14.1
 
 
 ## 2. Export to an existing animation project
+
+### 2.0 How to integrated  marathon envs in an existing project
+
+1. Open the file Packages/manifest.json in the target project, and add to the existing package dependencies the following:
+
+```json
+    "com.joebooth.many-worlds": "https://github.com/sohojoe/many-worlds.git?path=/com.joebooth.many-worlds",
+	"com.unity.ml-agents": "1.0.6",
+	"com.unity.barracuda": "0.6.1-preview",
+```
+
+
+
+2. Take the entire *marathon-envs* folder and add it to your project
+3. Adjust the Layers and how they connect physically (see image below)
+
+![Layers2add](img/2.1.layers2add_highlight.png)
+	
+![Physics Set up](img/2.2.physics2set-up.png)
+
+
+
+4. Adjust the Physics collisions
+
+![Physics](img/3.physics-settings-fix-highlight.png)
+
+
+
+**IN PROGRESS, UNFINISHED**
+
 
 
 ### 2.1 How to integrated the marathon man scene in an existing project

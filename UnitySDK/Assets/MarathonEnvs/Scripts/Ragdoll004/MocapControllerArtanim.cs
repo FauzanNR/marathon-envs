@@ -272,44 +272,47 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 		if (_offsetsSource2RB == null)
 		{
-			MappingOffset o = SetOffsetSourcePose2RB("butt", "mixamorig:Hips");
+			MappingOffset o = SetOffsetSourcePose2RB("articulation:Hips", "mixamorig:Hips");
 			
+
 			o.SetAsRoot(true, _debugDistance);
-			SetOffsetSourcePose2RB("lower_waist", "mixamorig:Spine");
-			SetOffsetSourcePose2RB("upper_waist", "mixamorig:Spine1");
-			SetOffsetSourcePose2RB("torso", "mixamorig:Spine2");
-			SetOffsetSourcePose2RB("head", "mixamorig:Head");
+			SetOffsetSourcePose2RB("articulation:Spine", "mixamorig:Spine");
+			SetOffsetSourcePose2RB("articulation:Spine1", "mixamorig:Spine1");
+			SetOffsetSourcePose2RB("articulation:Spine2", "mixamorig:Spine2");
+            SetOffsetSourcePose2RB("articulation:Neck", "mixamorig:Neck");
+
+            SetOffsetSourcePose2RB("head", "mixamorig:Head");
 
 
-			SetOffsetSourcePose2RB("left_shoulder_joint", "mixamorig:LeftShoulder");
+			SetOffsetSourcePose2RB("articulation:LeftShoulder", "mixamorig:LeftShoulder");
 
 
-			SetOffsetSourcePose2RB("left_upper_arm_joint", "mixamorig:LeftArm");
+			SetOffsetSourcePose2RB("articulation:LeftArm", "mixamorig:LeftArm");
 			
-			SetOffsetSourcePose2RB("left_larm_joint", "mixamorig:LeftForeArm");
+			SetOffsetSourcePose2RB("articulation:LeftForeArm", "mixamorig:LeftForeArm");
 
 			//	SetOffsetSourcePose2RB("left_hand", "mixamorig:LeftHand");
 			// no rigidbodies in hands, so far
 
-			SetOffsetSourcePose2RB("right_shoulder_joint", "mixamorig:RightShoulder");
+			SetOffsetSourcePose2RB("articulation:RightShoulder", "mixamorig:RightShoulder");
 
 
-			SetOffsetSourcePose2RB("right_upper_arm_joint", "mixamorig:RightArm");
-			SetOffsetSourcePose2RB("right_larm_joint", "mixamorig:RightForeArm");
+			SetOffsetSourcePose2RB("articulation:RightArm", "mixamorig:RightArm");
+			SetOffsetSourcePose2RB("articulation:RightForeArm", "mixamorig:RightForeArm");
 			//	SetOffsetSourcePose2RB("right_hand", "mixamorig:RightHand");
 
-			SetOffsetSourcePose2RB("left_thigh_joint", "mixamorig:LeftUpLeg");
-			SetOffsetSourcePose2RB("left_shin_joint", "mixamorig:LeftLeg");
+			SetOffsetSourcePose2RB("articulation:LeftUpLeg", "mixamorig:LeftUpLeg");
+			SetOffsetSourcePose2RB("articulation:LeftLeg", "mixamorig:LeftLeg");
 
 
-			SetOffsetSourcePose2RB("left_left_foot", "mixamorig:LeftToeBase");
-		//	SetOffsetSourcePose2RB("right_left_foot", "mixamorig:LeftToeBase");
+			SetOffsetSourcePose2RB("articulation:LeftToeBase", "mixamorig:LeftToeBase");
+	
 
+			SetOffsetSourcePose2RB("articulation:RightUpLeg", "mixamorig:RightUpLeg");
+			SetOffsetSourcePose2RB("articulation:RightLeg", "mixamorig:RightLeg");
+			SetOffsetSourcePose2RB("articulation:RightToeBase", "mixamorig:RightToeBase");
+		
 
-			SetOffsetSourcePose2RB("right_thigh_joint", "mixamorig:RightUpLeg");
-			SetOffsetSourcePose2RB("right_shin_joint", "mixamorig:RightLeg");
-			SetOffsetSourcePose2RB("left_left_foot", "mixamorig:RightToeBase");
-		//	SetOffsetSourcePose2RB("left_right_foot", "mixamorig:RightToeBase");
 
 
 		}
