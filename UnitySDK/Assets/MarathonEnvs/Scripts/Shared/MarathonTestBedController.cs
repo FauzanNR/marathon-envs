@@ -80,16 +80,21 @@ public class MarathonTestBedController : MonoBehaviour
                     // if (FreezeHead && !FreezeHips)
                     //     rb.GetComponentInChildren<FixedJoint>().connectedBody = head;
                     break;
-                case "Ragdoll-MarathonMan004":
                 case "RagDoll":
                     if (!_hasFrozen && setTpose)
                         loadTposeanim();
-
-
                     _hasFrozen = true;
                     children = agent.GetComponentsInChildren<ArticulationBody>();
                     head = children.FirstOrDefault(x=>x.name=="torso");
                     butt = children.FirstOrDefault(x=>x.name=="butt");
+                    break;
+                case "Ragdoll-MarathonMan004":
+                    if (!_hasFrozen && setTpose)
+                        loadTposeanim();
+                    _hasFrozen = true;
+                    children = agent.GetComponentsInChildren<ArticulationBody>();
+                    head = children.FirstOrDefault(x=>x.name=="head");
+                    butt = children.FirstOrDefault(x=>x.name=="articulation:Hips");
                     break;
                 case "humanoid":
                     _hasFrozen = true;
