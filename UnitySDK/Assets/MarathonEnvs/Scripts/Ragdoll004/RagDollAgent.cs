@@ -189,11 +189,7 @@ public class RagDollAgent : Agent
     }
     float[] GetDebugActions(float[] vectorAction)
     {
-        if (_debugController.Actions == null || _debugController.Actions.Length != vectorAction.Length)
-        {
-            _debugController.Actions = vectorAction.Select(x=>0f).ToArray();
-        }
-        int i = 0;
+        var debugActions = new List<float>();
         foreach (var m in _motors)
         {
             if (m.isRoot)
@@ -212,15 +208,16 @@ public class RagDollAgent : Agent
             Vector3 targetNormalizedRotation = debugMotor.Actions;
 
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                _debugController.Actions[i++] = targetNormalizedRotation.x;
+                debugActions.Add(targetNormalizedRotation.x);
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                _debugController.Actions[i++] = targetNormalizedRotation.y;
+                debugActions.Add(targetNormalizedRotation.y);
             if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                _debugController.Actions[i++] = targetNormalizedRotation.z;
+                debugActions.Add(targetNormalizedRotation.z);
         }
-
-        vectorAction = _debugController.Actions.Select(x=>Mathf.Clamp(x,-1f,1f)).ToArray();
-        return vectorAction;
+        
+        debugActions = debugActions.Select(x=>Mathf.Clamp(x,-1f,1f)).ToList();
+        _debugController.Actions = debugActions.ToArray();
+        return debugActions.ToArray();
     }
 
     float[] SmoothActions(float[] vectorAction)

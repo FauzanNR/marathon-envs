@@ -174,9 +174,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 2
-  m_SwingZ: 2
-  m_Twist: 2
+  m_SwingY: 1
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -446,9 +446,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 2
-  m_SwingZ: 2
-  m_Twist: 2
+  m_SwingY: 1
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -1457,8 +1457,8 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -150
-    upperLimit: 8
+    lowerLimit: -8
+    upperLimit: 150
     stiffness: 0
     damping: 0
     forceLimit: 40
@@ -2049,9 +2049,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 2
-  m_SwingZ: 2
-  m_Twist: 2
+  m_SwingY: 1
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -2423,9 +2423,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 2
-  m_SwingZ: 2
-  m_Twist: 2
+  m_SwingY: 1
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -2763,8 +2763,8 @@ ArticulationBody:
   m_LinearY: 2
   m_LinearZ: 2
   m_SwingY: 1
-  m_SwingZ: 0
-  m_Twist: 0
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: 0
     upperLimit: 0
@@ -2896,9 +2896,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 2
-  m_SwingZ: 2
-  m_Twist: 2
+  m_SwingY: 1
+  m_SwingZ: 1
+  m_Twist: 1
   m_XDrive:
     lowerLimit: -170
     upperLimit: 170
@@ -4950,33 +4950,39 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MusclePowers:
-  - Muscle: lower_waist
+  - Muscle: articulation:Spine
     PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: upper_waist
+  - Muscle: articulation:Spine1
     PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: right_thigh_joint
+  - Muscle: articulation:RightUpLeg
     PowerVector: {x: 40, y: 120, z: 40}
-  - Muscle: right_shin_joint
+  - Muscle: articulation:RightLeg
     PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: right_right_foot
+  - Muscle: articulation:RightFoot
     PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: left_thigh_joint
+  - Muscle: articulation:LeftUpLeg
     PowerVector: {x: 40, y: 120, z: 40}
-  - Muscle: left_shin_joint
+  - Muscle: articulation:LeftLeg
     PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: left_left_foot
+  - Muscle: articulation:LeftFoot
     PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: right_upper_arm_joint
+  - Muscle: articulation:LeftShoulder
     PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: right_larm_joint
+  - Muscle: articulation:LeftArm
     PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: left_upper_arm_joint
+  - Muscle: articulation:LeftForeArm
     PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: left_larm_joint
+  - Muscle: articulation:LeftToeBase
     PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: left_shoulder_joint
+  - Muscle: articulation:RightShoulder
     PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: right_shoulder_joint
+  - Muscle: articulation:RightArm
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:RightForeArm
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:RightToeBase
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:Neck
     PowerVector: {x: 20, y: 20, z: 20}
   MotorScale: 1
   Stiffness: 50
@@ -4997,7 +5003,7 @@ MonoBehaviour:
   m_BrainParameters:
     VectorObservationSize: 128
     NumStackedVectorObservations: 1
-    VectorActionSize: 1f000000
+    VectorActionSize: 24000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
   m_Model: {fileID: 5022602860645237092, guid: 0e791689cf0300c4fbe8be76f09fccff, type: 3}
