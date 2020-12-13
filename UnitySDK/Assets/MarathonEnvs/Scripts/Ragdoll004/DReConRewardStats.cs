@@ -28,7 +28,7 @@ public class DReConRewardStats : MonoBehaviour
     public bool LastIsSet;
 
     SpawnableEnv _spawnableEnv;
-    List<CapsuleCollider> _capsuleColliders;
+    List<Collider> _colliders;
     List<Rigidbody> _rigidbodyParts;
     List<ArticulationBody> _articulationBodyParts;
     List<GameObject> _bodyParts;
@@ -69,9 +69,10 @@ public class DReConRewardStats : MonoBehaviour
             .Distinct()
             .Where(x=>x.GetComponent<Rigidbody>() != null || x.GetComponent<ArticulationBody>() != null)
             .ToList();
-        _capsuleColliders = _bodyParts
-            .SelectMany(x=>x.GetComponentsInChildren<CapsuleCollider>())
+        _colliders = _bodyParts
+            .SelectMany(x=>x.GetComponentsInChildren<Collider>())
             .Where(x=>x.enabled)
+            .Where(x=>!x.name.Contains("senor"))
             .Distinct()
             .ToList();
         if (orderToCopy != null)
@@ -82,17 +83,17 @@ public class DReConRewardStats : MonoBehaviour
             _trackRotations = orderToCopy._trackRotations
                 .Select(x=>_trackRotations.First(y=>y.name == x.name))
                 .ToList();
-            _capsuleColliders = orderToCopy._capsuleColliders
-                .Select(x=>_capsuleColliders.First(y=>y.name == x.name))
+            _colliders = orderToCopy._colliders
+                .Select(x=>_colliders.First(y=>y.name == x.name))
                 .ToList();
         }
-        Points = Enumerable.Range(0,_capsuleColliders.Count * 6)
+        Points = Enumerable.Range(0,_colliders.Count * 6)
             .Select(x=>Vector3.zero)
             .ToArray();
-        _lastPoints = Enumerable.Range(0,_capsuleColliders.Count * 6)
+        _lastPoints = Enumerable.Range(0,_colliders.Count * 6)
             .Select(x=>Vector3.zero)
             .ToArray();            
-        PointVelocity = Enumerable.Range(0,_capsuleColliders.Count * 6)
+        PointVelocity = Enumerable.Range(0,_colliders.Count * 6)
             .Select(x=>Vector3.zero)
             .ToArray();
         Rotations = Enumerable.Range(0,_trackRotations.Count)
@@ -104,7 +105,7 @@ public class DReConRewardStats : MonoBehaviour
         }        
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
-        ColliderNames = _capsuleColliders
+        ColliderNames = _colliders
             .Select(x=>x.name)
             .ToList();
         RotationNames = _trackRotations
@@ -218,14 +219,14 @@ public class DReConRewardStats : MonoBehaviour
         Assert.AreEqual(PointVelocity.Length, target.PointVelocity.Length);
         Assert.AreEqual(Points.Length, _lastPoints.Length);
         Assert.AreEqual(Points.Length, PointVelocity.Length);
-        Assert.AreEqual(_capsuleColliders.Count, target._capsuleColliders.Count);
-        for (int i = 0; i < _capsuleColliders.Count; i++)
+        Assert.AreEqual(_colliders.Count, target._colliders.Count);
+        for (int i = 0; i < _colliders.Count; i++)
         {
-            string debugStr = $" _capsuleColliders.{_capsuleColliders[i].name} vs target._capsuleColliders.{target._capsuleColliders[i].name}";
-            Assert.AreEqual(_capsuleColliders[i].name, target._capsuleColliders[i].name, $"name:{debugStr}");
-            Assert.AreEqual(_capsuleColliders[i].direction, target._capsuleColliders[i].direction, $"direction:{debugStr}");
-            Assert.AreEqual(_capsuleColliders[i].height, target._capsuleColliders[i].height, $"height:{debugStr}");
-            Assert.AreEqual(_capsuleColliders[i].radius, target._capsuleColliders[i].radius, $"radius:{debugStr}");
+            string debugStr = $" _colliders.{_colliders[i].name} vs target._colliders.{target._colliders[i].name}";
+            Assert.AreEqual(_colliders[i].name, target._colliders[i].name, $"name:{debugStr}");
+            // Assert.AreEqual(_colliders[i].direction, target._colliders[i].direction, $"direction:{debugStr}");
+            // Assert.AreEqual(_colliders[i].height, target._colliders[i].height, $"height:{debugStr}");
+            // Assert.AreEqual(_colliders[i].radius, target._colliders[i].radius, $"radius:{debugStr}");
         }
         Assert.AreEqual(ColliderNames.Count, target.ColliderNames.Count);
         Assert.AreEqual(RotationNames.Count, target.RotationNames.Count);
@@ -241,11 +242,90 @@ public class DReConRewardStats : MonoBehaviour
     void GetAllPoints(Vector3[] pointBuffer)
     {
         int idx = 0;
-        foreach (var capsule in _capsuleColliders)
+        foreach (var collider in _colliders)
         {
-            idx = SetCapusalPoints(capsule, pointBuffer, idx);
+            CapsuleCollider capsule = collider as CapsuleCollider;
+            BoxCollider box = collider as BoxCollider;
+            SphereCollider sphere = collider as SphereCollider;
+            if (capsule != null)
+                idx = SetCapusalPoints(capsule, pointBuffer, idx);
+            else if (box != null)
+                idx = SetBoxPoints(box, pointBuffer, idx);
+            else if (sphere != null)
+                idx = SetSpherePoints(sphere, pointBuffer, idx);
+            else
+                throw new NotImplementedException();
         }
     }
+    int SetBoxPoints(BoxCollider collider, Vector3[] pointBuffer, int idx)
+    {
+        Vector3 c = collider.center;
+        var b = new Bounds(c, collider.size);
+        if (collider.gameObject.name == "head")
+        {
+            print($"head c:{c} b:{b}");
+        }
+
+        Vector3 point1, point2, point3, point4, point5, point6;
+        point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));
+        point2 = collider.transform.TransformPoint(new Vector3(b.min.x, c.y, c.z));
+        point3 = collider.transform.TransformPoint(new Vector3(c.x, b.max.y, c.z));
+        point4 = collider.transform.TransformPoint(new Vector3(c.x, b.min.y, c.z));
+        point5 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.max.z));
+        point6 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.min.z));
+
+        // transform from world space, into local space for COM 
+        point1 = this.transform.InverseTransformPoint(point1);
+        point2 = this.transform.InverseTransformPoint(point2);
+        point3 = this.transform.InverseTransformPoint(point3);
+        point4 = this.transform.InverseTransformPoint(point4);
+        point5 = this.transform.InverseTransformPoint(point5);
+        point6 = this.transform.InverseTransformPoint(point6);
+
+        pointBuffer[idx++] = point1;
+        pointBuffer[idx++] = point2;
+        pointBuffer[idx++] = point3;
+        pointBuffer[idx++] = point4;
+        pointBuffer[idx++] = point5;
+        pointBuffer[idx++] = point6;
+
+        return idx;
+    }
+    int SetSpherePoints(SphereCollider collider, Vector3[] pointBuffer, int idx)
+    {
+        Vector3 c = collider.center;
+        var r = collider.radius;
+        var b = new Bounds(c, new Vector3(r,r,r));
+        if (collider.gameObject.name == "head")
+        {
+            print($"head c:{c} b:{b}");
+        }
+
+        Vector3 point1, point2, point3, point4, point5, point6;
+        point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));
+        point2 = collider.transform.TransformPoint(new Vector3(b.min.x, c.y, c.z));
+        point3 = collider.transform.TransformPoint(new Vector3(c.x, b.max.y, c.z));
+        point4 = collider.transform.TransformPoint(new Vector3(c.x, b.min.y, c.z));
+        point5 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.max.z));
+        point6 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.min.z));
+
+        // transform from world space, into local space for COM 
+        point1 = this.transform.InverseTransformPoint(point1);
+        point2 = this.transform.InverseTransformPoint(point2);
+        point3 = this.transform.InverseTransformPoint(point3);
+        point4 = this.transform.InverseTransformPoint(point4);
+        point5 = this.transform.InverseTransformPoint(point5);
+        point6 = this.transform.InverseTransformPoint(point6);
+
+        pointBuffer[idx++] = point1;
+        pointBuffer[idx++] = point2;
+        pointBuffer[idx++] = point3;
+        pointBuffer[idx++] = point4;
+        pointBuffer[idx++] = point5;
+        pointBuffer[idx++] = point6;
+
+        return idx;
+    }    
 
     int SetCapusalPoints(CapsuleCollider capsule, Vector3[] pointBuffer, int idx)
     {

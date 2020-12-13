@@ -5087,7 +5087,7 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   HeadHeightDistance: 0
-  ObjectForPointDistancesGizmo: 8
+  ObjectForPointDistancesGizmo: 12
 --- !u!114 &6615205430042084611
 MonoBehaviour:
   m_ObjectHideFlags: 0
