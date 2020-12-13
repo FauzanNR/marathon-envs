@@ -261,10 +261,6 @@ public class DReConRewardStats : MonoBehaviour
     {
         Vector3 c = collider.center;
         var b = new Bounds(c, collider.size);
-        if (collider.gameObject.name == "head")
-        {
-            print($"head c:{c} b:{b}");
-        }
 
         Vector3 point1, point2, point3, point4, point5, point6;
         point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));
@@ -296,10 +292,6 @@ public class DReConRewardStats : MonoBehaviour
         Vector3 c = collider.center;
         var r = collider.radius;
         var b = new Bounds(c, new Vector3(r,r,r));
-        if (collider.gameObject.name == "head")
-        {
-            print($"head c:{c} b:{b}");
-        }
 
         Vector3 point1, point2, point3, point4, point5, point6;
         point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));

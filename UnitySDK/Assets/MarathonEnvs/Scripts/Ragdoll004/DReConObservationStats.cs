@@ -55,7 +55,7 @@ public class DReConObservationStats : MonoBehaviour
 
 
     SpawnableEnv _spawnableEnv;
-    List<Transform> _bodyParts;
+    List<Collider> _bodyParts;
     internal List<Rigidbody> _rigidbodyParts;
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
@@ -74,12 +74,12 @@ public class DReConObservationStats : MonoBehaviour
         _articulationBodyParts = ObjectToTrack.GetComponentsInChildren<ArticulationBody>().ToList();
         if (_rigidbodyParts?.Count > 0)
             _bodyParts = _rigidbodyParts
-                .SelectMany(x=>x.GetComponentsInChildren<Transform>())
+                .SelectMany(x=>x.GetComponentsInChildren<Collider>())
                 .Distinct()
                 .ToList();
         else
             _bodyParts = _articulationBodyParts
-                .SelectMany(x=>x.GetComponentsInChildren<Transform>())
+                .SelectMany(x=>x.GetComponentsInChildren<Collider>())
                 .Distinct()
                 .ToList();
         var bodyPartNames = _bodyParts.Select(x=>x.name);
@@ -206,8 +206,19 @@ public class DReConObservationStats : MonoBehaviour
         foreach (var bodyPart in _bodyParts)
         {
             Stat bodyPartStat = Stats.First(x=>x.Name == bodyPart.name);
-            Vector3 worldPosition = bodyPart.position;
-            Quaternion worldRotation = bodyPart.rotation;
+
+            Vector3 c = Vector3.zero;
+            CapsuleCollider capsule = bodyPart as CapsuleCollider;
+            BoxCollider box = bodyPart as BoxCollider;
+            SphereCollider sphere = bodyPart as SphereCollider;
+            if (capsule != null)
+                c = capsule.center;
+            else if (box != null)
+                c = box.center;
+            else if (sphere != null)
+                c = sphere.center;
+            Vector3 worldPosition = bodyPart.transform.TransformPoint(c);
+            Quaternion worldRotation = bodyPart.transform.rotation;
             Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
             Quaternion localRotation = FromToRotation(transform.rotation, worldRotation);
             if (!bodyPartStat.LastIsSet)
