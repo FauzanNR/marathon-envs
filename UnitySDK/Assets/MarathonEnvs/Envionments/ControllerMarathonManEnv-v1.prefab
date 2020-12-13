@@ -658,31 +658,6 @@ PrefabInstance:
       propertyPath: m_ParentAnchorRotation.z
       value: 0.7108332
       objectReference: {fileID: 0}
-    - target: {fileID: 6001081406238583533, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: BodyPartsToTrack.Array.data[0]
-      value: articulation:Hips
-      objectReference: {fileID: 0}
-    - target: {fileID: 6001081406238583533, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: BodyPartsToTrack.Array.data[2]
-      value: LeftHand
-      objectReference: {fileID: 0}
-    - target: {fileID: 6001081406238583533, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: BodyPartsToTrack.Array.data[3]
-      value: RightHand
-      objectReference: {fileID: 0}
-    - target: {fileID: 6001081406238583533, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: BodyPartsToTrack.Array.data[4]
-      value: LeftFoot
-      objectReference: {fileID: 0}
-    - target: {fileID: 6001081406238583533, guid: 6a7e84e6b4b64c744857753e3e544b81,
-        type: 3}
-      propertyPath: BodyPartsToTrack.Array.data[5]
-      value: RightFoot
-      objectReference: {fileID: 0}
     - target: {fileID: 8208509521937967625, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
       propertyPath: m_Twist

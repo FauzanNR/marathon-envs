@@ -249,51 +249,37 @@ public class DReConRewardStats : MonoBehaviour
 
     int SetCapusalPoints(CapsuleCollider capsule, Vector3[] pointBuffer, int idx)
     {
-        Vector3 ls = capsule.transform.lossyScale;
-        float rScale;
-        switch (capsule.direction)
-        {
-            case (0):
-                rScale = Mathf.Max(Mathf.Abs(ls.y), Mathf.Abs(ls.z));
-                break;
-            case (1):
-                rScale = Mathf.Max(Mathf.Abs(ls.x), Mathf.Abs(ls.y));
-                break;
-            default:
-                rScale = Mathf.Max(Mathf.Abs(ls.x), Mathf.Abs(ls.z));
-                break;
-        }
-        // Vector3 toCenter = capsule.transform.TransformDirection(new Vector3(capsule.center.x * ls.x, capsule.center.y * ls.y, capsule.center.z * ls.z));
-        // Vector3 center = capsule.transform.position + toCenter;
-        float radius = capsule.radius * rScale;
-        float halfHeight = capsule.height * Mathf.Abs(ls[capsule.direction]) * 0.5f;
+        Vector3 c = capsule.center;
+
+        float radius = capsule.radius;
+        float halfHeight = capsule.height * 0.5f;
         Vector3 point1, point2, point3, point4, point5, point6;
         switch (capsule.direction)
         {
             default:
             case (0):
-                point1 = capsule.transform.TransformPoint(new Vector3(halfHeight, 0f, 0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(-halfHeight, 0f, 0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(0f, radius, 0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(0f, -radius, 0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(0f, 0f, radius));
-                point6 = capsule.transform.TransformPoint(new Vector3(0f, 0f, -radius));
+                point1 = capsule.transform.TransformPoint(new Vector3(c.x+halfHeight, c.y+0f, c.z+0f));
+                point2 = capsule.transform.TransformPoint(new Vector3(c.x-halfHeight, c.y+0f, c.z+0f));
+                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+radius, c.z+0f));
+                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-radius, c.z+0f));
+                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+radius));
+                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-radius));
                 break;
             case (1):
-                point1 = capsule.transform.TransformPoint(new Vector3(radius, 0f, 0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(-radius, 0f, 0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(0f, halfHeight, 0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(0f, -halfHeight, 0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(0f, 0f, radius));
-                point6 = capsule.transform.TransformPoint(new Vector3(0f, 0f, -radius));
+                point1 = capsule.transform.TransformPoint(new Vector3(c.x+radius, c.y+0f, c.z+0f));
+                point2 = capsule.transform.TransformPoint(new Vector3(c.x-radius, c.y+0f, c.z+0f));
+                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+halfHeight, c.z+0f));
+                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-halfHeight, c.z+0f));
+                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+radius));
+                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-radius));
                 break;
             case (2):
-                point1 = capsule.transform.TransformPoint(new Vector3(radius, 0f, 0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(-radius, 0f, 0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(0f, radius, 0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(0f, -radius, 0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(0f, 0f, halfHeight));
-                point6 = capsule.transform.TransformPoint(new Vector3(0f, 0f, -halfHeight));
+                point1 = capsule.transform.TransformPoint(new Vector3(c.x+radius, c.y+0f, c.z+0f));
+                point2 = capsule.transform.TransformPoint(new Vector3(c.x-radius, c.y+0f, c.z+0f));
+                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+radius, c.z+0f));
+                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-radius, c.z+0f));
+                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+halfHeight));
+                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-halfHeight));
                 break;
         }
         // transform from world space, into local space for COM 

@@ -5087,7 +5087,7 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   HeadHeightDistance: 0
-  ObjectForPointDistancesGizmo: 3
+  ObjectForPointDistancesGizmo: 8
 --- !u!114 &6615205430042084611
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5124,12 +5124,12 @@ MonoBehaviour:
   RagDollBodyStats: []
   PreviousActions: []
   BodyPartsToTrack:
-  - butt
+  - articulation:Hips
   - head
-  - left_hand
-  - right_hand
-  - left_left_foot
-  - right_right_foot
+  - LeftHand
+  - RightHand
+  - LeftFoot
+  - RightFoot
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
 --- !u!1 &8722159205191571325
