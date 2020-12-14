@@ -46,7 +46,7 @@ public class MarathonTestBedController : MonoBehaviour
         animControl.MaxForwardVelocity = 0;
 
         MocapControllerArtanim animControlartanim = sourceAgent.GetComponent<MocapControllerArtanim>();
-        animControlartanim.doFixedUpdate = false;
+        animControlartanim.doLateUpdate = false;
 
         InputController input = FindObjectOfType<InputController>();
         input.DemoMockIfNoInput = false;
