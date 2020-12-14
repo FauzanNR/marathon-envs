@@ -63,7 +63,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
     //for debugging, we disable this when setTpose in MarathonTestBedController is on
     [HideInInspector]
-    public bool doFixedUpdate = true;
+    public bool doLateUpdate = true;
 
 
 
@@ -219,15 +219,15 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    void FixedUpdate()
+    void LateUpdate()
     {
-        if (doFixedUpdate)
-            OnFixedUpdate();
+        if (doLateUpdate)
+            OnLateUpdate();
 	
     }
 
 
-    void OnFixedUpdate() {
+    void OnLateUpdate() {
 
         //if (!_usesMotionMatching)
         {
@@ -442,7 +442,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	public void OnReset(Quaternion resetRotation)
 	{
 
-        if (!doFixedUpdate)
+        if (!doLateUpdate)
             return;
 
             if (_usingMocapAnimatorController)
