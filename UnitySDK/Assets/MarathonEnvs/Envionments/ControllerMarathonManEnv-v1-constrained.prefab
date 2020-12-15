@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderOnlyTarget: 0
   movementsource: {fileID: 9028912518352089956}
-  ragdollcontroller: {fileID: 0}
+  ragdollcontroller: {fileID: 4962350742026466811}
 --- !u!1 &3989728765861935376
 GameObject:
   m_ObjectHideFlags: 0
@@ -1340,6 +1340,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 679441d2c369e9445a90429254d91182, type: 3}
+--- !u!1 &4962350742026466811 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8722076230529752364, guid: 679441d2c369e9445a90429254d91182,
+    type: 3}
+  m_PrefabInstance: {fileID: 4455966221941647575}
+  m_PrefabAsset: {fileID: 0}
 --- !u!171741748 &1930244335497773028 stripped
 ArticulationBody:
   m_CorrespondingSourceObject: {fileID: 2819076708403337011, guid: 679441d2c369e9445a90429254d91182,
