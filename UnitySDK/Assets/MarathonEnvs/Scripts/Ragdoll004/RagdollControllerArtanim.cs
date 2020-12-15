@@ -31,13 +31,14 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 
 
-
+    /*
 
     [SerializeField]
     bool SetUpConstraintsFromData= false;
 
     [SerializeField]
     ROMinfoCollector data4constraints;
+    */
 
 
     //we use this to bypass the physical character, using only the ragdoll with rigidbodies, instead of the ragdoll with articulation Joints
@@ -55,101 +56,101 @@ public class RagdollControllerArtanim : MonoBehaviour
 	// Start is called before the first frame update
 	public void Start()
     {
-        if (SetUpConstraintsFromData) {
+        //if (SetUpConstraintsFromData) {
 
-            Debug.LogError("this automatic method to set up the constraints does NOT work yet");
-            SetConstraints(data4constraints);
-        }
+        //    Debug.LogError("this automatic method to set up the constraints does NOT work yet");
+        //    SetConstraints(data4constraints);
+        //}
     }
 
 
-    void SetConstraints(ROMinfoCollector info) {
+    //void SetConstraints(ROMinfoCollector info) {
 
-        Set1Constraint("lower_waist", "mixamorig:Spine");
-        Set1Constraint("upper_waist", "mixamorig:Spine1");
-        Set1Constraint("torso", "mixamorig:Spine2");
-        Set1Constraint("head", "mixamorig:Head");
-
-
-        Set1Constraint("left_shoulder_joint", "mixamorig:LeftShoulder");
-
-        Set1Constraint("left_upper_arm_joint", "mixamorig:LeftArm");
-        Set1Constraint("left_larm_joint", "mixamorig:LeftForeArm");
-
-        //	Set1Constraint("left_hand", "mixamorig:LeftHand");
-        // hands do not have rigidbodies
+    //    Set1Constraint("lower_waist", "mixamorig:Spine");
+    //    Set1Constraint("upper_waist", "mixamorig:Spine1");
+    //    Set1Constraint("torso", "mixamorig:Spine2");
+    //    Set1Constraint("head", "mixamorig:Head");
 
 
-        Set1Constraint("right_shoulder_joint", "mixamorig:RightShoulder");
+    //    Set1Constraint("left_shoulder_joint", "mixamorig:LeftShoulder");
 
-        Set1Constraint("right_upper_arm_joint", "mixamorig:RightArm");
-        Set1Constraint("right_larm_joint", "mixamorig:RightForeArm");
-        //	Set1Constraint("right_hand", "mixamorig:RightHand");
+    //    Set1Constraint("left_upper_arm_joint", "mixamorig:LeftArm");
+    //    Set1Constraint("left_larm_joint", "mixamorig:LeftForeArm");
 
-        //			Set1Constraint("left_thigh", "mixamorig:LeftUpLeg");
-
-        Set1Constraint("left_thigh_joint", "mixamorig:LeftUpLeg");
-
-        //			Set1Constraint("left_shin", "mixamorig:LeftLeg");
-        Set1Constraint("left_shin_joint", "mixamorig:LeftLeg");
-        Set1Constraint("left_left_foot", "mixamorig:LeftToeBase");
-        //	Set1Constraint("right_left_foot", "mixamorig:LeftToeBase");
+    //    //	Set1Constraint("left_hand", "mixamorig:LeftHand");
+    //    // hands do not have rigidbodies
 
 
-        //			Set1Constraint("right_thigh", "mixamorig:RightUpLeg");
-        Set1Constraint("right_thigh_joint", "mixamorig:RightUpLeg");
-        //Set1Constraint("right_shin", "mixamorig:RightLeg");
-        Set1Constraint("right_shin_joint", "mixamorig:RightLeg");
+    //    Set1Constraint("right_shoulder_joint", "mixamorig:RightShoulder");
+
+    //    Set1Constraint("right_upper_arm_joint", "mixamorig:RightArm");
+    //    Set1Constraint("right_larm_joint", "mixamorig:RightForeArm");
+    //    //	Set1Constraint("right_hand", "mixamorig:RightHand");
+
+    //    //			Set1Constraint("left_thigh", "mixamorig:LeftUpLeg");
+
+    //    Set1Constraint("left_thigh_joint", "mixamorig:LeftUpLeg");
+
+    //    //			Set1Constraint("left_shin", "mixamorig:LeftLeg");
+    //    Set1Constraint("left_shin_joint", "mixamorig:LeftLeg");
+    //    Set1Constraint("left_left_foot", "mixamorig:LeftToeBase");
+    //    //	Set1Constraint("right_left_foot", "mixamorig:LeftToeBase");
 
 
-        Set1Constraint("left_left_foot", "mixamorig:RightToeBase");
-        //	Set1Constraint("left_right_foot", "mixamorig:RightToeBase");
-    }
+    //    //			Set1Constraint("right_thigh", "mixamorig:RightUpLeg");
+    //    Set1Constraint("right_thigh_joint", "mixamorig:RightUpLeg");
+    //    //Set1Constraint("right_shin", "mixamorig:RightLeg");
+    //    Set1Constraint("right_shin_joint", "mixamorig:RightLeg");
 
 
-    void Set1Constraint(string ArticulationName, string JointName) {
-
-        if (_targetPoseTransforms == null)
-        {
-            _targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
-            Debug.Log("the number of transforms  intarget pose is: " + _targetPoseTransforms.Count);
-        }
-
-        if (_articulationbodies == null)
-        {
-                _articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
-        }
+    //    Set1Constraint("left_left_foot", "mixamorig:RightToeBase");
+    //    //	Set1Constraint("left_right_foot", "mixamorig:RightToeBase");
+    //}
 
 
-        ArticulationBody ab = _articulationbodies.First(x => x.name == ArticulationName);
+    //void Set1Constraint(string ArticulationName, string JointName) {
+
+    //    if (_targetPoseTransforms == null)
+    //    {
+    //        _targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
+    //        Debug.Log("the number of transforms  intarget pose is: " + _targetPoseTransforms.Count);
+    //    }
+
+    //    if (_articulationbodies == null)
+    //    {
+    //            _articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
+    //    }
+
+
+    //    ArticulationBody ab = _articulationbodies.First(x => x.name == ArticulationName);
 
 
 
-        //string name = data4constraints.jointNames.First(x => x == JointName);
-        int where = Array.IndexOf(data4constraints.jointNames, JointName);
+    //    //string name = data4constraints.jointNames.First(x => x == JointName);
+    //    int where = Array.IndexOf(data4constraints.jointNames, JointName);
 
 
-        Vector3 maxVals = data4constraints.maxRotations[where];
-        Vector3 minVals = data4constraints.minRotations[where];
+    //    Vector3 maxVals = data4constraints.maxRotations[where];
+    //    Vector3 minVals = data4constraints.minRotations[where];
 
 
-        ArticulationDrive temp = ab.xDrive;
-        temp.upperLimit = maxVals.x;
-        temp.lowerLimit = minVals.x;
-        ab.xDrive = temp;
+    //    ArticulationDrive temp = ab.xDrive;
+    //    temp.upperLimit = maxVals.x;
+    //    temp.lowerLimit = minVals.x;
+    //    ab.xDrive = temp;
 
-        temp = ab.yDrive;
-        temp.upperLimit = maxVals.y;
-        temp.lowerLimit = minVals.y;
-        ab.yDrive = temp;
+    //    temp = ab.yDrive;
+    //    temp.upperLimit = maxVals.y;
+    //    temp.lowerLimit = minVals.y;
+    //    ab.yDrive = temp;
 
-        temp = ab.zDrive;
-        temp.upperLimit = maxVals.z;
-        temp.lowerLimit = minVals.z;
-        ab.zDrive = temp;
+    //    temp = ab.zDrive;
+    //    temp.upperLimit = maxVals.z;
+    //    temp.lowerLimit = minVals.z;
+    //    ab.zDrive = temp;
 
 
-    }
+    //}
 
 
 
