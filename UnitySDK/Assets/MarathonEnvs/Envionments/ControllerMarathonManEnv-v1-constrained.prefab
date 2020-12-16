@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35bb009193589147a32f492be74a1a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderOnlyTarget: 0
+  renderOnlyTarget: 1
   movementsource: {fileID: 9028912518352089956}
   ragdollcontroller: {fileID: 4962350742026466811}
 --- !u!1 &3989728765861935376

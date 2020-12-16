@@ -115,11 +115,17 @@ public class MarathonTestBedController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    public void OnAgentEpisodeBegin()
     {
         if (!_hasFrozen)
             FreezeBodyParts();
+        if (setTpose)
+            loadTposeanim();
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         if (ApplyRandomActions)
         {
             Actions = Actions.Select(x=>Random.Range(-1f,1f)).ToArray();

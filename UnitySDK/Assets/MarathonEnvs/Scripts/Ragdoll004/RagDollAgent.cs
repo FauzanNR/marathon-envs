@@ -320,6 +320,10 @@ public class RagDollAgent : Agent
 	        UnityEditor.EditorApplication.isPaused = true;
 		}
 #endif	        
+        if (_debugController != null && _debugController.isActiveAndEnabled)
+        {
+            _debugController.OnAgentEpisodeBegin();
+        }
     }   
 
     float[] GetMocapTargets()
