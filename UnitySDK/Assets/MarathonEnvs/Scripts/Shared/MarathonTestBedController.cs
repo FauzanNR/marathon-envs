@@ -89,6 +89,8 @@ public class MarathonTestBedController : MonoBehaviour
                     butt = children.FirstOrDefault(x=>x.name=="butt");
                     break;
                 case "Ragdoll-MarathonMan004":
+                case "MarathonMan004":
+                case "MarathonMan004Constrained":
                     if (!_hasFrozen && setTpose)
                         loadTposeanim();
                     _hasFrozen = true;
@@ -103,6 +105,7 @@ public class MarathonTestBedController : MonoBehaviour
                     butt = children.FirstOrDefault(x=>x.name=="butt");
                     break;
                 default:
+                    throw new System.ArgumentException($"agent.name: {agent.name}");
                     break;
             }
         //    if (FreezeHead && head != null)
