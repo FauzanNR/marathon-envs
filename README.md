@@ -31,9 +31,8 @@ Document last updated: 02.12.2020
 
 The main goal has *almost*  been achieved: skinned characters are matched with ragdolls.
 
-<video src="img/2020-12-02 10-17-05-trained-narrower-constraints.mkv"></video>
 
-
+![2020-12-09 10-46-28-no-collisions-plus-updated-mlagents](img/2020-12-09 10-46-28-no-collisions-plus-updated-mlagents.gif)
 
 #### 0.2 Pending tasks:
 
