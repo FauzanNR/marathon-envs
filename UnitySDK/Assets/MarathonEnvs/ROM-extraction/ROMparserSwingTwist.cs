@@ -183,9 +183,15 @@ public class ROMparserSwingTwist : MonoBehaviour
             //we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
 
             int index = -1;
+            if (parts.Length > 0)
+            {
 
-            index = jNames.FindIndex(x => x.Contains(parts[1]));
+                string jointname = "mixamorig:" + parts[1];
+                Debug.Log("looking for: " + jointname);
 
+                index = jNames.FindIndex(x => x.Contains(jointname));
+
+            }
             if (index < 0)
                 Debug.Log("Could not find a joint name matching " + s + "and specifically: " + parts[1]);
             else
