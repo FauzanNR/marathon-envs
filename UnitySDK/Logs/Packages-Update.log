@@ -161,3 +161,20 @@ The following packages were updated:
   com.unity.ide.visualstudio from version 2.0.3 to 2.0.5
   com.unity.test-framework from version 1.1.18 to 1.1.19
   com.unity.xr.legacyinputhelpers from version 2.1.4 to 2.1.6
+
+=== Thu Dec 17 21:24:14 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.purchasing from version 2.1.1 to 2.2.1
+
+=== Fri Dec 18 09:54:24 2020
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were updated:
+  com.unity.barracuda from version 0.6.1-preview to 1.0.4
+  com.unity.ide.rider from version 1.2.1 to 2.0.7
