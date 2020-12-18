@@ -78,7 +78,6 @@ public class StyleTransfer002Master : MonoBehaviour {
 
 	public bool IsInferenceMode;
 	bool _phaseIsRunning;
-    UnityEngine.Random _random = new UnityEngine.Random();
 	Vector3 _lastCenterOfMass;
 
 	public BodyConfig BodyConfig;
