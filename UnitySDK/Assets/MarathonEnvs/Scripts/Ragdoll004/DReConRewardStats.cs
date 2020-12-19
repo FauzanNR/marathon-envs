@@ -247,129 +247,71 @@ public class DReConRewardStats : MonoBehaviour
             CapsuleCollider capsule = collider as CapsuleCollider;
             BoxCollider box = collider as BoxCollider;
             SphereCollider sphere = collider as SphereCollider;
+            Vector3 c = Vector3.zero;
+            Bounds b = new Bounds(c,c);
+
+            if (collider.name=="head")
+            {
+                c = c;
+            }
+
             if (capsule != null)
-                idx = SetCapusalPoints(capsule, pointBuffer, idx);
+            {
+                c = capsule.center;
+                var r = capsule.radius*2;
+                var h = capsule.height;
+                h = Mathf.Max(r,h); // capsules height is clipped at r
+                if (capsule.direction == 0)
+                    b = new Bounds(c, new Vector3(h,r,r));
+                else if (capsule.direction == 1)
+                    b = new Bounds(c, new Vector3(r,h,r));
+                else if (capsule.direction == 2)
+                    b = new Bounds(c, new Vector3(r,r,h));
+                else throw new NotImplementedException();
+            }
             else if (box != null)
-                idx = SetBoxPoints(box, pointBuffer, idx);
+            {
+                c = box.center;
+                b = new Bounds(c, box.size);
+            }
             else if (sphere != null)
-                idx = SetSpherePoints(sphere, pointBuffer, idx);
+            {
+                c = sphere.center;
+                var r = sphere.radius*2;
+                b = new Bounds(c, new Vector3(r,r,r));
+            }
             else
                 throw new NotImplementedException();
+
+            Vector3 point1, point2, point3, point4, point5, point6;
+            point1 = new Vector3(b.max.x, c.y, c.z);
+            point2 = new Vector3(b.min.x, c.y, c.z);
+            point3 = new Vector3(c.x, b.max.y, c.z);
+            point4 = new Vector3(c.x, b.min.y, c.z);
+            point5 = new Vector3(c.x, c.y, b.max.z);
+            point6 = new Vector3(c.x, c.y, b.min.z);
+            // from local collider space to world space
+            point1 = collider.transform.TransformPoint(point1);
+            point2 = collider.transform.TransformPoint(point2);
+            point3 = collider.transform.TransformPoint(point3);
+            point4 = collider.transform.TransformPoint(point4);
+            point5 = collider.transform.TransformPoint(point5);
+            point6 = collider.transform.TransformPoint(point6);
+            // transform from world space, into local space for COM 
+            point1 = this.transform.InverseTransformPoint(point1);
+            point2 = this.transform.InverseTransformPoint(point2);
+            point3 = this.transform.InverseTransformPoint(point3);
+            point4 = this.transform.InverseTransformPoint(point4);
+            point5 = this.transform.InverseTransformPoint(point5);
+            point6 = this.transform.InverseTransformPoint(point6);
+
+            pointBuffer[idx++] = point1;
+            pointBuffer[idx++] = point2;
+            pointBuffer[idx++] = point3;
+            pointBuffer[idx++] = point4;
+            pointBuffer[idx++] = point5;
+            pointBuffer[idx++] = point6;
         }
-    }
-    int SetBoxPoints(BoxCollider collider, Vector3[] pointBuffer, int idx)
-    {
-        Vector3 c = collider.center;
-        var b = new Bounds(c, collider.size);
-
-        Vector3 point1, point2, point3, point4, point5, point6;
-        point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));
-        point2 = collider.transform.TransformPoint(new Vector3(b.min.x, c.y, c.z));
-        point3 = collider.transform.TransformPoint(new Vector3(c.x, b.max.y, c.z));
-        point4 = collider.transform.TransformPoint(new Vector3(c.x, b.min.y, c.z));
-        point5 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.max.z));
-        point6 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.min.z));
-
-        // transform from world space, into local space for COM 
-        point1 = this.transform.InverseTransformPoint(point1);
-        point2 = this.transform.InverseTransformPoint(point2);
-        point3 = this.transform.InverseTransformPoint(point3);
-        point4 = this.transform.InverseTransformPoint(point4);
-        point5 = this.transform.InverseTransformPoint(point5);
-        point6 = this.transform.InverseTransformPoint(point6);
-
-        pointBuffer[idx++] = point1;
-        pointBuffer[idx++] = point2;
-        pointBuffer[idx++] = point3;
-        pointBuffer[idx++] = point4;
-        pointBuffer[idx++] = point5;
-        pointBuffer[idx++] = point6;
-
-        return idx;
-    }
-    int SetSpherePoints(SphereCollider collider, Vector3[] pointBuffer, int idx)
-    {
-        Vector3 c = collider.center;
-        var r = collider.radius;
-        var b = new Bounds(c, new Vector3(r,r,r));
-
-        Vector3 point1, point2, point3, point4, point5, point6;
-        point1 = collider.transform.TransformPoint(new Vector3(b.max.x, c.y, c.z));
-        point2 = collider.transform.TransformPoint(new Vector3(b.min.x, c.y, c.z));
-        point3 = collider.transform.TransformPoint(new Vector3(c.x, b.max.y, c.z));
-        point4 = collider.transform.TransformPoint(new Vector3(c.x, b.min.y, c.z));
-        point5 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.max.z));
-        point6 = collider.transform.TransformPoint(new Vector3(c.x, c.y, b.min.z));
-
-        // transform from world space, into local space for COM 
-        point1 = this.transform.InverseTransformPoint(point1);
-        point2 = this.transform.InverseTransformPoint(point2);
-        point3 = this.transform.InverseTransformPoint(point3);
-        point4 = this.transform.InverseTransformPoint(point4);
-        point5 = this.transform.InverseTransformPoint(point5);
-        point6 = this.transform.InverseTransformPoint(point6);
-
-        pointBuffer[idx++] = point1;
-        pointBuffer[idx++] = point2;
-        pointBuffer[idx++] = point3;
-        pointBuffer[idx++] = point4;
-        pointBuffer[idx++] = point5;
-        pointBuffer[idx++] = point6;
-
-        return idx;
-    }    
-
-    int SetCapusalPoints(CapsuleCollider capsule, Vector3[] pointBuffer, int idx)
-    {
-        Vector3 c = capsule.center;
-
-        float radius = capsule.radius;
-        float halfHeight = capsule.height * 0.5f;
-        Vector3 point1, point2, point3, point4, point5, point6;
-        switch (capsule.direction)
-        {
-            default:
-            case (0):
-                point1 = capsule.transform.TransformPoint(new Vector3(c.x+halfHeight, c.y+0f, c.z+0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(c.x-halfHeight, c.y+0f, c.z+0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+radius, c.z+0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-radius, c.z+0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+radius));
-                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-radius));
-                break;
-            case (1):
-                point1 = capsule.transform.TransformPoint(new Vector3(c.x+radius, c.y+0f, c.z+0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(c.x-radius, c.y+0f, c.z+0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+halfHeight, c.z+0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-halfHeight, c.z+0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+radius));
-                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-radius));
-                break;
-            case (2):
-                point1 = capsule.transform.TransformPoint(new Vector3(c.x+radius, c.y+0f, c.z+0f));
-                point2 = capsule.transform.TransformPoint(new Vector3(c.x-radius, c.y+0f, c.z+0f));
-                point3 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+radius, c.z+0f));
-                point4 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y-radius, c.z+0f));
-                point5 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z+halfHeight));
-                point6 = capsule.transform.TransformPoint(new Vector3(c.x+0f, c.y+0f, c.z-halfHeight));
-                break;
-        }
-        // transform from world space, into local space for COM 
-        point1 = this.transform.InverseTransformPoint(point1);
-        point2 = this.transform.InverseTransformPoint(point2);
-        point3 = this.transform.InverseTransformPoint(point3);
-        point4 = this.transform.InverseTransformPoint(point4);
-        point5 = this.transform.InverseTransformPoint(point5);
-        point6 = this.transform.InverseTransformPoint(point6);
-
-        pointBuffer[idx++] = point1;
-        pointBuffer[idx++] = point2;
-        pointBuffer[idx++] = point3;
-        pointBuffer[idx++] = point4;
-        pointBuffer[idx++] = point5;
-        pointBuffer[idx++] = point6;
-
-        return idx;
     }
 	Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
 	{
@@ -415,8 +357,6 @@ public class DReConRewardStats : MonoBehaviour
             // transform to this object's world space
             from = this.transform.TransformPoint(from);
             to = this.transform.TransformPoint(to);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawLine(from, to);
             // transform to target's world space
             toTarget = target.transform.TransformPoint(toTarget);
             Gizmos.color = Color.white;
