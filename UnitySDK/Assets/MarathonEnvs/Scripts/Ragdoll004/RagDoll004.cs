@@ -17,6 +17,7 @@ public class RagDoll004 : MonoBehaviour {
     public float MotorScale = 1f;
     public float Stiffness = 100f;
     public float Damping = 100f;
+    public float ForceLimit = float.MaxValue;
 
 
     [Header("Debug Collisions")]

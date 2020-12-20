@@ -405,6 +405,7 @@ public class RagDollAgent : Agent
 
         power *= _ragDollSettings.Stiffness;
         float damping = _ragDollSettings.Damping;
+        float forceLimit = _ragDollSettings.ForceLimit;
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
@@ -415,6 +416,7 @@ public class RagDollAgent : Agent
             drive.target = target;
             drive.stiffness = power.x;
             drive.damping = damping;
+            drive.forceLimit = forceLimit;
             joint.xDrive = drive;
         }
 
@@ -427,6 +429,7 @@ public class RagDollAgent : Agent
             drive.target = target;
             drive.stiffness = power.y;
             drive.damping = damping;
+            drive.forceLimit = forceLimit;
             joint.yDrive = drive;
         }
 
@@ -439,6 +442,7 @@ public class RagDollAgent : Agent
             drive.target = target;
             drive.stiffness = power.z;
             drive.damping = damping;
+            drive.forceLimit = forceLimit;
             joint.zDrive = drive;
         }
 	}
