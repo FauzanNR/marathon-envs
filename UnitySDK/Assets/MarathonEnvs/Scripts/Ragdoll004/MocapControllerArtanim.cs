@@ -221,14 +221,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
     void FixedUpdate()
     {
-        if (doFixedUpdate)
-            OnFixedUpdate();
-	
-    }
-
-
-    void OnFixedUpdate() {
-
+        if (!doFixedUpdate)
+			return;
         //if (!_usesMotionMatching)
         {
             AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
@@ -243,16 +237,12 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
             // if (NormalizedTime <= endTime) {
             // }       
         }
-
+	}
+    void LateUpdate()
+	{
+        if (!doFixedUpdate)
+			return;
         MimicAnimationArtanim();
-
-
-
-
-
-
-
-
     }
 
 
