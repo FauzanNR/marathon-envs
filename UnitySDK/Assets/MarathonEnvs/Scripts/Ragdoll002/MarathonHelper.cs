@@ -145,7 +145,7 @@ namespace Unity.MLAgents
             var instance = new GameObject();
             var procCap = instance.AddComponent<ProceduralCapsule>();
             var handleOverlap = instance.AddComponent<HandleOverlap>();
-            handleOverlap.Parent = parent;
+            handleOverlap.Parent = root;
             var collider = instance.AddComponent<CapsuleCollider>();
             var offset = start - end;
             var position = start - (offset / 2.0f);
@@ -168,7 +168,7 @@ namespace Unity.MLAgents
                 instance.transform.rotation = instance.transform.rotation * parent.transform.rotation;
             }
 
-            UnityEngine.GameObject.Destroy(handleOverlap);
+            // UnityEngine.GameObject.Destroy(handleOverlap);
             return instance;
         }
 

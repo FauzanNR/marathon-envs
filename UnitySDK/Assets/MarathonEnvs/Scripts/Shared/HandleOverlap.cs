@@ -6,7 +6,7 @@ namespace Unity.MLAgents
     {
         public GameObject Parent;
 
-        int _fixedUpdateSteps;
+        int _lateUpdateSteps;
 
         /// <summary>
         /// OnCollisionEnter is called when this collider/rigidbody has begun
@@ -28,15 +28,13 @@ namespace Unity.MLAgents
                 return;
             Physics.IgnoreCollision(myCollider, other.collider);
         }
-        void FixedUpdate()
-        {
-            _fixedUpdateSteps++;
-        }
+
         void LateUpdate()
         {
             // ensure we had atleast once full physics step
-            if (_fixedUpdateSteps > 0)
+            if (_lateUpdateSteps > 0)
                 enabled = false;
+            _lateUpdateSteps++;
         }
     }
 }

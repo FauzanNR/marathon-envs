@@ -85,6 +85,7 @@ public class StyleTransfer002Animator : MonoBehaviour, IOnSensorCollision {
 		}
 
 		SetupSensors();
+		OnAgentAction();
 	}
 
 	void Awake()

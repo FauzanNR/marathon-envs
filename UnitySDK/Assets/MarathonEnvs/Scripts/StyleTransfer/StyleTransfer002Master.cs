@@ -82,8 +82,9 @@ public class StyleTransfer002Master : MonoBehaviour {
 
 	public BodyConfig BodyConfig;
 
-	// Use this for initialization
-	void Awake () {
+    // Initialize the Agent. Sets up Body Parts, Muscles. 
+	public void OnInitializeAgent()
+	{
 		foreach (var rb in GetComponentsInChildren<Rigidbody>())
 		{
 			if (rb.useGravity == false)
@@ -92,11 +93,7 @@ public class StyleTransfer002Master : MonoBehaviour {
 		var masters = FindObjectsOfType<StyleTransfer002Master>().ToList();
 		if (masters.Count(x=>x.CameraFollowMe) < 1)
 			CameraFollowMe = true;
-	}
 
-    // Initialize the Agent. Sets up Body Parts, Muscles. 
-	public void OnInitializeAgent()
-    {
 		Time.fixedDeltaTime = FixedDeltaTime;
 		_waitingForAnimation = true;
 		_decisionRequester = GetComponent<DecisionRequester>();
