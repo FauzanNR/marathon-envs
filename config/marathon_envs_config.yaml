@@ -14,9 +14,9 @@ behaviors:
             num_layers: 2
             hidden_units: 128
             vis_encode_type: simple
-            memory:
-                memory_size: 256
-                sequence_length: 64
+            # memory:
+            #     memory_size: 256
+            #     sequence_length: 64
         reward_signals: 
             extrinsic:
                 strength: 1.0
@@ -25,119 +25,146 @@ behaviors:
         time_horizon: 64
         threaded: true
         summary_freq: 1000
-        # use_recurrent: false
 
-    # MarathonManBackflip-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 128e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManBackflip-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 128e6
+        threaded: true    
 
-    # MarathonManWalking-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 64e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManWalking-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 64e6
+        threaded: true       
 
-    # MarathonManRunning-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 64e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManRunning-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 64e6
+        threaded: true     
 
-    # MarathonManJazzDancing-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 64e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManJazzDancing-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 64e6
+        threaded: true     
 
-    # MarathonManMMAKick-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 64e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManMMAKick-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 64e6
+        threaded: true     
 
-    # MarathonManPunchingBag-v0:
-    #     normalize: true
-    #     num_epoch: 3
-    #     beta: .00001
-    #     learning_rate: 1e-4
-    #     time_horizon: 100
-    #     max_steps: 64e6
-    #     batch_size: 768 
-    #     buffer_size: 21504 # 768 * 28
-    #     summary_freq: 100000
-    #     num_layers: 2
-    #     hidden_units: 256
+    MarathonManPunchingBag-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .00001
+            learning_rate: 1e-4
+            batch_size: 768
+            buffer_size: 21504 # 768 * 28
+        time_horizon: 100
+        summary_freq: 100000
+        network_settings:
+            num_layers: 2
+            normalize: true
+            hidden_units: 256
+        max_steps: 64e6
+        threaded: true     
 
-    # MarathonMan-v0:
-    #     num_epoch: 10 
-    #     time_horizon: 100 
-    #     # summary_freq: 250000
-    #     summary_freq: 25000
-    #     use_recurrent: false
-    #     normalize: true 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 64
-    #     buffer_size: 10240
-    #     beta: .003
-    #     max_steps: 1.e7 
+    MarathonMan-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 10 
+            beta: .003
+            learning_rate: 3e-4
+            batch_size: 64
+            buffer_size: 10240
+        time_horizon: 100 
+        summary_freq: 25000
+        network_settings:
+            num_layers: 2
+            normalize: true 
+            hidden_units: 64
+        max_steps: 1.e7
+        threaded: true
 
-    # MarathonManSparse-v0:
-    #     num_epoch: 10 
-    #     time_horizon: 1000 
-    #     # summary_freq: 250000
-    #     summary_freq: 25000
-    #     use_recurrent: false
-    #     normalize: true 
-    #     num_layers: 2
-    #     reward_signals: 
-    #         extrinsic:
-    #             strength: 1.0
-    #             gamma: 0.9999
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 64
-    #     buffer_size: 10240
-    #     beta: .003
-    #     max_steps: 1.e7 
+    MarathonManSparse-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 10 
+            beta: .003
+            learning_rate: 3e-4
+            batch_size: 64
+            buffer_size: 10240
+        time_horizon: 1000
+        summary_freq: 25000
+        network_settings:
+            num_layers: 2
+            normalize: true 
+            hidden_units: 64
+        reward_signals: 
+            extrinsic:
+                strength: 1.0
+                gamma: 0.9999
+        max_steps: 1.e7
+        threaded: true    
 
     Hopper-v0:
         trainer_type: ppo
@@ -153,93 +180,110 @@ behaviors:
             num_layers: 2
             normalize: false 
             hidden_units: 64
-    #     use_recurrent: false
         max_steps: 1e6 
         threaded: true
 
-    # Walker2d-v0:
-    #     num_epoch: 10 
-    #     time_horizon: 100 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 1e-3
-    #     batch_size: 16
-    #     buffer_size: 5120
-    #     max_steps: 1e6
-    #     beta: .003
+    Walker2d-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 10 
+            beta: .003
+            learning_rate: 1e-3
+            batch_size: 16
+            buffer_size: 5120
+        time_horizon: 100 
+        summary_freq: 10000
+        network_settings:
+            num_layers: 2
+            normalize: false 
+            hidden_units: 64
+        max_steps: 1e6 
+        threaded: true    
 
-    # Ant-v0:
-    #     num_epoch: 10 
-    #     time_horizon: 100 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 1e-3
-    #     batch_size: 32
-    #     buffer_size: 5120
-    #     max_steps: 1e6
-    #     beta: .003
+    Ant-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 10 
+            beta: .003
+            learning_rate: 1e-3
+            batch_size: 32
+            buffer_size: 5120
+        time_horizon: 100 
+        summary_freq: 10000
+        network_settings:
+            num_layers: 2
+            normalize: false 
+            hidden_units: 64
+        max_steps: 1e6 
+        threaded: true
 
-    # TerrainHopper-v0:
-    #     num_epoch: 3 
-    #     time_horizon: 1000 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 32
-    #     buffer_size: 5120
-    #     beta: .1
-    #     max_steps: 50e6
+    TerrainHopper-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .1
+            learning_rate: 3e-4
+            batch_size: 32
+            buffer_size: 5120
+        time_horizon: 1000
+        summary_freq: 50000
+        network_settings:
+            num_layers: 2
+            normalize: false
+            hidden_units: 64
+        max_steps: 50e6
+        threaded: true
 
-    # TerrainWalker2d-v0:
-    #     num_epoch: 3 
-    #     time_horizon: 1000 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 32
-    #     buffer_size: 5120
-    #     beta: .1
-    #     max_steps: 50e6
+    TerrainWalker2d-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .1
+            learning_rate: 3e-4
+            batch_size: 32
+            buffer_size: 5120
+        time_horizon: 1000
+        summary_freq: 50000
+        network_settings:
+            num_layers: 2
+            normalize: false
+            hidden_units: 64
+        max_steps: 50e6
+        threaded: true    
 
-    # TerrainAnt-v0:
-    #     num_epoch: 3
-    #     time_horizon: 1000 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: false 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 32
-    #     buffer_size: 5120
-    #     beta: .1
-    #     max_steps: 50e6
+    TerrainAnt-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .1
+            learning_rate: 3e-4
+            batch_size: 32
+            buffer_size: 5120
+        time_horizon: 1000
+        summary_freq: 50000
+        network_settings:
+            num_layers: 2
+            normalize: false
+            hidden_units: 64
+        max_steps: 50e6
+        threaded: true
 
-    # TerrainMarathonMan-v0:
-    #     num_epoch: 3 
-    #     time_horizon: 1000 
-    #     summary_freq: 10000
-    #     use_recurrent: false
-    #     normalize: true 
-    #     num_layers: 2
-    #     hidden_units: 64
-    #     learning_rate: 3e-4
-    #     batch_size: 32
-    #     buffer_size: 5120
-    #     beta: .1
-    #     max_steps: 50e6
+    TerrainMarathonMan-v0:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: .1
+            learning_rate: 3e-4
+            batch_size: 32
+            buffer_size: 5120
+        time_horizon: 1000
+        summary_freq: 50000
+        network_settings:
+            num_layers: 2
+            normalize: false
+            hidden_units: 64
+        max_steps: 50e6
+        threaded: true    
         
     ControllerMarathonMan-v1:
         trainer_type: ppo
