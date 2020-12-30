@@ -1,6 +1,6 @@
 import itertools
 import numpy as np
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple, Union, Iterable
 
 import gym
 from gym import error, spaces
@@ -22,7 +22,7 @@ logger = logging_util.get_logger(__name__)
 logging_util.set_log_level(logging_util.INFO)
 
 GymStepResult = Tuple[np.ndarray, float, bool, Dict]
-
+VecEnvStepReturn = Tuple[np.ndarray, np.ndarray, np.ndarray, List[Dict]]
 
 class UnityToGymWrapper(gym.Env):
     """
@@ -47,6 +47,7 @@ class UnityToGymWrapper(gym.Env):
             If False, returns a single np.ndarray containing either only a single visual observation or the array of
             vector observations.
         """
+        self._n_agents = -1
         self._env = unity_env
 
         # Take a single step so that the brain information will be sent over
@@ -87,6 +88,7 @@ class UnityToGymWrapper(gym.Env):
         if (
             self._get_n_vis_obs() + self._get_vec_obs_size() >= 2
             and not self._allow_multiple_obs
+            and self.number_agents == 1
         ):
             logger.warning(
                 "The environment contains multiple observations. "
@@ -161,7 +163,7 @@ class UnityToGymWrapper(gym.Env):
         res: GymStepResult = self._single_step(decision_step)
         return res[0]
 
-    def step(self, action: List[Any]) -> GymStepResult:
+    def step(self, action: List[Any]) -> Union[GymStepResult, VecEnvStepReturn]:
         """Run one timestep of the environment's dynamics. When end of
         episode is reached, you are responsible for calling `reset()`
         to reset this environment's state.
@@ -178,7 +180,8 @@ class UnityToGymWrapper(gym.Env):
             # Translate action into list
             action = self._flattener.lookup_action(action)
 
-        action = np.array(action).reshape((1, self.action_size))
+        action = np.array(action) if self.number_agents > 1 else \
+           np.array(action).reshape((1, self.action_size))
 
         action_tuple = ActionTuple()
         if self.group_spec.action_spec.is_continuous():
@@ -186,6 +189,18 @@ class UnityToGymWrapper(gym.Env):
         else:
             action_tuple.add_discrete(action)
         self._env.set_actions(self.name, action_tuple)
+
+        if self.number_agents > 1:
+            self._vec_step_return = (
+                np.zeros(shape=tuple([self.number_agents])+self.observation_space.shape, dtype=np.float), 
+                np.zeros(shape=(self.number_agents), dtype=np.float), 
+                np.zeros(shape=(self.number_agents), dtype=np.bool),
+                [{} for _ in range(self.number_agents)])
+
+            while not self._is_step_complete():
+                self._env.step()        
+                self._proc_step()
+            return self._vec_step_return
 
         self._env.step()
         decision_step, terminal_step = self._env.get_steps(self.name)
@@ -197,7 +212,30 @@ class UnityToGymWrapper(gym.Env):
         else:
             return self._single_step(decision_step)
 
-    def _single_step(self, info: Union[DecisionSteps, TerminalSteps]) -> GymStepResult:
+    def _proc_step(self):
+        decision_step, terminal_step = self._env.get_steps(self.name)
+        obs, rew, done, inf = self._single_step(terminal_step)
+        for agent in terminal_step.agent_id:
+            i = terminal_step.agent_id_to_index[agent]
+            self._vec_step_return[1][agent] = rew[i]
+            self._vec_step_return[2][agent] = done[i]
+            self._vec_step_return[3][agent]["terminal_observation"] = obs[i]
+        obs, rew, done, inf = self._single_step(decision_step)
+        for agent in decision_step.agent_id:
+            i = decision_step.agent_id_to_index[agent]
+            self._vec_step_return[0][agent] = obs[i]
+            if not self._vec_step_return[2][agent]:
+                self._vec_step_return[1][agent] = rew[i]
+                self._vec_step_return[2][agent] = done[i]
+            self._vec_step_return[3][agent]['step'] = inf['step'][i]
+
+    def _is_step_complete(self):
+        count = 0
+        for info in self._vec_step_return[3]:
+            count += 1 if len(info.keys()) else 0
+        return count == self.number_agents
+
+    def _single_step(self, info: Union[DecisionSteps, TerminalSteps]) -> VecEnvStepReturn:
         if self._allow_multiple_obs:
             visual_obs = self._get_vis_obs_list(info)
             visual_obs_list = []
@@ -206,6 +244,12 @@ class UnityToGymWrapper(gym.Env):
             default_observation = visual_obs_list
             if self._get_vec_obs_size() >= 1:
                 default_observation.append(self._get_vector_obs(info)[0, :])
+        elif self.number_agents > 1:
+            if self._get_n_vis_obs() >= 1:
+                visual_obs = self._get_vis_obs_list(info)
+                default_observation = self._preprocess_single(visual_obs[0][0])
+            else:
+                default_observation = self._get_vector_obs(info)
         else:
             if self._get_n_vis_obs() >= 1:
                 visual_obs = self._get_vis_obs_list(info)
@@ -217,8 +261,10 @@ class UnityToGymWrapper(gym.Env):
             visual_obs = self._get_vis_obs_list(info)
             self.visual_obs = self._preprocess_single(visual_obs[0][0])
 
-        done = isinstance(info, TerminalSteps)
+        done = np.array([isinstance(info, TerminalSteps) for _ in info])
 
+        if self.number_agents > 1:
+            return (default_observation, info.reward, done, {"step": info})
         return (default_observation, info.reward[0], done, {"step": info})
 
     def _preprocess_single(self, single_visual_obs: np.ndarray) -> np.ndarray:
@@ -283,11 +329,14 @@ class UnityToGymWrapper(gym.Env):
         logger.warning("Could not seed environment %s", self.name)
         return
 
-    @staticmethod
-    def _check_agents(n_agents: int) -> None:
-        if n_agents > 1:
+    def _check_agents(self, n_agents: int) -> None:
+        if self._n_agents == -1:
+            self._n_agents = n_agents
+            logger.info("{} agents within environment.".format(n_agents))        
+        elif self._n_agents != n_agents:  
             raise UnityGymException(
-                f"There can only be one Agent in the environment but {n_agents} were detected."
+                "The number of agents in the environment has changed since "
+                "initialization. This is not supported."
             )
 
     @property
@@ -309,6 +358,10 @@ class UnityToGymWrapper(gym.Env):
     @property
     def observation_space(self):
         return self._observation_space
+
+    @property
+    def number_agents(self):
+        return self._n_agents
 
 
 class ActionFlattener:

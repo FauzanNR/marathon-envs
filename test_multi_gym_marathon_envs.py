@@ -66,10 +66,9 @@ def MarathonEnvs(
         engine_configuration_channel.set_configuration_parameters(
             width=160, height=160, quality_level=0, 
             time_scale=20., target_frame_rate=-1)
+    # env = UnityToGymWrapper(unity_env, allow_multiple_obs=True)
     env = UnityToGymWrapper(unity_env)
     return env
-        
-
 
 env_names = [
     'Hopper-v0', 
@@ -80,23 +79,20 @@ env_names = [
     ]
 for env_name in env_names:
     print ('-------', env_name, '-------')
-    env = MarathonEnvs(env_name, 1)
+    env = MarathonEnvs(env_name, 3)
     
     obs = env.reset()
-    episode_score = 0.
-    episode_steps = 0
+    total_score = 0.
+    total_steps = 0
     episodes = 0
-    while episodes < 5:
-        # action, _states = model.predict(obs)
-        # action = [env.action_space.sample() for _ in range(env.number_agents)]
-        action = env.action_space.sample()
+    while episodes < 15:
+        action = [env.action_space.sample() for _ in range(env.number_agents)]
         obs, rewards, dones, info = env.step(action)
-        episode_score += rewards
-        episode_steps += 1
-        if dones:
-            print ('episode_score', episode_score, 'episode_steps', episode_steps)
-            episode_score = 0.
-            episode_steps = 0
-            episodes += 1
-            obs = env.reset()
+        total_score += rewards.sum()
+        total_steps += 1
+        num_done = dones.sum()
+        if num_done > 0:
+            episodes += num_done
+            # obs = env.reset()
+    print ('total_score', total_score, 'total_steps', total_steps)
     env.close()    
