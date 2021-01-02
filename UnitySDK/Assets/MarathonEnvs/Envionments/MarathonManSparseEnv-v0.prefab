@@ -15,7 +15,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  maxStep: 5000
+  MaxStep: 5000
   _heightReward: 0
   _torsoUprightReward: 0
   _torsoForwardReward: 0
@@ -35,22 +35,42 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Model
       value: 
-      objectReference: {fileID: 11400000, guid: d3d9fbf2c09804a1cbce38811ad9a6df,
+      objectReference: {fileID: 5022602860645237092, guid: a22572d925357834d8e998ff028a6cfe,
         type: 3}
-    - target: {fileID: 114263248370519032, guid: 27548cbf466924cd699685496025f534,
-        type: 3}
-      propertyPath: m_BrainParameters.vectorObservationSize
-      value: 256
-      objectReference: {fileID: 0}
     - target: {fileID: 114263248370519032, guid: 27548cbf466924cd699685496025f534,
         type: 3}
       propertyPath: m_BehaviorName
       value: MarathonManSparse-v0
       objectReference: {fileID: 0}
+    - target: {fileID: 114263248370519032, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_BrainParameters.VectorObservationSize
+      value: 256
+      objectReference: {fileID: 0}
+    - target: {fileID: 114263248370519032, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_BrainParameters.vectorObservationSize
+      value: 256
+      objectReference: {fileID: 0}
     - target: {fileID: 6637013144633364566, guid: 27548cbf466924cd699685496025f534,
         type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
         type: 3}
@@ -65,6 +85,11 @@ PrefabInstance:
     - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
         type: 3}
       propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
+        type: 3}
+      propertyPath: m_LocalRotation.w
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
@@ -84,16 +109,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
         type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
-        type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
@@ -106,16 +121,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 8719875636317608491, guid: 27548cbf466924cd699685496025f534,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8722076229893094739, guid: 27548cbf466924cd699685496025f534,
         type: 3}

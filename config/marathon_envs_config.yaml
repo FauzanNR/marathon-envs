@@ -131,39 +131,39 @@ behaviors:
     MarathonMan-v0:
         trainer_type: ppo
         hyperparameters:
-            num_epoch: 10 
+            num_epoch: 3 
             beta: .003
             learning_rate: 3e-4
-            batch_size: 64
-            buffer_size: 10240
-        time_horizon: 100 
+            batch_size: 1024
+            buffer_size: 8196
+        time_horizon: 1000
         summary_freq: 25000
         network_settings:
-            num_layers: 2
+            num_layers: 3
             normalize: true 
-            hidden_units: 64
-        max_steps: 1.e7
+            hidden_units: 512
+        max_steps: 5.e6
         threaded: true
 
     MarathonManSparse-v0:
         trainer_type: ppo
         hyperparameters:
-            num_epoch: 10 
+            num_epoch: 3 
             beta: .003
             learning_rate: 3e-4
             batch_size: 64
-            buffer_size: 10240
+            buffer_size: 640
         time_horizon: 1000
         summary_freq: 25000
         network_settings:
             num_layers: 2
             normalize: true 
-            hidden_units: 64
+            hidden_units: 512
         reward_signals: 
             extrinsic:
                 strength: 1.0
                 gamma: 0.9999
-        max_steps: 1.e7
+        max_steps: 5.e6
         threaded: true    
 
     Hopper-v0:
