@@ -1518,7 +1518,7 @@ Result:
 
 
 
-![No Collisions](img/2020-12-08 10-20-17-new-ragdoll-no-collisions.gif)
+![No Collisions](img/2020-12-08_10-20-17-new-ragdoll-no-collisions.gif)
 
 
 #### Tasks done that do not work (or not yet)
