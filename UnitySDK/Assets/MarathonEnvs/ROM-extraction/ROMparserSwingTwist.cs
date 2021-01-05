@@ -138,12 +138,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         if (duration < Time.time)
         {
-            Debug.Log("animation played");
-            //Application.Quit();
-
-
-
-
+            Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM file does not update anymore");
+        
         }
 
     }
