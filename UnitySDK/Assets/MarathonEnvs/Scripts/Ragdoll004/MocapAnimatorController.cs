@@ -58,9 +58,12 @@ public class MocapAnimatorController : MonoBehaviour
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _targetDirection = Quaternion.Euler(0, 90, 0);
         var ragDoll = _spawnableEnv.GetComponentInChildren<RagDollAgent>( true);//we include inactive childs
-        _layerMask = 1<<ragDoll.gameObject.layer;
-        _layerMask |= 1<<this.gameObject.layer;
-        _layerMask = ~(_layerMask);
+        if (ragDoll)//in the ROM extraction case we do not have any ragdoll agent
+        {
+            _layerMask = 1 << ragDoll.gameObject.layer;
+            _layerMask |= 1 << this.gameObject.layer;
+            _layerMask = ~(_layerMask);
+        }
     }
 
     void Update()
@@ -199,6 +202,10 @@ public class MocapAnimatorController : MonoBehaviour
     }
     void SetTargetFromMoveInput()
     {
+        if (!_inputController) //if it is used without a ragdoll agent (for example, for ROM extraction), we still need to initialize it
+            OnAgentInitialize();
+
+
         Vector2 moveInput = _inputController.MovementVector;
         Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
         _targetDirection = Quaternion.Euler(localMovementDirection);
