@@ -10,10 +10,14 @@ public class RagdollControllerArtanim : MonoBehaviour
 {
 
     [SerializeField]
-
 	ArticulationBody _articulationBodyRoot;
 
-	private List<ArticulationBody> _articulationbodies = null;
+    //to generate an environment automatically from a rigged character and an animation (see folder ROM-extraction)
+    public ArticulationBody ArticulationBodyRoot { set => _articulationBodyRoot = value; }
+
+
+
+    private List<ArticulationBody> _articulationbodies = null;
 
 	private List<Transform> _targetPoseTransforms = null;
 
@@ -53,8 +57,9 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 
 
-	// Start is called before the first frame update
-	public void Start()
+
+    // Start is called before the first frame update
+    public void Start()
     {
         //if (SetUpConstraintsFromData) {
 

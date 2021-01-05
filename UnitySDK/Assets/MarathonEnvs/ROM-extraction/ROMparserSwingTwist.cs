@@ -24,14 +24,25 @@ public class ROMparserSwingTwist : MonoBehaviour
     public ROMinfoCollector info2store;
 
 
-    //this is only if we want to generate a prefab from a bunch of articulated bodies and the constraints parsed
+    //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
     //[SerializeField]
     public Transform targetRagdollRoot;
-    
+
+
+    [Tooltip("Learning Environment where to integrate the constrained ragdoll. Leave blanc if you do not want to generate any training environment")]
+    public
+    ManyWorlds.SpawnableEnv trainingEnv;
+
+
+
     [Tooltip("Leave blanc if you want to apply on all the children of targetRoot")]
     [SerializeField]
-    public Transform[] targetJoints;
+    Transform[] targetJoints;
+
+
+
+
 
     ArticulationBody[] articulationBodies;
 
@@ -138,12 +149,15 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         if (duration < Time.time)
         {
-            Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM file does not update anymore");
+            Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
         
         }
 
     }
 
+
+    //to apply the Range of Motion to MarathonMan004 (the ragdoll made of articulationBodies).
+    //This function is called from an Editor Script
     public void ApplyROMAsConstraints()
     {
 
@@ -214,6 +228,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                 articulationBodies[i].xDrive = xboundaries;
 
 
+                articulationBodies[i].anchorRotation = Quaternion.identity; //the anchor cannot be rotated, otherwise the constraints make no sense
 
             }
 
@@ -230,9 +245,57 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     }
 
+    //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
+    //This function is called from an Editor Script
+    public bool Prepare4PrefabStorage()
+    {
+        if (articulationBodies.Length <= 0)
+        {
+            Debug.LogError("you must apply the constraints before you can store the marathonMan as a prefab");
+            return false;
+
+        }
+
+        bool storeTrainingEnv = false;
+        string add2prefabs = "constrained-in" + targetJoints.Length + "joints";
+
+        //We also prepare the stuff inside the Marathon Classes:
+
+        //if there is a spawnableEnv, there is a ragdollAgent:
+        RagDollAgent rda = targetRagdollRoot.GetComponent<RagDollAgent>();
+        if (rda != null) {
+            Debug.Log("Found a ragdoll agent, setting it up");
+            rda.name = rda.name + add2prefabs;
+
+        }
 
 
 
+        for (int i = 0; i < articulationBodies.Length; i++)
+        {
+            articulationBodies[i].transform.localRotation = Quaternion.identity;
+            if (articulationBodies[i].isRoot) {
+                articulationBodies[i].immovable = false;
+                rda.CameraTarget = articulationBodies[i].transform;
+                if (trainingEnv)
+                {
+
+                    if(rda != null) { 
+                        rda.transform.parent = trainingEnv.transform;
+                        rda.enabled = true;//only when the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
+                    }
+                    RagdollControllerArtanim agentOutcome = trainingEnv.GetComponentInChildren<RagdollControllerArtanim>();
+                    agentOutcome.enabled = true;
+                    agentOutcome.ArticulationBodyRoot = articulationBodies[i];
+                    storeTrainingEnv = true;
+                    trainingEnv.name = "ControllerMarathonManEnv" + add2prefabs;
+                }
+            }
+
+        }
+
+        return storeTrainingEnv;
+    }
 
 
 
