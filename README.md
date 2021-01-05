@@ -32,7 +32,7 @@ Document last updated: 02.12.2020
 The main goal has *almost*  been achieved: skinned characters are matched with ragdolls.
 
 
-![2020-12-09 10-46-28-no-collisions-plus-updated-mlagents](img/2020-12-09 10-46-28-no-collisions-plus-updated-mlagents.gif)
+![Example-current-status](img/2020-12-09 10-46-28-no-collisions-plus-updated-mlagents-v2.gif)
 
 #### 0.2 Pending tasks:
 
@@ -1452,15 +1452,16 @@ Joe fixed the problem of not training, it is in the develop branch. It was relat
 
 In branch develop, commit 30 nov 2020 (756f04bea244c3da9e6237d13ccd05e5207e18cd) Joe commited a trained model that seems to walk. In transitions it does weird shoulder rotation.
 
-<video src="img/2020-12-02 10-21-07-trained-larger-constraints.mkv"></video>
 
+
+![Larger Constraints](img/2020-12-02 10-21-07-trained-larger-constraints.gif)
 
 
 I narrow down the constraints (branch feature/try-adjusting-constraints-from-model-that-trains, commit 2 december 2020, f58c7be3315534d14050f43bad45adcf23c20572), it seems to reduce a bit this weird shoulder rotation, but not that much, which is surprising.
 
 
+![Narrower Constraints](img/2020-12-02 10-17-05-trained-narrower-constraints.gif)
 
-<video src="img/2020-12-02 10-17-05-trained-narrower-constraints.mkv"></video>
 
 
 
@@ -1514,9 +1515,8 @@ Result:
 
 
 
+![No Collisions](img/2020-12-08 10-20-17-new-ragdoll-no-collisions.gif)
 
-
-<video src="img/2020-12-08 10-20-17-new-ragdoll-no-collisions.mkv"></video>
 
 #### Tasks done that do not work (or not yet)
 
