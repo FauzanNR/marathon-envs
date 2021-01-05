@@ -1457,13 +1457,13 @@ In branch develop, commit 30 nov 2020 (756f04bea244c3da9e6237d13ccd05e5207e18cd)
 
 
 
-![Larger Constraints](img/2020-12-02 10-21-07-trained-larger-constraints.gif)
+![Larger Constraints](img/2020-12-02_10-21-07-trained-larger-constraints.gif)
 
 
 I narrow down the constraints (branch feature/try-adjusting-constraints-from-model-that-trains, commit 2 december 2020, f58c7be3315534d14050f43bad45adcf23c20572), it seems to reduce a bit this weird shoulder rotation, but not that much, which is surprising.
 
 
-![Narrower Constraints](img/2020-12-02 10-17-05-trained-narrower-constraints.gif)
+![Narrower Constraints](img/2020-12-02_10-17-05-trained-narrower-constraints.gif)
 
 
 
