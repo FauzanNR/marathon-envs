@@ -33,6 +33,8 @@ public class ROMparserSwingTwistEditor: Editor
         serializedObject.Update();
 
 
+        GUILayout.Label("");
+        
         base.OnInspectorGUI();
 
 
@@ -68,6 +70,15 @@ public class ROMparserSwingTwistEditor: Editor
 
         GUILayout.Label("Prefab Keyword:");
         keyword4prefabs = GUILayout.TextField(keyword4prefabs);
+
+        GUILayout.Label("How to use:");
+
+        GUILayout.TextArea(
+            "Step 1: execute in play mode until the values in the Info2Store file do not change any more" +
+            " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
+            " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
+
+
 
         serializedObject.ApplyModifiedProperties();
 
