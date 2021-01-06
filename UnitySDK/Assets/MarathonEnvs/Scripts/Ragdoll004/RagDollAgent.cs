@@ -82,7 +82,7 @@ public class RagDollAgent : Agent
         if (!_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position))
         {
             _mocapControllerArtanim.transform.position = _spawnableEnv.transform.position;
-            _trackBodyStatesInWorldSpace.Reset();
+            _trackBodyStatesInWorldSpace.LinkStatsToRigidBodies();
             EndEpisode();
         }
     }
