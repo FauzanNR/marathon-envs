@@ -295,10 +295,17 @@ public class ROMparserSwingTwist : MonoBehaviour
                 {
                     envPrefab = GameObject.Instantiate(trainingEnv);
 
-                    //we assume the environment has an animated character, and in this there is a son which is the root of a bunch of rigidBodies forming a humanoid.
-                    //TODO: replace this with something that creates the rigidBody humanoid such a thing procedurally
-                    activateMarathonManTarget(envPrefab);
+                    Animator target = envPrefab.transform.GetComponentInChildren<Animator>();
 
+
+                    //we assume the environment has an animated character, and in this there is a son which is the root of a bunch of rigidBodies forming a humanoid.
+                    //TODO: replace this function with something that creates the rigidBody humanoid such a thing procedurally
+                    activateMarathonManTarget(target);
+
+                    //we also need our target animation to have this:
+                    TrackBodyStatesInWorldSpace tracker = target.GetComponent<TrackBodyStatesInWorldSpace>();
+                    if (tracker == null)
+                        target.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
 
 
 
@@ -323,9 +330,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-    static void activateMarathonManTarget(ManyWorlds.SpawnableEnv env)
+    static void activateMarathonManTarget(Animator target)
     {
-        Animator target = env.transform.GetComponentInChildren<Animator>();
 
         Transform[] rbs = target.GetComponentsInChildren<Transform>(true);
 
