@@ -4958,7 +4958,7 @@ GameObject:
   - component: {fileID: 6615205431282869628}
   - component: {fileID: 6001081405267774098}
   m_Layer: 14
-  m_Name: MarathonMan004constrainedConstrained-procedurally 1
+  m_Name: MarathonMan004constrainedConstrained-procedurally
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
