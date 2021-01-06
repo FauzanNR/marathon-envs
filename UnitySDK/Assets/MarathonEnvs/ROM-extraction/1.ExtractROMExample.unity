@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 147523745}
   - component: {fileID: 147523744}
   m_Layer: 0
-  m_Name: ROMparser
+  m_Name: CHECK-ME-ROMparser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,6 +155,7 @@ MonoBehaviour:
   theAnimator: {fileID: 5866666021843134029}
   info2store: {fileID: 11400000, guid: 44eed71eefb26d44caf8cecfbe74b710, type: 2}
   targetRagdollRoot: {fileID: 1535983488}
+  trainingEnv: {fileID: 0}
   targetJoints:
   - {fileID: 1513971843}
   - {fileID: 1513971844}
@@ -442,6 +443,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &1242214835

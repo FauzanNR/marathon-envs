@@ -56,7 +56,7 @@ public class TrackBodyStatesInWorldSpace : MonoBehaviour
         }        
     }
 
-    public void Reset()
+    public void LinkStatsToRigidBodies()
     {
         foreach (var rb in _rigidbodies)
         {
