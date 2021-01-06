@@ -221,10 +221,10 @@ behaviors:
         trainer_type: ppo
         hyperparameters:
             num_epoch: 3
-            beta: .1
+            beta: 2e-2
             learning_rate: 3e-4
-            batch_size: 32
-            buffer_size: 5120
+            batch_size: 768
+            buffer_size: 3072
         time_horizon: 1000
         summary_freq: 50000
         network_settings:
@@ -238,10 +238,10 @@ behaviors:
         trainer_type: ppo
         hyperparameters:
             num_epoch: 3
-            beta: .1
+            beta: 2e-2
             learning_rate: 3e-4
-            batch_size: 32
-            buffer_size: 5120
+            batch_size: 768
+            buffer_size: 3072
         time_horizon: 1000
         summary_freq: 50000
         network_settings:
@@ -255,10 +255,10 @@ behaviors:
         trainer_type: ppo
         hyperparameters:
             num_epoch: 3
-            beta: .1
+            beta: 2e-2
             learning_rate: 3e-4
-            batch_size: 32
-            buffer_size: 5120
+            batch_size: 768
+            buffer_size: 3072
         time_horizon: 1000
         summary_freq: 50000
         network_settings:
@@ -272,10 +272,10 @@ behaviors:
         trainer_type: ppo
         hyperparameters:
             num_epoch: 3
-            beta: .1
+            beta: 2e-2
             learning_rate: 3e-4
-            batch_size: 32
-            buffer_size: 5120
+            batch_size: 768
+            buffer_size: 3072
         time_horizon: 1000
         summary_freq: 50000
         network_settings:
