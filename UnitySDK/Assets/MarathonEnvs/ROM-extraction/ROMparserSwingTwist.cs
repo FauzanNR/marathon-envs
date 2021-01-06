@@ -44,9 +44,6 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-    ArticulationBody[] articulationBodies;
-
-
     // Start is called before the first frame update
     void Start()
     {
@@ -161,7 +158,10 @@ public class ROMparserSwingTwist : MonoBehaviour
     public void ApplyROMAsConstraints()
     {
 
-        
+
+        //these are the articulationBodies that we want to parse and apply the constraints to
+        ArticulationBody[] articulationBodies;
+
 
         Transform[] joints = targetJoints;
         //we want them all:
@@ -178,10 +178,6 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
         articulationBodies = temp.ToArray();
-
-
-
-
 
 
         List<string> jNames = new List<string>(info2store.jointNames);
@@ -240,34 +236,47 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
 
-
+        Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
 
 
     }
 
     //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
     //This function is called from an Editor Script
-    public bool Prepare4PrefabStorage()
+    public void Prepare4PrefabStorage(out RagDollAgent rda, out ManyWorlds.SpawnableEnv envPrefab)
     {
-        if (articulationBodies.Length <= 0)
-        {
-            Debug.LogError("you must apply the constraints before you can store the marathonMan as a prefab");
-            return false;
 
+        Transform targetRagdollPrefab = GameObject.Instantiate(targetRagdollRoot);
+
+        //if there is a spawnableEnv, there is a ragdollAgent:
+        rda = targetRagdollPrefab.GetComponent<RagDollAgent>();
+        if (rda != null)
+            Debug.Log("Setting up the  ragdoll agent");
+        
+        envPrefab = null;
+
+
+
+        //these are all the articulationBodies in the ragdoll prefab
+        ArticulationBody[] articulationBodies;
+
+        Transform[] joints = targetRagdollPrefab.GetComponentsInChildren<Transform>();
+
+
+        List<ArticulationBody> temp = new List<ArticulationBody>();
+        for (int i = 0; i < joints.Length; i++)
+        {
+            ArticulationBody a = joints[i].GetComponent<ArticulationBody>();
+            if (a != null)
+                temp.Add(a);
         }
 
-        bool storeTrainingEnv = false;
-        string add2prefabs = "constrained-in" + targetJoints.Length + "joints";
+        articulationBodies = temp.ToArray();
+
 
         //We also prepare the stuff inside the Marathon Classes:
 
-        //if there is a spawnableEnv, there is a ragdollAgent:
-        RagDollAgent rda = targetRagdollRoot.GetComponent<RagDollAgent>();
-        if (rda != null) {
-            Debug.Log("Found a ragdoll agent, setting it up");
-            rda.name = rda.name + add2prefabs;
 
-        }
 
 
 
@@ -276,25 +285,28 @@ public class ROMparserSwingTwist : MonoBehaviour
             articulationBodies[i].transform.localRotation = Quaternion.identity;
             if (articulationBodies[i].isRoot) {
                 articulationBodies[i].immovable = false;
-                rda.CameraTarget = articulationBodies[i].transform;
+                if(rda != null)
+                    rda.CameraTarget = articulationBodies[i].transform;
+
+
                 if (trainingEnv)
                 {
-
+                    envPrefab = GameObject.Instantiate(trainingEnv);
                     if(rda != null) { 
-                        rda.transform.parent = trainingEnv.transform;
+                        rda.transform.parent = envPrefab.transform;
                         rda.enabled = true;//only when the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
                     }
-                    RagdollControllerArtanim agentOutcome = trainingEnv.GetComponentInChildren<RagdollControllerArtanim>();
-                    agentOutcome.enabled = true;
-                    agentOutcome.ArticulationBodyRoot = articulationBodies[i];
-                    storeTrainingEnv = true;
-                    trainingEnv.name = "ControllerMarathonManEnv" + add2prefabs;
+                    RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>();
+                    if (agentOutcome != null)
+                    {
+                        agentOutcome.enabled = true;
+                        agentOutcome.ArticulationBodyRoot = articulationBodies[i];
+                    }
                 }
             }
 
         }
-
-        return storeTrainingEnv;
+        
     }
 
 

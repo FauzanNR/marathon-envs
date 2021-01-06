@@ -45,11 +45,20 @@ public class ROMparserSwingTwistEditor: Editor
         {
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
             Transform targetRoot = t.targetRagdollRoot;
-            bool prefab4env =t.Prepare4PrefabStorage();
 
+            ManyWorlds.SpawnableEnv envPrefab = null;
+            RagDollAgent rda = null;
 
-            applyROM2NewPrefab(prefab4env);
-   
+            //this creates the needed objects and configures them
+            t.Prepare4PrefabStorage(out rda, out envPrefab);
+            
+            //this stores them 
+            applyROM2NewPrefab(rda, envPrefab);
+
+            //once stored we can destroy them to keep the scene clean
+            //Destroy(envPrefab);
+            //Destroy(rda);
+
 
         }
 
@@ -60,7 +69,7 @@ public class ROMparserSwingTwistEditor: Editor
 
 
 
-    void applyROM2NewPrefab(bool prefab4env= false)
+    void applyROM2NewPrefab(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
 
@@ -69,10 +78,12 @@ public class ROMparserSwingTwistEditor: Editor
         Transform targetRoot = t.targetRagdollRoot;
 
 
-        
+        string add2prefabs = "constrained-procedurally";
+
+
         // Set the path,
         // and name it as the GameObject's name with the .Prefab format
-        string localPath = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/" + targetRoot.name + ".prefab";
+        string localPath = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/" + targetRoot.name + add2prefabs + ".prefab";
 
         // Make sure the file name is unique, in case an existing Prefab has the same name.
         string uniqueLocalPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
@@ -84,19 +95,19 @@ public class ROMparserSwingTwistEditor: Editor
 
 
         // Create the new Prefab.
-        PrefabUtility.SaveAsPrefabAsset(targetRoot.gameObject, uniqueLocalPath);//, InteractionMode.UserAction);
+        PrefabUtility.SaveAsPrefabAsset(targetRoot.gameObject, uniqueLocalPath);
 
         Debug.Log("Saved new CharacterPrefab at: " + uniqueLocalPath);
 
 
-        if (prefab4env)
+        if (envPrefab != null)
         {
-            Transform targetEnv = t.trainingEnv.transform;
-            string localEnvPath = "Assets/MarathonEnvs/Environments/" + targetEnv.name + ".prefab";
+            Transform targetEnv = envPrefab.transform;
+            
+            string localEnvPath = "Assets/MarathonEnvs/Environments/" + "ControllerMarathonManEnv" + add2prefabs + ".prefab";
 
             // Make sure the file name is unique, in case an existing Prefab has the same name.
             string uniqueLocalEnvPath = AssetDatabase.GenerateUniqueAssetPath(localEnvPath);
-
 
             if (PrefabUtility.IsAnyPrefabInstanceRoot(targetEnv.gameObject))
                 //We want to store it independently from the current prefab. Therefore:
@@ -104,16 +115,10 @@ public class ROMparserSwingTwistEditor: Editor
 
 
             // Create the new Prefab.
-            PrefabUtility.SaveAsPrefabAsset(targetEnv.gameObject, uniqueLocalPath);//, InteractionMode.UserAction);
+            PrefabUtility.SaveAsPrefabAsset(targetEnv.gameObject, uniqueLocalEnvPath);
 
-            Debug.Log("Saved new Environment Prefab at: " + uniqueLocalPath);
-
-
-
-
-
-
-
+            Debug.Log("Saved new Environment Prefab at: " + uniqueLocalEnvPath);
+           
         }
 
 

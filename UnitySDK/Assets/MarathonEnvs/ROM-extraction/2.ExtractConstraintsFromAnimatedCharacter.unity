@@ -1059,16 +1059,16 @@ ArticulationBody:
   m_SwingZ: 1
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -4.842499
-    upperLimit: 27.867634
+    lowerLimit: 0
+    upperLimit: 23.448383
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -21.250854
-    upperLimit: 24.63535
+    lowerLimit: 0
+    upperLimit: 14.222527
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -1076,7 +1076,7 @@ ArticulationBody:
     targetVelocity: 0
   m_ZDrive:
     lowerLimit: 0
-    upperLimit: 69.93328
+    upperLimit: 69.82841
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -1620,8 +1620,8 @@ ArticulationBody:
   m_SwingZ: 0
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -7.061859
-    upperLimit: 7.883309
+    lowerLimit: 0
+    upperLimit: 3.2011356
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -1629,15 +1629,15 @@ ArticulationBody:
     targetVelocity: 0
   m_YDrive:
     lowerLimit: -0.58828735
-    upperLimit: 117.1939
+    upperLimit: 1.4145167
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_ZDrive:
-    lowerLimit: -5.0208435
-    upperLimit: 7.269228
+    lowerLimit: -0.16201782
+    upperLimit: 0.37834495
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -1683,24 +1683,24 @@ ArticulationBody:
   m_SwingZ: 1
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -3.3787231
-    upperLimit: 0.9066425
+    lowerLimit: -3.3790894
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -14.831024
-    upperLimit: 1.5990949
+    lowerLimit: -13.622498
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_ZDrive:
-    lowerLimit: -12.990143
-    upperLimit: 7.775734
+    lowerLimit: -12.992035
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -1808,24 +1808,24 @@ ArticulationBody:
   m_SwingZ: 1
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -3.1801758
-    upperLimit: 0.40026486
+    lowerLimit: -3.0404968
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -0.4942627
-    upperLimit: 15.873446
+    lowerLimit: 0
+    upperLimit: 15.778092
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_ZDrive:
-    lowerLimit: -4.327118
-    upperLimit: 13.494114
+    lowerLimit: 0
+    upperLimit: 10.898932
     stiffness: 0
     damping: 0
     forceLimit: 0
@@ -2314,7 +2314,7 @@ ArticulationBody:
   m_LinearDamping: 0.05
   m_AngularDamping: 0.05
   m_JointFriction: 0.05
-  m_Immovable: 1
+  m_Immovable: 0
   m_UseGravity: 1
 --- !u!33 &2841526050255432969
 MeshFilter:
@@ -3130,7 +3130,7 @@ MonoBehaviour:
   SmoothBeta: 0.2
   RequestCamera: 0
   CameraFollowMe: 0
-  CameraTarget: {fileID: 0}
+  CameraTarget: {fileID: 8719972219484657114}
   SkipRewardSmoothing: 0
   debugCopyMocap: 0
   ignorActions: 0
@@ -5104,23 +5104,23 @@ ArticulationBody:
   m_SwingZ: 1
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -10.0208435
-    upperLimit: 26.260654
+    lowerLimit: 0
+    upperLimit: 26.194939
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -39.289
-    upperLimit: 8.594383
+    lowerLimit: -13.793854
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_ZDrive:
-    lowerLimit: -61.089752
+    lowerLimit: -61.0903
     upperLimit: 0
     stiffness: 0
     damping: 0
@@ -5674,9 +5674,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8722076230529752364}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 1.105}
-  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8719972219484657114}
   m_Father: {fileID: 0}
@@ -5707,7 +5707,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8721806365061678940}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.004121773, y: 0.95, z: 0.020950755}
   m_LocalScale: {x: 0.92, y: 0.92, z: 0.92}
   m_Children:
@@ -6714,15 +6714,15 @@ ArticulationBody:
   m_SwingZ: 0
   m_Twist: 1
   m_XDrive:
-    lowerLimit: -3.9317017
-    upperLimit: 8.057305
+    lowerLimit: 0
+    upperLimit: 7.9261546
     stiffness: 0
     damping: 0
     forceLimit: 0
     target: 0
     targetVelocity: 0
   m_YDrive:
-    lowerLimit: -97.607605
+    lowerLimit: -4.733795
     upperLimit: 0
     stiffness: 0
     damping: 0
@@ -6730,8 +6730,8 @@ ArticulationBody:
     target: 0
     targetVelocity: 0
   m_ZDrive:
-    lowerLimit: -8.580566
-    upperLimit: 1.1390195
+    lowerLimit: -1.2721863
+    upperLimit: 0
     stiffness: 0
     damping: 0
     forceLimit: 0
