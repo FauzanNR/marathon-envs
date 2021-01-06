@@ -256,6 +256,8 @@ public class ROMparserSwingTwist : MonoBehaviour
         envPrefab = null;
 
 
+        
+
 
         //these are all the articulationBodies in the ragdoll prefab
         ArticulationBody[] articulationBodies;
@@ -292,14 +294,24 @@ public class ROMparserSwingTwist : MonoBehaviour
                 if (trainingEnv)
                 {
                     envPrefab = GameObject.Instantiate(trainingEnv);
-                    if(rda != null) { 
+
+                    //we assume the environment has an animated character, and in this there is a son which is the root of a bunch of rigidBodies forming a humanoid.
+                    //TODO: replace this with something that creates the rigidBody humanoid such a thing procedurally
+                    activateMarathonManTarget(envPrefab);
+
+
+
+
+                    if (rda != null) { 
                         rda.transform.parent = envPrefab.transform;
+                        rda.name = targetRagdollRoot.name;
                         rda.enabled = true;//only when the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
                     }
-                    RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>();
+                    RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>(true);
                     if (agentOutcome != null)
                     {
-                        agentOutcome.enabled = true;
+                        agentOutcome.gameObject.SetActive(true);
+                        //agentOutcome.enabled = true;
                         agentOutcome.ArticulationBodyRoot = articulationBodies[i];
                     }
                 }
@@ -307,6 +319,29 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         }
         
+    }
+
+
+
+    static void activateMarathonManTarget(ManyWorlds.SpawnableEnv env)
+    {
+        Animator target = env.transform.GetComponentInChildren<Animator>();
+
+        Transform[] rbs = target.GetComponentsInChildren<Transform>(true);
+
+
+        //Rigidbody[] rbs = target.GetComponentsInChildren<Rigidbody>(true);
+        for (int i = 0; i < rbs.Length; i++)
+        {
+            rbs[i].gameObject.SetActive(true);
+
+        }
+
+
+
+
+
+
     }
 
 

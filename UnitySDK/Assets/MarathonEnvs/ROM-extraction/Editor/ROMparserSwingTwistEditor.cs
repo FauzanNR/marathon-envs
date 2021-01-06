@@ -16,6 +16,10 @@ public class ROMparserSwingTwistEditor: Editor
     [SerializeField]
     SerializedProperty ROMparserSwingTwist;
 
+    [SerializeField]
+    string keyword4prefabs = "Constrained-procedurally";
+
+
     void OnEnable()
     {
         ROMparserSwingTwist = serializedObject.FindProperty("ROMparserSwingTwist");
@@ -41,7 +45,7 @@ public class ROMparserSwingTwistEditor: Editor
         }
 
 
-        if (GUILayout.Button("2.Store ArtBod with ROM"))
+        if (GUILayout.Button("2.Store Ragdoll and Env as Prefab"))
         {
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
             Transform targetRoot = t.targetRagdollRoot;
@@ -62,6 +66,8 @@ public class ROMparserSwingTwistEditor: Editor
 
         }
 
+        GUILayout.Label("Prefab Keyword:");
+        keyword4prefabs = GUILayout.TextField(keyword4prefabs);
 
         serializedObject.ApplyModifiedProperties();
 
@@ -78,8 +84,9 @@ public class ROMparserSwingTwistEditor: Editor
         Transform targetRoot = t.targetRagdollRoot;
 
 
-        string add2prefabs = "constrained-procedurally";
+        string add2prefabs = keyword4prefabs;
 
+        
 
         // Set the path,
         // and name it as the GameObject's name with the .Prefab format
@@ -103,8 +110,10 @@ public class ROMparserSwingTwistEditor: Editor
         if (envPrefab != null)
         {
             Transform targetEnv = envPrefab.transform;
-            
-            string localEnvPath = "Assets/MarathonEnvs/Environments/" + "ControllerMarathonManEnv" + add2prefabs + ".prefab";
+
+            targetEnv.name = "ControllerMarathonManEnv" + add2prefabs;
+
+            string localEnvPath = "Assets/MarathonEnvs/Environments/" + targetEnv.name + ".prefab";
 
             // Make sure the file name is unique, in case an existing Prefab has the same name.
             string uniqueLocalEnvPath = AssetDatabase.GenerateUniqueAssetPath(localEnvPath);
