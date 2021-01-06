@@ -62,8 +62,9 @@ public class ROMparserSwingTwistEditor: Editor
             applyROM2NewPrefab(rda, envPrefab);
 
             //once stored we can destroy them to keep the scene clean
-            Destroy(envPrefab);
-            Destroy(rda);
+            DestroyImmediate(rda.gameObject);
+            if (envPrefab != null)
+                DestroyImmediate(envPrefab.gameObject);
 
 
         }

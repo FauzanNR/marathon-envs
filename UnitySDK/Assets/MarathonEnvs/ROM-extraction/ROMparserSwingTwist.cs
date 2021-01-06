@@ -193,7 +193,7 @@ public class ROMparserSwingTwist : MonoBehaviour
             index = jNames.FindIndex(x => x.Contains(parts[1]));
 
             if (index < 0)
-                Debug.Log("Could not find a joint name matching " + s + "and specifically: " + parts[1]);
+                Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
 
