@@ -103,6 +103,18 @@ Windows format:
 mlagents-learn config\marathon_envs_config.yaml --env="envs\MarathonEnvs\Marathon Environments.exe" --num-envs=25 --run-id=newMlAgents-007 --no-graphics --env-args --spawn-env=ControllerMarathonMan-v1 --num-spawn-envs=35
 ```
 
+Example to test quickly in editor:
+
+```
+mlagents-learn config\marathon_envs_config.yaml --run-id=test-2020-01-06-v2 --env-args --spawn-env=ControllerMarathonMan-v1 
+```
+
+
+
+## 
+
+
+
 
 
 ## 1. Install and Troubleshooting

@@ -59,7 +59,7 @@ public class ROMparserSwingTwistEditor: Editor
             t.Prepare4PrefabStorage(out rda, out envPrefab);
             
             //this stores them 
-            applyROM2NewPrefab(rda, envPrefab);
+            storeNewPrefabWithROM(rda, envPrefab);
 
             //once stored we can destroy them to keep the scene clean
             DestroyImmediate(rda.gameObject);
@@ -87,7 +87,7 @@ public class ROMparserSwingTwistEditor: Editor
 
 
 
-    void applyROM2NewPrefab(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
+    void storeNewPrefabWithROM(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
 

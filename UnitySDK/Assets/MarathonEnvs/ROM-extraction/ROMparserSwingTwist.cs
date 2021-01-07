@@ -276,12 +276,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         articulationBodies = temp.ToArray();
 
 
-        //We also prepare the stuff inside the Marathon Classes:
-
-
-
-
-
+        //We also prepare everything inside the ragdoll agent :
         for (int i = 0; i < articulationBodies.Length; i++)
         {
             articulationBodies[i].transform.localRotation = Quaternion.identity;
@@ -298,6 +293,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                     Animator target = envPrefab.transform.GetComponentInChildren<Animator>();
 
 
+
                     //we assume the environment has an animated character, and in this there is a son which is the root of a bunch of rigidBodies forming a humanoid.
                     //TODO: replace this function with something that creates the rigidBody humanoid such a thing procedurally
                     activateMarathonManTarget(target);
@@ -312,8 +308,9 @@ public class ROMparserSwingTwist : MonoBehaviour
                     if (rda != null) { 
                         rda.transform.parent = envPrefab.transform;
                         rda.name = targetRagdollRoot.name;
-                        rda.enabled = true;//only when the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
+                        rda.enabled = true;//this should already be the case, but just ot be cautious
                     }
+
                     RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>(true);
                     if (agentOutcome != null)
                     {
@@ -342,6 +339,12 @@ public class ROMparserSwingTwist : MonoBehaviour
             rbs[i].gameObject.SetActive(true);
 
         }
+
+
+
+        //the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
+        MocapControllerArtanim mca = target.GetComponent<MocapControllerArtanim>();
+        mca.enabled = true;
 
 
 
