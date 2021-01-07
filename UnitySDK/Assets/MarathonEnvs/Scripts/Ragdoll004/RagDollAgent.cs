@@ -62,8 +62,10 @@ public class RagDollAgent : Agent
 		{
             // Will follow the last object to be spawned
             var camera = FindObjectOfType<Camera>();
-            var follow = camera.GetComponent<SmoothFollow>();
-            follow.target = CameraTarget;
+            if(camera != null) { 
+                var follow = camera.GetComponent<SmoothFollow>();
+                follow.target = CameraTarget;
+            }
         }
         _hasAwake = true;        
     }
@@ -80,7 +82,7 @@ public class RagDollAgent : Agent
         if (!_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position))
         {
             _mocapControllerArtanim.transform.position = _spawnableEnv.transform.position;
-            _trackBodyStatesInWorldSpace.Reset();
+            _trackBodyStatesInWorldSpace.LinkStatsToRigidBodies();
             EndEpisode();
         }
     }

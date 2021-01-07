@@ -24,16 +24,24 @@ public class ROMparserSwingTwist : MonoBehaviour
     public ROMinfoCollector info2store;
 
 
-    //this is only if we want to generate a prefab from a bunch of articulated bodies and the constraints parsed
+    //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
     //[SerializeField]
     public Transform targetRagdollRoot;
-    
+
+
+    [Tooltip("Learning Environment where to integrate the constrained ragdoll. Leave blanc if you do not want to generate any training environment")]
+    public
+    ManyWorlds.SpawnableEnv trainingEnv;
+
+
+
     [Tooltip("Leave blanc if you want to apply on all the children of targetRoot")]
     [SerializeField]
-    public Transform[] targetJoints;
+    Transform[] targetJoints;
 
-    ArticulationBody[] articulationBodies;
+
+
 
 
     // Start is called before the first frame update
@@ -138,20 +146,22 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         if (duration < Time.time)
         {
-            Debug.Log("animation played");
-            //Application.Quit();
-
-
-
-
+            Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
+        
         }
 
     }
 
+
+    //to apply the Range of Motion to MarathonMan004 (the ragdoll made of articulationBodies).
+    //This function is called from an Editor Script
     public void ApplyROMAsConstraints()
     {
 
-        
+
+        //these are the articulationBodies that we want to parse and apply the constraints to
+        ArticulationBody[] articulationBodies;
+
 
         Transform[] joints = targetJoints;
         //we want them all:
@@ -170,10 +180,6 @@ public class ROMparserSwingTwist : MonoBehaviour
         articulationBodies = temp.ToArray();
 
 
-
-
-
-
         List<string> jNames = new List<string>(info2store.jointNames);
 
         for (int i = 0; i < articulationBodies.Length; i++)
@@ -187,7 +193,7 @@ public class ROMparserSwingTwist : MonoBehaviour
             index = jNames.FindIndex(x => x.Contains(parts[1]));
 
             if (index < 0)
-                Debug.Log("Could not find a joint name matching " + s + "and specifically: " + parts[1]);
+                Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
 
@@ -218,6 +224,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                 articulationBodies[i].xDrive = xboundaries;
 
 
+                articulationBodies[i].anchorRotation = Quaternion.identity; //the anchor cannot be rotated, otherwise the constraints make no sense
 
             }
 
@@ -229,14 +236,119 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
 
-
+        Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
 
 
     }
 
+    //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
+    //This function is called from an Editor Script
+    public void Prepare4PrefabStorage(out RagDollAgent rda, out ManyWorlds.SpawnableEnv envPrefab)
+    {
+
+        Transform targetRagdollPrefab = GameObject.Instantiate(targetRagdollRoot);
+
+        //if there is a spawnableEnv, there is a ragdollAgent:
+        rda = targetRagdollPrefab.GetComponent<RagDollAgent>();
+        if (rda != null)
+            Debug.Log("Setting up the  ragdoll agent");
+        
+        envPrefab = null;
+
+
+        
+
+
+        //these are all the articulationBodies in the ragdoll prefab
+        ArticulationBody[] articulationBodies;
+
+        Transform[] joints = targetRagdollPrefab.GetComponentsInChildren<Transform>();
+
+
+        List<ArticulationBody> temp = new List<ArticulationBody>();
+        for (int i = 0; i < joints.Length; i++)
+        {
+            ArticulationBody a = joints[i].GetComponent<ArticulationBody>();
+            if (a != null)
+                temp.Add(a);
+        }
+
+        articulationBodies = temp.ToArray();
+
+
+        //We also prepare the stuff inside the Marathon Classes:
 
 
 
+
+
+        for (int i = 0; i < articulationBodies.Length; i++)
+        {
+            articulationBodies[i].transform.localRotation = Quaternion.identity;
+            if (articulationBodies[i].isRoot) {
+                articulationBodies[i].immovable = false;
+                if(rda != null)
+                    rda.CameraTarget = articulationBodies[i].transform;
+
+
+                if (trainingEnv)
+                {
+                    envPrefab = GameObject.Instantiate(trainingEnv);
+
+                    Animator target = envPrefab.transform.GetComponentInChildren<Animator>();
+
+
+                    //we assume the environment has an animated character, and in this there is a son which is the root of a bunch of rigidBodies forming a humanoid.
+                    //TODO: replace this function with something that creates the rigidBody humanoid such a thing procedurally
+                    activateMarathonManTarget(target);
+
+                    //we also need our target animation to have this:
+                    TrackBodyStatesInWorldSpace tracker = target.GetComponent<TrackBodyStatesInWorldSpace>();
+                    if (tracker == null)
+                        target.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
+
+
+
+                    if (rda != null) { 
+                        rda.transform.parent = envPrefab.transform;
+                        rda.name = targetRagdollRoot.name;
+                        rda.enabled = true;//only when the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
+                    }
+                    RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>(true);
+                    if (agentOutcome != null)
+                    {
+                        agentOutcome.gameObject.SetActive(true);
+                        //agentOutcome.enabled = true;
+                        agentOutcome.ArticulationBodyRoot = articulationBodies[i];
+                    }
+                }
+            }
+
+        }
+        
+    }
+
+
+
+    static void activateMarathonManTarget(Animator target)
+    {
+
+        Transform[] rbs = target.GetComponentsInChildren<Transform>(true);
+
+
+        //Rigidbody[] rbs = target.GetComponentsInChildren<Rigidbody>(true);
+        for (int i = 0; i < rbs.Length; i++)
+        {
+            rbs[i].gameObject.SetActive(true);
+
+        }
+
+
+
+
+
+
+    }
 
 
 
