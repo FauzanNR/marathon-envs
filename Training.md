@@ -49,25 +49,25 @@ mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs
 #### TerrainHopper-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=TerrainHopper-001 --env-args --spawn-env=TerrainHopper-v0 --num-spawn-envs=10
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainHopper-000 --env-args --spawn-env=TerrainHopper-v0 --num-spawn-envs=100
 ```
 
 #### TerrainWalker2d-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=TerrainWalker2d-001 --env-args --spawn-env=TerrainWalker2d-v0 --num-spawn-envs=10
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainWalker2d-001 --env-args --spawn-env=TerrainWalker2d-v0 --num-spawn-envs=100
 ```
 
 #### TerrainAnt-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=TerrainAnt-001 --env-args --spawn-env=TerrainAnt-v0 --num-spawn-envs=10
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainAnt-001 --env-args --spawn-env=TerrainAnt-v0 --num-spawn-envs=100
 ```
 
 #### TerrainMarathonMan-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=TerrainMarathonMan-001 --env-args --spawn-env=TerrainMarathonMan-v0 --num-spawn-envs=10
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainMarathonMan-001 --env-args --spawn-env=TerrainMarathonMan-v0 --num-spawn-envs=100
 ```
 
 
