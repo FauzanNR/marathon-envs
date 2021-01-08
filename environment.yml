@@ -8,4 +8,4 @@ dependencies:
   # - cudatoolkit=10.2
   - numpy
   - pip:
-    - mlagents==0.22
+    - mlagents==0.23

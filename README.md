@@ -127,6 +127,12 @@ mlagents-learn config\marathon_envs_config.yaml --run-id=test-2020-01-06-v2 --en
 
 
 
+If you update from a previous ml-agents version, you can use `conda env update -f environment.yml `. It is Remember to restart the computer
+
+
+
+
+
 If you had trouble using the previous, you can: 
 
 
