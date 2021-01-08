@@ -5735,9 +5735,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 0
+  m_SwingY: 1
   m_SwingZ: 0
-  m_Twist: 1
+  m_Twist: 0
   m_XDrive:
     lowerLimit: -3.7960815
     upperLimit: 8.057305
@@ -14466,9 +14466,9 @@ ArticulationBody:
   m_LinearX: 2
   m_LinearY: 2
   m_LinearZ: 2
-  m_SwingY: 0
+  m_SwingY: 1
   m_SwingZ: 0
-  m_Twist: 1
+  m_Twist: 0
   m_XDrive:
     lowerLimit: -6.9612427
     upperLimit: 7.8562646
