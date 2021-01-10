@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class ROMparserSwingTwist : MonoBehaviour
 {
@@ -41,7 +42,16 @@ public class ROMparserSwingTwist : MonoBehaviour
     Transform[] targetJoints;
 
 
+    [System.Serializable]
+    public struct PreviewValues
+    {
+        public string name;
+        public Vector3 lower;
+        public Vector3 upper;
+    }
+    public PreviewValues[] Preview;
 
+    MocapControllerArtanim _mocapControllerArtanim;
 
 
     // Start is called before the first frame update
@@ -77,16 +87,44 @@ public class ROMparserSwingTwist : MonoBehaviour
         duration = theClip.length;
         Debug.Log("The animation " + theClip.name + " has a duration of: " + duration);
 
-
+        _mocapControllerArtanim = theAnimator.GetComponent<MocapControllerArtanim>();
     }
-    
 
 
-
-    // Update is called once per frame
-    void Update()
+    void CopyMocap()
     {
+        if (_mocapControllerArtanim != null && 
+            targetRagdollRoot != null && 
+            _mocapControllerArtanim.enabled)
+        {
+            var atriculationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+            if (atriculationBodies.Length ==0)
+                return;
+            var root = atriculationBodies.First(x=>x.isRoot);
+            var pos = root.transform.position;
+            var rot = root.transform.rotation;
+            // root.gameObject.SetActive(false);
+            _mocapControllerArtanim.CopyStatesTo(targetRagdollRoot.gameObject);
+            rot = root.transform.rotation;
+            root.TeleportRoot(pos,rot);
+            // root.gameObject.SetActive(true);
+            foreach (var body in atriculationBodies)
+            {
+                if (body.twistLock == ArticulationDofLock.LimitedMotion)
+                {
+                    var xDrive = body.xDrive;
+                    List<float> targets = new List<float>();
+                    var bb = body.GetDriveTargets(targets);
+                    var cc = 22;
+                }
+            }
+        }
+    }
 
+    // Used fixed update to ensure we see every phsycis step
+    void FixedUpdate()
+    {
+        CopyMocap();
         for (int i = 0; i< joints.Length; i++) {
 
 
@@ -149,7 +187,55 @@ public class ROMparserSwingTwist : MonoBehaviour
             Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
         
         }
+    }
 
+    void Update()
+    {
+        CalcPreview();
+    }
+    void LateUpdate()
+    {
+    }
+
+    // preview range of motion
+    void CalcPreview()
+    {
+        Transform[] joints = targetJoints;
+        //we want them all:
+        if (joints.Length == 0)
+            joints = targetRagdollRoot.GetComponentsInChildren<Transform>();
+        
+        var articulationBodies = joints
+            .Select(x=>x.GetComponent<ArticulationBody>())
+            .Where(x=>x!=null)
+            .ToArray();
+
+        List<PreviewValues> preview = new List<PreviewValues>();
+
+        List<string> jNames = new List<string>(info2store.jointNames);
+        for (int i = 0; i < articulationBodies.Length; i++)
+        {
+            string s = articulationBodies[i].name;
+            string[] parts = s.Split(':');
+            //we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
+
+            int index = -1;
+
+            index = jNames.FindIndex(x => x.Contains(parts[1]));
+
+            if (index < 0)
+                Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
+            else
+            {
+                var p = new PreviewValues{
+                    name=parts[1],
+                    lower = info2store.minRotations[index],
+                    upper = info2store.maxRotations[index]
+                };             
+                preview.Add(p);
+            }
+        }
+        Preview = preview.ToArray();
     }
 
 

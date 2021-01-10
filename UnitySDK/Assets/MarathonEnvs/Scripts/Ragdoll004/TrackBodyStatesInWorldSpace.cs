@@ -35,6 +35,9 @@ public class TrackBodyStatesInWorldSpace : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (_rigidbodies == null)
+            OnAgentInitialize();
+            
         float timeDelta = Time.fixedDeltaTime;
 
         foreach (var rb in _rigidbodies)

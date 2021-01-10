@@ -65,7 +65,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
     [HideInInspector]
     public bool doFixedUpdate = true;
 
-
+	bool _hasLazyInitialized;
 
     MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
 	{
@@ -173,7 +173,13 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	//public bool UsingMocapAnimatorController { get => _usingMocapAnimatorController;  }
 
 	public void OnAgentInitialize()
+	{
+		LazyInitialize();
+	}
+	void LazyInitialize()
     {
+		if (_hasLazyInitialized)
+			return;
 		try
 		{
 			_mocapAnimController = GetComponent<MocapAnimatorController>();
@@ -209,7 +215,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
         }
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
-
+		_hasLazyInitialized = true;
     }
 	void SetupSensors()
 	{
@@ -221,6 +227,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
     void FixedUpdate()
     {
+		LazyInitialize();
         if (doFixedUpdate)
             OnFixedUpdate();
 	
@@ -228,6 +235,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 
     void OnFixedUpdate() {
+		LazyInitialize();
 
         //if (!_usesMotionMatching)
         {
@@ -441,6 +449,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 	public void OnReset(Quaternion resetRotation)
 	{
+		LazyInitialize();
 
         if (!doFixedUpdate)
             return;
@@ -481,6 +490,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
 	{
+		LazyInitialize();
+
 		//if (string.Compare(other.name, "Terrain", true) !=0)
 		if (other.layer != LayerMask.NameToLayer("Ground"))
 				return;
@@ -493,6 +504,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	}
 	public void OnSensorCollisionExit(Collider sensorCollider, GameObject other)
 	{
+		LazyInitialize();
+
 		if (other.layer != LayerMask.NameToLayer("Ground"))
 				return;
 		var sensor = _sensors
@@ -504,7 +517,11 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	}   
     public void CopyStatesTo(GameObject target)
     {
+		LazyInitialize();
+
         var targets = target.GetComponentsInChildren<ArticulationBody>().ToList();
+		if (targets?.Count == 0)
+			return;
         var root = targets.First(x=>x.isRoot);
         root.gameObject.SetActive(false);
         foreach (var targetRb in targets)
