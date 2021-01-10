@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.MLAgents;
 using UnityEngine;
-
+using UnityEngine.Assertions;
 
 using System.Linq.Expressions;
 
@@ -191,6 +191,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController");
 		}
 
+		DynamicallyCreateRagdollForMocap();
+
         SetupSensors();
 
 		anim = GetComponent<Animator>();
@@ -215,8 +217,61 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
         }
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
+
 		_hasLazyInitialized = true;
     }
+	void DynamicallyCreateRagdollForMocap()
+	{
+		// Find Ragdoll in parent
+		var parent = this.transform.parent;
+		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>();
+		Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
+		RagDollAgent ragDoll = ragdolls[0];
+		var ragdollForMocap = new GameObject("RagdollForMocap");
+		ragdollForMocap.transform.SetParent(this.transform, false);
+		Assert.AreEqual(ragDoll.transform.childCount, 1, "code only supports 1 child");
+		var ragdollRoot = ragDoll.transform.GetChild(0);
+		// clone the ragdoll root
+		var clone = Instantiate(ragdollRoot);
+		// remove '(clone)' from names
+		foreach (var t in clone.GetComponentsInChildren<Transform>())
+		{
+			t.name = t.name.Replace("(Clone)", "");
+		}
+		clone.transform.SetParent(ragdollForMocap.transform, false);
+		// swap ArticulatedBody for RidgedBody
+		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
+		{
+			var bodyGameobject = abody.gameObject;
+			var rb = bodyGameobject.AddComponent<Rigidbody>();
+			rb.mass = abody.mass;
+			rb.useGravity = abody.useGravity;
+			Destroy(abody);
+		}
+		// make Kinematic
+		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
+		{
+			rb.isKinematic = true;
+		}
+		// set the root
+		this._rigidbodyRoot = clone.GetComponent<Rigidbody>();
+		// set the layers
+		ragdollForMocap.layer = this.gameObject.layer;
+		foreach (Transform child in ragdollForMocap.transform)
+		{
+			child.gameObject.layer  = this.gameObject.layer;
+		}
+		// setup HandleOverlap
+		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
+		{
+			// remove cloned HandledOverlap
+			var oldHandleOverlap = rb.GetComponent<HandleOverlap>();
+			Destroy(oldHandleOverlap);
+			var handleOverlap = rb.gameObject.AddComponent<HandleOverlap>();
+			handleOverlap.Parent = clone.gameObject;
+		}
+
+	}
 	void SetupSensors()
 	{
 		_sensors = GetComponentsInChildren<SensorBehavior>()
