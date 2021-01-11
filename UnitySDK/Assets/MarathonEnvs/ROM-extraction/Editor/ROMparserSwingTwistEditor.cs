@@ -37,6 +37,12 @@ public class ROMparserSwingTwistEditor: Editor
         
         base.OnInspectorGUI();
 
+        if (GUILayout.Button("0.Debug: Set Joints To Max ROM"))
+        {
+            ROMparserSwingTwist t = target as ROMparserSwingTwist;
+            t.SetJointsToMaxROM();
+        }        
+
 
         if (GUILayout.Button("1.Apply ROM As Constraints"))
         {

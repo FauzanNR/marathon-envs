@@ -39,19 +39,29 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     [Tooltip("Leave blanc if you want to apply on all the children of targetRoot")]
     [SerializeField]
-    Transform[] targetJoints;
+    ArticulationBody[] targetJoints;
 
 
     [System.Serializable]
     public struct PreviewValues
     {
+        [HideInInspector]
         public string name;
         public Vector3 lower;
         public Vector3 upper;
+        public Vector3 rangeOfMotion;
     }
     public PreviewValues[] Preview;
 
     MocapControllerArtanim _mocapControllerArtanim;
+    Vector3 _rootStartPosition;
+    Quaternion _rootStartRotation;
+
+    public bool MimicMocap;
+    [Range(0,359)]
+    public int MaxROM = 180;
+    [Range(0,359)]
+    public int MinROMNeededForJoint = 3;
 
 
     // Start is called before the first frame update
@@ -88,6 +98,26 @@ public class ROMparserSwingTwist : MonoBehaviour
         Debug.Log("The animation " + theClip.name + " has a duration of: " + duration);
 
         _mocapControllerArtanim = theAnimator.GetComponent<MocapControllerArtanim>();
+
+        // get root start position and rotation
+        var atriculationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+        if (atriculationBodies.Length ==0)
+            return;
+        var root = atriculationBodies.First(x=>x.isRoot);
+        _rootStartPosition = root.transform.position;
+        _rootStartRotation = root.transform.rotation;
+
+        // if no joints specified get joints using
+        // not root (is static), begins with 'articulation:'
+        if (targetJoints.Length == 0)
+        {
+            targetJoints = targetRagdollRoot
+                .GetComponentsInChildren<ArticulationBody>()
+                .Where(x=>x.isRoot == false)
+                .Where(x=>x.name.StartsWith("articulation:"))
+                .ToArray();
+            SetJointsToMaxROM();
+        }
     }
 
 
@@ -101,30 +131,78 @@ public class ROMparserSwingTwist : MonoBehaviour
             if (atriculationBodies.Length ==0)
                 return;
             var root = atriculationBodies.First(x=>x.isRoot);
-            var pos = root.transform.position;
-            var rot = root.transform.rotation;
+            CopyMocapStatesTo(root.gameObject, _rootStartPosition);
+            // teleport back to start position
+            // var curRotation = root.transform.rotation;
+            // root.TeleportRoot(_rootStartPosition, curRotation);
+            // Vector3 offset = _rootStartPosition - root.transform.position;
             // root.gameObject.SetActive(false);
-            _mocapControllerArtanim.CopyStatesTo(targetRagdollRoot.gameObject);
-            rot = root.transform.rotation;
-            root.TeleportRoot(pos,rot);
+            // foreach (var t in root.GetComponentsInChildren<Transform>())
+            // {
+            //     t.position = t.position + offset;
+            // }
+            // root.transform.position = _rootStartPosition;
             // root.gameObject.SetActive(true);
-            foreach (var body in atriculationBodies)
-            {
-                if (body.twistLock == ArticulationDofLock.LimitedMotion)
-                {
-                    var xDrive = body.xDrive;
-                    List<float> targets = new List<float>();
-                    var bb = body.GetDriveTargets(targets);
-                    var cc = 22;
-                }
-            }
+
+            // foreach (var body in atriculationBodies)
+            // {
+            //     if (body.twistLock == ArticulationDofLock.LimitedMotion)
+            //     {
+            //         var xDrive = body.xDrive;
+            //         List<float> targets = new List<float>();
+            //         var bb = body.GetDriveTargets(targets);
+            //         var cc = 22;
+            //     }
+            // }
         }
     }
-
-    // Used fixed update to ensure we see every phsycis step
-    void FixedUpdate()
+    void CopyMocapStatesTo(GameObject target, Vector3 rootPosition)
     {
-        CopyMocap();
+
+        var targets = target.GetComponentsInChildren<ArticulationBody>().ToList();
+		if (targets?.Count == 0)
+			return;
+        var root = targets.First(x=>x.isRoot);
+		root.gameObject.SetActive(false);
+        var mocapRoot = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == root.name);
+        Vector3 offset = rootPosition - mocapRoot.transform.position;
+        foreach (var targetRb in targets)
+        {
+			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == targetRb.name);
+            targetRb.transform.position = stat.position + offset;
+            targetRb.transform.rotation = stat.rotation;
+            if (targetRb.isRoot)
+            {
+                targetRb.TeleportRoot(stat.position + offset, stat.rotation);
+            }
+			// // float stiffness = 0f;
+			// // float damping = 10000f;
+			// if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
+			// {
+			// 	var drive = targetRb.xDrive;
+			// 	// drive.stiffness = stiffness;
+			// 	// drive.damping = damping;
+			// 	targetRb.xDrive = drive;
+			// }			
+            // if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
+			// {
+			// 	var drive = targetRb.yDrive;
+			// 	// drive.stiffness = stiffness;
+			// 	// drive.damping = damping;
+			// 	targetRb.yDrive = drive;
+			// }
+            // if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
+			// {
+			// 	var drive = targetRb.zDrive;
+			// 	// drive.stiffness = stiffness;
+			// 	// drive.damping = damping;
+			// 	targetRb.zDrive = drive;
+			// }
+        }
+		root.gameObject.SetActive(true);
+    }
+    void Update()
+    {
         for (int i = 0; i< joints.Length; i++) {
 
 
@@ -176,40 +254,31 @@ public class ROMparserSwingTwist : MonoBehaviour
                 info2store.minRotations[i].y = candidates4storage.y;
             if (info2store.minRotations[i].z > candidates4storage.z)
                 info2store.minRotations[i].z = candidates4storage.z;
-
-
-
         }
-
 
         if (duration < Time.time)
         {
             Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
         
         }
-    }
 
-    void Update()
-    {
         CalcPreview();
     }
-    void LateUpdate()
+    // void FixedUpdate()
+    void OnRenderObject()
     {
+        if (MimicMocap)
+            CopyMocap();
     }
 
     // preview range of motion
     void CalcPreview()
     {
-        Transform[] joints = targetJoints;
+        ArticulationBody[] articulationBodies = targetJoints;
         //we want them all:
-        if (joints.Length == 0)
-            joints = targetRagdollRoot.GetComponentsInChildren<Transform>();
+        if (articulationBodies.Length == 0)
+            articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
         
-        var articulationBodies = joints
-            .Select(x=>x.GetComponent<ArticulationBody>())
-            .Where(x=>x!=null)
-            .ToArray();
-
         List<PreviewValues> preview = new List<PreviewValues>();
 
         List<string> jNames = new List<string>(info2store.jointNames);
@@ -227,16 +296,79 @@ public class ROMparserSwingTwist : MonoBehaviour
                 Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
+                var diff = info2store.minRotations[index] - info2store.maxRotations[index];
+                var rangeOfMotion = new Vector3(
+                    Mathf.Abs(diff.x),
+                    Mathf.Abs(diff.y),
+                    Mathf.Abs(diff.z)
+                );
                 var p = new PreviewValues{
                     name=parts[1],
                     lower = info2store.minRotations[index],
-                    upper = info2store.maxRotations[index]
+                    upper = info2store.maxRotations[index],
+                    rangeOfMotion = rangeOfMotion
                 };             
                 preview.Add(p);
             }
         }
         Preview = preview.ToArray();
     }
+
+    // Make all joints use Max Range of Motion 
+    public void SetJointsToMaxROM()
+    {
+        //these are the articulationBodies that we want to parse and apply the constraints to
+        ArticulationBody[] articulationBodies;
+
+        ArticulationBody[] joints = targetJoints;
+        //we want them all:
+        if (joints.Length == 0)
+            joints = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+
+        articulationBodies = joints.ToArray();
+
+        foreach (var body in articulationBodies)
+        {
+            // root has no DOF
+            if (body.isRoot)
+                continue;
+            body.jointType = ArticulationJointType.SphericalJoint;
+            body.twistLock = ArticulationDofLock.LimitedMotion;
+            body.swingYLock = ArticulationDofLock.LimitedMotion;
+            body.swingZLock = ArticulationDofLock.LimitedMotion;
+
+			float stiffness = 40000f;
+			float damping = 0f;
+            float forceLimit = float.MaxValue;
+
+            var drive = new ArticulationDrive();
+            drive.lowerLimit = -(float)MaxROM;
+            drive.upperLimit = (float)MaxROM;
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            body.xDrive = drive;
+
+            drive = new ArticulationDrive();
+            drive.lowerLimit = -(float)MaxROM;
+            drive.upperLimit = (float)MaxROM;
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            body.yDrive = drive;            
+
+            drive = new ArticulationDrive();
+            drive.lowerLimit = -(float)MaxROM;
+            drive.upperLimit = (float)MaxROM;
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            body.zDrive = drive;
+
+            // body.useGravity = false;
+        }     
+    }
+
 
 
     //to apply the Range of Motion to MarathonMan004 (the ragdoll made of articulationBodies).
@@ -246,25 +378,10 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
         //these are the articulationBodies that we want to parse and apply the constraints to
-        ArticulationBody[] articulationBodies;
-
-
-        Transform[] joints = targetJoints;
+        ArticulationBody[] articulationBodies = targetJoints;
         //we want them all:
         if (joints.Length == 0)
-            joints = targetRagdollRoot.GetComponentsInChildren<Transform>();
-
-
-        List<ArticulationBody> temp = new List<ArticulationBody>();
-        for (int i = 0; i < joints.Length; i++)
-        {
-            ArticulationBody a = joints[i].GetComponent<ArticulationBody>();
-            if (a != null)
-                temp.Add(a);
-        }
-
-        articulationBodies = temp.ToArray();
-
+            articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
 
         List<string> jNames = new List<string>(info2store.jointNames);
 
@@ -282,49 +399,28 @@ public class ROMparserSwingTwist : MonoBehaviour
                 Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
-
                 //The swing in one axis:
-                ArticulationDrive yboundaries = new ArticulationDrive
-                {
-                    upperLimit = info2store.maxRotations[index].y,
-                    lowerLimit = info2store.minRotations[index].y
-                };
+                ArticulationDrive yboundaries = articulationBodies[i].yDrive;
+                yboundaries.upperLimit = info2store.maxRotations[index].y;
+                yboundaries.lowerLimit = info2store.minRotations[index].y;
                 articulationBodies[i].yDrive = yboundaries;
 
-
                 //The twist in the second axis:
-                ArticulationDrive zboundaries = new ArticulationDrive
-                {
-                    upperLimit = info2store.maxRotations[index].z,
-                    lowerLimit = info2store.minRotations[index].z
-                };
+                ArticulationDrive zboundaries = articulationBodies[i].zDrive;
+                zboundaries.upperLimit = info2store.maxRotations[index].z;
+                zboundaries.lowerLimit = info2store.minRotations[index].z;
                 articulationBodies[i].zDrive = zboundaries;
 
-
                 //The twist:
-                ArticulationDrive xboundaries = new ArticulationDrive
-                {
-                    upperLimit = info2store.maxRotations[index].x,
-                    lowerLimit = info2store.minRotations[index].x
-                };
+                ArticulationDrive xboundaries = articulationBodies[i].xDrive;
+                xboundaries.upperLimit = info2store.maxRotations[index].x;
+                xboundaries.lowerLimit = info2store.minRotations[index].x;
                 articulationBodies[i].xDrive = xboundaries;
 
-
                 articulationBodies[i].anchorRotation = Quaternion.identity; //the anchor cannot be rotated, otherwise the constraints make no sense
-
             }
-
-
-
-
-
-
         }
-
-
         Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
-
-
     }
 
     //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)

@@ -64,7 +64,8 @@ public class RagDollAgent : Agent
             var camera = FindObjectOfType<Camera>();
             if(camera != null) { 
                 var follow = camera.GetComponent<SmoothFollow>();
-                follow.target = CameraTarget;
+                if (follow != null)
+                    follow.target = CameraTarget;
             }
         }
         _hasAwake = true;        
