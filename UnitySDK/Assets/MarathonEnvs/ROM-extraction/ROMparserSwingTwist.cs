@@ -63,6 +63,14 @@ public class ROMparserSwingTwist : MonoBehaviour
     [Range(0,359)]
     public int MinROMNeededForJoint = 3;
 
+    [Range(0,500)]
+    public int MimicSkipPhysicsSteps = 50;
+    int _physicsStepsToNextMimic = 0;
+    public float stiffness = 40000f;
+    public float damping = 0f;
+    public float forceLimit = float.MaxValue;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -166,40 +174,24 @@ public class ROMparserSwingTwist : MonoBehaviour
 		root.gameObject.SetActive(false);
         var mocapRoot = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == root.name);
         Vector3 offset = rootPosition - mocapRoot.transform.position;
-        foreach (var targetRb in targets)
+        foreach (var body in targets)
         {
-			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == targetRb.name);
-            targetRb.transform.position = stat.position + offset;
-            targetRb.transform.rotation = stat.rotation;
-            if (targetRb.isRoot)
+			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == body.name);
+            body.transform.position = stat.position + offset;
+            body.transform.rotation = stat.rotation;
+            if (body.isRoot)
             {
-                targetRb.TeleportRoot(stat.position + offset, stat.rotation);
+                body.TeleportRoot(stat.position + offset, stat.rotation);
             }
-			// // float stiffness = 0f;
-			// // float damping = 10000f;
-			// if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.xDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.xDrive = drive;
-			// }			
-            // if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.yDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.yDrive = drive;
-			// }
-            // if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.zDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.zDrive = drive;
-			// }
         }
 		root.gameObject.SetActive(true);
+        foreach (var body in targets)
+        {
+            // body.AddForce(new Vector3(0.1f, -200f, 3f));
+            // body.AddTorque(new Vector3(0.1f, 200f, 3f));
+            body.velocity = (new Vector3(0.1f, 4f, .3f));
+            body.angularVelocity = (new Vector3(0.1f, 20f, 3f));
+        }
     }
     void Update()
     {
@@ -268,7 +260,13 @@ public class ROMparserSwingTwist : MonoBehaviour
     void OnRenderObject()
     {
         if (MimicMocap)
-            CopyMocap();
+        {
+            if (_physicsStepsToNextMimic-- < 1)
+            {
+                CopyMocap();
+                _physicsStepsToNextMimic = MimicSkipPhysicsSteps;
+            }
+        }
     }
 
     // preview range of motion
@@ -336,10 +334,6 @@ public class ROMparserSwingTwist : MonoBehaviour
             body.twistLock = ArticulationDofLock.LimitedMotion;
             body.swingYLock = ArticulationDofLock.LimitedMotion;
             body.swingZLock = ArticulationDofLock.LimitedMotion;
-
-			float stiffness = 40000f;
-			float damping = 0f;
-            float forceLimit = float.MaxValue;
 
             var drive = new ArticulationDrive();
             drive.lowerLimit = -(float)MaxROM;
