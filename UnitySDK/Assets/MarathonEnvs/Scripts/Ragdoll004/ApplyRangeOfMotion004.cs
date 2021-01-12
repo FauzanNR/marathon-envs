@@ -15,6 +15,8 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
     public int DegreesOfFreedom = 0;
 
+    [SerializeField]
+    bool debugWithLargestROM = false;
 
 
     // Start is called before the first frame update
@@ -69,6 +71,11 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
                 drive.lowerLimit = rom.lower.x;
                 drive.upperLimit = rom.upper.x;
                 body.xDrive = drive;
+                if (debugWithLargestROM) {
+                    drive.lowerLimit = -170;
+                    drive.upperLimit = +170;
+                }
+
             }
             if (rom.rangeOfMotion.y >= (float)MinROMNeededForJoint)
             {
@@ -79,6 +86,14 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
                 drive.lowerLimit = rom.lower.y;
                 drive.upperLimit = rom.upper.y;
                 body.yDrive = drive;
+
+                if (debugWithLargestROM)
+                {
+                    drive.lowerLimit = -170;
+                    drive.upperLimit = +170;
+                }
+
+
             }
             if (rom.rangeOfMotion.z >= (float)MinROMNeededForJoint)
             {
@@ -89,6 +104,13 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
                 drive.lowerLimit = rom.lower.z;
                 drive.upperLimit = rom.upper.z;
                 body.zDrive = drive;
+
+                if (debugWithLargestROM)
+                {
+                    drive.lowerLimit = -170;
+                    drive.upperLimit = +170;
+                }
+
             }
 
             if (!isLocked)
