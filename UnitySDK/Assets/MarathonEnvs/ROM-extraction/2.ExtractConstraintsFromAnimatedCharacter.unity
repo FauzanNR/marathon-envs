@@ -153,14 +153,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 2062591809}
-  info2store: {fileID: 11400000, guid: 44eed71eefb26d44caf8cecfbe74b710, type: 2}
+  info2store: {fileID: 11400000, guid: 175db96ff81bf4be8af3d10d3976b8db, type: 2}
   targetRagdollRoot: {fileID: 229651234}
   trainingEnv: {fileID: 539001198}
   targetJoints: []
-  Preview: []
+  RangeOfMotion2Store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0,
+    type: 2}
+  RangeOfMotionPreview: []
   MimicMocap: 1
   MaxROM: 180
-  MinROMNeededForJoint: 3
+  MimicSkipPhysicsSteps: 50
+  stiffness: 40000
+  damping: 0
+  forceLimit: 3.4028235e+38
 --- !u!4 &147523745
 Transform:
   m_ObjectHideFlags: 0

@@ -5721,6 +5721,7 @@ GameObject:
   - component: {fileID: 4606487679878347701}
   - component: {fileID: 6615205430042084611}
   - component: {fileID: 6001081406238583533}
+  - component: {fileID: 1534069135567159773}
   m_Layer: 14
   m_Name: MarathonMan004
   m_TagString: Untagged
@@ -5945,6 +5946,22 @@ MonoBehaviour:
   - RightFoot
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
+--- !u!114 &1534069135567159773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8722076229893094739}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 724fbb7fb42874164b01cca63c7e6f8b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  RangeOfMotion2Store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0,
+    type: 2}
+  MinROMNeededForJoint: 16
+  DegreesOfFreedom: 39
 --- !u!1 &8872927153018051289
 GameObject:
   m_ObjectHideFlags: 0
