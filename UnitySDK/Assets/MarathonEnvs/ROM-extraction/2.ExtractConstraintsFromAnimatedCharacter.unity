@@ -154,7 +154,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 2062591809}
   info2store: {fileID: 11400000, guid: 175db96ff81bf4be8af3d10d3976b8db, type: 2}
-  targetRagdollRoot: {fileID: 229651234}
+  targetRagdollRoot: {fileID: 871919434}
   trainingEnv: {fileID: 539001198}
   targetJoints: []
   RangeOfMotion2Store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0,
@@ -162,7 +162,7 @@ MonoBehaviour:
   RangeOfMotionPreview: []
   MimicMocap: 1
   MaxROM: 180
-  MimicSkipPhysicsSteps: 50
+  MimicSkipPhysicsSteps: 0
   stiffness: 40000
   damping: 0
   forceLimit: 3.4028235e+38
@@ -180,12 +180,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &229651234 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5155081340422327880, guid: 039f5bf4e1cc0214ea4f370014f59897,
-    type: 3}
-  m_PrefabInstance: {fileID: 268274524}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &268274524
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -253,6 +247,246 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.size
+      value: 18
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[2].Muscle
+      value: articulation:Spine2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[3].Muscle
+      value: articulation:RightUpLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[4].Muscle
+      value: articulation:RightLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[5].Muscle
+      value: articulation:RightFoot
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[6].Muscle
+      value: articulation:LeftUpLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[7].Muscle
+      value: articulation:LeftLeg
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[8].Muscle
+      value: articulation:LeftFoot
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[9].Muscle
+      value: articulation:LeftShoulder
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[10].Muscle
+      value: articulation:LeftArm
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[11].Muscle
+      value: articulation:LeftForeArm
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[12].Muscle
+      value: articulation:LeftToeBase
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[13].Muscle
+      value: articulation:RightShoulder
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[14].Muscle
+      value: articulation:RightArm
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[15].Muscle
+      value: articulation:RightForeArm
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[16].Muscle
+      value: articulation:RightToeBase
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[17].Muscle
+      value: articulation:Neck
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[2].PowerVector.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[3].PowerVector.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[3].PowerVector.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[3].PowerVector.z
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[4].PowerVector.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[4].PowerVector.y
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[4].PowerVector.z
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[5].PowerVector.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[5].PowerVector.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[6].PowerVector.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[6].PowerVector.y
+      value: 120
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[6].PowerVector.z
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[7].PowerVector.x
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[7].PowerVector.y
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[7].PowerVector.z
+      value: 80
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[8].PowerVector.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[9].PowerVector.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[9].PowerVector.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[9].PowerVector.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[10].PowerVector.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[10].PowerVector.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[10].PowerVector.z
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[11].PowerVector.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[11].PowerVector.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[11].PowerVector.z
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[12].PowerVector.x
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[12].PowerVector.y
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[12].PowerVector.z
+      value: 40
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[17].PowerVector.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[17].PowerVector.y
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 1942286211220644650, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: MusclePowers.Array.data[17].PowerVector.z
+      value: 20
+      objectReference: {fileID: 0}
     - target: {fileID: 4212714203011529027, guid: 039f5bf4e1cc0214ea4f370014f59897,
         type: 3}
       propertyPath: m_IsActive
@@ -262,6 +496,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: ControllerMarathonManEnv-v1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5391639678180288632, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: _articulationBodyRoot
+      value: 
+      objectReference: {fileID: 871919436}
+    - target: {fileID: 5437849642330803184, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: ragdollcontroller
+      value: 
+      objectReference: {fileID: 567866619}
+    - target: {fileID: 6599971818930870607, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 039f5bf4e1cc0214ea4f370014f59897, type: 3}
@@ -277,6 +526,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a5ee228c95df445dfb46077fb9d6a66d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &567866619 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1973854535028386212, guid: 039f5bf4e1cc0214ea4f370014f59897,
+    type: 3}
+  m_PrefabInstance: {fileID: 268274524}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &871919434 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1975972665812050258, guid: 039f5bf4e1cc0214ea4f370014f59897,
+    type: 3}
+  m_PrefabInstance: {fileID: 268274524}
+  m_PrefabAsset: {fileID: 0}
+--- !u!171741748 &871919436 stripped
+ArticulationBody:
+  m_CorrespondingSourceObject: {fileID: 5003744890765894587, guid: 039f5bf4e1cc0214ea4f370014f59897,
+    type: 3}
+  m_PrefabInstance: {fileID: 268274524}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1242214833
 GameObject:
   m_ObjectHideFlags: 0
