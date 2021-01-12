@@ -9,8 +9,8 @@ public class ApplyRangeOfMotion004Editor : Editor
     [SerializeField]
     SerializedProperty ROMparserSwingTwist;
 
-    [SerializeField]
-    string keyword4prefabs = "Constrained-procedurally";
+    //[SerializeField]
+    //string keyword4prefabs = "Constrained-procedurally";
 
 
     void OnEnable()
@@ -31,10 +31,13 @@ public class ApplyRangeOfMotion004Editor : Editor
             t.CalculateDoF();
         }        
 
-        if (GUILayout.Button("1. Apply to RagDoll"))
+        if (GUILayout.Button("1. Apply to RagDoll Prefab"))
         {
             ApplyRangeOfMotion004 t = target as ApplyRangeOfMotion004;
             t.ApplyToRagDoll();
+
+            PrefabUtility.ApplyPrefabInstance( t.gameObject, InteractionMode.AutomatedAction);
+
         }
     }
 }
