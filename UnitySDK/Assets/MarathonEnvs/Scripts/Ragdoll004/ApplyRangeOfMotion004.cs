@@ -62,6 +62,9 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
             body.swingZLock = ArticulationDofLock.LockedMotion;
             body.jointType = ArticulationJointType.FixedJoint;
 
+
+            body.anchorRotation = Quaternion.identity; //we make sure the anchor has no Rotation, otherwise the constraints do not make any sense
+
             if (rom.rangeOfMotion.x > (float)MinROMNeededForJoint)
             {
                 DegreesOfFreedom++;
