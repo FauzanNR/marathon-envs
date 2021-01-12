@@ -121,29 +121,63 @@ mlagents-learn config\marathon_envs_config.yaml --run-id=test-2020-01-06-v2 --en
 
 ### 1.0 Installation with conda environment file
 
-1. Install conda. 
-2. In the conda command prompt, go to the home of this repo
-3. Run `conda env create -f environment.yml `
+1. Make sure you have the latest graphics drivers updated
+2. Install anaconda. If it is already installed, make sure you have the latest version by running, with admin privileges, `conda upgrade anaconda`
+3. Make sure you have the latest version of pip by running, with admin privileges, `python -m pip install --upgrade pip`
+4. In the conda command prompt, go to the home of this repo
+5. Run `conda env create -f environment.yml `
 
 
 
-If you update from a previous ml-agents version, you can use `conda env update -f environment.yml `. It is Remember to restart the computer
+If you update from a previous ml-agents version, you can use `conda env update -f environment.yml `. Remember to restart the computer after that.
 
 
 
 
 
-If you had trouble using the previous, you can: 
+### 1.1 Common mistakes
+
+On windows,  missing packages:
 
 
 
-### 1.1 Installation info online
+If you have an error similar to:
+
+
+
+`Error loading site-packages\torch\lib\caffe2_detectron_ops_gpu.dll or one of its dependencies.`
+
+Then the fix seems to be:
+
+https://github.com/pytorch/pytorch/issues/35803
+
+
+
+
+
+If the error is:
+
+`Error loading "c:\users\joanl\.conda\envs\marathon-envs\lib\site-packages\torch\lib\cudnn_adv_infer64_8.dll" or one of its dependencies.`
+
+Then, you may install the latest C++ redistributable
+
+
+
+https://support.microsoft.com/en-ca/help/2977003/the-latest-supported-visual-c-downloads 
+
+
+
+If you still have trouble using the previous, you may have memory limits. Try setting up the training with less environments.
+
+
+
+### 1.2 (old) Installation info online
 
 These training environments are based on the *ml-agents* packages. The latest version of marathon-envs works with release 10. To install the software environment to get training working, you can check the basic steps to install the training framework are explained in the ml-agents repository:
 
 https://github.com/Unity-Technologies/ml-agents/blob/release_10_docs/docs/Installation.md
 
-### 1.2 The right combination of pip and conda
+### 1.3 (old)  The right combination of pip and conda
 
 On windows, it turns out there are some tiny challenging things in the previous instructions. A combination that has worked for me is:
 
@@ -168,7 +202,7 @@ ERROR: pip's dependency resolver does not currently take into account all the pa
  Which I solve using:`pip3 install future` The resulting environment trains well the latest version of the marathon-environments found in this repository
 
 
-### 1.3 OLD Using pip and conda
+### 1.4 OLD Using pip and conda
 
 When installing mlagents: I have had trouble setting the required version of mlagents using anaconda in Windows 10. Specifically, the problem I found was that when I ran
 
@@ -203,7 +237,7 @@ After that, install mlagents with the instruction:
 Doing it like this, when running the training instruction it works directly
 
 
-### 1.4. (OLD) Going around problem with tensorflow not compiled for AVX and AVX2
+### 1.5. (EVEN OLDER) Going around problem with tensorflow not compiled for AVX and AVX2
 
 It seems like version 1.7.1 is super old.
 Another option:
