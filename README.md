@@ -122,7 +122,7 @@ mlagents-learn config\marathon_envs_config.yaml --run-id=test-2020-01-06-v2 --en
 ### 1.0 Installation with conda environment file
 
 1. Make sure you have the latest graphics drivers updated. Restart the computer.
-2. Install anaconda. If it is already installed, make sure you have the latest version by running, with admin privileges, `conda upgrade anaconda`. Restart the computer.
+2. Install anaconda. If it is already installed, make sure you have the latest version by running, with admin privileges, `conda update anaconda`. Restart the computer.
 3. Make sure you have the latest version of pip by running, with admin privileges, `python -m pip install --upgrade pip`
 4. In the conda command prompt, go to the home of this repo
 5. Run `conda env create -f environment.yml `
