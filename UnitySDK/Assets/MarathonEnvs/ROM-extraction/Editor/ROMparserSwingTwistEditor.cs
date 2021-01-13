@@ -43,15 +43,15 @@ public class ROMparserSwingTwistEditor: Editor
             t.SetJointsToMaxROM();
         }        
 
-        //if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
-        //{
-        //    ROMparserSwingTwist t = target as ROMparserSwingTwist;
-        //    t.WriteRangeOfMotion();
-        //    AssetDatabase.SaveAssets();
-        //    // string targetFile = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/MarathonMan004RomPreview.asset";
-        //    // string sourceFile = "Assets/MarathonEnvs/ROM-extraction/RomPreview.asset";
-        //    // AssetDatabase.CopyAsset(sourceFile, targetFile);
-        //}
+        if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
+        {
+            ROMparserSwingTwist t = target as ROMparserSwingTwist;
+            t.WriteRangeOfMotion();
+            AssetDatabase.SaveAssets();
+            // string targetFile = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/MarathonMan004RomPreview.asset";
+            // string sourceFile = "Assets/MarathonEnvs/ROM-extraction/RomPreview.asset";
+            // AssetDatabase.CopyAsset(sourceFile, targetFile);
+        }
 
         if (GUILayout.Button("1.Apply ROM As Constraints"))
         {
