@@ -17,5 +17,23 @@ public struct RangeOfMotionValue
 public class RangeOfMotion004 : ScriptableObject
 {
     public RangeOfMotionValue[] Values;
+
+
+    public string[] getNames() {
+        
+
+        string[] temp = new string[Values.Length];
+
+        for(int i = 0; i <Values.Length; i++)
+        {
+            temp[i] = (Values[i].name);
+
+
+        }
+        return temp;
+    
+    }
+
+
 }
 

@@ -16,13 +16,18 @@ public class ROMparserSwingTwistEditor: Editor
     [SerializeField]
     SerializedProperty ROMparserSwingTwist;
 
-    [SerializeField]
-    string keyword4prefabs = "Constrained-procedurally";
+    //NOT USED ANYMORE
+    //[SerializeField]
+    //string keyword4prefabs = "Constrained-procedurally";
+    //[SerializeField]
+    //RangeOfMotion004 theRagdollPrefab;
+
 
 
     void OnEnable()
     {
         ROMparserSwingTwist = serializedObject.FindProperty("ROMparserSwingTwist");
+     
     }
 
 
@@ -41,7 +46,7 @@ public class ROMparserSwingTwistEditor: Editor
         {
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
             t.SetJointsToMaxROM();
-        }        
+        }
 
         //if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
         //{
@@ -53,15 +58,19 @@ public class ROMparserSwingTwistEditor: Editor
         //    // AssetDatabase.CopyAsset(sourceFile, targetFile);
         //}
 
-        if (GUILayout.Button("1.Apply ROM As Constraints"))
-        {
 
-            ROMparserSwingTwist t = target as ROMparserSwingTwist;
-            Transform targetRoot = t.targetRagdollRoot;
-            t.ApplyROMAsConstraints();
-        }
+        //This is done now in the script RangeOfMotion004
+        //if (GUILayout.Button("1.Apply ROM As Constraints"))
+        //{
+
+        //    ROMparserSwingTwist t = target as ROMparserSwingTwist;
+        //    Transform targetRoot = t.targetRagdollRoot;
+        //    t.ApplyROMAsConstraints();
+        //}
 
 
+        /*
+        //this is now done in script ApplyRangeOfMotion004
         if (GUILayout.Button("2.Store Ragdoll and Env as Prefab"))
         {
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
@@ -83,17 +92,18 @@ public class ROMparserSwingTwistEditor: Editor
 
 
         }
+        */
+        GUILayout.Label("Prefab Ragdoll:");
 
-        GUILayout.Label("Prefab Keyword:");
-        keyword4prefabs = GUILayout.TextField(keyword4prefabs);
+        
 
         GUILayout.Label("How to use:");
 
         GUILayout.TextArea(
             "Step 1: execute in play mode until the values in the Info2Store file do not change any more" +
-            " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
-            " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
-
+            // " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
+            // " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
+            " \n Step 2: open the Ragdoll on which you want to apply the range of motion, and use the script ApplyRangeOfMotion004");
 
 
         serializedObject.ApplyModifiedProperties();
@@ -101,7 +111,7 @@ public class ROMparserSwingTwistEditor: Editor
     }
 
 
-
+       
     void storeNewPrefabWithROM(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
@@ -111,13 +121,13 @@ public class ROMparserSwingTwistEditor: Editor
         Transform targetRoot = t.targetRagdollRoot;
 
 
-        string add2prefabs = keyword4prefabs;
+        //string add2prefabs = keyword4prefabs;
 
         
 
         // Set the path,
         // and name it as the GameObject's name with the .Prefab format
-        string localPath = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/" + targetRoot.name + add2prefabs + ".prefab";
+        string localPath = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/" + targetRoot.name + ".prefab";
 
         // Make sure the file name is unique, in case an existing Prefab has the same name.
         string uniqueLocalPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
@@ -138,7 +148,7 @@ public class ROMparserSwingTwistEditor: Editor
         {
             Transform targetEnv = envPrefab.transform;
 
-            targetEnv.name = "ControllerMarathonManEnv" + add2prefabs;
+            targetEnv.name = "ControllerMarathonManEnv";
 
             string localEnvPath = "Assets/MarathonEnvs/Environments/" + targetEnv.name + ".prefab";
 
@@ -157,9 +167,9 @@ public class ROMparserSwingTwistEditor: Editor
            
         }
 
-
+        
 
     }
+        
 
-
-}
+    }
