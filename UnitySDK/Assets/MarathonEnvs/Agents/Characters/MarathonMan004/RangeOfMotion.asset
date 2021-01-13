@@ -293,3 +293,5 @@ MonoBehaviour:
     lower: {x: 0, y: 0, z: 0}
     upper: {x: 0, y: 0, z: 0}
     rangeOfMotion: {x: 0, y: 0, z: 0}
+  InferenceModel: {fileID: 5022602860645237092, guid: f2b134ff161530946b7c8cac57d8e28b,
+    type: 3}

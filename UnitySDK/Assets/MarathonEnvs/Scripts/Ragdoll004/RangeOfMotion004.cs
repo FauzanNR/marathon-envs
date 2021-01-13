@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+using Unity.Barracuda;
 
 [System.Serializable]
 public struct RangeOfMotionValue
@@ -18,6 +19,9 @@ public class RangeOfMotion004 : ScriptableObject
 {
     public RangeOfMotionValue[] Values;
 
+    public
+    //a model trained with these constraints
+    NNModel InferenceModel;
 
     public string[] getNames() {
         

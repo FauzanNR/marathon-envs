@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 5866666021843134029}
-  info2store: {fileID: 11400000, guid: 44eed71eefb26d44caf8cecfbe74b710, type: 2}
+  info2store: {fileID: 0}
   targetRagdollRoot: {fileID: 1535983488}
   trainingEnv: {fileID: 0}
   targetJoints:
@@ -163,6 +163,13 @@ MonoBehaviour:
   - {fileID: 1513971840}
   - {fileID: 1513971841}
   - {fileID: 1513971842}
+  RangeOfMotionPreview: []
+  MimicMocap: 0
+  MaxROM: 180
+  MimicSkipPhysicsSteps: 50
+  stiffness: 40000
+  damping: 0
+  forceLimit: 3.4028235e+38
 --- !u!4 &147523745
 Transform:
   m_ObjectHideFlags: 0
@@ -562,6 +569,86 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 260939356137283678, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0039292537
+      objectReference: {fileID: 0}
+    - target: {fileID: 348096294373738880, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0018831529
+      objectReference: {fileID: 0}
+    - target: {fileID: 414781352213456562, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.00000003632158
+      objectReference: {fileID: 0}
+    - target: {fileID: 689695163126716068, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0028464198
+      objectReference: {fileID: 0}
+    - target: {fileID: 837786529545343070, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.022321196
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127414539557790481, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.100326896
+      objectReference: {fileID: 0}
+    - target: {fileID: 1193331087286090374, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.000000023283064
+      objectReference: {fileID: 0}
+    - target: {fileID: 1239497654434244758, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.002765119
+      objectReference: {fileID: 0}
+    - target: {fileID: 1279219593241357561, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.015995614
+      objectReference: {fileID: 0}
+    - target: {fileID: 1340527944349289928, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.01646515
+      objectReference: {fileID: 0}
+    - target: {fileID: 1496666803027742699, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.00042614038
+      objectReference: {fileID: 0}
+    - target: {fileID: 1808420173214174992, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.00000036135316
+      objectReference: {fileID: 0}
+    - target: {fileID: 1856326131723110599, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.026280222
+      objectReference: {fileID: 0}
+    - target: {fileID: 2015231249865073876, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.026279865
+      objectReference: {fileID: 0}
+    - target: {fileID: 2762019965930867294, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: applyROMInGamePlay
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2768223422526478394, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.10710565
+      objectReference: {fileID: 0}
     - target: {fileID: 2819076709843220300, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
       propertyPath: m_Immovable
@@ -571,6 +658,21 @@ PrefabInstance:
         type: 3}
       propertyPath: m_UseGravity
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2971074736974418861, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.015995614
+      objectReference: {fileID: 0}
+    - target: {fileID: 4028625926059442890, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.00041223224
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079613823659954323, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.02983792
       objectReference: {fileID: 0}
     - target: {fileID: 4177175816300940728, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
@@ -586,6 +688,56 @@ PrefabInstance:
         type: 3}
       propertyPath: RequestCamera
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5764981685078331935, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0149619905
+      objectReference: {fileID: 0}
+    - target: {fileID: 6032172806317267978, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0027651563
+      objectReference: {fileID: 0}
+    - target: {fileID: 6114793560261688705, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.002005352
+      objectReference: {fileID: 0}
+    - target: {fileID: 6499578195492720033, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0028615966
+      objectReference: {fileID: 0}
+    - target: {fileID: 6567217719409461366, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.010008066
+      objectReference: {fileID: 0}
+    - target: {fileID: 7079208600320329709, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.000000032944072
+      objectReference: {fileID: 0}
+    - target: {fileID: 7179770322580443774, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.013734119
+      objectReference: {fileID: 0}
+    - target: {fileID: 7916655283506230889, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.0013152355
+      objectReference: {fileID: 0}
+    - target: {fileID: 8149641315181257463, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.022321021
+      objectReference: {fileID: 0}
+    - target: {fileID: 8208509521937967625, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.029821865
       objectReference: {fileID: 0}
     - target: {fileID: 8719875636317608491, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
@@ -646,6 +798,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: MarathonMan004
+      objectReference: {fileID: 0}
+    - target: {fileID: 9173802407982569481, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: 0.00000008381903
+      objectReference: {fileID: 0}
+    - target: {fileID: 9218996436316437763, guid: 6a7e84e6b4b64c744857753e3e544b81,
+        type: 3}
+      propertyPath: m_ParentAnchorPosition.z
+      value: -0.0044048186
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a7e84e6b4b64c744857753e3e544b81, type: 3}

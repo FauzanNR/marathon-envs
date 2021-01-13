@@ -5,9 +5,13 @@ using System;
 using System.Linq;
 using UnityEngine;
 
+using Unity.MLAgents.Policies;
+
+
 public class ApplyRangeOfMotion004 : MonoBehaviour
 {
-
+    [SerializeField]
+    bool applyROMInGamePlay;
 
     public RangeOfMotion004 RangeOfMotion2Store;
 
@@ -18,6 +22,23 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
     [SerializeField]
     bool debugWithLargestROM = false;
+
+
+
+    private void OnEnable()
+    {
+        if (applyROMInGamePlay)
+        {
+            ApplyToRagDoll();
+            if (RangeOfMotion2Store.InferenceModel != null)
+                GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
+
+
+        }
+
+
+
+    }
 
 
     // Start is called before the first frame update

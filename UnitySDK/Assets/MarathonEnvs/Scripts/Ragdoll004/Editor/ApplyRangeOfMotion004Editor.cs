@@ -21,9 +21,14 @@ public class ApplyRangeOfMotion004Editor : Editor
     public override void OnInspectorGUI()
     {
         serializedObject.Update();
-        GUILayout.Label("");
         
         base.OnInspectorGUI();
+
+        GUILayout.Label("Apply at WakeUP");
+
+
+
+
 
         if (GUILayout.Button("1. Calculate Degrees of Freedom (motors)"))
         {
