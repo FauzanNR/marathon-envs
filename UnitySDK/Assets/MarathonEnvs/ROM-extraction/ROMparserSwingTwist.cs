@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
+
 public class ROMparserSwingTwist : MonoBehaviour
 {
 
@@ -42,16 +43,13 @@ public class ROMparserSwingTwist : MonoBehaviour
     ArticulationBody[] targetJoints;
 
 
-    [System.Serializable]
-    public struct PreviewValues
-    {
-        [HideInInspector]
-        public string name;
-        public Vector3 lower;
-        public Vector3 upper;
-        public Vector3 rangeOfMotion;
-    }
-    public PreviewValues[] Preview;
+
+    [SerializeField]
+
+    public RangeOfMotion004 RangeOfMotion2Store;
+    [SerializeField]
+
+    public RangeOfMotionValue[] RangeOfMotionPreview;    
 
     MocapControllerArtanim _mocapControllerArtanim;
     Vector3 _rootStartPosition;
@@ -60,8 +58,14 @@ public class ROMparserSwingTwist : MonoBehaviour
     public bool MimicMocap;
     [Range(0,359)]
     public int MaxROM = 180;
-    [Range(0,359)]
-    public int MinROMNeededForJoint = 3;
+
+    [Range(0,500)]
+    public int MimicSkipPhysicsSteps = 50;
+    int _physicsStepsToNextMimic = 0;
+    public float stiffness = 40000f;
+    public float damping = 0f;
+    public float forceLimit = float.MaxValue;
+
 
 
     // Start is called before the first frame update
@@ -166,40 +170,24 @@ public class ROMparserSwingTwist : MonoBehaviour
 		root.gameObject.SetActive(false);
         var mocapRoot = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == root.name);
         Vector3 offset = rootPosition - mocapRoot.transform.position;
-        foreach (var targetRb in targets)
+        foreach (var body in targets)
         {
-			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == targetRb.name);
-            targetRb.transform.position = stat.position + offset;
-            targetRb.transform.rotation = stat.rotation;
-            if (targetRb.isRoot)
+			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == body.name);
+            body.transform.position = stat.position + offset;
+            body.transform.rotation = stat.rotation;
+            if (body.isRoot)
             {
-                targetRb.TeleportRoot(stat.position + offset, stat.rotation);
+                body.TeleportRoot(stat.position + offset, stat.rotation);
             }
-			// // float stiffness = 0f;
-			// // float damping = 10000f;
-			// if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.xDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.xDrive = drive;
-			// }			
-            // if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.yDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.yDrive = drive;
-			// }
-            // if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
-			// {
-			// 	var drive = targetRb.zDrive;
-			// 	// drive.stiffness = stiffness;
-			// 	// drive.damping = damping;
-			// 	targetRb.zDrive = drive;
-			// }
         }
 		root.gameObject.SetActive(true);
+        foreach (var body in targets)
+        {
+            // body.AddForce(new Vector3(0.1f, -200f, 3f));
+            // body.AddTorque(new Vector3(0.1f, 200f, 3f));
+            body.velocity = (new Vector3(0.1f, 4f, .3f));
+            body.angularVelocity = (new Vector3(0.1f, 20f, 3f));
+        }
     }
     void Update()
     {
@@ -268,7 +256,13 @@ public class ROMparserSwingTwist : MonoBehaviour
     void OnRenderObject()
     {
         if (MimicMocap)
-            CopyMocap();
+        {
+            if (_physicsStepsToNextMimic-- < 1)
+            {
+                CopyMocap();
+                _physicsStepsToNextMimic = MimicSkipPhysicsSteps;
+            }
+        }
     }
 
     // preview range of motion
@@ -279,7 +273,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         if (articulationBodies.Length == 0)
             articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
         
-        List<PreviewValues> preview = new List<PreviewValues>();
+        List<RangeOfMotionValue> preview = new List<RangeOfMotionValue>();
 
         List<string> jNames = new List<string>(info2store.jointNames);
         for (int i = 0; i < articulationBodies.Length; i++)
@@ -302,7 +296,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                     Mathf.Abs(diff.y),
                     Mathf.Abs(diff.z)
                 );
-                var p = new PreviewValues{
+                var p = new RangeOfMotionValue{
                     name=parts[1],
                     lower = info2store.minRotations[index],
                     upper = info2store.maxRotations[index],
@@ -311,8 +305,16 @@ public class ROMparserSwingTwist : MonoBehaviour
                 preview.Add(p);
             }
         }
-        Preview = preview.ToArray();
+        RangeOfMotionPreview = preview.ToArray();
     }
+
+    //Not needed, the previous function already does that
+    //public void WriteRangeOfMotion()
+    //{
+    //    if (RangeOfMotion2Store == null)
+    //        RangeOfMotion2Store = RangeOfMotion004.CreateInstance<RangeOfMotion004>();
+    //    RangeOfMotion2Store.Values = RangeOfMotionPreview;
+    //}
 
     // Make all joints use Max Range of Motion 
     public void SetJointsToMaxROM()
@@ -336,10 +338,6 @@ public class ROMparserSwingTwist : MonoBehaviour
             body.twistLock = ArticulationDofLock.LimitedMotion;
             body.swingYLock = ArticulationDofLock.LimitedMotion;
             body.swingZLock = ArticulationDofLock.LimitedMotion;
-
-			float stiffness = 40000f;
-			float damping = 0f;
-            float forceLimit = float.MaxValue;
 
             var drive = new ArticulationDrive();
             drive.lowerLimit = -(float)MaxROM;
