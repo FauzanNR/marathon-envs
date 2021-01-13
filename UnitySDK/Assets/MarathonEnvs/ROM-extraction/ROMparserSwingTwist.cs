@@ -13,8 +13,8 @@ public class ROMparserSwingTwist : MonoBehaviour
     [SerializeField]
     Animator theAnimator;
 
- //   [SerializeField]
- //   Transform sourceAnimationRoot;
+    [SerializeField]
+    Transform skeletonRoot;
 
     Transform[] joints;
 
@@ -81,7 +81,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         //a.Play();
 
      
-        joints = theAnimator.GetComponentsInChildren<Transform>();
+        joints = skeletonRoot.GetComponentsInChildren<Transform>();
 
         info2store.Values = new RangeOfMotionValue[joints.Length];
         //info2store.maxRotations = new Vector3[joints.Length];

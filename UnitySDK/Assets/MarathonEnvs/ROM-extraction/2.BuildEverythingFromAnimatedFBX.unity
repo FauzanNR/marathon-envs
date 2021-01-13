@@ -153,6 +153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 905811485}
+  skeletonRoot: {fileID: 1072644998}
   info2store: {fileID: 11400000, guid: e561678fee66b9b40b7751d9a55f0704, type: 2}
   targetRagdollRoot: {fileID: 247293934}
   trainingEnv: {fileID: 0}
@@ -264,6 +265,12 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 60222b4e849c1ec47b60b4d00b772f0f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57ff63287e80d214a9cff16bba965fc6, type: 3}
+--- !u!4 &1072644998 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6360398436353765508, guid: 57ff63287e80d214a9cff16bba965fc6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1072644997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1242214833
 GameObject:
   m_ObjectHideFlags: 0

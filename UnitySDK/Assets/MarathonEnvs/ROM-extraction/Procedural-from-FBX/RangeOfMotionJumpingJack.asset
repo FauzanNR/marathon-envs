@@ -13,5 +13,4 @@ MonoBehaviour:
   m_Name: RangeOfMotionJumpingJack
   m_EditorClassIdentifier: 
   Values: []
-  InferenceModel: {fileID: 5022602860645237092, guid: f2b134ff161530946b7c8cac57d8e28b,
-    type: 3}
+  InferenceModel: {fileID: 0}
