@@ -307,14 +307,12 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
         RangeOfMotionPreview = preview.ToArray();
     }
-
-    //Not needed, the previous function already does that
-    //public void WriteRangeOfMotion()
-    //{
-    //    if (RangeOfMotion2Store == null)
-    //        RangeOfMotion2Store = RangeOfMotion004.CreateInstance<RangeOfMotion004>();
-    //    RangeOfMotion2Store.Values = RangeOfMotionPreview;
-    //}
+    public void WriteRangeOfMotion()
+    {
+        if (RangeOfMotion2Store == null)
+            RangeOfMotion2Store = RangeOfMotion004.CreateInstance<RangeOfMotion004>();
+        RangeOfMotion2Store.Values = RangeOfMotionPreview;
+    }
 
     // Make all joints use Max Range of Motion 
     public void SetJointsToMaxROM()
