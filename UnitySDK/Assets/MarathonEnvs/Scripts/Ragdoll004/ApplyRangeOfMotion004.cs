@@ -1,22 +1,44 @@
 using System.Collections;
 using System.Collections.Generic;
+
+using System;
 using System.Linq;
 using UnityEngine;
 
+using Unity.MLAgents.Policies;
+
+
 public class ApplyRangeOfMotion004 : MonoBehaviour
 {
-
     [SerializeField]
+    bool applyROMInGamePlay;
 
     public RangeOfMotion004 RangeOfMotion2Store;
 
-    [Range(0,359)]
+      [Range(0,359)]
     public int MinROMNeededForJoint = 5;
 
     public int DegreesOfFreedom = 0;
 
     [SerializeField]
     bool debugWithLargestROM = false;
+
+
+
+    private void OnEnable()
+    {
+        if (applyROMInGamePlay)
+        {
+            ApplyToRagDoll();
+            if (RangeOfMotion2Store.InferenceModel != null)
+                GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
+
+
+        }
+
+
+
+    }
 
 
     // Start is called before the first frame update
@@ -55,7 +77,19 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
         DegreesOfFreedom = 0;
         foreach (var rom in RangeOfMotion2Store.Values)
         {
-            var body = articulationBodies.First(x=>x.name == $"articulation:{rom.name}");
+            ArticulationBody body = null;
+
+
+            try
+            {
+                body = articulationBodies.First(x => x.name == $"articulation:{rom.name}");
+
+            }
+           catch (InvalidOperationException e) { Debug.Log("no articulationBody with name: " + rom.name + "Exception: " +e); }
+                
+                if (body == null)
+                return;
+
             bool isLocked = true;
             body.twistLock = ArticulationDofLock.LockedMotion;
             body.swingYLock = ArticulationDofLock.LockedMotion;

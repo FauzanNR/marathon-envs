@@ -13,8 +13,8 @@ public class ROMparserSwingTwist : MonoBehaviour
     [SerializeField]
     Animator theAnimator;
 
- //   [SerializeField]
- //   Transform sourceAnimationRoot;
+    [SerializeField]
+    Transform skeletonRoot;
 
     Transform[] joints;
 
@@ -23,8 +23,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
  
     [SerializeField]
-    public ROMinfoCollector info2store;
-
+    //public ROMinfoCollector info2store;
+    public RangeOfMotion004 info2store;
 
     //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
@@ -44,9 +44,12 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-    [SerializeField]
+    //[SerializeField]
 
-    public RangeOfMotion004 RangeOfMotion2Store;
+    //public RangeOfMotion004 RangeOfMotion2Store;
+
+   // public ROMinfoCollector RangeOfMotionStored;
+
     [SerializeField]
 
     public RangeOfMotionValue[] RangeOfMotionPreview;    
@@ -78,12 +81,12 @@ public class ROMparserSwingTwist : MonoBehaviour
         //a.Play();
 
      
-        joints = theAnimator.GetComponentsInChildren<Transform>();
+        joints = skeletonRoot.GetComponentsInChildren<Transform>();
 
-        
-        info2store.maxRotations = new Vector3[joints.Length];
-        info2store.minRotations = new Vector3[joints.Length];
-        info2store.jointNames = new string[joints.Length];
+        info2store.Values = new RangeOfMotionValue[joints.Length];
+        //info2store.maxRotations = new Vector3[joints.Length];
+        //info2store.minRotations = new Vector3[joints.Length];
+        //info2store.jointNames = new string[joints.Length];
 
 
 
@@ -91,12 +94,13 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         for (int i = 0; i < joints.Length; i++)
         {
-            info2store.jointNames[i] = joints[i].name;
+            // info2store.jointNames[i] = joints[i].name;
+            info2store.Values[i].name  = joints[i].name;
 
 
         }
 
-            AnimatorClipInfo[] info = theAnimator.GetCurrentAnimatorClipInfo(0);
+        AnimatorClipInfo[] info = theAnimator.GetCurrentAnimatorClipInfo(0);
         AnimationClip theClip = info[0].clip;
         duration = theClip.length;
         Debug.Log("The animation " + theClip.name + " has a duration of: " + duration);
@@ -226,8 +230,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                 candidates4storage.y = (candidates4storage.y - 360);
             if (Mathf.Abs(candidates4storage.z - 360) < Mathf.Abs(candidates4storage.z))
                 candidates4storage.z = (candidates4storage.z - 360);
-
-
+            /*
             if (info2store.maxRotations[i].x < candidates4storage.x)
                 info2store.maxRotations[i].x = candidates4storage.x;
             if (info2store.maxRotations[i].y < candidates4storage.y)
@@ -242,6 +245,23 @@ public class ROMparserSwingTwist : MonoBehaviour
                 info2store.minRotations[i].y = candidates4storage.y;
             if (info2store.minRotations[i].z > candidates4storage.z)
                 info2store.minRotations[i].z = candidates4storage.z;
+            */
+
+
+            if (info2store.Values[i].upper.x < candidates4storage.x)
+                info2store.Values[i].upper.x = candidates4storage.x;
+            if (info2store.Values[i].upper.y < candidates4storage.y)
+                info2store.Values[i].upper.y = candidates4storage.y;
+            if (info2store.Values[i].upper.z < candidates4storage.z)
+                info2store.Values[i].upper.z = candidates4storage.z;
+
+
+            if (info2store.Values[i].lower.x > candidates4storage.x)
+                info2store.Values[i].lower.x = candidates4storage.x;
+            if (info2store.Values[i].lower.y > candidates4storage.y)
+                info2store.Values[i].lower.y = candidates4storage.y;
+            if (info2store.Values[i].lower.z > candidates4storage.z)
+                info2store.Values[i].lower.z = candidates4storage.z;
         }
 
         if (duration < Time.time)
@@ -250,7 +270,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         
         }
 
-        CalcPreview();
+        CalcPreview();//this only stores the ROM value?
     }
     // void FixedUpdate()
     void OnRenderObject()
@@ -275,7 +295,8 @@ public class ROMparserSwingTwist : MonoBehaviour
         
         List<RangeOfMotionValue> preview = new List<RangeOfMotionValue>();
 
-        List<string> jNames = new List<string>(info2store.jointNames);
+        //List<string> jNames = new List<string>(info2store.jointNames);
+        List<string> jNames = new List<string>(info2store.getNames());
         for (int i = 0; i < articulationBodies.Length; i++)
         {
             string s = articulationBodies[i].name;
@@ -290,19 +311,27 @@ public class ROMparserSwingTwist : MonoBehaviour
                 Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
-                var diff = info2store.minRotations[index] - info2store.maxRotations[index];
-                var rangeOfMotion = new Vector3(
+                //var diff = info2store.minRotations[index] - info2store.maxRotations[index];
+                var diff = info2store.Values[index].upper - info2store.Values[index].lower;
+                
+                info2store.Values[index].rangeOfMotion = new Vector3(
                     Mathf.Abs(diff.x),
                     Mathf.Abs(diff.y),
                     Mathf.Abs(diff.z)
                 );
-                var p = new RangeOfMotionValue{
-                    name=parts[1],
-                    lower = info2store.minRotations[index],
-                    upper = info2store.maxRotations[index],
-                    rangeOfMotion = rangeOfMotion
-                };             
-                preview.Add(p);
+                preview.Add(info2store.Values[index] );
+                //var rangeOfMotion = new Vector3(
+                //    Mathf.Abs(diff.x),
+                //    Mathf.Abs(diff.y),
+                //    Mathf.Abs(diff.z)
+                //);
+                //var p = new RangeOfMotionValue{
+                //    name=parts[1],
+                //    lower = info2store.minRotations[index],
+                //    upper = info2store.maxRotations[index],
+                //    rangeOfMotion = rangeOfMotion
+                //};             
+                //preview.Add(p);
             }
         }
         RangeOfMotionPreview = preview.ToArray();
@@ -369,55 +398,58 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     //to apply the Range of Motion to MarathonMan004 (the ragdoll made of articulationBodies).
     //This function is called from an Editor Script
-    public void ApplyROMAsConstraints()
-    {
+   
+    //this is now done in ApplyRangeOfMotion004
+    //public void ApplyROMAsConstraints()
+    //{
 
 
-        //these are the articulationBodies that we want to parse and apply the constraints to
-        ArticulationBody[] articulationBodies = targetJoints;
-        //we want them all:
-        if (joints.Length == 0)
-            articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+    //    //these are the articulationBodies that we want to parse and apply the constraints to
+    //    ArticulationBody[] articulationBodies = targetJoints;
+    //    //we want them all:
+    //    if (joints.Length == 0)
+    //        articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
 
-        List<string> jNames = new List<string>(info2store.jointNames);
+    //    //List<string> jNames = new List<string>(info2store.jointNames);
+    //    List<string> jNames = new List<string>(info2store.getNames());
 
-        for (int i = 0; i < articulationBodies.Length; i++)
-        {
-            string s = articulationBodies[i].name;
-            string[] parts = s.Split(':');
-            //we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
+    //    for (int i = 0; i < articulationBodies.Length; i++)
+    //    {
+    //        string s = articulationBodies[i].name;
+    //        string[] parts = s.Split(':');
+    //        //we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
 
-            int index = -1;
+    //        int index = -1;
 
-            index = jNames.FindIndex(x => x.Contains(parts[1]));
+    //        index = jNames.FindIndex(x => x.Contains(parts[1]));
 
-            if (index < 0)
-                Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
-            else
-            {
-                //The swing in one axis:
-                ArticulationDrive yboundaries = articulationBodies[i].yDrive;
-                yboundaries.upperLimit = info2store.maxRotations[index].y;
-                yboundaries.lowerLimit = info2store.minRotations[index].y;
-                articulationBodies[i].yDrive = yboundaries;
+    //        if (index < 0)
+    //            Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
+    //        else
+    //        {
+    //            //The swing in one axis:
+    //            ArticulationDrive yboundaries = articulationBodies[i].yDrive;
+    //            yboundaries.upperLimit = info2store.maxRotations[index].y;
+    //            yboundaries.lowerLimit = info2store.minRotations[index].y;
+    //            articulationBodies[i].yDrive = yboundaries;
 
-                //The twist in the second axis:
-                ArticulationDrive zboundaries = articulationBodies[i].zDrive;
-                zboundaries.upperLimit = info2store.maxRotations[index].z;
-                zboundaries.lowerLimit = info2store.minRotations[index].z;
-                articulationBodies[i].zDrive = zboundaries;
+    //            //The twist in the second axis:
+    //            ArticulationDrive zboundaries = articulationBodies[i].zDrive;
+    //            zboundaries.upperLimit = info2store.maxRotations[index].z;
+    //            zboundaries.lowerLimit = info2store.minRotations[index].z;
+    //            articulationBodies[i].zDrive = zboundaries;
 
-                //The twist:
-                ArticulationDrive xboundaries = articulationBodies[i].xDrive;
-                xboundaries.upperLimit = info2store.maxRotations[index].x;
-                xboundaries.lowerLimit = info2store.minRotations[index].x;
-                articulationBodies[i].xDrive = xboundaries;
+    //            //The twist:
+    //            ArticulationDrive xboundaries = articulationBodies[i].xDrive;
+    //            xboundaries.upperLimit = info2store.maxRotations[index].x;
+    //            xboundaries.lowerLimit = info2store.minRotations[index].x;
+    //            articulationBodies[i].xDrive = xboundaries;
 
-                articulationBodies[i].anchorRotation = Quaternion.identity; //the anchor cannot be rotated, otherwise the constraints make no sense
-            }
-        }
-        Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
-    }
+    //            articulationBodies[i].anchorRotation = Quaternion.identity; //the anchor cannot be rotated, otherwise the constraints make no sense
+    //        }
+    //    }
+    //    Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
+    //}
 
     //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
     //This function is called from an Editor Script
