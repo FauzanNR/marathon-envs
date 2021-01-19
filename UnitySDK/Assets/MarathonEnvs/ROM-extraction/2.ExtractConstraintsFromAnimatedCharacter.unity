@@ -153,12 +153,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 2062591809}
-  info2store: {fileID: 11400000, guid: 175db96ff81bf4be8af3d10d3976b8db, type: 2}
+  skeletonRoot: {fileID: 268274525}
+  info2store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0, type: 2}
   targetRagdollRoot: {fileID: 871919434}
   trainingEnv: {fileID: 539001198}
   targetJoints: []
-  RangeOfMotion2Store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0,
-    type: 2}
   RangeOfMotionPreview: []
   MimicMocap: 1
   MaxROM: 180
@@ -539,6 +538,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 039f5bf4e1cc0214ea4f370014f59897, type: 3}
+--- !u!4 &268274525 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5542997858502927345, guid: 039f5bf4e1cc0214ea4f370014f59897,
+    type: 3}
+  m_PrefabInstance: {fileID: 268274524}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &446646072 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9028912518352089956, guid: 039f5bf4e1cc0214ea4f370014f59897,
