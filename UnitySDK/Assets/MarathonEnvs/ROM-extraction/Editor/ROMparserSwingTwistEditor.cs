@@ -10,7 +10,7 @@ using UnityEditor;
 //we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
 
 [CustomEditor(typeof(ROMparserSwingTwist))]
-public class ROMparserSwingTwistEditor: Editor
+public class ROMparserSwingTwistEditor : Editor
 {
 
     [SerializeField]
@@ -27,19 +27,19 @@ public class ROMparserSwingTwistEditor: Editor
     void OnEnable()
     {
         ROMparserSwingTwist = serializedObject.FindProperty("ROMparserSwingTwist");
-     
+
     }
 
 
 
 
-     public override void OnInspectorGUI()
+    public override void OnInspectorGUI()
     {
         serializedObject.Update();
 
 
         GUILayout.Label("");
-        
+
         base.OnInspectorGUI();
 
         if (GUILayout.Button("0.Debug: Set Joints To Max ROM"))
@@ -48,15 +48,15 @@ public class ROMparserSwingTwistEditor: Editor
             t.SetJointsToMaxROM();
         }
 
-        if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
-        {
-            ROMparserSwingTwist t = target as ROMparserSwingTwist;
-            t.WriteRangeOfMotion();
-            AssetDatabase.SaveAssets();
-            // string targetFile = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/MarathonMan004RomPreview.asset";
-            // string sourceFile = "Assets/MarathonEnvs/ROM-extraction/RomPreview.asset";
-            // AssetDatabase.CopyAsset(sourceFile, targetFile);
-        }
+        //if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
+        //{
+        //    ROMparserSwingTwist t = target as ROMparserSwingTwist;
+        //    t.WriteRangeOfMotion();
+        //    AssetDatabase.SaveAssets();
+        //    // string targetFile = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/MarathonMan004RomPreview.asset";
+        //    // string sourceFile = "Assets/MarathonEnvs/ROM-extraction/RomPreview.asset";
+        //    // AssetDatabase.CopyAsset(sourceFile, targetFile);
+        //}
 
 
         //This is done now in the script RangeOfMotion004
@@ -95,7 +95,7 @@ public class ROMparserSwingTwistEditor: Editor
         */
         GUILayout.Label("Prefab Ragdoll:");
 
-        
+
 
         GUILayout.Label("How to use:");
 
@@ -111,7 +111,7 @@ public class ROMparserSwingTwistEditor: Editor
     }
 
 
-       
+
     void storeNewPrefabWithROM(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
@@ -123,7 +123,7 @@ public class ROMparserSwingTwistEditor: Editor
 
         //string add2prefabs = keyword4prefabs;
 
-        
+
 
         // Set the path,
         // and name it as the GameObject's name with the .Prefab format
@@ -133,8 +133,8 @@ public class ROMparserSwingTwistEditor: Editor
         string uniqueLocalPath = AssetDatabase.GenerateUniqueAssetPath(localPath);
 
 
-        if ( PrefabUtility.IsAnyPrefabInstanceRoot(targetRoot.gameObject)  )
-        //We want to store it independently from the current prefab. Therefore:
+        if (PrefabUtility.IsAnyPrefabInstanceRoot(targetRoot.gameObject))
+            //We want to store it independently from the current prefab. Therefore:
             PrefabUtility.UnpackPrefabInstance(targetRoot.gameObject, PrefabUnpackMode.Completely, InteractionMode.AutomatedAction);
 
 
@@ -164,12 +164,12 @@ public class ROMparserSwingTwistEditor: Editor
             PrefabUtility.SaveAsPrefabAsset(targetEnv.gameObject, uniqueLocalEnvPath);
 
             Debug.Log("Saved new Environment Prefab at: " + uniqueLocalEnvPath);
-           
+
         }
 
-        
+
 
     }
-        
 
-    }
+
+}

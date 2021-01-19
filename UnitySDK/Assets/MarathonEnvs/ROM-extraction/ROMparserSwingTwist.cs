@@ -18,10 +18,10 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     Transform[] joints;
 
- 
+
     float duration;
 
- 
+
     [SerializeField]
     //public ROMinfoCollector info2store;
     public RangeOfMotion004 info2store;
@@ -48,21 +48,21 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     //public RangeOfMotion004 RangeOfMotion2Store;
 
-   // public ROMinfoCollector RangeOfMotionStored;
+    // public ROMinfoCollector RangeOfMotionStored;
 
     [SerializeField]
 
-    public RangeOfMotionValue[] RangeOfMotionPreview;    
+    public RangeOfMotionValue[] RangeOfMotionPreview;
 
     MocapControllerArtanim _mocapControllerArtanim;
     Vector3 _rootStartPosition;
     Quaternion _rootStartRotation;
 
     public bool MimicMocap;
-    [Range(0,359)]
+    [Range(0, 359)]
     public int MaxROM = 180;
 
-    [Range(0,500)]
+    [Range(0, 500)]
     public int MimicSkipPhysicsSteps = 50;
     int _physicsStepsToNextMimic = 0;
     public float stiffness = 40000f;
@@ -80,7 +80,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         //AnimatorStateInfo = a.GetCurrentAnimatorStateInfo();
         //a.Play();
 
-     
+
         joints = skeletonRoot.GetComponentsInChildren<Transform>();
 
         info2store.Values = new RangeOfMotionValue[joints.Length];
@@ -95,7 +95,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         for (int i = 0; i < joints.Length; i++)
         {
             // info2store.jointNames[i] = joints[i].name;
-            info2store.Values[i].name  = joints[i].name;
+            info2store.Values[i].name = joints[i].name;
 
 
         }
@@ -109,9 +109,9 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         // get root start position and rotation
         var atriculationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
-        if (atriculationBodies.Length ==0)
+        if (atriculationBodies.Length == 0)
             return;
-        var root = atriculationBodies.First(x=>x.isRoot);
+        var root = atriculationBodies.First(x => x.isRoot);
         _rootStartPosition = root.transform.position;
         _rootStartRotation = root.transform.rotation;
 
@@ -121,8 +121,8 @@ public class ROMparserSwingTwist : MonoBehaviour
         {
             targetJoints = targetRagdollRoot
                 .GetComponentsInChildren<ArticulationBody>()
-                .Where(x=>x.isRoot == false)
-                .Where(x=>x.name.StartsWith("articulation:"))
+                .Where(x => x.isRoot == false)
+                .Where(x => x.name.StartsWith("articulation:"))
                 .ToArray();
             SetJointsToMaxROM();
         }
@@ -131,14 +131,14 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     void CopyMocap()
     {
-        if (_mocapControllerArtanim != null && 
-            targetRagdollRoot != null && 
+        if (_mocapControllerArtanim != null &&
+            targetRagdollRoot != null &&
             _mocapControllerArtanim.enabled)
         {
             var atriculationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
-            if (atriculationBodies.Length ==0)
+            if (atriculationBodies.Length == 0)
                 return;
-            var root = atriculationBodies.First(x=>x.isRoot);
+            var root = atriculationBodies.First(x => x.isRoot);
             CopyMocapStatesTo(root.gameObject, _rootStartPosition);
             // teleport back to start position
             // var curRotation = root.transform.rotation;
@@ -168,15 +168,15 @@ public class ROMparserSwingTwist : MonoBehaviour
     {
 
         var targets = target.GetComponentsInChildren<ArticulationBody>().ToList();
-		if (targets?.Count == 0)
-			return;
-        var root = targets.First(x=>x.isRoot);
-		root.gameObject.SetActive(false);
-        var mocapRoot = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == root.name);
+        if (targets?.Count == 0)
+            return;
+        var root = targets.First(x => x.isRoot);
+        root.gameObject.SetActive(false);
+        var mocapRoot = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x => x.name == root.name);
         Vector3 offset = rootPosition - mocapRoot.transform.position;
         foreach (var body in targets)
         {
-			var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x=>x.name == body.name);
+            var stat = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().First(x => x.name == body.name);
             body.transform.position = stat.position + offset;
             body.transform.rotation = stat.rotation;
             if (body.isRoot)
@@ -184,7 +184,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                 body.TeleportRoot(stat.position + offset, stat.rotation);
             }
         }
-		root.gameObject.SetActive(true);
+        root.gameObject.SetActive(true);
         foreach (var body in targets)
         {
             // body.AddForce(new Vector3(0.1f, -200f, 3f));
@@ -195,7 +195,8 @@ public class ROMparserSwingTwist : MonoBehaviour
     }
     void Update()
     {
-        for (int i = 0; i< joints.Length; i++) {
+        for (int i = 0; i < joints.Length; i++)
+        {
 
 
             Quaternion localRotation = joints[i].localRotation;
@@ -208,11 +209,11 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-            Quaternion twist =  Quaternion.Inverse(swing) * localRotation ;
+            Quaternion twist = Quaternion.Inverse(swing) * localRotation;
 
 
             //double check:
-            Quaternion temp = swing * twist ;
+            Quaternion temp = swing * twist;
 
             bool isTheSame = (Mathf.Abs(Quaternion.Angle(temp, localRotation)) < 0.001f);
 
@@ -267,7 +268,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         if (duration < Time.time)
         {
             Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
-        
+
         }
 
         CalcPreview();//this only stores the ROM value?
@@ -292,7 +293,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         //we want them all:
         if (articulationBodies.Length == 0)
             articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
-        
+
         List<RangeOfMotionValue> preview = new List<RangeOfMotionValue>();
 
         //List<string> jNames = new List<string>(info2store.jointNames);
@@ -313,13 +314,13 @@ public class ROMparserSwingTwist : MonoBehaviour
             {
                 //var diff = info2store.minRotations[index] - info2store.maxRotations[index];
                 var diff = info2store.Values[index].upper - info2store.Values[index].lower;
-                
+
                 info2store.Values[index].rangeOfMotion = new Vector3(
                     Mathf.Abs(diff.x),
                     Mathf.Abs(diff.y),
                     Mathf.Abs(diff.z)
                 );
-                preview.Add(info2store.Values[index] );
+                preview.Add(info2store.Values[index]);
                 //var rangeOfMotion = new Vector3(
                 //    Mathf.Abs(diff.x),
                 //    Mathf.Abs(diff.y),
@@ -336,12 +337,14 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
         RangeOfMotionPreview = preview.ToArray();
     }
-    public void WriteRangeOfMotion()
-    {
-        if (RangeOfMotion2Store == null)
-            RangeOfMotion2Store = RangeOfMotion004.CreateInstance<RangeOfMotion004>();
-        RangeOfMotion2Store.Values = RangeOfMotionPreview;
-    }
+
+    //Not needed, the previous function already does that
+    //public void WriteRangeOfMotion()
+    //{
+    //    if (RangeOfMotion2Store == null)
+    //        RangeOfMotion2Store = RangeOfMotion004.CreateInstance<RangeOfMotion004>();
+    //    RangeOfMotion2Store.Values = RangeOfMotionPreview;
+    //}
 
     // Make all joints use Max Range of Motion 
     public void SetJointsToMaxROM()
@@ -380,7 +383,7 @@ public class ROMparserSwingTwist : MonoBehaviour
             drive.stiffness = stiffness;
             drive.damping = damping;
             drive.forceLimit = forceLimit;
-            body.yDrive = drive;            
+            body.yDrive = drive;
 
             drive = new ArticulationDrive();
             drive.lowerLimit = -(float)MaxROM;
@@ -391,14 +394,14 @@ public class ROMparserSwingTwist : MonoBehaviour
             body.zDrive = drive;
 
             // body.useGravity = false;
-        }     
+        }
     }
 
 
 
     //to apply the Range of Motion to MarathonMan004 (the ragdoll made of articulationBodies).
     //This function is called from an Editor Script
-   
+
     //this is now done in ApplyRangeOfMotion004
     //public void ApplyROMAsConstraints()
     //{
@@ -462,11 +465,11 @@ public class ROMparserSwingTwist : MonoBehaviour
         rda = targetRagdollPrefab.GetComponent<RagDollAgent>();
         if (rda != null)
             Debug.Log("Setting up the  ragdoll agent");
-        
+
         envPrefab = null;
 
 
-        
+
 
 
         //these are all the articulationBodies in the ragdoll prefab
@@ -490,9 +493,10 @@ public class ROMparserSwingTwist : MonoBehaviour
         for (int i = 0; i < articulationBodies.Length; i++)
         {
             articulationBodies[i].transform.localRotation = Quaternion.identity;
-            if (articulationBodies[i].isRoot) {
+            if (articulationBodies[i].isRoot)
+            {
                 articulationBodies[i].immovable = false;
-                if(rda != null)
+                if (rda != null)
                     rda.CameraTarget = articulationBodies[i].transform;
 
 
@@ -515,7 +519,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-                    if (rda != null) { 
+                    if (rda != null)
+                    {
                         rda.transform.parent = envPrefab.transform;
                         rda.name = targetRagdollRoot.name;
                         rda.enabled = true;//this should already be the case, but just ot be cautious
@@ -532,7 +537,7 @@ public class ROMparserSwingTwist : MonoBehaviour
             }
 
         }
-        
+
     }
 
 
