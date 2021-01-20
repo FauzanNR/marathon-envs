@@ -20,7 +20,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	public float Lenght;
 	public bool IsLoopingAnimation;
 
-	[SerializeField]
+	//[SerializeField]
 	Rigidbody _rigidbodyRoot;
 
 	private List<Rigidbody> _rigidbodies;

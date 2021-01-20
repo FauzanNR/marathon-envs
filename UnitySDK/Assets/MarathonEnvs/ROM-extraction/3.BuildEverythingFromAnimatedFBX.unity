@@ -134,7 +134,7 @@ GameObject:
   - component: {fileID: 147523745}
   - component: {fileID: 147523744}
   m_Layer: 0
-  m_Name: rom-parser
+  m_Name: ROMparser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,7 +155,7 @@ MonoBehaviour:
   theAnimator: {fileID: 905811485}
   skeletonRoot: {fileID: 1072644998}
   info2store: {fileID: 11400000, guid: e561678fee66b9b40b7751d9a55f0704, type: 2}
-  targetRagdollRoot: {fileID: 247293934}
+  targetRagdollRoot: {fileID: 0}
   trainingEnv: {fileID: 0}
   targetJoints: []
   RangeOfMotionPreview: []
@@ -179,12 +179,75 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &247293934 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1976157281100074716, guid: 039f5bf4e1cc0214ea4f370014f59897,
-    type: 3}
-  m_PrefabInstance: {fileID: 1343480952}
-  m_PrefabAsset: {fileID: 0}
+--- !u!1001 &494547772
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4890684744258037759, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_Name
+      value: ControllerMarathonManEnv-v1
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 039f5bf4e1cc0214ea4f370014f59897, type: 3}
 --- !u!95 &905811485 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 57ff63287e80d214a9cff16bba965fc6,
@@ -201,7 +264,7 @@ PrefabInstance:
     - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
         type: 3}
@@ -364,100 +427,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 160.002, y: 120.895004, z: 111.952}
---- !u!1001 &1343480952
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1714340263721781765, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3989728765861935376, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4212714203011529027, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4890684744258037759, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_Name
-      value: ControllerMarathonManEnv-v1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4890684744258037759, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6599971818930870607, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9028912518352089956, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 039f5bf4e1cc0214ea4f370014f59897, type: 3}
 --- !u!1 &1574263909
 GameObject:
   m_ObjectHideFlags: 0
@@ -570,8 +539,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1898a29c838a8f445af23e017c73e97a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ROMparser: {fileID: 0}
-  characterReference: {fileID: 0}
+  ROMparser: {fileID: 147523744}
+  characterReference: {fileID: 905811485}
+  SourceAgentName: AgentMoveSource
 --- !u!4 &2008991782
 Transform:
   m_ObjectHideFlags: 0

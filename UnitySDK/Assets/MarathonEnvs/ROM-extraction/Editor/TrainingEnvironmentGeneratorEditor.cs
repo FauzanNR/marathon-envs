@@ -4,11 +4,6 @@ using UnityEngine;
 using UnityEditor;
 
 
-//This script assumes information was stored as SwingTwist
-//This means the script goes together with ROMparserSwingTwist
-
-//we assume the articulationBodies have a name structure of hte form ANYNAME:something-in-the-targeted-joint
-
 [CustomEditor(typeof(TrainingEnvironmentGenerator))]
 public class TrainingEnvironmentGeneratorEditor : Editor
 {
