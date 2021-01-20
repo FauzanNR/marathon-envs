@@ -170,17 +170,26 @@ public class RagDollAgent : Agent
         }
         _dReConObservations.PreviousActions = vectorAction;
 
+
+        bool lastSkipRewardAfterTeleportValue = _skipRewardAfterTeleport;
         if (!_skipRewardAfterTeleport)
             AddReward(_dReConRewards.Reward);
         _skipRewardAfterTeleport = false;
         // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward < 1f)
-        if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+        // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+        bool terminate = false;
+        terminate = terminate || _dReConRewards.PositionReward < .1f;
+        terminate = terminate || _dReConRewards.ComVelocityReward < .001f; // disabled because our player controller turns to quickly
+        terminate = terminate || _dReConRewards.PointsVelocityReward < .001f;
+        terminate = terminate || _dReConRewards.LocalPoseReward < .1f;
+        // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
+        terminate = terminate && !lastSkipRewardAfterTeleportValue;
+        if (terminate)
         {
             if (!dontResetOnZeroReward)
                 EndEpisode();
         }
-        // else if (_dReConRewards.HeadDistance > 1.5f)
-        else if (_dReConRewards.Reward <= 0.1f && !dontSnapMocapToRagdoll)
+        else if (_dReConRewards.DistanceFactor <= 0.1f && !dontSnapMocapToRagdoll)
         {
             Transform ragDollCom = _dReConObservations.GetRagDollCOM();
             Vector3 snapPosition = ragDollCom.position;
