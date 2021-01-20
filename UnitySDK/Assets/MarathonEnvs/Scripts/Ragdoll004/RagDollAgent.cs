@@ -287,7 +287,10 @@ public class RagDollAgent : Agent
         }
         _dReConObservations.PreviousActions = individualMotors.ToArray();
 
-        _mocapAnimatorController = _mocapControllerArtanim.GetComponentInChildren<MocapAnimatorController>();
+        //_mocapAnimatorController = _mocapControllerArtanim.GetComponentInChildren<MocapAnimatorController>();
+        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<MocapAnimatorController>();
+
+
 
         _mocapControllerArtanim.OnAgentInitialize();
         _dReConObservations.OnAgentInitialize();

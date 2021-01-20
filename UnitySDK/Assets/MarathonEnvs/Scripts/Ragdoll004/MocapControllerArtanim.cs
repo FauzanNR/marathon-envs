@@ -220,6 +220,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 		_hasLazyInitialized = true;
     }
+
+
 	void DynamicallyCreateRagdollForMocap()
 	{
 		// Find Ragdoll in parent
