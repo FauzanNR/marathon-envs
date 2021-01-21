@@ -25,7 +25,11 @@ namespace Unity.MLAgents
             if (otherOverlap == null)
                 return;
             if (otherOverlap.Parent != Parent)
+            {
+                Debug.Log("the parent of: " + name + "is not: " + Parent.name);
                 return;
+
+            }
             Physics.IgnoreCollision(myCollider, other.collider);
         }
 

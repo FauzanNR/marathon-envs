@@ -252,6 +252,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jumping Jacks_fbx_output-rotated
       objectReference: {fileID: 0}
+    - target: {fileID: 2055600106563930396, guid: 57ff63287e80d214a9cff16bba965fc6,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 57ff63287e80d214a9cff16bba965fc6,
         type: 3}
       propertyPath: m_Controller
@@ -476,6 +481,8 @@ MonoBehaviour:
   characterReference: {fileID: 905811485}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,
     type: 3}
+  trainerMaterial: {fileID: 2100000, guid: 34d590f08bbd6d941bf9c959e933ffd5, type: 2}
+  colliderMaterial: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
 --- !u!4 &2008991782
 Transform:
   m_ObjectHideFlags: 0

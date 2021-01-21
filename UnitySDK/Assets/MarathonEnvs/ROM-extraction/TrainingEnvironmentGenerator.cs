@@ -22,9 +22,15 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     Animator characterReference;
 
 
-
+    [Header("Assets to generate training environment:")]
     [SerializeField]
     ManyWorlds.SpawnableEnv referenceSpawnableEnvironment;
+
+    [SerializeField]
+    Material trainerMaterial;
+
+    [SerializeField]
+    PhysicMaterial colliderMaterial;
 
 
     Animator character4training;
@@ -57,24 +63,40 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4training.gameObject.AddComponent<MocapAnimatorController>();
         character4training.gameObject.AddComponent<MocapControllerArtanim>();
         character4training.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
-        character4training.name = AgentName + "Source";
+        character4training.name = "Source:" + AgentName;
+
+        SkinnedMeshRenderer[] renderers = character4training.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer r in renderers) {
+
+            Material[] mats = r.sharedMaterials;
+            for (int i =0; i < mats.Length; i++) {
+                mats[i] = trainerMaterial;
+            }
+            
+        }
+
 
 
         character4synthesis = Instantiate(characterReference.gameObject).GetComponent<Animator>();
-        character4synthesis.name = AgentName + "Result" ;
-        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>(); //TODO, add reference to the ragdoll, the articulationBodyRoot
-
+        character4synthesis.name = "Result:" + AgentName ;
+        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>(); 
 
         _outcome = Instantiate(referenceSpawnableEnvironment).GetComponent<ManyWorlds.SpawnableEnv>();
         _outcome.name = TrainingEnvName;
 
-        generateRagDollFromAnimatedSource(rca, _outcome);
+       
+        RagDollAgent rda = generateRagDollFromAnimatedSource(rca, _outcome);
+
+        _outcome.GetComponent<RenderingOptions>().ragdollcontroller = rda.gameObject;
+
 
 
 
 
 
         character4training.transform.SetParent(_outcome.transform);
+        _outcome.GetComponent<RenderingOptions>().movementsource = character4training.gameObject;
+
         character4synthesis.transform.SetParent(_outcome.transform);
 
 
@@ -87,9 +109,23 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
      RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
 
-        //ragdoll4training = GameObject.Instantiate();
+   
+        GameObject temp = GameObject.Instantiate(target.gameObject);
 
-        GameObject temp = new GameObject(AgentName + "Ragdoll");
+
+        //we remove everything we do not need:
+        SkinnedMeshRenderer[] renderers = temp.GetComponentsInChildren<SkinnedMeshRenderer>();
+        foreach (SkinnedMeshRenderer r in renderers)
+        {
+            DestroyImmediate(r.gameObject);
+
+        }
+        DestroyImmediate( temp.GetComponent<Animator>());
+        DestroyImmediate(temp.GetComponent<CharacterController>());
+        DestroyImmediate(temp.GetComponent<RagdollControllerArtanim>());
+
+
+        temp.name = "Ragdoll:" + AgentName ;
         temp.AddComponent<RagDoll004>();
         temp.AddComponent<BehaviorParameters>();
         temp.AddComponent<DecisionRequester>();
@@ -97,12 +133,80 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         temp.transform.rotation = target.transform.rotation;
 
 
+        Transform root = temp.transform.GetChild(0);
+
+        Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
+
+        foreach (Transform j in joints) {
+            ArticulationBody ab = j.gameObject.AddComponent<ArticulationBody>();
+            ab.anchorRotation = Quaternion.identity;
+
+            ab.mass = 0.1f;
+
+            j.name = j.name.Replace("(Clone)", "");
+            j.name = "articulation:" + j.name;
+
+            //we only add a collider if it has a parent:
+            Transform dad = ab.transform.parent;
+
+            ArticulationBody articulatedDad = null;
+
+            if (dad != null)
+            {
+                articulatedDad = dad.GetComponent<ArticulationBody>();
+            }
+
+            if(articulatedDad != null) { 
+
+                GameObject go = new GameObject();
+                go.transform.parent = dad;
+                go.name = "collider:" + j.name;
+
+                CapsuleCollider c = go.AddComponent<CapsuleCollider>();
+                c.material = colliderMaterial;
+
+                c.height = Vector3.Distance(dad.position, j.transform.position);
+                c.center = (dad.position + j.transform.position) / 2.0f;
+                c.radius = c.height / 5;
+
+
+                // Rigidbody rb = go.AddComponent<Rigidbody>();
+                // rb.mass = 4;
+                ArticulationBody rb = go.AddComponent<ArticulationBody>();
+                rb.jointType = ArticulationJointType.FixedJoint;
+                rb.mass = 5;
+
+
+
+                HandleOverlap ho = go.AddComponent<HandleOverlap>();
+                ho.Parent = dad.gameObject;
+
+               
+                
+
+
+
+            }
+                    
+        
+        }
+
+
+        //we add reference to the ragdoll, the articulationBodyRoot
+        foreach (Transform j in joints)
+        {
+            ArticulationBody ab = j.transform.GetComponent<ArticulationBody>();
+            if (ab.isRoot) {
+                target.ArticulationBodyRoot = ab;
+            }
+        }
+
+
+
+
+
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
         _ragdoll4training.transform.parent = trainingenv.transform;
-
-        DynamicallyCreateRagdollForMocap(target, ragdoll4training);
-
-
 
         temp.AddComponent<DReConRewards>();
         temp.AddComponent<SensorObservations>();
@@ -115,47 +219,6 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         return _ragdoll4training;
 
     }
-
-
-
-    static void DynamicallyCreateRagdollForMocap(RagdollControllerArtanim target, RagDollAgent ragDoll)
-    {
-        // Find Ragdoll in parent
-
-        var ragdollRoot = ragDoll.transform.GetChild(0);
-        // clone the ragdoll root
-        var clone = Instantiate(ragdollRoot);
-
-        //TODO,instantiate all the sons and the colliders
-
-
-        // remove '(clone)' from names
-        foreach (Transform t in target.GetComponentsInChildren<Transform>())
-        {
-
-
-
-            //t.name = t.name.Replace("(Clone)", "");
-        }
-        //clone.transform.SetParent(ragdollForMocap.transform, false);
-        //// swap ArticulatedBody for RidgedBody
-        //foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
-        //{
-        //    var bodyGameobject = abody.gameObject;
-        //    var rb = bodyGameobject.AddComponent<Rigidbody>();
-        //    rb.mass = abody.mass;
-        //    rb.useGravity = abody.useGravity;
-        //    Destroy(abody);
-        //}
-        // make Kinematic
-        foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
-        {
-            rb.isKinematic = true;
-        }
-
-    }
-
-
 
 
 }
