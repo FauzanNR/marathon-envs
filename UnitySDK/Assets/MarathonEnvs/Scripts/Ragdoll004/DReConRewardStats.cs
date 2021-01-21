@@ -45,6 +45,16 @@ public class DReConRewardStats : MonoBehaviour
     public List<string> BodyPartNames;
     bool _hasLazyInitialized;
 
+
+    string rootName = "articulation:Hips";
+
+    public void setRootName(string s)
+    {
+        rootName = s;
+
+    }
+
+
     public void OnAgentInitialize(Transform defaultTransform, DReConRewardStats orderToCopy = null)
     {
         Assert.IsFalse(_hasLazyInitialized);
@@ -102,7 +112,7 @@ public class DReConRewardStats : MonoBehaviour
             .ToList();
         if (_root == null)
         {
-            _root = _bodyParts.First(x=>x.name== "articulation:Hips");
+            _root = _bodyParts.First(x=>x.name== rootName);
         }        
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;

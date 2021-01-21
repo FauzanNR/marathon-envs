@@ -123,6 +123,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!4 &128026182 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8910934542501929264, guid: 57ff63287e80d214a9cff16bba965fc6,
+    type: 3}
+  m_PrefabInstance: {fileID: 1072644997}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &147523743
 GameObject:
   m_ObjectHideFlags: 0
@@ -139,7 +145,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &147523744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +183,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &905811485 stripped
 Animator:
@@ -479,6 +485,7 @@ MonoBehaviour:
   TrainingEnvName: TrainingEnvironment
   ROMparser: {fileID: 147523744}
   characterReference: {fileID: 905811485}
+  characterReferenceHead: {fileID: 128026182}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,
     type: 3}
   trainerMaterial: {fileID: 2100000, guid: 34d590f08bbd6d941bf9c959e933ffd5, type: 2}
@@ -495,7 +502,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!171741748 &23053003448590374
 ArticulationBody:
@@ -5146,6 +5153,7 @@ MonoBehaviour:
   - RightFoot
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
+  targetedRootName: articulation:Hips
 --- !u!4 &3543264683591306276
 Transform:
   m_ObjectHideFlags: 0
@@ -6795,7 +6803,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!171741748 &4901381675955503089
 ArticulationBody:
   m_ObjectHideFlags: 0
@@ -9267,6 +9275,8 @@ MonoBehaviour:
   DistanceFactor: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 12
+  headname: head
+  targetedRootName: articulation:Hips
 --- !u!114 &6743038721755239374
 MonoBehaviour:
   m_ObjectHideFlags: 0

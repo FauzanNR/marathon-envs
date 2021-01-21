@@ -21,8 +21,11 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     Animator characterReference;
 
+    [SerializeField]
+    Transform characterReferenceHead;
 
-    [Header("Assets to generate training environment:")]
+
+    [Header("Prefabs to generate training environment:")]
     [SerializeField]
     ManyWorlds.SpawnableEnv referenceSpawnableEnvironment;
 
@@ -208,9 +211,16 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
         _ragdoll4training.transform.parent = trainingenv.transform;
 
-        temp.AddComponent<DReConRewards>();
+        DReConRewards dcrew = temp.AddComponent<DReConRewards>();
+        dcrew.headname = "articulation:" + characterReferenceHead.name;
+        dcrew.targetedRootName = target.ArticulationBodyRoot.name; //it should be it's son, but let's see
+
+
         temp.AddComponent<SensorObservations>();
-        temp.AddComponent<DReConObservations>();
+        DReConObservations dcobs = temp.AddComponent<DReConObservations>();
+        dcobs.targetedRootName = target.ArticulationBodyRoot.name; 
+
+
         ApplyRangeOfMotion004 rom = temp.AddComponent<ApplyRangeOfMotion004>();
         rom.RangeOfMotion2Store = ROMparser.info2store;
 
