@@ -82,7 +82,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         character4synthesis = Instantiate(characterReference.gameObject).GetComponent<Animator>();
         character4synthesis.name = "Result:" + AgentName ;
-        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>(); 
+        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
+        rca.IsGeneratedProcedurally = true;
 
         _outcome = Instantiate(referenceSpawnableEnvironment).GetComponent<ManyWorlds.SpawnableEnv>();
         _outcome.name = TrainingEnvName;

@@ -7485,6 +7485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _articulationBodyRoot: {fileID: 5003744890446467207}
   _debugDistance: 0
+  _isGeneratedProcedurally: 0
   _debugWithRigidBody: 0
   _rigidbodyRoot: {fileID: 0}
 --- !u!4 &5410650273814737483
