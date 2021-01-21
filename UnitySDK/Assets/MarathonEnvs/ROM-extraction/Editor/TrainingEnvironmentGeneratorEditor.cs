@@ -34,7 +34,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
             storeEnvAsPrefab(t.Outcome);
 
             //once stored we can destroy them to keep the scene clean
-            DestroyImmediate(t.Outcome.gameObject);
+            //DestroyImmediate(t.Outcome.gameObject);
           
 
 
