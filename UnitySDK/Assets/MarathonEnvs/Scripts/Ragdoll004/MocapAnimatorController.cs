@@ -105,7 +105,13 @@ public class MocapAnimatorController : MonoBehaviour
 
     public void OnReset()
     {
-        _isGrounded = true;
+
+        if (_isGeneratedProcedurally)
+            doFixedUpdate = false;
+
+
+
+            _isGrounded = true;
         _previouslyGrounded = true;
         _inCombo = false;
         _readyToJump = false;
@@ -119,22 +125,20 @@ public class MocapAnimatorController : MonoBehaviour
             return;
 
 
-        if (!_isGeneratedProcedurally) { 
 
-            _anim.SetBool("onGround", _isGrounded);
-            // _anim.SetFloat("verticalVelocity", _verticalVelocity);
-            _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
-            _anim.SetFloat("forwardVelocity", _forwardVelocity);
-            _anim.SetBool("backflip", false);
-            _anim.Rebind();
-            _anim.SetBool("onGround", _isGrounded);
-            // _anim.SetFloat("verticalVelocity", _verticalVelocity);
-            _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
-            _anim.SetFloat("forwardVelocity", _forwardVelocity);
-            _anim.SetBool("backflip", false);
+        _anim.SetBool("onGround", _isGrounded);
+        // _anim.SetFloat("verticalVelocity", _verticalVelocity);
+        _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
+        _anim.SetFloat("forwardVelocity", _forwardVelocity);
+        _anim.SetBool("backflip", false);
+        _anim.Rebind();
+        _anim.SetBool("onGround", _isGrounded);
+        // _anim.SetFloat("verticalVelocity", _verticalVelocity);
+        _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
+        _anim.SetFloat("forwardVelocity", _forwardVelocity);
+        _anim.SetBool("backflip", false);
             
 
-        }
         OnFixedUpdate();
         _anim.Update(0f);
 
@@ -194,11 +198,15 @@ public class MocapAnimatorController : MonoBehaviour
 
         // If Ellen is not on the ground then send the vertical speed to the animator.
         // This is so the vertical speed is kept when landing so the correct landing animation is played.
-        if (!_isGrounded)
-            _anim.SetFloat("verticalVelocity", verticalVelocity);
 
-        // Send whether or not Ellen is on the ground to the animator.
-        _anim.SetBool("onGround", _isGrounded);
+
+        if (!_isGeneratedProcedurally) { 
+            if (!_isGrounded)
+                _anim.SetFloat("verticalVelocity", verticalVelocity);
+
+            // Send whether or not Ellen is on the ground to the animator.
+            _anim.SetBool("onGround", _isGrounded);
+        }
     }
 
     void RotateTarget(float deltaTime)
