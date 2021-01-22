@@ -24,7 +24,7 @@ public class ApplyRangeOfMotion004Editor : Editor
         
         base.OnInspectorGUI();
 
-        GUILayout.Label("Apply at WakeUP");
+        GUILayout.Label("Only IF Working With Prefab:");
 
 
 
@@ -36,13 +36,28 @@ public class ApplyRangeOfMotion004Editor : Editor
             t.CalculateDoF();
         }        
 
-        if (GUILayout.Button("1. Apply ROM to RagDoll Prefab"))
+        if (GUILayout.Button("2. Apply ROM to RagDoll Prefab"))
         {
             ApplyRangeOfMotion004 t = target as ApplyRangeOfMotion004;
-            t.ApplyToRagDoll();
+            t.ApplyRangeOfMotionToRagDoll();
 
             PrefabUtility.ApplyPrefabInstance( t.gameObject, InteractionMode.AutomatedAction);
 
         }
+
+        if (GUILayout.Button("3. Apply Degrees of Freedom to Behavior Parameters"))
+        {
+            ApplyRangeOfMotion004 t = target as ApplyRangeOfMotion004;
+            t.applyDoFOnBehaviorParameters();
+
+            PrefabUtility.ApplyPrefabInstance(t.gameObject, InteractionMode.AutomatedAction);
+
+        }
+
+
+
+
+
+
     }
 }

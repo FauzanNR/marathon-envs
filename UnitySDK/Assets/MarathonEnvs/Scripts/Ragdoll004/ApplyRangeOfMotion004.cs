@@ -32,10 +32,16 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
     {
         if (applyROMInGamePlay)
         {
-            ApplyToRagDoll();
-            if (RangeOfMotion2Store.InferenceModel != null)
-                GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
+            ApplyRangeOfMotionToRagDoll();
 
+
+            CalculateDoF();
+            applyDoFOnBehaviorParameters();
+
+
+
+            if ( (RangeOfMotion2Store != null) && RangeOfMotion2Store.InferenceModel != null)
+                GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
 
         }
 
@@ -71,7 +77,7 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
         }
     }
 
-    public void ApplyToRagDoll()
+    public void ApplyRangeOfMotionToRagDoll()
     {
         if (RangeOfMotion2Store == null || RangeOfMotion2Store.Values.Length == 0)
             return;
@@ -161,4 +167,30 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
         }
 
     }
+
+
+     
+
+
+    public void applyDoFOnBehaviorParameters() {
+        // due to an obscure function call in the setter of ActionSpec inside bp, this can only run at runtime
+        //the function is called SyncDeprecatedActionFields()
+
+
+        BehaviorParameters bp = GetComponent<BehaviorParameters>();
+
+        Unity.MLAgents.Actuators.ActionSpec myActionSpec = bp.BrainParameters.ActionSpec;
+
+
+
+        myActionSpec.NumContinuousActions = DegreesOfFreedom;
+        bp.BrainParameters.ActionSpec = myActionSpec;
+        Debug.Log("applied DoF on ActionSpec:" + myActionSpec.NumContinuousActions);
+
+
+
+    }
+
+
+
 }

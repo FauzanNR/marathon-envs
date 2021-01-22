@@ -805,7 +805,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &147523744
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7199,75 +7199,6 @@ CapsuleCollider:
   m_Height: 0.36555967
   m_Direction: 1
   m_Center: {x: -0.08867896, y: 0.61219203, z: -0.0047062263}
---- !u!1001 &1805075133
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 7
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: -8679921383154817045, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 919132149155446097, guid: 57ff63287e80d214a9cff16bba965fc6,
-        type: 3}
-      propertyPath: m_Name
-      value: Jumping Jacks_fbx_output-rotated (1)
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 57ff63287e80d214a9cff16bba965fc6, type: 3}
 --- !u!1 &1807712188
 GameObject:
   m_ObjectHideFlags: 0
@@ -7612,7 +7543,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2008991781
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7627,7 +7558,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AgentName: AgentMove
   TrainingEnvName: TrainingEnvironment
-  ROMparser: {fileID: 147523744}
+  info2store: {fileID: 11400000, guid: ce9e14ad18811452b982187123117660, type: 2}
   characterReference: {fileID: 905811485}
   characterReferenceHead: {fileID: 128026182}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,

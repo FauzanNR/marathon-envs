@@ -247,6 +247,14 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         rom.RangeOfMotion2Store = info2store;
         rom.ApplyROMInGamePlay = true;
 
+        
+        rom.CalculateDoF();
+
+
+
+        if(rom.RangeOfMotion2Store != null)
+            rom.ApplyRangeOfMotionToRagDoll();
+
 
         return _ragdoll4training;
 
