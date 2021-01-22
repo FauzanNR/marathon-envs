@@ -32,7 +32,7 @@ Document last updated: 02.12.2020
 The main goal has *almost*  been achieved: skinned characters are matched with ragdolls.
 
 
-![Example-current-status](img/2020-12-09_10-46-28-no-collisions-plus-updated-mlagents-v2.gif)
+![Example-current-status](img/trained-with-automatic-constraint-parsing.gif)
 
 
 
