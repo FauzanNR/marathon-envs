@@ -34,6 +34,9 @@ public class DReConRewards : MonoBehaviour
     public float COMVelocityDifference;
     public float ComVelocityReward;
 
+    [Header("Center of Mass Direction Reward")]
+    public float ComDirectionDistance;
+    public float ComDirectionReward;
 
     [Header("Center of Mass Position Reward")]
     public float ComDistance;
@@ -161,16 +164,28 @@ public class DReConRewards : MonoBehaviour
         DistanceFactor = 1.4f*DistanceFactor;
         DistanceFactor = 1.01f-DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
-        ComPositionReward = Mathf.Exp(-2f * Mathf.Pow(ComDistance,2));
+        // ComPositionReward = Mathf.Exp(-2f * Mathf.Pow(ComDistance,2));
+        ComPositionReward = 1.3f*ComDistance;
+        ComPositionReward = 1.01f-ComPositionReward;
+        ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
+        ComPositionReward = Mathf.Pow(ComPositionReward,2);
+
+        // center of mass direction reward
+        ComDirectionDistance = Vector3.Dot( 
+            _mocapBodyStats.transform.forward, 
+            _ragDollBodyStats.transform.forward);
+        ComDirectionReward = (ComDirectionDistance + 1f)/2f;
+        ComDirectionReward = Mathf.Pow(ComDirectionReward,2);
 
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
-        SumOfSubRewards = ComPositionReward+ComVelocityReward+PositionReward+LocalPoseReward+PointsVelocityReward;
-        Reward = (ComPositionReward * 0.2f) +
-                    (ComVelocityReward * 0.2f) +
+        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
+        Reward = (ComPositionReward * 0.1f) +
+                    (ComVelocityReward * 0.1f) +
+                    (ComDirectionReward * 0.2f) +
                     (PositionReward * 0.1f) +
                     (LocalPoseReward * 0.4f) +
                     (PointsVelocityReward * 0.1f);
