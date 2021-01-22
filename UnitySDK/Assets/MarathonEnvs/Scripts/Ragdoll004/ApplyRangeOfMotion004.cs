@@ -13,6 +13,10 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
     [SerializeField]
     bool applyROMInGamePlay;
 
+    public bool ApplyROMInGamePlay {  set => applyROMInGamePlay = value; }
+
+
+
     public RangeOfMotion004 RangeOfMotion2Store;
 
       [Range(0,359)]
@@ -22,7 +26,6 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
     [SerializeField]
     bool debugWithLargestROM = false;
-
 
 
     private void OnEnable()

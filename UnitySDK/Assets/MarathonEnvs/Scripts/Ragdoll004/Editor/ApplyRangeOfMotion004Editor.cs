@@ -36,7 +36,7 @@ public class ApplyRangeOfMotion004Editor : Editor
             t.CalculateDoF();
         }        
 
-        if (GUILayout.Button("1. Apply to RagDoll Prefab"))
+        if (GUILayout.Button("1. Apply ROM to RagDoll Prefab"))
         {
             ApplyRangeOfMotion004 t = target as ApplyRangeOfMotion004;
             t.ApplyToRagDoll();
