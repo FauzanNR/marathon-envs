@@ -63,8 +63,18 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     public void GenerateTrainingEnv() {
 
         character4training = Instantiate(characterReference.gameObject).GetComponent<Animator>();
-        character4training.gameObject.AddComponent<MocapAnimatorController>();
-        character4training.gameObject.AddComponent<MocapControllerArtanim>();
+        character4training.gameObject.SetActive(true);
+        character4training.gameObject.AddComponent<CharacterController>();
+
+
+
+        MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
+        mac.IsGeneratedProcedurally = true;
+
+
+        MocapControllerArtanim mca =character4training.gameObject.AddComponent<MocapControllerArtanim>();
+        mca.IsGeneratedProcedurally = true;
+
         character4training.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
         character4training.name = "Source:" + AgentName;
 
@@ -81,6 +91,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         character4synthesis = Instantiate(characterReference.gameObject).GetComponent<Animator>();
+        character4synthesis.gameObject.SetActive(true);
+
         character4synthesis.name = "Result:" + AgentName ;
         RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
         rca.IsGeneratedProcedurally = true;
@@ -147,8 +159,11 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
             ab.mass = 0.1f;
 
-            j.name = j.name.Replace("(Clone)", "");
-            j.name = "articulation:" + j.name;
+            
+            string namebase = j.name.Replace("(Clone)", "");
+
+
+            j.name = "articulation:" + namebase;
 
             //we only add a collider if it has a parent:
             Transform dad = ab.transform.parent;
@@ -164,7 +179,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
                 GameObject go = new GameObject();
                 go.transform.parent = dad;
-                go.name = "collider:" + j.name;
+                go.name = "collider:" + namebase;
 
                 CapsuleCollider c = go.AddComponent<CapsuleCollider>();
                 c.material = colliderMaterial;

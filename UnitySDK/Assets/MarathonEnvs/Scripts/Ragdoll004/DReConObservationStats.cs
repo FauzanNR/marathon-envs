@@ -119,7 +119,7 @@ public class DReConObservationStats : MonoBehaviour
             .ToList();
         if (_root == null)
         {
-            Debug.Log("in game object: " + name + "my rootname is: " + rootName);
+           // Debug.Log("in game object: " + name + "my rootname is: " + rootName);
             _root = _bodyParts.First(x=>x.name== rootName).gameObject;
         }             
         transform.position = defaultTransform.position;

@@ -34,6 +34,13 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	Quaternion _resetRotation;
 
 
+	[SerializeField]
+	bool _isGeneratedProcedurally = false;
+
+	public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
+
+
+
 	[Space(20)]
 	//---------------------- piece added to deal with mixamo characters and mapping between skinned and physical characters
 	//[SerializeField]
@@ -67,7 +74,61 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 	bool _hasLazyInitialized;
 
-    MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
+
+
+	void SetOffsetSourcePose2RBInProceduralWorld() {
+
+		_transforms = GetComponentsInChildren<Transform>().ToList();
+
+		_offsetsSource2RB = new List<MappingOffset>();
+
+
+		if (_rigidbodies == null)
+		{
+			_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
+			// _transforms = GetComponentsInChildren<Transform>().ToList();
+		}
+
+
+
+		foreach (Rigidbody rb in _rigidbodies)
+		{
+
+			//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
+
+			string[] temp = rb.name.Split(':');
+
+			string tname = temp[1];
+
+			//if structure is "articulation:" + t.name, it comes from a joint:
+
+			if (temp[0].Equals("articulation"))
+			{
+
+				Transform t = _transforms.First(x => x.name == tname);
+
+
+				//TODO: check these days if those values are different from 0, sometimes
+				Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(t.rotation);
+
+				MappingOffset r = new MappingOffset(t, rb, qoffset);
+
+				_offsetsSource2RB.Add(r);
+				r.UpdateRigidBodies = true;//TODO: check if really needed, probably the constructor already does it
+
+
+
+			}
+		}
+
+
+
+	}
+
+
+
+
+	MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
 	{
 		//here we set up:
 		// a. the transform of the rigged character input
@@ -196,7 +257,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
         SetupSensors();
 
 		anim = GetComponent<Animator>();
-		if (_usingMocapAnimatorController)
+		if (_usingMocapAnimatorController && !_isGeneratedProcedurally)
 		{
 
 			// anim.Play("Record",0, NormalizedTime);
@@ -309,26 +370,23 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
             // }       
         }
 
-        MimicAnimationArtanim();
-
-
-
-
-
-
+		if (_isGeneratedProcedurally)
+			MimicAnimationArtanimInProceduralWorld();
+		else
+			MimicAnimationArtanim();
 
 
     }
 
 
-	//public void MimicAnimation(bool skipIfLearning = false)
-	//{
-		
+	void MimicAnimationArtanimInProceduralWorld() {
+		if (!anim.enabled)
+			return;
+		else
+			SetOffsetSourcePose2RBInProceduralWorld();
 
-	
-	//	MimicAnimationArtanim();
-		
-	//}
+
+	}
 
 
 	void MimicAnimationArtanim() {
@@ -411,50 +469,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 	}
 
-
 	/*
-
-	void MimicBone(string name, string bodyPartName, Vector3 offset, Quaternion rotationOffset)
-	{
-		if (_rigidbodies == null || _transforms == null)
-		{
-			_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
-			_transforms = GetComponentsInChildren<Transform>().ToList();
-		}
-
-		var bodyPart = _transforms.First(x=>x.name == bodyPartName);
-		var target = _rigidbodies.First(x=>x.name == name);
-
-		target.transform.position = bodyPart.transform.position + offset;
-		target.transform.localPosition = bodyPart.transform.localPosition + offset;
-		target.transform.rotation = bodyPart.transform.rotation * rotationOffset;
-
-		target.transform.rotation = rotationOffset* bodyPart.transform.rotation;
-	}
-
-
-	void MimicBone(string name, string animStartName, string animEndtName, Vector3 offset, Quaternion rotationOffset)
-	{
-		if (_rigidbodies == null || _transforms == null)
-		{
-			_rigidbodies = GetComponentsInChildren<Rigidbody>().ToList();
-			_transforms = GetComponentsInChildren<Transform>().ToList();
-		}
-
-
-		var animStartBone = _transforms.First(x=>x.name == animStartName);
-		var animEndBone = _transforms.First(x=>x.name == animEndtName);
-		var target = _rigidbodies.First(x=>x.name == name);
-
-		var pos = (animEndBone.transform.position - animStartBone.transform.position);
-		var localOffset = target.transform.parent.InverseTransformPoint(offset);
-		// target.transform.position = animStartBone.transform.position + (pos/2) + localOffset;
-		target.transform.position = animStartBone.transform.position + (pos/2);
-		target.transform.localPosition += offset;
-		
-		target.transform.rotation = rotationOffset * animStartBone.transform.rotation ;
-	}
-	*/
 	[Space(20)]
 	[Range(0f,1f)]
 	public float toePositionOffset = .3f;
@@ -503,6 +518,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		target.transform.rotation = rotation * rotationOffset;
 
 	}
+	*/
 
 	public void OnReset(Quaternion resetRotation)
 	{
@@ -542,7 +558,10 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			transform.position = pos;
 		}
 		transform.rotation = resetRotation;
-        MimicAnimationArtanim();
+		if (_isGeneratedProcedurally)
+			MimicAnimationArtanimInProceduralWorld();
+		else
+	        MimicAnimationArtanim();
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)

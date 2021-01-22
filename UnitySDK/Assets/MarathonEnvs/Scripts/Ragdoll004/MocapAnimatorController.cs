@@ -44,6 +44,12 @@ public class MocapAnimatorController : MonoBehaviour
     public bool doFixedUpdate = true;
 
 
+    [SerializeField]
+    bool _isGeneratedProcedurally = false;
+
+    public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
+
+
     protected bool IsMoveInput
     {
         get { return !Mathf.Approximately(_inputController.MovementVector.sqrMagnitude, 0f); }
@@ -111,18 +117,24 @@ public class MocapAnimatorController : MonoBehaviour
 
         if (!doFixedUpdate)
             return;
-   
-        _anim.SetBool("onGround", _isGrounded);
-        // _anim.SetFloat("verticalVelocity", _verticalVelocity);
-        _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
-        _anim.SetFloat("forwardVelocity", _forwardVelocity);
-        _anim.SetBool("backflip", false);
-        _anim.Rebind();
-        _anim.SetBool("onGround", _isGrounded);
-        // _anim.SetFloat("verticalVelocity", _verticalVelocity);
-        _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
-        _anim.SetFloat("forwardVelocity", _forwardVelocity);
-        _anim.SetBool("backflip", false);
+
+
+        if (!_isGeneratedProcedurally) { 
+
+            _anim.SetBool("onGround", _isGrounded);
+            // _anim.SetFloat("verticalVelocity", _verticalVelocity);
+            _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
+            _anim.SetFloat("forwardVelocity", _forwardVelocity);
+            _anim.SetBool("backflip", false);
+            _anim.Rebind();
+            _anim.SetBool("onGround", _isGrounded);
+            // _anim.SetFloat("verticalVelocity", _verticalVelocity);
+            _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
+            _anim.SetFloat("forwardVelocity", _forwardVelocity);
+            _anim.SetBool("backflip", false);
+            
+
+        }
         OnFixedUpdate();
         _anim.Update(0f);
 

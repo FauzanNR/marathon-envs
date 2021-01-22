@@ -26,7 +26,7 @@ namespace Unity.MLAgents
                 return;
             if (otherOverlap.Parent != Parent)
             {
-                Debug.Log("the parent of: " + name + "is not: " + Parent.name);
+                //Debug.Log("the parent of: " + name + "is not: " + Parent.name);
                 return;
 
             }

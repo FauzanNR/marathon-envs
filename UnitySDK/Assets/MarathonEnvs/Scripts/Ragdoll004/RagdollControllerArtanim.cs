@@ -37,7 +37,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 
 	[SerializeField]
-	bool _isGeneratedProcedurally;
+	bool _isGeneratedProcedurally = false;
 
 	public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
 
@@ -80,30 +80,47 @@ public class RagdollControllerArtanim : MonoBehaviour
 	//this one is for the case where everything is generated procedurally
 	void  SetOffsetRB2targetPoseInProceduralWorld() {
 
-		_targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
+		if(_targetPoseTransforms == null)
+			_targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
 
-		_offsetsRB2targetPoseTransforms = new List<MappingOffset>();
-
-		_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
-
-
-		foreach (Transform t in _targetPoseTransforms) {
-
-			string abname = "articulation:" + t.name;
-			ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
-			
+		if(_offsetsRB2targetPoseTransforms == null)
+			_offsetsRB2targetPoseTransforms = new List<MappingOffset>();
 
 
-			Quaternion qoffset = ab.transform.rotation * Quaternion.Inverse(t.rotation);
-			MappingOffset r = new MappingOffset(t, ab, Quaternion.Inverse(qoffset));
-			if (ab.isRoot)
-			{
-				r.SetAsRoot(true, _debugDistance);
+		if(_articulationbodies == null)
+			_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
+
+
+
+
+
+		foreach (ArticulationBody ab in _articulationbodies) {
+
+			//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
+
+			string[] temp = ab.name.Split(':');
+
+			string tname = temp[1];
+
+            //if structure is "articulation:" + t.name, it comes from a joint:
+
+            if (temp[0].Equals("articulation")) { 
+
+				Transform t = _targetPoseTransforms.First(x => x.name == tname);
+
+
+				//TODO: check these days if those values are different from 0, sometimes
+				Quaternion qoffset = ab.transform.rotation * Quaternion.Inverse(t.rotation);
+				MappingOffset r = new MappingOffset(t, ab, Quaternion.Inverse(qoffset));
+				if (ab.isRoot)
+				{
+					r.SetAsRoot(true, _debugDistance);
+
+				}
+
+				_offsetsRB2targetPoseTransforms.Add(r);
 
 			}
-
-			_offsetsRB2targetPoseTransforms.Add(r);
-
 		}
 
 
