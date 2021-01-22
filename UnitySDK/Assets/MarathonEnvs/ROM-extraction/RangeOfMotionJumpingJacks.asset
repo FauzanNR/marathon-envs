@@ -1,0 +1,297 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 999eba76c61cf4049a412dd933bea1b0, type: 3}
+  m_Name: RangeOfMotionJumpingJacks
+  m_EditorClassIdentifier: 
+  Values:
+  - name: AgentMove-source
+    lower: {x: 0, y: -174.93837, z: 0}
+    upper: {x: 0, y: 177.86163, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: Beta_Joints
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: Beta_Surface
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:Hips
+    lower: {x: -4.8261414, y: -11.58429, z: -9.435852}
+    upper: {x: 15, y: 4.8374953, z: 4.3038664}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftUpLeg
+    lower: {x: -74.44714, y: -5.8776245, z: -11.393372}
+    upper: {x: 18.330416, y: 13.041272, z: 11.971504}
+    rangeOfMotion: {x: 92.77756, y: 18.918896, z: 23.364876}
+  - name: mixamorig:LeftLeg
+    lower: {x: 0, y: -7.209198, z: -9.934662}
+    upper: {x: 89.09691, y: 4.601871, z: 3.4599116}
+    rangeOfMotion: {x: 89.09691, y: 11.8110695, z: 13.394573}
+  - name: mixamorig:LeftFoot
+    lower: {x: -39.949646, y: -11.643677, z: -4.925476}
+    upper: {x: 12.153133, y: 3.0419388, z: 17.044003}
+    rangeOfMotion: {x: 52.10278, y: 14.685616, z: 21.969479}
+  - name: mixamorig:LeftToeBase
+    lower: {x: -29.242859, y: -0.000000027841663, z: 0}
+    upper: {x: 2.3147357, y: 0.0000000021560673, z: 0.000000106773804}
+    rangeOfMotion: {x: 31.557594, y: 0.00000002999773, z: 0.000000106773804}
+  - name: mixamorig:LeftToe_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightUpLeg
+    lower: {x: -70.80298, y: -6.886505, z: -3.4920044}
+    upper: {x: 19.025679, y: 7.59686, z: 10.571373}
+    rangeOfMotion: {x: 89.82866, y: 14.483365, z: 14.063377}
+  - name: mixamorig:RightLeg
+    lower: {x: 0, y: -1.7425537, z: -9.983856}
+    upper: {x: 86.97638, y: 10.362495, z: 5.7140527}
+    rangeOfMotion: {x: 86.97638, y: 12.105049, z: 15.697908}
+  - name: mixamorig:RightFoot
+    lower: {x: -39.02945, y: -3.8867493, z: -14.299866}
+    upper: {x: 7.6942534, y: 12.481155, z: 7.2257247}
+    rangeOfMotion: {x: 46.7237, y: 16.367905, z: 21.52559}
+  - name: mixamorig:RightToeBase
+    lower: {x: -33.025146, y: -6.996389e-14, z: -0.0000000016675265}
+    upper: {x: 1.2438064, y: 1.910806e-12, z: 0}
+    rangeOfMotion: {x: 34.26895, y: 1.9807697e-12, z: 0.0000000016675265}
+  - name: mixamorig:RightToe_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:Spine
+    lower: {x: -1, y: -15.56662, z: -7.8842163}
+    upper: {x: 10.152193, y: 22.96365, z: 12.733941}
+    rangeOfMotion: {x: 10.152193, y: 38.53027, z: 20.618156}
+  - name: mixamorig:Spine1
+    lower: {x: -0.017669678, y: -5.5842285, z: -4.13855}
+    upper: {x: 2.4610693, y: 8.744252, z: 1.9011399}
+    rangeOfMotion: {x: 2.478739, y: 14.328481, z: 6.0396895}
+  - name: mixamorig:Spine2
+    lower: {x: 0, y: -5.584076, z: -4.299469}
+    upper: {x: 5.0664234, y: 8.766709, z: 1.9505053}
+    rangeOfMotion: {x: 5.0664234, y: 14.350785, z: 6.2499743}
+  - name: mixamorig:LeftShoulder
+    lower: {x: -3.1871643, y: -0.3958435, z: -0.7024536}
+    upper: {x: 0.16452196, y: 15.8816, z: 13.580022}
+    rangeOfMotion: {x: 3.3516862, y: 16.277443, z: 14.282475}
+  - name: mixamorig:LeftArm
+    lower: {x: -4.9208374, y: -21.544403, z: 0}
+    upper: {x: 27.884377, y: 25.280075, z: 71.083984}
+    rangeOfMotion: {x: 32.805214, y: 46.82448, z: 71.083984}
+  - name: mixamorig:LeftForeArm
+    lower: {x: -7.1115723, y: -0.58865356, z: -5.0166016}
+    upper: {x: 7.884013, y: 112.74351, z: 7.2724066}
+    rangeOfMotion: {x: 14.995585, y: 113.33216, z: 12.289008}
+  - name: mixamorig:LeftHand
+    lower: {x: -13.919586, y: -0.6594238, z: -0.04852295}
+    upper: {x: 0, y: 0.001847844, z: 1.6088748}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandIndex1
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.0000046162468, y: 8.413712, z: 33.209797}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandIndex2
+    lower: {x: -0.000014598445, y: 0, z: 0}
+    upper: {x: 0, y: 0.015387281, z: 36.525787}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandIndex3
+    lower: {x: -0.000004835778, y: 0, z: 0}
+    upper: {x: 0, y: 0.015383724, z: 36.525776}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandIndex4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandMiddle1
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.000000040311306, y: 4.218069, z: 33.35004}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandMiddle2
+    lower: {x: -0.0000023137827, y: 0, z: 0}
+    upper: {x: 0, y: 0.015386264, z: 36.52578}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandMiddle3
+    lower: {x: -0.0000012828993, y: 0, z: 0}
+    upper: {x: 0, y: 0.015384218, z: 36.525776}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandMiddle4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandPinky1
+    lower: {x: 0, y: -8.38504, z: 0}
+    upper: {x: 0.0000006600912, y: 0, z: 33.21861}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandPinky2
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.0000012917787, y: 0.015385728, z: 36.525784}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandPinky3
+    lower: {x: -0.00000642349, y: 0, z: 0}
+    upper: {x: 0, y: 0.015383169, z: 36.525776}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandPinky4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandRing1
+    lower: {x: 0, y: -4.189575, z: 0}
+    upper: {x: 0.00000094419585, y: 0, z: 33.354458}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandRing2
+    lower: {x: -0.00000537433, y: 0, z: 0}
+    upper: {x: 0, y: 0.015388311, z: 36.525764}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandRing3
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.0000033539902, y: 0.015384709, z: 36.52578}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandRing4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandThumb1
+    lower: {x: -16.022736, y: 0, z: 0}
+    upper: {x: 0, y: 22.350302, z: 2.1009815}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandThumb2
+    lower: {x: 0, y: -21.341278, z: -4.691925}
+    upper: {x: 5.603852, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandThumb3
+    lower: {x: 0, y: -21.340637, z: -4.6913757}
+    upper: {x: 5.6039214, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftHandThumb4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:Neck
+    lower: {x: -3.5856018, y: -5.5338135, z: -3.4222412}
+    upper: {x: 10.173826, y: 3.517331, z: 2.7413383}
+    rangeOfMotion: {x: 13.759428, y: 9.051145, z: 6.1635795}
+  - name: mixamorig:Head
+    lower: {x: -14.963684, y: -29.291412, z: -3.944275}
+    upper: {x: 0, y: 24.139975, z: 5.2405343}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:HeadTop_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:LeftEye
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightEye
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightShoulder
+    lower: {x: -3.5014343, y: -14.37442, z: -13.443176}
+    upper: {x: 0.31854764, y: 1.6815505, z: 1.116517}
+    rangeOfMotion: {x: 3.819982, y: 16.055971, z: 14.559693}
+  - name: mixamorig:RightArm
+    lower: {x: -10.279358, y: -39.35681, z: -61.248047}
+    upper: {x: 26.510824, y: 2.666854, z: 0}
+    rangeOfMotion: {x: 36.790184, y: 42.023666, z: 61.248047}
+  - name: mixamorig:RightForeArm
+    lower: {x: -3.9916992, y: -91.27048, z: -8.653595}
+    upper: {x: 8.161657, y: 0, z: 1.2510701}
+    rangeOfMotion: {x: 12.153357, y: 91.27048, z: 9.904665}
+  - name: mixamorig:RightHand
+    lower: {x: -11.802887, y: -0.0007411771, z: -0.85092163}
+    upper: {x: 0, y: 0.2838256, z: 0.02405869}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandIndex1
+    lower: {x: -0.0000016132351, y: -8.414154, z: -33.209656}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandIndex2
+    lower: {x: -0.0000084386365, y: -0.01586914, z: -36.525787}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandIndex3
+    lower: {x: -0.00000073950895, y: -0.01586914, z: -36.525787}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandIndex4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandMiddle1
+    lower: {x: 0, y: -4.218506, z: -33.349976}
+    upper: {x: 0.000000038304712, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandMiddle2
+    lower: {x: -0.0000023072043, y: -0.01586914, z: -36.525787}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandMiddle3
+    lower: {x: 0, y: -0.014038086, z: -36.525757}
+    upper: {x: 0.0006075707, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandMiddle4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandPinky1
+    lower: {x: 0, y: 0, z: -33.21872}
+    upper: {x: 0.00044040312, y: 8.386052, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandPinky2
+    lower: {x: 0, y: -0.017303467, z: -36.525787}
+    upper: {x: 0.00046979717, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandPinky3
+    lower: {x: -0.000010519397, y: -0.01586914, z: -36.525787}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandPinky4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandRing1
+    lower: {x: 0, y: 0, z: -33.354523}
+    upper: {x: 0.0000009448496, y: 4.189121, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandRing2
+    lower: {x: -0.0000053792546, y: -0.01586914, z: -36.525787}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandRing3
+    lower: {x: 0, y: -0.01586914, z: -36.525787}
+    upper: {x: 0.0000033523345, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandRing4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandThumb1
+    lower: {x: -16.02304, y: -22.350098, z: -2.1004028}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandThumb2
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 5.6037908, y: 21.340055, z: 4.690447}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandThumb3
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 5.603845, y: 21.341993, z: 4.6923556}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  - name: mixamorig:RightHandThumb4
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+    rangeOfMotion: {x: 0, y: 0, z: 0}
+  InferenceModel: {fileID: 5022602860645237092, guid: f2b134ff161530946b7c8cac57d8e28b,
+    type: 3}

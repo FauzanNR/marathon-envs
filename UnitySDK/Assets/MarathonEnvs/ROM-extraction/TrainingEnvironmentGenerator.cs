@@ -16,8 +16,14 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
 
+    //[SerializeField]
+    //ROMparserSwingTwist ROMparser;
+
     [SerializeField]
-    ROMparserSwingTwist ROMparser;
+    public RangeOfMotion004 info2store;
+
+
+
     [SerializeField]
     Animator characterReference;
 
@@ -238,7 +244,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         ApplyRangeOfMotion004 rom = temp.AddComponent<ApplyRangeOfMotion004>();
-        rom.RangeOfMotion2Store = ROMparser.info2store;
+        rom.RangeOfMotion2Store = info2store;
 
 
 

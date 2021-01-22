@@ -100,6 +100,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         }
 
+
+
         AnimatorClipInfo[] info = theAnimator.GetCurrentAnimatorClipInfo(0);
         AnimationClip theClip = info[0].clip;
         duration = theClip.length;
