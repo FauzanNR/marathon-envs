@@ -44,6 +44,10 @@ public class DReConObservations : MonoBehaviour
     public bool PositionInWorldSpace = true;
 
 
+    public string targetedRootName = "articulation:Hips";
+
+
+
     InputController _inputController;
     SpawnableEnv _spawnableEnv;
     DReConObservationStats _mocapBodyStats;
@@ -62,17 +66,24 @@ public class DReConObservations : MonoBehaviour
             .ToList();
 
         _mocapBodyStats= new GameObject("MocapDReConObservationStats").AddComponent<DReConObservationStats>();
+        _mocapBodyStats.setRootName(targetedRootName);
+
+
 
         _mocapBodyStats.ObjectToTrack = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
         _mocapBodyStats.OnAgentInitialize(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);
 
-        _ragDollBodyStats= new GameObject("RagDollDReConObservationStats").AddComponent<DReConObservationStats>();
+        _ragDollBodyStats = new GameObject("RagDollDReConObservationStats").AddComponent<DReConObservationStats>();
+        _ragDollBodyStats.setRootName(targetedRootName);
+
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
         _ragDollBodyStats.OnAgentInitialize(BodyPartsToTrack, transform);
     }
+
+
 
     public void OnStep(float timeDelta)
     {

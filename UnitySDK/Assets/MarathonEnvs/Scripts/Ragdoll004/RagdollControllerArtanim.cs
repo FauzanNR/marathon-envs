@@ -13,9 +13,9 @@ public class RagdollControllerArtanim : MonoBehaviour
 	ArticulationBody _articulationBodyRoot;
 
     //to generate an environment automatically from a rigged character and an animation (see folder ROM-extraction)
-    public ArticulationBody ArticulationBodyRoot { set => _articulationBodyRoot = value; }
-
-
+    public ArticulationBody ArticulationBodyRoot { set => _articulationBodyRoot = value; 
+		get =>  _articulationBodyRoot; }
+  
 
     private List<ArticulationBody> _articulationbodies = null;
 
@@ -30,12 +30,19 @@ public class RagdollControllerArtanim : MonoBehaviour
 	[Space(20)]
 
 
+
+	//not used in 
 	[SerializeField]
 	float _debugDistance= 0.0f;
 
 
+	[SerializeField]
+	bool _isGeneratedProcedurally = false;
 
-    /*
+	public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
+
+
+	/*
 
     [SerializeField]
     bool SetUpConstraintsFromData= false;
@@ -45,9 +52,9 @@ public class RagdollControllerArtanim : MonoBehaviour
     */
 
 
-    //we use this to bypass the physical character, using only the ragdoll with rigidbodies, instead of the ragdoll with articulation Joints
-    //This is INCOMPATIBLE with SetUPConstraintsFromData
-    [SerializeField]
+	//we use this to bypass the physical character, using only the ragdoll with rigidbodies, instead of the ragdoll with articulation Joints
+	//This is INCOMPATIBLE with SetUPConstraintsFromData
+	[SerializeField]
 	bool _debugWithRigidBody = false;
 	[SerializeField]
 	Rigidbody _rigidbodyRoot;
@@ -69,97 +76,63 @@ public class RagdollControllerArtanim : MonoBehaviour
     }
 
 
-    //void SetConstraints(ROMinfoCollector info) {
 
-    //    Set1Constraint("lower_waist", "mixamorig:Spine");
-    //    Set1Constraint("upper_waist", "mixamorig:Spine1");
-    //    Set1Constraint("torso", "mixamorig:Spine2");
-    //    Set1Constraint("head", "mixamorig:Head");
+	//this one is for the case where everything is generated procedurally
+	void  SetOffsetRB2targetPoseInProceduralWorld() {
 
+		if(_targetPoseTransforms == null)
+			_targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
 
-    //    Set1Constraint("left_shoulder_joint", "mixamorig:LeftShoulder");
-
-    //    Set1Constraint("left_upper_arm_joint", "mixamorig:LeftArm");
-    //    Set1Constraint("left_larm_joint", "mixamorig:LeftForeArm");
-
-    //    //	Set1Constraint("left_hand", "mixamorig:LeftHand");
-    //    // hands do not have rigidbodies
+		if(_offsetsRB2targetPoseTransforms == null)
+			_offsetsRB2targetPoseTransforms = new List<MappingOffset>();
 
 
-    //    Set1Constraint("right_shoulder_joint", "mixamorig:RightShoulder");
-
-    //    Set1Constraint("right_upper_arm_joint", "mixamorig:RightArm");
-    //    Set1Constraint("right_larm_joint", "mixamorig:RightForeArm");
-    //    //	Set1Constraint("right_hand", "mixamorig:RightHand");
-
-    //    //			Set1Constraint("left_thigh", "mixamorig:LeftUpLeg");
-
-    //    Set1Constraint("left_thigh_joint", "mixamorig:LeftUpLeg");
-
-    //    //			Set1Constraint("left_shin", "mixamorig:LeftLeg");
-    //    Set1Constraint("left_shin_joint", "mixamorig:LeftLeg");
-    //    Set1Constraint("left_left_foot", "mixamorig:LeftToeBase");
-    //    //	Set1Constraint("right_left_foot", "mixamorig:LeftToeBase");
-
-
-    //    //			Set1Constraint("right_thigh", "mixamorig:RightUpLeg");
-    //    Set1Constraint("right_thigh_joint", "mixamorig:RightUpLeg");
-    //    //Set1Constraint("right_shin", "mixamorig:RightLeg");
-    //    Set1Constraint("right_shin_joint", "mixamorig:RightLeg");
-
-
-    //    Set1Constraint("left_left_foot", "mixamorig:RightToeBase");
-    //    //	Set1Constraint("left_right_foot", "mixamorig:RightToeBase");
-    //}
-
-
-    //void Set1Constraint(string ArticulationName, string JointName) {
-
-    //    if (_targetPoseTransforms == null)
-    //    {
-    //        _targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
-    //        Debug.Log("the number of transforms  intarget pose is: " + _targetPoseTransforms.Count);
-    //    }
-
-    //    if (_articulationbodies == null)
-    //    {
-    //            _articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
-    //    }
-
-
-    //    ArticulationBody ab = _articulationbodies.First(x => x.name == ArticulationName);
+		if(_articulationbodies == null)
+			_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
 
 
 
-    //    //string name = data4constraints.jointNames.First(x => x == JointName);
-    //    int where = Array.IndexOf(data4constraints.jointNames, JointName);
 
 
-    //    Vector3 maxVals = data4constraints.maxRotations[where];
-    //    Vector3 minVals = data4constraints.minRotations[where];
+		foreach (ArticulationBody ab in _articulationbodies) {
+
+			//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
+
+			string[] temp = ab.name.Split(':');
+
+			string tname = temp[1];
+
+            //if structure is "articulation:" + t.name, it comes from a joint:
+
+            if (temp[0].Equals("articulation")) { 
+
+				Transform t = _targetPoseTransforms.First(x => x.name == tname);
 
 
-    //    ArticulationDrive temp = ab.xDrive;
-    //    temp.upperLimit = maxVals.x;
-    //    temp.lowerLimit = minVals.x;
-    //    ab.xDrive = temp;
+				//TODO: check these days if those values are different from 0, sometimes
+				Quaternion qoffset = ab.transform.rotation * Quaternion.Inverse(t.rotation);
+				MappingOffset r = new MappingOffset(t, ab, Quaternion.Inverse(qoffset));
+				if (ab.isRoot)
+				{
+					r.SetAsRoot(true, _debugDistance);
 
-    //    temp = ab.yDrive;
-    //    temp.upperLimit = maxVals.y;
-    //    temp.lowerLimit = minVals.y;
-    //    ab.yDrive = temp;
+				}
 
-    //    temp = ab.zDrive;
-    //    temp.upperLimit = maxVals.z;
-    //    temp.lowerLimit = minVals.z;
-    //    ab.zDrive = temp;
+				_offsetsRB2targetPoseTransforms.Add(r);
 
-
-    //}
+			}
+		}
 
 
 
-    MappingOffset SetOffsetRB2targetPose(string rbname, string tname)
+	}
+
+
+
+
+
+
+	MappingOffset SetOffsetRB2targetPose(string rbname, string tname)
 	{
 		//here we set up:
 		// a. the transform of the rigged character output
@@ -308,72 +281,64 @@ public class RagdollControllerArtanim : MonoBehaviour
     void MimicAnimationArtanim()
 	{
 
-     
-     
-
-   
-
-
-
-
-
-
-
-
 
         if (_offsetsRB2targetPoseTransforms == null)
 		{
-			MappingOffset o = SetOffsetRB2targetPose("articulation:Hips", "mixamorig:Hips");
-			o.SetAsRoot(true, _debugDistance);
-			SetOffsetRB2targetPose("articulation:Spine", "mixamorig:Spine");
-			SetOffsetRB2targetPose("articulation:Spine1", "mixamorig:Spine1");
-			SetOffsetRB2targetPose("articulation:Spine2", "mixamorig:Spine2");
-            SetOffsetRB2targetPose("articulation:Neck", "mixamorig:Neck");
-            SetOffsetRB2targetPose("head", "mixamorig:Head");
+
+            if (_isGeneratedProcedurally)
+            {
+
+				SetOffsetRB2targetPoseInProceduralWorld();
+            }
+            else { 
+
+				MappingOffset o = SetOffsetRB2targetPose("articulation:Hips", "mixamorig:Hips");
+				o.SetAsRoot(true, _debugDistance);
+				SetOffsetRB2targetPose("articulation:Spine", "mixamorig:Spine");
+				SetOffsetRB2targetPose("articulation:Spine1", "mixamorig:Spine1");
+				SetOffsetRB2targetPose("articulation:Spine2", "mixamorig:Spine2");
+				SetOffsetRB2targetPose("articulation:Neck", "mixamorig:Neck");
+				SetOffsetRB2targetPose("head", "mixamorig:Head");
 
             
 
-            SetOffsetRB2targetPose("articulation:LeftShoulder", "mixamorig:LeftShoulder");
+				SetOffsetRB2targetPose("articulation:LeftShoulder", "mixamorig:LeftShoulder");
 
-			SetOffsetRB2targetPose("articulation:LeftArm", "mixamorig:LeftArm");
-			SetOffsetRB2targetPose("articulation:LeftForeArm", "mixamorig:LeftForeArm");
+				SetOffsetRB2targetPose("articulation:LeftArm", "mixamorig:LeftArm");
+				SetOffsetRB2targetPose("articulation:LeftForeArm", "mixamorig:LeftForeArm");
 
-            //	SetOffsetRB2targetPose("left_hand", "mixamorig:LeftHand");
-            // hands do not have rigidbodies
-
-
-
-
-            SetOffsetRB2targetPose("articulation:RightShoulder", "mixamorig:RightShoulder");
-
-			SetOffsetRB2targetPose("articulation:RightArm", "mixamorig:RightArm");
-			SetOffsetRB2targetPose("articulation:RightForeArm", "mixamorig:RightForeArm");
-		//	SetOffsetRB2targetPose("right_hand", "mixamorig:RightHand");
-
-
-			SetOffsetRB2targetPose("articulation:LeftUpLeg", "mixamorig:LeftUpLeg");
-
-           
+				//	SetOffsetRB2targetPose("left_hand", "mixamorig:LeftHand");
+				// hands do not have rigidbodies
 
 
 
 
-            //			SetOffsetRB2targetPose("left_shin", "mixamorig:LeftLeg");
-            SetOffsetRB2targetPose("articulation:LeftLeg", "mixamorig:LeftLeg");
-            SetOffsetRB2targetPose("articulation:LeftFoot", "mixamorig:LeftFoot");
-            SetOffsetRB2targetPose("articulation:LeftToeBase", "mixamorig:LeftToeBase");
-            //	SetOffsetRB2targetPose("right_left_foot", "mixamorig:LeftToeBase");
+				SetOffsetRB2targetPose("articulation:RightShoulder", "mixamorig:RightShoulder");
+
+				SetOffsetRB2targetPose("articulation:RightArm", "mixamorig:RightArm");
+				SetOffsetRB2targetPose("articulation:RightForeArm", "mixamorig:RightForeArm");
+			//	SetOffsetRB2targetPose("right_hand", "mixamorig:RightHand");
 
 
-            SetOffsetRB2targetPose("articulation:RightUpLeg", "mixamorig:RightUpLeg");
-			//SetOffsetRB2targetPose("right_shin", "mixamorig:RightLeg");
-			SetOffsetRB2targetPose("articulation:RightLeg", "mixamorig:RightLeg");
-
-            SetOffsetRB2targetPose("articulation:RightFoot", "mixamorig:RightFoot");
-            SetOffsetRB2targetPose("articulation:RightToeBase", "mixamorig:RightToeBase");
-		//	SetOffsetRB2targetPose("left_right_foot", "mixamorig:RightToeBase");
+				SetOffsetRB2targetPose("articulation:LeftUpLeg", "mixamorig:LeftUpLeg");
 
 
+				//			SetOffsetRB2targetPose("left_shin", "mixamorig:LeftLeg");
+				SetOffsetRB2targetPose("articulation:LeftLeg", "mixamorig:LeftLeg");
+				SetOffsetRB2targetPose("articulation:LeftFoot", "mixamorig:LeftFoot");
+				SetOffsetRB2targetPose("articulation:LeftToeBase", "mixamorig:LeftToeBase");
+				//	SetOffsetRB2targetPose("right_left_foot", "mixamorig:LeftToeBase");
+
+
+				SetOffsetRB2targetPose("articulation:RightUpLeg", "mixamorig:RightUpLeg");
+				//SetOffsetRB2targetPose("right_shin", "mixamorig:RightLeg");
+				SetOffsetRB2targetPose("articulation:RightLeg", "mixamorig:RightLeg");
+
+				SetOffsetRB2targetPose("articulation:RightFoot", "mixamorig:RightFoot");
+				SetOffsetRB2targetPose("articulation:RightToeBase", "mixamorig:RightToeBase");
+					//	SetOffsetRB2targetPose("left_right_foot", "mixamorig:RightToeBase");
+
+			}
 
 		}
 		else

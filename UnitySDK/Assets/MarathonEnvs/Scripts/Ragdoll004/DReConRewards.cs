@@ -67,6 +67,12 @@ public class DReConRewards : MonoBehaviour
 
     bool _hasLazyInitialized;
 
+    [Header("Things to check for rewards")]
+    public string headname = "head";
+
+    public string targetedRootName = "articulation:Hips";
+
+
     public void OnAgentInitialize()
     {
         Assert.IsFalse(_hasLazyInitialized);
@@ -87,11 +93,12 @@ public class DReConRewards : MonoBehaviour
         // Assert.AreEqual(_mocapBodyParts.Count, _ragDollBodyParts.Count);
         _mocapHead = _mocap
             .GetComponentsInChildren<Transform>()
-            .First(x => x.name == "head");
+            .First(x => x.name == headname);
         _ragDollHead = _ragDoll
             .GetComponentsInChildren<Transform>()
-            .First(x => x.name == "head");
+            .First(x => x.name == headname);
         _mocapBodyStats = new GameObject("MocapDReConRewardStats").AddComponent<DReConRewardStats>();
+        _mocapBodyStats.setRootName(targetedRootName);
 
         _mocapBodyStats.ObjectToTrack = _mocap;
 
@@ -99,6 +106,9 @@ public class DReConRewards : MonoBehaviour
         _mocapBodyStats.OnAgentInitialize(_mocapBodyStats.ObjectToTrack.transform);
 
         _ragDollBodyStats= new GameObject("RagDollDReConRewardStats").AddComponent<DReConRewardStats>();
+        _ragDollBodyStats.setRootName(targetedRootName);
+
+
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
         _ragDollBodyStats.OnAgentInitialize(transform, _mocapBodyStats);      

@@ -55,12 +55,21 @@ public class DReConObservationStats : MonoBehaviour
 
 
     SpawnableEnv _spawnableEnv;
-    List<Collider> _bodyParts;
+    List<Transform> _bodyParts;
     internal List<Rigidbody> _rigidbodyParts;
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
     InputController _inputController;
     bool _hasLazyInitialized;
+
+    string rootName = "articulation:Hips";
+
+    public void setRootName(string s) {
+        rootName = s;
+    
+    }
+
+
 
     public void OnAgentInitialize(List<string> bodyPartsToTrack, Transform defaultTransform)
     {
@@ -72,6 +81,9 @@ public class DReConObservationStats : MonoBehaviour
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _rigidbodyParts = ObjectToTrack.GetComponentsInChildren<Rigidbody>().ToList();
         _articulationBodyParts = ObjectToTrack.GetComponentsInChildren<ArticulationBody>().ToList();
+
+
+        /*
         if (_rigidbodyParts?.Count > 0)
             _bodyParts = _rigidbodyParts
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
@@ -82,6 +94,20 @@ public class DReConObservationStats : MonoBehaviour
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
                 .Distinct()
                 .ToList();
+        */
+        if (_rigidbodyParts?.Count > 0)
+            _bodyParts = _rigidbodyParts
+                .SelectMany(x => x.GetComponentsInChildren<Transform>())
+                .Distinct()
+                .ToList();
+        else
+            _bodyParts = _articulationBodyParts
+                .SelectMany(x => x.GetComponentsInChildren<Transform>())
+                .Distinct()
+                .ToList();
+
+
+
         var bodyPartNames = _bodyParts.Select(x=>x.name);
         if (_bodyPartsToTrack?.Count > 0)
             _bodyParts = _bodyPartsToTrack
@@ -93,7 +119,8 @@ public class DReConObservationStats : MonoBehaviour
             .ToList();
         if (_root == null)
         {
-            _root = _bodyParts.First(x=>x.name== "articulation:Hips").gameObject;
+           // Debug.Log("in game object: " + name + "my rootname is: " + rootName);
+            _root = _bodyParts.First(x=>x.name== rootName).gameObject;
         }             
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
@@ -207,6 +234,7 @@ public class DReConObservationStats : MonoBehaviour
         {
             Stat bodyPartStat = Stats.First(x=>x.Name == bodyPart.name);
 
+            /*
             Vector3 c = Vector3.zero;
             CapsuleCollider capsule = bodyPart as CapsuleCollider;
             BoxCollider box = bodyPart as BoxCollider;
@@ -218,6 +246,9 @@ public class DReConObservationStats : MonoBehaviour
             else if (sphere != null)
                 c = sphere.center;
             Vector3 worldPosition = bodyPart.transform.TransformPoint(c);
+            */
+            Vector3 worldPosition = transform.position;
+
             Quaternion worldRotation = bodyPart.transform.rotation;
             Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
             Quaternion localRotation = FromToRotation(transform.rotation, worldRotation);

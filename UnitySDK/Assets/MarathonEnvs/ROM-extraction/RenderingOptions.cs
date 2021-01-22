@@ -8,9 +8,10 @@ public class RenderingOptions : MonoBehaviour
     [SerializeField]
     bool renderOnlyTarget;
 
-    [SerializeField]
+    public
     GameObject movementsource;
-    [SerializeField] 
+    
+    public
     GameObject ragdollcontroller;
 
     SkinnedMeshRenderer[] SkinnedRenderers;
