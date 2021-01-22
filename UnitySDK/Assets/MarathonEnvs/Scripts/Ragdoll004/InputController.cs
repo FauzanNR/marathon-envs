@@ -27,8 +27,8 @@ public class InputController : MonoBehaviour
     float _delayUntilNextAction;
     float _timeUnillDemo;
 
-    const float kGroundAcceleration = .6f/2;
-    const float kGroundDeceleration = .75f/2;
+    const float kGroundAcceleration = .6f;
+    const float kGroundDeceleration = .75f;
 
 
     // Start is called before the first frame update

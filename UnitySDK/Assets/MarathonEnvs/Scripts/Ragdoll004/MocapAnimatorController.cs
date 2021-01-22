@@ -8,7 +8,7 @@ public class MocapAnimatorController : MonoBehaviour
 {
     public float MaxForwardVelocity = 1f;        // Max run speed.
     public float MinTurnVelocity = 400f;         // Turn velocity when moving at maximum speed.
-    public float MaxTurnVelocity = 1200f / 3;        // Turn velocity when stationary.
+    public float MaxTurnVelocity = 1200f;        // Turn velocity when stationary.
     public float JumpSpeed = 10f;                // 
     public bool debugForceJump;
     Animator _anim;
@@ -19,7 +19,7 @@ public class MocapAnimatorController : MonoBehaviour
     bool _isGrounded;
     bool _previouslyGrounded;
     const float kAirborneTurnSpeedProportion = 5.4f;
-    const float kGroundTurnSpeedProportion = 200f/2;
+    const float kGroundTurnSpeedProportion = 200f;
     const float kGroundedRayDistance = 1f;
     const float kJumpAbortSpeed = 10f;
     const float kMinEnemyDotCoeff = 0.2f;
