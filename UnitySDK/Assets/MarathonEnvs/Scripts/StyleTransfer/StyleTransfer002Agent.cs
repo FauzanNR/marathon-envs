@@ -106,23 +106,23 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 		var rotationDistance = _master.RotationDistance / 16f ;
 		var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f ;
 		var endEffectorDistance = _master.EndEffectorDistance / 1f ;
-		var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 170f;
+		var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 2058f;
 		var jointAngularVelocityDistance = _master.JointAngularVelocityDistance / 7000f;
 		var jointAngularVelocityDistanceWorld = _master.JointAngularVelocityDistanceWorld / 7000f;
 		var centerOfMassDistance = _master.CenterOfMassDistance / 0.3f;
 		var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
 		var sensorDistance = _master.SensorDistance / 1f;
 
-		var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
-		var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
-		var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
-		var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
-		var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-		var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-		var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
-		var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
-        var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
+		var rotationReward = Mathf.Exp(-2*Mathf.Pow(rotationDistance,2));
+		var centerOfMassVelocityReward = Mathf.Exp(-2*Mathf.Pow(centerOfMassvelocityDistance,2));
+		var endEffectorReward = Mathf.Exp(-2*Mathf.Pow(endEffectorDistance,2));
+        var endEffectorVelocityReward = Mathf.Exp(-2*Mathf.Pow(endEffectorVelocityDistance,2));
+		var jointAngularVelocityReward = Mathf.Exp(-2*Mathf.Pow(jointAngularVelocityDistance,2));
+		var jointAngularVelocityRewardWorld = Mathf.Exp(-2*Mathf.Pow(jointAngularVelocityDistanceWorld,2));
+		var centerMassReward = Mathf.Exp(-2*Mathf.Pow(centerOfMassDistance,2));
+		var angularMomentReward = Mathf.Exp(-2*Mathf.Pow(angularMomentDistance,2));
+		var sensorReward = Mathf.Exp(-2*Mathf.Pow(sensorDistance,2));
+        var jointsNotAtLimitReward = Mathf.Exp(-2*Mathf.Pow(JointsAtLimit(),2));
 
         //Debug.Log("---------------");
         //Debug.Log("rotation reward: " + rotationReward);
@@ -136,21 +136,33 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //Debug.Log("sensorReward: " + sensorReward);
         //Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
 
-        float reward = rotationReward +
-            centerOfMassVelocityReward +
-            endEffectorReward +
-            endEffectorVelocityReward +
-            jointAngularVelocityReward +
-            jointAngularVelocityRewardWorld +
-            centerMassReward +
-            angularMomentReward +
-            sensorReward +
-            jointsNotAtLimitReward;
+        float reward = 0 +
+			(0.35f * rotationReward) +
+            (0.10f * centerOfMassVelocityReward) +
+            (0.15f * endEffectorReward) +
+            (0.10f * endEffectorVelocityReward) +
+            (0.10f * jointAngularVelocityReward) +
+            (0.0f * jointAngularVelocityRewardWorld) +
+            (0.05f * centerMassReward) +
+            (0.15f * angularMomentReward) +
+            (0.0f * sensorReward) +
+            (0.0f * jointsNotAtLimitReward);
 
 		if (!_master.IgnorRewardUntilObservation)
 			AddReward(reward);
 
-		if (reward < 0.5)
+		bool terminate = false;
+		terminate |= rotationReward<0.1f;
+		terminate |= centerOfMassVelocityReward<0.1f;
+		terminate |= endEffectorReward<0.1f;
+		terminate |= endEffectorVelocityReward<0.1f;
+		terminate |= jointAngularVelocityReward<0.1f;
+		terminate |= jointAngularVelocityRewardWorld<0.1f;
+		terminate |= centerMassReward<0.1f;
+		terminate |= angularMomentReward<0.1f;
+		terminate |= sensorReward<0.1f;
+		terminate |= jointsNotAtLimitReward<0.1f;
+		if (terminate)
 			EndEpisode();
 
 		if (!_isDone){
