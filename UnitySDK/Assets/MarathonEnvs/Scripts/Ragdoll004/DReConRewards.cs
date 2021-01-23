@@ -183,12 +183,13 @@ public class DReConRewards : MonoBehaviour
 
         // reward
         SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
-        Reward = (ComPositionReward * 0.1f) +
+        Reward = (ComPositionReward * 0.3f) +
                     (ComVelocityReward * 0.1f) +
-                    (ComDirectionReward * 0.2f) +
+                    // (ComDirectionReward * 0.2f) +
                     (PositionReward * 0.1f) +
                     (LocalPoseReward * 0.4f) +
                     (PointsVelocityReward * 0.1f);
+        Reward *= ComDirectionReward;
     }
     public void OnReset()
     {
