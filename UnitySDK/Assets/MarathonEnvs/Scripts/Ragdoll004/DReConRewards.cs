@@ -164,18 +164,19 @@ public class DReConRewards : MonoBehaviour
         DistanceFactor = 1.4f*DistanceFactor;
         DistanceFactor = 1.01f-DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
-        // ComPositionReward = Mathf.Exp(-2f * Mathf.Pow(ComDistance,2));
-        ComPositionReward = 1.3f*ComDistance;
-        ComPositionReward = 1.01f-ComPositionReward;
-        ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
-        ComPositionReward = Mathf.Pow(ComPositionReward,2);
+        ComPositionReward = Mathf.Exp(-2f * Mathf.Pow(DistanceFactor,2));
+        // ComPositionReward = 1.3f*ComDistance;
+        // ComPositionReward = 1.01f-ComPositionReward;
+        // ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
+        // ComPositionReward = Mathf.Pow(ComPositionReward,2);
 
         // center of mass direction reward
         ComDirectionDistance = Vector3.Dot( 
             _mocapBodyStats.transform.forward, 
             _ragDollBodyStats.transform.forward);
         ComDirectionReward = (ComDirectionDistance + 1f)/2f;
-        ComDirectionReward = Mathf.Pow(ComDirectionReward,2);
+        // ComDirectionReward = Mathf.Pow(ComDirectionReward,2);
+        ComDirectionReward = Mathf.Exp(-2f * Mathf.Pow(ComDirectionReward,2));
 
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
