@@ -19,6 +19,9 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
         base.OnInspectorGUI();
 
+        
+
+
         if (GUILayout.Button("1.Generate training environment "))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
@@ -26,9 +29,29 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         }
 
 
-        if (GUILayout.Button("2.Store Env as Prefab"))
+
+        if (GUILayout.Button("2. (optional) Generate ROM file"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+            t.GenerateRangeOfMotionParser();
+
+            t.Prepare4RangeOfMotionParsing();
+
+
+
+        }
+        GUILayout.Label("If (2), press play until the values in the ROM file do not change ");
+
+
+
+
+        if (GUILayout.Button("3.Store Env as Prefab"))
+        {
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+
+
+            t.Prepare4EnvironmentStorage();
+
 
             //this stores them 
             storeEnvAsPrefab(t.Outcome);

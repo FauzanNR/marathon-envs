@@ -501,6 +501,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: ControllerMarathonManEnv-v1
       objectReference: {fileID: 0}
+    - target: {fileID: 4890684744258037759, guid: 039f5bf4e1cc0214ea4f370014f59897,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5391639678180288632, guid: 039f5bf4e1cc0214ea4f370014f59897,
         type: 3}
       propertyPath: _articulationBodyRoot

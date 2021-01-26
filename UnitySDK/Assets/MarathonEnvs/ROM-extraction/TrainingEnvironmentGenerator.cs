@@ -30,6 +30,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     Transform characterReferenceHead;
 
+    [SerializeField]
+    Transform characterReferenceRoot;
+
 
     [Header("Prefabs to generate training environment:")]
     [SerializeField]
@@ -42,13 +45,19 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     PhysicMaterial colliderMaterial;
 
 
+
+    //things generated procedurally:
+    [HideInInspector]
+    [SerializeField]
     Animator character4training;
+
+    [HideInInspector]
+    [SerializeField]
     Animator character4synthesis;
 
-    RagDollAgent ragdoll4training;
-
-
+    [HideInInspector][SerializeField]
     ManyWorlds.SpawnableEnv _outcome;
+
 
     public ManyWorlds.SpawnableEnv Outcome{ get { return _outcome; } }
 
@@ -100,20 +109,18 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4synthesis.gameObject.SetActive(true);
 
         character4synthesis.name = "Result:" + AgentName ;
+
+
         RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
         rca.IsGeneratedProcedurally = true;
 
         _outcome = Instantiate(referenceSpawnableEnvironment).GetComponent<ManyWorlds.SpawnableEnv>();
         _outcome.name = TrainingEnvName;
 
-       
-        RagDollAgent rda = generateRagDollFromAnimatedSource(rca, _outcome);
 
-        _outcome.GetComponent<RenderingOptions>().ragdollcontroller = rda.gameObject;
+        RagDollAgent ragdoll4training = generateRagDollFromAnimatedSource(rca, _outcome);
 
-
-
-
+        _outcome.GetComponent<RenderingOptions>().ragdollcontroller = ragdoll4training.gameObject;
 
 
         character4training.transform.SetParent(_outcome.transform);
@@ -154,7 +161,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
-
+        //TODO: this assumes the first son will always be the good one. A more secure method seems cautious 
         Transform root = temp.transform.GetChild(0);
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
@@ -259,6 +266,53 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         return _ragdoll4training;
 
     }
+
+
+
+    public void GenerateRangeOfMotionParser() {
+
+        
+        ROMparserSwingTwist rom = gameObject.GetComponentInChildren<ROMparserSwingTwist>();
+        if (rom == null) {
+            GameObject go = new GameObject();
+            go.name = "ROM-parser";
+            go.transform.parent = gameObject.transform;
+            rom = go.AddComponent<ROMparserSwingTwist>();
+
+
+
+        }
+
+
+        rom.info2store = info2store;
+        rom.theAnimator = characterReference;
+        rom.skeletonRoot = characterReferenceRoot;
+
+        rom.targetRagdollRoot = character4synthesis.GetComponent<RagdollControllerArtanim>().ArticulationBodyRoot;
+
+        rom.trainingEnv = _outcome;
+
+    }
+
+
+    public void Prepare4RangeOfMotionParsing()
+    {
+        _outcome.gameObject.SetActive(false);
+        characterReference.gameObject.SetActive(true);
+
+    }
+
+
+    public void Prepare4EnvironmentStorage()
+    {
+        _outcome.gameObject.SetActive(true);
+        characterReference.gameObject.SetActive(false);
+
+    }
+
+
+
+
 
 
 }

@@ -143,7 +143,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 		if (_targetPoseTransforms == null)
 		{
 			_targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
-			Debug.Log("the number of transforms  intarget pose is: " + _targetPoseTransforms.Count);
+			//	Debug.Log("the number of transforms  intarget pose is: " + _targetPoseTransforms.Count);
 
 		}
 

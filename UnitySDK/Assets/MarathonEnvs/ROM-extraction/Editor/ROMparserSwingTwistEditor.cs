@@ -118,7 +118,7 @@ public class ROMparserSwingTwistEditor : Editor
 
         //ROMinfoCollector infoStored = t.info2store;
 
-        Transform targetRoot = t.targetRagdollRoot;
+        Transform targetRoot = t.targetRagdollRoot.transform;
 
 
         //string add2prefabs = keyword4prefabs;

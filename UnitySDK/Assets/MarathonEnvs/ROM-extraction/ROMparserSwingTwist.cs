@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System;
+
 using UnityEngine;
 using System.Linq;
 
@@ -10,10 +12,10 @@ public class ROMparserSwingTwist : MonoBehaviour
     //we assume a decomposition where the twist is in the X axis.
     //This seems consistent with how ArticulationBody works (see constraints in the inspector)
 
-    [SerializeField]
+    public
     Animator theAnimator;
 
-    [SerializeField]
+    public
     Transform skeletonRoot;
 
     Transform[] joints;
@@ -29,7 +31,7 @@ public class ROMparserSwingTwist : MonoBehaviour
     //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
     //[SerializeField]
-    public Transform targetRagdollRoot;
+    public ArticulationBody targetRagdollRoot;
 
 
     [Tooltip("Learning Environment where to integrate the constrained ragdoll. Leave blanc if you do not want to generate any training environment")]
@@ -42,7 +44,7 @@ public class ROMparserSwingTwist : MonoBehaviour
     [SerializeField]
     ArticulationBody[] targetJoints;
 
-
+    string animationEndMessage = "First animation played.If there are no more animations, the constraints have been stored.If there are, wait until the ROM info collector file does not update anymore";
 
     //[SerializeField]
 
@@ -100,20 +102,28 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         }
 
+        try
+        {
 
+            AnimatorClipInfo[] info = theAnimator.GetCurrentAnimatorClipInfo(0);
+            AnimationClip theClip = info[0].clip;
+            duration = theClip.length;
+            Debug.Log("The animation " + theClip.name + " has a duration of: " + duration);
 
-        AnimatorClipInfo[] info = theAnimator.GetCurrentAnimatorClipInfo(0);
-        AnimationClip theClip = info[0].clip;
-        duration = theClip.length;
-        Debug.Log("The animation " + theClip.name + " has a duration of: " + duration);
+        }
+        catch (Exception e) {
+            Debug.Log("the character does not seem to have an animator. Make sure it is moving in some way to extract the Range of Motion");
+
+        }
+
 
         _mocapControllerArtanim = theAnimator.GetComponent<MocapControllerArtanim>();
 
         // get root start position and rotation
-        var atriculationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
-        if (atriculationBodies.Length == 0)
+        var articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+        if (articulationBodies.Length == 0)
             return;
-        var root = atriculationBodies.First(x => x.isRoot);
+        var root = articulationBodies.First(x => x.isRoot);
         _rootStartPosition = root.transform.position;
         _rootStartRotation = root.transform.rotation;
 
@@ -269,7 +279,10 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         if (duration < Time.time)
         {
-            Debug.Log("First animation played. If there are no more animations, the constraints have been stored. If there are, wait until the ROM info collector file does not update anymore");
+            if(animationEndMessage.Length > 0) { 
+                Debug.Log(animationEndMessage);
+                animationEndMessage = "";
+            }
 
         }
 
@@ -294,7 +307,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         ArticulationBody[] articulationBodies = targetJoints;
         //we want them all:
         if (articulationBodies.Length == 0)
-            articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+            articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>(true);
 
         List<RangeOfMotionValue> preview = new List<RangeOfMotionValue>();
 
@@ -311,7 +324,7 @@ public class ROMparserSwingTwist : MonoBehaviour
             index = jNames.FindIndex(x => x.Contains(parts[1]));
 
             if (index < 0)
-                Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
+                    Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
                 //var diff = info2store.minRotations[index] - info2store.maxRotations[index];
@@ -461,10 +474,12 @@ public class ROMparserSwingTwist : MonoBehaviour
     public void Prepare4PrefabStorage(out RagDollAgent rda, out ManyWorlds.SpawnableEnv envPrefab)
     {
 
-        Transform targetRagdollPrefab = GameObject.Instantiate(targetRagdollRoot);
+
+        ArticulationBody targetRagdollPrefab = GameObject.Instantiate(targetRagdollRoot);
 
         //if there is a spawnableEnv, there is a ragdollAgent:
         rda = targetRagdollPrefab.GetComponent<RagDollAgent>();
+
         if (rda != null)
             Debug.Log("Setting up the  ragdoll agent");
 
