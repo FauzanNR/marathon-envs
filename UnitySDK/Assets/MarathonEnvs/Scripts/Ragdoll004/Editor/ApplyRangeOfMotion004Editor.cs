@@ -24,10 +24,13 @@ public class ApplyRangeOfMotion004Editor : Editor
         
         base.OnInspectorGUI();
 
+
+
+        /*
+
+        //Moved to TrainingEnvironmentGeneratorEditor
+
         GUILayout.Label("Only IF Working With Prefab:");
-
-
-
 
 
         if (GUILayout.Button("1. Calculate Degrees of Freedom (motors)"))
@@ -53,7 +56,7 @@ public class ApplyRangeOfMotion004Editor : Editor
             PrefabUtility.ApplyPrefabInstance(t.gameObject, InteractionMode.AutomatedAction);
 
         }
-
+        */
 
 
 

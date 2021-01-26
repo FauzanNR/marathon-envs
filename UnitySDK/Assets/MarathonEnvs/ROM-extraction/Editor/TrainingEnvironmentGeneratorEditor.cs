@@ -43,9 +43,21 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         GUILayout.Label("If (2), press play until the values in the ROM file do not change ");
 
 
+        if (GUILayout.Button("3.Configure Ragdoll and learning agent")) {
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+
+            t.Prepare4EnvironmentStorage();
+
+            t.ApplyROMToBehaviorParameters();
+
+        }
 
 
-        if (GUILayout.Button("3.Store Env as Prefab"))
+
+
+
+
+        if (GUILayout.Button("4.Store Env as Prefab"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
 

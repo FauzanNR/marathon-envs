@@ -8,20 +8,9 @@ using Unity.MLAgents;
 public class TrainingEnvironmentGenerator : MonoBehaviour
 {
 
-    [SerializeField]
-    string AgentName;
-
-    [SerializeField]
-    string TrainingEnvName;
 
 
-
-    //[SerializeField]
-    //ROMparserSwingTwist ROMparser;
-
-    [SerializeField]
-    public RangeOfMotion004 info2store;
-
+    [Header("The animated character:")]
 
 
     [SerializeField]
@@ -32,6 +21,25 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
     [SerializeField]
     Transform characterReferenceRoot;
+
+
+    [Header("How we want the generated assets stored:")]
+
+    [SerializeField]
+    string AgentName;
+
+    [SerializeField]
+    string TrainingEnvName;
+
+    [Range(0, 359)]
+    public int MinROMNeededForJoint = 0;
+
+
+    //[SerializeField]
+    //ROMparserSwingTwist ROMparser;
+
+    [SerializeField]
+    public RangeOfMotion004 info2store;
 
 
     [Header("Prefabs to generate training environment:")]
@@ -310,7 +318,15 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
     }
 
+    public void ApplyROMToBehaviorParameters() {
 
+        ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>();
+        ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
+        ROMonRagdoll.ApplyRangeOfMotionToRagDoll();
+        ROMonRagdoll.applyDoFOnBehaviorParameters();
+
+
+    }
 
 
 
