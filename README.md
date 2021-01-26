@@ -27,7 +27,7 @@ Document last updated: 02.12.2020
 
 
 
-#### 0.1 Behaviour synthesized
+### 0.1 Behaviour synthesized
 
 The main goal has *almost*  been achieved: skinned characters are matched with ragdolls.
 
@@ -37,20 +37,12 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 
 
 
-#### 0.2 Pending tasks:
+### 0.2 Pending tasks:
 
 **Constraints**
 
 - Clarify why in the articulation constraints:
   - The first animation is not acceptable. Unclear why would be the case (T-pose switches abruptly?) 
-  - In both cases, the left elbow does not move (a correspondence problem?).
-  - The changes in direction make quite weird movements (may be used if transitions are continuous, using for example motion matching)
-- Finish clarifying ArticulationBody constraints in spherical joints
-  - Confirm with Unity how the articulation body works (forum)
-  - Implement well the updateVelocity method in the learning procedure (less singularities)
-- Find how to make debug and adjustments easier for animator (merge ArticulationBody and Debug views) 
-  - This is done, but moderate success
-  - Moving the constraints when ArticulationBody is driven by a model trained on different constraints rapidly creates trouble. We should think a bit better what to do.
 
 **Rewards**
 
@@ -58,38 +50,18 @@ The main goal has *almost*  been achieved: skinned characters are matched with r
 
 **Simplify use and make animation pipeline more robust**
 
-- Small script to activate and de-activate the rendering of everything except the final target
-
-- Adjust the size of the bones (with an animator) to simplify the collision management. 
-
-  - A first version of this has been done by Joan to avoid overlap
-  - A second version which avoids all contact between colliders is available, but not tested
-  - A third version which adds the articulation of the feet and adjusts better the position of the head will be added soon
-- Systematize  all steps to add new character (even non-humanoids) in the pipeline
-  - Fix how to set up a character from scratch, having all the elements assembled in different prefabs makes that the complex setting of parameters that are co-dependent is not preserved. does NOT work
-  - Document clearly
-- Since now we have the same joint topology, we can merge the skinned character and the ragdoll reference, and even create the 2 ragdolls and target character procedurally.
 
 
-
-#### 0.3 Active branches
+### 0.3 Active branches
 
 - *master* contains a stable version
 - *develop* contains the main current development
-- *feature/fix-constraints-from-range-of-motion* is in progress, and does not work. It tries to fix the boundaries of the ArticulationBody ragdoll joints from a range-of-motion animation file mapped to the default .fbx character (from mixamo)
-- *feature/try-adjusting-constraints-from-model-that-trains* shows a model trained with more constrained ArticulationBody ragdoll joints
 
-#### 0.4 Current limitations (out from the scope of this repo)
+### 0.4 Current limitations (out from the scope of this repo)
 
 - Running several environments together does not work. Indeed, if I try to run it with the previous version, in parallel, it complains of socket conflicts.
-- Using TF2 does not work. 
-- An upgrade to MLAgents 1.0 is more than desirable
 
-
-
-
-
-#### 0.5 How to train
+### 0.5 How to train
 
 macOS format:
 
@@ -111,9 +83,52 @@ mlagents-learn config\marathon_envs_config.yaml --run-id=test-2020-01-06-v2 --en
 
 
 
-## 
 
+### 0.6 Procedural generation
 
+To simplify the creation of a training environment, you can do it directly from a character with an animation controller associated to it.
+
+To do so:
+
+1. Open the scene found in `Assets > MarathonEnvs > 3.GenerateEverythingFromAnimatedFBX`
+
+2. Add the animated character that you prefer
+
+   It needs to be a character that moves, either interactively, either as a long sequence. For results to work reasonably, there needs to be some variety of movements, otherwise the range of motion will be too narrow, and the trianing will give poor results.
+
+3. Select the gameObject *CHECKME-generate-training-env*. That gameObject has  the component *Training Environment Generator*. You should drag in the first 3 fields  the character that you want to use, as well as it's head, and it's root. Below you can find an example with a character consisting of a very long animation:
+
+![proced-config](img/proced-config.png)
+
+4. At the bottom of the *Training Environment Generator* you can find the 4 steps that you need to go through:
+
+![Captura de Pantalla 2021-01-26 a les 16.24.04](img/procedural-generation-buttons.png)
+
+Once you have gone through these 4 steps, you will have an environment generated. It will be in *Assets > MarathonEnvs > Environments* and, if it the first one, will be called *TrainingEnvironment*.
+
+![Captura de Pantalla 2021-01-26 a les 16.26.16](img/training-environment-generated.png)
+
+If one already exists, it will store it with a name like *TrainingEnvironment 1*, and add indices (2,3,...).
+
+5. Open the scene *Assets > MarathonEnvs > Scenes > MarathonEnvs*. When you select the gameObject *WorldFactory*, you will see a list of environments. Click on Add New, give it a name (in the example below I called it *ControllerProcedural-v0*), and add the Procedural Environment that was stored. If you do so, it should look like below
+
+![adjust-environment-in-list](img/adjust-environment-in-list.png)
+
+6. You can now train using the usual procedure, like below:
+
+In **editor** (useful to check everything goes well):
+
+```
+mlagents-learn config/marathon_envs_config.yaml --run-id=Procedural-v1 --env-args --spawn-env=ControllerProcedural-v0
+```
+
+With a **binary** file:
+
+- Compile the project only with the scene MarathonEnvs
+
+![Captura de Pantalla 2021-01-26 a les 16.35.59](img/build-settings.png)
+
+Once compiled, simply launch the *marathonenvs* training environment, and launch the training as explained above, making sure that the `--spawn-env`variable is targeting the name that you associated with your procedural environment.
 
 
 
