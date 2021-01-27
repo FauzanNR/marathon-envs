@@ -301,7 +301,7 @@ behaviors:
             hidden_units: 256    
             normalize: true
         max_steps: 128e6
-        time_horizon: 100
+        time_horizon: 1000
 
 
         
