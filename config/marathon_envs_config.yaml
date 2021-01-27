@@ -30,18 +30,18 @@ behaviors:
         trainer_type: ppo
         hyperparameters:
             num_epoch: 3
-            beta: .00001
-            learning_rate: 1e-4
-            batch_size: 768
-            buffer_size: 21504 # 768 * 28
-        time_horizon: 100
+            beta: 2e-2
+            learning_rate: 3e-4
+            batch_size: 4096 
+            buffer_size: 16384
         summary_freq: 100000
+        checkpoint_interval: 5000000
         network_settings:
             num_layers: 2
-            normalize: true
             hidden_units: 256
-        max_steps: 128e6
-        threaded: true    
+            normalize: true
+        max_steps: 64e6
+        time_horizon: 1000
 
     MarathonManWalking-v0:
         trainer_type: ppo
