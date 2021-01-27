@@ -154,8 +154,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   theAnimator: {fileID: 2062591809}
   skeletonRoot: {fileID: 268274525}
-  info2store: {fileID: 11400000, guid: df7bef89ea7e24085b10fa85be845ce0, type: 2}
-  targetRagdollRoot: {fileID: 871919434}
+  info2store: {fileID: 11400000, guid: 5c3315467e77843a7b00bbbb63f5e6ef, type: 2}
+  targetRagdollRoot: {fileID: 871919436}
   trainingEnv: {fileID: 539001198}
   targetJoints: []
   RangeOfMotionPreview: []
@@ -539,7 +539,7 @@ PrefabInstance:
     - target: {fileID: 6599971818930870607, guid: 039f5bf4e1cc0214ea4f370014f59897,
         type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 039f5bf4e1cc0214ea4f370014f59897, type: 3}
@@ -605,12 +605,6 @@ MonoBehaviour:
 --- !u!1 &567866619 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1973854535028386212, guid: 039f5bf4e1cc0214ea4f370014f59897,
-    type: 3}
-  m_PrefabInstance: {fileID: 268274524}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &871919434 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1975972665812050258, guid: 039f5bf4e1cc0214ea4f370014f59897,
     type: 3}
   m_PrefabInstance: {fileID: 268274524}
   m_PrefabAsset: {fileID: 0}
