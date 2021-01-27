@@ -10,11 +10,13 @@ using Unity.MLAgents.Policies;
 
 public class ApplyRangeOfMotion004 : MonoBehaviour
 {
+
+    /*
     [SerializeField]
     bool applyROMInGamePlay;
 
     public bool ApplyROMInGamePlay {  set => applyROMInGamePlay = value; }
-
+    */
 
 
     public RangeOfMotion004 RangeOfMotion2Store;
@@ -30,6 +32,8 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
     private void OnEnable()
     {
+
+        /*
         if (applyROMInGamePlay)
         {
             ApplyRangeOfMotionToRagDoll();
@@ -43,7 +47,7 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
             if ( (RangeOfMotion2Store != null) && RangeOfMotion2Store.InferenceModel != null)
                 GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
 
-        }
+        }*/
 
 
 

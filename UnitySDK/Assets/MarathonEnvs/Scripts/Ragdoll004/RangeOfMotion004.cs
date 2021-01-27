@@ -5,7 +5,7 @@ using UnityEngine;
 using Unity.Barracuda;
 
 [System.Serializable]
-public struct RangeOfMotionValue
+public class RangeOfMotionValue
 {
     // [HideInInspector]
     public string name;
@@ -19,9 +19,9 @@ public class RangeOfMotion004 : ScriptableObject
 {
     public RangeOfMotionValue[] Values;
 
-    public
+    //public
     //a model trained with these constraints
-    NNModel InferenceModel;
+    //NNModel InferenceModel;
 
     public string[] getNames() {
         
