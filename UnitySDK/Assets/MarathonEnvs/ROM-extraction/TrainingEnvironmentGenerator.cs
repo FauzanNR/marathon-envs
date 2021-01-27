@@ -111,6 +111,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
             
         }
 
+        
+
 
 
         character4synthesis = Instantiate(characterReference.gameObject).GetComponent<Animator>();
@@ -144,7 +146,16 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     }
 
 
-     RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
+    public void GenerateRagdollForMocap() {
+
+
+        MocapControllerArtanim mca = character4training.gameObject.GetComponent<MocapControllerArtanim>();
+        mca.DynamicallyCreateRagdollForMocap();
+
+    }
+
+
+    RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
