@@ -252,7 +252,10 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController");
 		}
 
-		DynamicallyCreateRagdollForMocap();
+
+		//we already created this in the procedural case:
+		if(! _isGeneratedProcedurally)
+			DynamicallyCreateRagdollForMocap();
 
         SetupSensors();
 
@@ -283,10 +286,10 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
     }
 
 
-	void DynamicallyCreateRagdollForMocap()
+	public void DynamicallyCreateRagdollForMocap()
 	{
 		// Find Ragdoll in parent
-		var parent = this.transform.parent;
+		Transform parent = this.transform.parent;
 		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>();
 		Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
 		RagDollAgent ragDoll = ragdolls[0];
@@ -309,7 +312,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			var rb = bodyGameobject.AddComponent<Rigidbody>();
 			rb.mass = abody.mass;
 			rb.useGravity = abody.useGravity;
-			Destroy(abody);
+			DestroyImmediate(abody);
 		}
 		// make Kinematic
 		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
@@ -329,7 +332,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		{
 			// remove cloned HandledOverlap
 			var oldHandleOverlap = rb.GetComponent<HandleOverlap>();
-			Destroy(oldHandleOverlap);
+			DestroyImmediate(oldHandleOverlap);
 			var handleOverlap = rb.gameObject.AddComponent<HandleOverlap>();
 			handleOverlap.Parent = clone.gameObject;
 		}
