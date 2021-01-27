@@ -100,11 +100,20 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 			string[] temp = ab.name.Split(':');
 
-			string tname = temp[1];
 
-            //if structure is "articulation:" + t.name, it comes from a joint:
 
-            if (temp[0].Equals("articulation")) { 
+			//if it has another ":" in the name, it crashes miserably
+			//string tname = temp[1];
+			//instead, we do:
+			string tname = ab.name.TrimStart(temp[0].ToArray<char>());
+
+			tname = tname.TrimStart(':');
+			Debug.Log("the full name is: " + ab.name + "  and the trimmed name is: " + tname);
+
+
+			//if structure is "articulation:" + t.name, it comes from a joint:
+
+			if (temp[0].Equals("articulation")) { 
 
 				Transform t = _targetPoseTransforms.First(x => x.name == tname);
 

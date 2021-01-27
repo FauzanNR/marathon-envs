@@ -175,8 +175,6 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         temp.name = "Ragdoll:" + AgentName ;
         temp.AddComponent<RagDoll004>();
-        temp.AddComponent<BehaviorParameters>();
-        temp.AddComponent<DecisionRequester>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
@@ -258,6 +256,14 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
         _ragdoll4training.transform.parent = trainingenv.transform;
+
+
+        //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
+        temp.AddComponent<BehaviorParameters>();
+        temp.AddComponent<DecisionRequester>();
+
+
+
 
         DReConRewards dcrew = temp.AddComponent<DReConRewards>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
