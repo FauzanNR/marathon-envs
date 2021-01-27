@@ -271,9 +271,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         ApplyRangeOfMotion004 rom = temp.AddComponent<ApplyRangeOfMotion004>();
         rom.RangeOfMotion2Store = info2store;
-        rom.ApplyROMInGamePlay = true;
+        //rom.ApplyROMInGamePlay = true;
 
-        
+        /*
         rom.CalculateDoF();
 
 
@@ -281,7 +281,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         if(rom.RangeOfMotion2Store != null)
             rom.ApplyRangeOfMotionToRagDoll();
 
-
+        */
         return _ragdoll4training;
 
     }
