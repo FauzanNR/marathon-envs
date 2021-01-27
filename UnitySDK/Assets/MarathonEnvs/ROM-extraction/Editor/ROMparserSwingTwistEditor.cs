@@ -40,6 +40,9 @@ public class ROMparserSwingTwistEditor : Editor
 
         GUILayout.Label("");
 
+
+
+
         base.OnInspectorGUI();
 
         if (GUILayout.Button("0.Debug: Set Joints To Max ROM"))
@@ -47,6 +50,18 @@ public class ROMparserSwingTwistEditor : Editor
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
             t.SetJointsToMaxROM();
         }
+
+
+
+        if (GUILayout.Button("1.Store ROM info "))
+        {
+            ROMparserSwingTwist t = target as ROMparserSwingTwist;
+            EditorUtility.SetDirty(t.info2store);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+        }
+
+
 
         //if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
         //{
@@ -100,7 +115,7 @@ public class ROMparserSwingTwistEditor : Editor
         GUILayout.Label("How to use:");
 
         GUILayout.TextArea(
-            "Step 1: execute in play mode until the values in the Info2Store file do not change any more" +
+            "Step 1: execute in play mode until the values in the Range Of Motion Preview  do not change any more" +
             // " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
             // " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
             " \n Step 2: open the Ragdoll on which you want to apply the range of motion, and use the script ApplyRangeOfMotion004");

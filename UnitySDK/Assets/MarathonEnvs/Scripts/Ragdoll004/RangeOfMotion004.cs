@@ -17,7 +17,19 @@ public class RangeOfMotionValue
 [CreateAssetMenu(fileName = "RangeOfMotion", menuName = "Parser/CreateRangeOfMotionFile")]
 public class RangeOfMotion004 : ScriptableObject
 {
-    public RangeOfMotionValue[] Values;
+    public RangeOfMotionValue[] Values { get { return _values.ToArray(); }  }
+
+
+    //[HideInInspector]
+    [SerializeField]
+    List<RangeOfMotionValue> _values;
+
+    public void addJoint(Transform joint) {
+        RangeOfMotionValue r = new RangeOfMotionValue();
+        r.name = joint.name;
+
+        _values.Add(r);
+    }
 
     //public
     //a model trained with these constraints
@@ -37,6 +49,10 @@ public class RangeOfMotion004 : ScriptableObject
         return temp;
     
     }
+
+
+
+
 
 
 }

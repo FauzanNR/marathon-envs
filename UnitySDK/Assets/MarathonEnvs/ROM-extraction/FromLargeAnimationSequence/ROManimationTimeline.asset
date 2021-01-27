@@ -10,7 +10,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 999eba76c61cf4049a412dd933bea1b0, type: 3}
-  m_Name: RangeOfMotionTimeline
+  m_Name: ROManimationTimeline
   m_EditorClassIdentifier: 
-  Values: []
-  InferenceModel: {fileID: 0}
+  _values: []

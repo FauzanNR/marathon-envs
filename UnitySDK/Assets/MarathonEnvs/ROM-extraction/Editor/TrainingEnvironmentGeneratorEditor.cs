@@ -32,7 +32,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
-        if (GUILayout.Button("2. (optional) Generate ROM file"))
+        if (GUILayout.Button("2.A (optional) Generate ROM values"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
             t.GenerateRangeOfMotionParser();
@@ -42,7 +42,20 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
         }
-        GUILayout.Label("If (2), press play until the values in the ROM file do not change ");
+        GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop, and the button below ");
+
+        if (GUILayout.Button("2.B (optional) Store ROM values"))
+        {
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+            
+            EditorUtility.SetDirty(t.info2store);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+
+        }
+
+
 
 
         if (GUILayout.Button("3.Configure Ragdoll and learning agent")) {

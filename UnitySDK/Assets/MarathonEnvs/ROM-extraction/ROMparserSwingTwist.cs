@@ -85,7 +85,13 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         joints = skeletonRoot.GetComponentsInChildren<Transform>();
 
-        info2store.Values = new RangeOfMotionValue[joints.Length];
+
+        foreach (Transform j in joints) {
+            info2store.addJoint(j);
+
+        }
+
+        //info2store.Values = new RangeOfMotionValue[joints.Length];
         //info2store.maxRotations = new Vector3[joints.Length];
         //info2store.minRotations = new Vector3[joints.Length];
         //info2store.jointNames = new string[joints.Length];
@@ -94,13 +100,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
 
-        for (int i = 0; i < joints.Length; i++)
-        {
-            // info2store.jointNames[i] = joints[i].name;
-            info2store.Values[i].name = joints[i].name;
-
-
-        }
+    
 
         try
         {
