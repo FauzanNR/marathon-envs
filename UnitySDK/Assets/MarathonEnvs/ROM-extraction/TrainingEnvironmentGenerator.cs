@@ -159,7 +159,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
-
+        
 
         //we remove everything we do not need:
         SkinnedMeshRenderer[] renderers = temp.GetComponentsInChildren<SkinnedMeshRenderer>();
@@ -209,6 +209,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
                 GameObject go = new GameObject();
                 go.transform.parent = dad;
+
+                //dad.gameObject
+
                 go.name = "collider:" + namebase;
 
                 CapsuleCollider c = go.AddComponent<CapsuleCollider>();
@@ -228,6 +231,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
                 HandleOverlap ho = go.AddComponent<HandleOverlap>();
+
                 ho.Parent = dad.gameObject;
 
                
@@ -255,8 +259,10 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
-        _ragdoll4training.transform.parent = trainingenv.transform;
+        //      _ragdoll4training.transform.parent = trainingenv.transform;
+        //_ragdoll4training.transform.SetParent(trainingenv.transform);
 
+        temp.transform.parent = trainingenv.transform;
 
         //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
         temp.AddComponent<BehaviorParameters>();

@@ -32,7 +32,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
-        if (GUILayout.Button("2.A (optional) Generate ROM values"))
+        if (GUILayout.Button("2 (optional) Generate ROM values"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
             t.GenerateRangeOfMotionParser();
@@ -42,20 +42,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
         }
-        GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop, and the button below ");
-
-        if (GUILayout.Button("2.B (optional) Store ROM values"))
-        {
-            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
-            
-            EditorUtility.SetDirty(t.info2store);
-            AssetDatabase.SaveAssets();
-            AssetDatabase.Refresh();
-
-
-        }
-
-
+        GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop.");
 
 
         if (GUILayout.Button("3.Configure Ragdoll and learning agent")) {
@@ -72,7 +59,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
-        if (GUILayout.Button("4.Store Env as Prefab"))
+        if (GUILayout.Button("4.Store Env as Prefab and ROM Values"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
 
@@ -83,9 +70,14 @@ public class TrainingEnvironmentGeneratorEditor : Editor
             //this stores them 
             storeEnvAsPrefab(t.Outcome);
 
+
             //once stored we can destroy them to keep the scene clean
             //DestroyImmediate(t.Outcome.gameObject);
-          
+
+
+            EditorUtility.SetDirty(t.info2store);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
 
 
         }
