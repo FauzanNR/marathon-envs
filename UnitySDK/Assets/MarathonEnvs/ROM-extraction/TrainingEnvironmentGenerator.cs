@@ -54,7 +54,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
 
-    //things generated procedurally:
+    //things generated procedurally that we store to configure after the generation of the environment:
     [HideInInspector]
     [SerializeField]
     Animator character4training;
@@ -66,6 +66,17 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [HideInInspector][SerializeField]
     ManyWorlds.SpawnableEnv _outcome;
 
+
+    
+
+
+    [HideInInspector]
+    [SerializeField]
+    List<ArticulationBody> articulatedJoints;
+
+    [HideInInspector]
+    [SerializeField]
+    RagDoll004 muscleteam;
 
     public ManyWorlds.SpawnableEnv Outcome{ get { return _outcome; } }
 
@@ -128,11 +139,11 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         _outcome.name = TrainingEnvName;
 
 
-        RagDollAgent ragdoll4training = generateRagDollFromAnimatedSource(rca, _outcome);
+        RagDollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
 
 
 
-        addTrainingParameters(rca, ragdoll4training);
+        addTrainingParameters(rca, ragdollMarathon);
 
 
         //UNITY BUG
@@ -151,7 +162,7 @@ If the script doing this is short, it works because this is finished before the 
         //ragdoll4training.gameObject.SetActive(true);
 
 
-        _outcome.GetComponent<RenderingOptions>().ragdollcontroller = ragdoll4training.gameObject;
+        _outcome.GetComponent<RenderingOptions>().ragdollcontroller = ragdollMarathon.gameObject;
 
 
         character4training.transform.SetParent(_outcome.transform);
@@ -218,7 +229,7 @@ If the script doing this is short, it works because this is finished before the 
 
 
         temp.name = "Ragdoll:" + AgentName ;
-        RagDoll004 muscleteam=  temp.AddComponent<RagDoll004>();
+        muscleteam=  temp.AddComponent<RagDoll004>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
@@ -232,13 +243,23 @@ If the script doing this is short, it works because this is finished before the 
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
 
+
+         articulatedJoints = new List<ArticulationBody>();
+
+
         foreach (Transform j in joints) {
             ArticulationBody ab = j.gameObject.AddComponent<ArticulationBody>();
             ab.anchorRotation = Quaternion.identity;
 
             ab.mass = 0.1f;
 
-            
+
+
+            articulatedJoints.Add(ab);
+
+          
+
+
             string namebase = j.name.Replace("(Clone)", "");
 
 
@@ -284,16 +305,6 @@ If the script doing this is short, it works because this is finished before the 
                 //ho.Parent = dad.gameObject;
                 ho.Parent = root.gameObject;
 
-                //muscles
-
-                RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
-                muscle.PowerVector = new Vector3(40, 40, 40);
-                muscle.Muscle = rb.name;
-
-                if (muscleteam.MusclePowers == null)
-                    muscleteam.MusclePowers = new List<RagDoll004.MusclePower>();
-
-                muscleteam.MusclePowers.Add(muscle);
 
 
 
@@ -311,9 +322,6 @@ If the script doing this is short, it works because this is finished before the 
                 target.ArticulationBodyRoot = ab;
             }
         }
-
-
-
 
 
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
@@ -385,6 +393,30 @@ If the script doing this is short, it works because this is finished before the 
 
     }
 
+    void generateMuscles() {
+
+        //muscles
+
+        foreach(ArticulationBody ab in articulatedJoints) { 
+
+            RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
+            muscle.PowerVector = new Vector3(40, 40, 40);
+            muscle.Muscle = ab.name;
+
+            if (muscleteam.MusclePowers == null)
+                muscleteam.MusclePowers = new List<RagDoll004.MusclePower>();
+
+            muscleteam.MusclePowers.Add(muscle);
+
+        }
+
+
+    }
+
+
+
+
+
 
     public void Prepare4RangeOfMotionParsing()
     {
@@ -396,18 +428,30 @@ If the script doing this is short, it works because this is finished before the 
 
     public void Prepare4EnvironmentStorage()
     {
-        _outcome.gameObject.SetActive(true);
+
         characterReference.gameObject.SetActive(false);
+
+        _outcome.gameObject.SetActive(true);
+      
+       // RagDollAgent ra = _outcome.GetComponentInChildren<RagDollAgent>(true);
+       // ra.gameObject.SetActive(true);
+
+
+
+
 
     }
 
-    public void ApplyROMToBehaviorParameters() {
+    public void ApplyROMasConstraintsAndConfigure() {
 
-        ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>();
+        ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>(true);
         ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
         ROMonRagdoll.ApplyRangeOfMotionToRagDoll();
         ROMonRagdoll.applyDoFOnBehaviorParameters();
 
+        generateMuscles();
+
+        ROMonRagdoll.GetComponent<DecisionRequester>().DecisionPeriod = 2;
 
     }
 

@@ -54,26 +54,32 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         }
         GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop.");
 
-
-
-        if (GUILayout.Button("3.Store Env as Prefab and ROM Values"))
-        {
+        if (GUILayout.Button("3.Configure")) {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
-
 
             //"3.We Configure Ragdoll and learning agent"
             t.Prepare4EnvironmentStorage();
 
-            t.ApplyROMToBehaviorParameters();
+            t.ApplyROMasConstraintsAndConfigure();
+
+
+
+        }
+        GUILayout.Label("After (3), activate the Ragdoll game object within the hierarchy of the training environment generated.");
+
+
+
+        if (GUILayout.Button("4.Store Env as Prefab and ROM Values"))
+        {
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+
 
 
             //"4.Store Env as Prefab and ROM Values"
-            t.Prepare4EnvironmentStorage();
+            
 
+            //this stores them, it can only be done in an editor script
 
-
-
-            //this stores them, it can only be done in an editor script 
             storeEnvAsPrefab(t.Outcome);
             //once stored we can destroy them to keep the scene clean
             //DestroyImmediate(t.Outcome.gameObject);
