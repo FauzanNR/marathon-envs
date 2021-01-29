@@ -130,6 +130,27 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         RagDollAgent ragdoll4training = generateRagDollFromAnimatedSource(rca, _outcome);
 
+
+
+        addTrainingParameters(rca, ragdoll4training);
+
+
+        //UNITY BUG
+        //This below seems to make it crash. My guess is that:
+        /*
+        ArticulationBody is a normal component, but it also does some odd thing: it affects the physical simluation, since it is a rigidBody plus an articulatedJoint. The way it is defined is that it has the properties of a rigidBody, but it ALSO uses the hierarchy of transforms  to define a chain of articulationJoints, with their rotation constraints, etc. Most notably, the ArticulationBody that is highest in the root gets assigned a property automatically, "isRoot", which means it's physics constraints are different.My guess is that when you change the hierarchy in the editor, at some point in the future the chain of ArticulationBody recalculates who is the root, and changes its properties. However since this relates to physics, it is not done in the same thread.
+If the script doing this is short, it works because this is finished before the update of the ArticulationBody chain is triggered. But when I add more functionality, the script lasts longer, and then it crashes. This is why I kept getting those Physx errors, and why it kept happening in a not-so-reliable way, because we do not have any way to know when this recalculation is done.The fact that ArticulationBody is a fairly recent addition to Unity also makes me suspect they did not debug it properly.The solution seems to be to do all the setup while having the game objects that have articulationBody components with no hierarchy changes, and also having the rootgameobject inactive. When I do this,  I am guessing it does not trigger the update of the ArticulationBody chain.
+
+        I seem to have a reliable crash:
+
+            1.if I use ragdollroot.gameObject.SetActive(true) at the end of my configuration script, it crashes.
+            2.if I comment that line, it does not.
+            3.if I set it to active manually, through the editor, after running the script with that line commented, it works.
+
+        */
+        //ragdoll4training.gameObject.SetActive(true);
+
+
         _outcome.GetComponent<RenderingOptions>().ragdollcontroller = ragdoll4training.gameObject;
 
 
@@ -139,11 +160,25 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4synthesis.transform.SetParent(_outcome.transform);
 
 
+        //ragdoll4training.gameObject.SetActive(true);
 
 
 
 
     }
+
+
+    /*
+    public void activateRagdoll() {
+
+        RagDollAgent ragdoll4training = _outcome.GetComponentInChildren<RagDollAgent>(true);
+        if(ragdoll4training!=null)
+            ragdoll4training.gameObject.SetActive(true);
+
+
+    }
+    */
+
 
 
     public void GenerateRagdollForMocap() {
@@ -159,24 +194,38 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
-
+        
 
         //we remove everything we do not need:
         SkinnedMeshRenderer[] renderers = temp.GetComponentsInChildren<SkinnedMeshRenderer>();
-        foreach (SkinnedMeshRenderer r in renderers)
+        foreach (SkinnedMeshRenderer rend in renderers)
         {
-            DestroyImmediate(r.gameObject);
+
+            if(rend.gameObject != null)
+                DestroyImmediate(rend.gameObject);
 
         }
-        DestroyImmediate( temp.GetComponent<Animator>());
-        DestroyImmediate(temp.GetComponent<CharacterController>());
-        DestroyImmediate(temp.GetComponent<RagdollControllerArtanim>());
+
+        Animator a = temp.GetComponent<Animator>();
+        if(a!= null)
+            DestroyImmediate(a);
+        CharacterController b = temp.GetComponent<CharacterController>();
+        if(b!=null)
+            DestroyImmediate(b);
+        RagdollControllerArtanim r = temp.GetComponent<RagdollControllerArtanim>();
+        if(r!=null)
+            DestroyImmediate(r);
 
 
         temp.name = "Ragdoll:" + AgentName ;
-        temp.AddComponent<RagDoll004>();
+        RagDoll004 muscleteam=  temp.AddComponent<RagDoll004>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
+
+        //it might be important to have this BEFORE we add ArticulationBody members, doing it afterwards, and having it active, makes the entire thing crash 
+        temp.transform.parent = trainingenv.transform;
+        temp.gameObject.SetActive(false);
+
 
         //TODO: this assumes the first son will always be the good one. A more secure method seems cautious 
         Transform root = temp.transform.GetChild(0);
@@ -209,6 +258,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
                 GameObject go = new GameObject();
                 go.transform.parent = dad;
+
+                //dad.gameObject
+
                 go.name = "collider:" + namebase;
 
                 CapsuleCollider c = go.AddComponent<CapsuleCollider>();
@@ -228,10 +280,20 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
                 HandleOverlap ho = go.AddComponent<HandleOverlap>();
-                ho.Parent = dad.gameObject;
 
-               
-                
+                //ho.Parent = dad.gameObject;
+                ho.Parent = root.gameObject;
+
+                //muscles
+
+                RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
+                muscle.PowerVector = new Vector3(40, 40, 40);
+                muscle.Muscle = rb.name;
+
+                if (muscleteam.MusclePowers == null)
+                    muscleteam.MusclePowers = new List<RagDoll004.MusclePower>();
+
+                muscleteam.MusclePowers.Add(muscle);
 
 
 
@@ -255,42 +317,46 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
-        _ragdoll4training.transform.parent = trainingenv.transform;
+        //      _ragdoll4training.transform.parent = trainingenv.transform;
+        //_ragdoll4training.transform.SetParent(trainingenv.transform);
+
+    
+
+        return _ragdoll4training;
+
+    }
+
+
+
+    void addTrainingParameters(RagdollControllerArtanim target, RagDollAgent temp) {
 
 
         //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
-        temp.AddComponent<BehaviorParameters>();
-        temp.AddComponent<DecisionRequester>();
+        temp.gameObject.AddComponent<BehaviorParameters>();
+        temp.gameObject.AddComponent<DecisionRequester>();
 
 
 
 
-        DReConRewards dcrew = temp.AddComponent<DReConRewards>();
+        DReConRewards dcrew = temp.gameObject.AddComponent<DReConRewards>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
         dcrew.targetedRootName = target.ArticulationBodyRoot.name; //it should be it's son, but let's see
 
 
-        temp.AddComponent<SensorObservations>();
-        DReConObservations dcobs = temp.AddComponent<DReConObservations>();
-        dcobs.targetedRootName = target.ArticulationBodyRoot.name; 
+        temp.gameObject.AddComponent<SensorObservations>();
+        DReConObservations dcobs = temp.gameObject.AddComponent<DReConObservations>();
+        dcobs.targetedRootName = target.ArticulationBodyRoot.name;
 
 
-        ApplyRangeOfMotion004 rom = temp.AddComponent<ApplyRangeOfMotion004>();
+        ApplyRangeOfMotion004 rom = temp.gameObject.AddComponent<ApplyRangeOfMotion004>();
         rom.RangeOfMotion2Store = info2store;
         //rom.ApplyROMInGamePlay = true;
 
-        /*
-        rom.CalculateDoF();
-
-
-
-        if(rom.RangeOfMotion2Store != null)
-            rom.ApplyRangeOfMotionToRagDoll();
-
-        */
-        return _ragdoll4training;
 
     }
+
+
+
 
 
 

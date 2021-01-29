@@ -42,18 +42,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 	public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
 
 
-	/*
-
-    [SerializeField]
-    bool SetUpConstraintsFromData= false;
-
-    [SerializeField]
-    ROMinfoCollector data4constraints;
-    */
-
-
-	//we use this to bypass the physical character, using only the ragdoll with rigidbodies, instead of the ragdoll with articulation Joints
-	//This is INCOMPATIBLE with SetUPConstraintsFromData
+	
 	[SerializeField]
 	bool _debugWithRigidBody = false;
 	[SerializeField]
@@ -68,11 +57,7 @@ public class RagdollControllerArtanim : MonoBehaviour
     // Start is called before the first frame update
     public void Start()
     {
-        //if (SetUpConstraintsFromData) {
-
-        //    Debug.LogError("this automatic method to set up the constraints does NOT work yet");
-        //    SetConstraints(data4constraints);
-        //}
+       
     }
 
 
@@ -108,7 +93,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 			string tname = ab.name.TrimStart(temp[0].ToArray<char>());
 
 			tname = tname.TrimStart(':');
-			Debug.Log("the full name is: " + ab.name + "  and the trimmed name is: " + tname);
+			//Debug.Log("the full name is: " + ab.name + "  and the trimmed name is: " + tname);
 
 
 			//if structure is "articulation:" + t.name, it comes from a joint:

@@ -20,7 +20,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	public float Lenght;
 	public bool IsLoopingAnimation;
 
-	//[SerializeField]
+	[SerializeField]
 	Rigidbody _rigidbodyRoot;
 
 	private List<Rigidbody> _rigidbodies;
@@ -98,7 +98,11 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 
 			string[] temp = rb.name.Split(':');
 
-			string tname = temp[1];
+			//string tname = temp[1];
+			string tname = rb.name.TrimStart(temp[0].ToArray<char>());
+
+			tname = tname.TrimStart(':');
+
 
 			//if structure is "articulation:" + t.name, it comes from a joint:
 
@@ -290,7 +294,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	{
 		// Find Ragdoll in parent
 		Transform parent = this.transform.parent;
-		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>();
+		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>(true);
 		Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
 		RagDollAgent ragDoll = ragdolls[0];
 		var ragdollForMocap = new GameObject("RagdollForMocap");
