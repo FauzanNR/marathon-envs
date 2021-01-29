@@ -294,7 +294,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	{
 		// Find Ragdoll in parent
 		Transform parent = this.transform.parent;
-		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>();
+		RagDollAgent[] ragdolls = parent.GetComponentsInChildren<RagDollAgent>(true);
 		Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
 		RagDollAgent ragDoll = ragdolls[0];
 		var ragdollForMocap = new GameObject("RagdollForMocap");

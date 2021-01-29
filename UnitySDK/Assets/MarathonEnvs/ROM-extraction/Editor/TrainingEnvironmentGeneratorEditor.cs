@@ -31,6 +31,16 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
+        /*
+        if (GUILayout.Button("2.Activate Ragdoll")) {
+
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+            t.activateRagdoll();
+
+        }
+        */
+
+
 
         if (GUILayout.Button("2 (optional) Generate ROM values"))
         {
@@ -45,32 +55,26 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop.");
 
 
-        if (GUILayout.Button("3.Configure Ragdoll and learning agent")) {
-            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
 
-            t.Prepare4EnvironmentStorage();
-
-            t.ApplyROMToBehaviorParameters();
-
-        }
-
-
-
-
-
-
-        if (GUILayout.Button("4.Store Env as Prefab and ROM Values"))
+        if (GUILayout.Button("3.Store Env as Prefab and ROM Values"))
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
 
 
+            //"3.We Configure Ragdoll and learning agent"
+            t.Prepare4EnvironmentStorage();
+
+            t.ApplyROMToBehaviorParameters();
+
+
+            //"4.Store Env as Prefab and ROM Values"
             t.Prepare4EnvironmentStorage();
 
 
-            //this stores them 
+
+
+            //this stores them, it can only be done in an editor script 
             storeEnvAsPrefab(t.Outcome);
-
-
             //once stored we can destroy them to keep the scene clean
             //DestroyImmediate(t.Outcome.gameObject);
 
@@ -82,14 +86,6 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
         }
 
-
-        //GUILayout.Label("How to use:");
-
-        //GUILayout.TextArea(
-        //    "Step 1: execute in play mode until the values in the Info2Store file do not change any more" +
-        //    // " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
-        //    // " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
-        //    " \n Step 2: open the Ragdoll on which you want to apply the range of motion, and use the script ApplyRangeOfMotion004");
 
 
         serializedObject.ApplyModifiedProperties();
