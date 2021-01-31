@@ -373,4 +373,10 @@ public class DReConRewardStats : MonoBehaviour
             Gizmos.DrawRay(toTarget, velocityTarget);
         }
     }
+    public void ShiftCOM (Vector3 snapDistance)
+    {
+        Vector3 newCOM = LastCenterOfMassInWorldSpace + snapDistance;
+        LastCenterOfMassInWorldSpace = newCOM;
+        transform.position = newCOM;
+    }
 }

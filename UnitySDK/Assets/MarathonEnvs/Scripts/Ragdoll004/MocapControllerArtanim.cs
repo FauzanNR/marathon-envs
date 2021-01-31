@@ -614,8 +614,11 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
         }
 		root.gameObject.SetActive(true);
     }	   
-	public void SnapTo(Vector3 snapPosition)
+	public Vector3 SnapTo(Vector3 snapPosition)
 	{
+		snapPosition.y = transform.position.y;
+		var snapDistance = snapPosition-transform.position;
 		transform.position = snapPosition;
+		return snapDistance;
 	}
 }

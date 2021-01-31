@@ -47,7 +47,6 @@ public class RagDollAgent : Agent
 
 
     bool _hasLazyInitialized;
-    bool _skipRewardAfterTeleport;
     float[] _smoothedActions;
     float[] _mocapTargets;
 
@@ -93,7 +92,6 @@ public class RagDollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);        
 
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
@@ -125,6 +123,11 @@ public class RagDollAgent : Agent
 	public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);
+
+        float timeDelta = Time.fixedDeltaTime;
+        if (!_decisionRequester.TakeActionsBetweenDecisions)
+            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        _dReConRewards.OnStep(timeDelta);        
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -171,19 +174,14 @@ public class RagDollAgent : Agent
         _dReConObservations.PreviousActions = vectorAction;
 
 
-        bool lastSkipRewardAfterTeleportValue = _skipRewardAfterTeleport;
-        if (!_skipRewardAfterTeleport)
-            AddReward(_dReConRewards.Reward);
-        _skipRewardAfterTeleport = false;
-        // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward < 1f)
-        // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+        AddReward(_dReConRewards.Reward);
         bool terminate = false;
         terminate = terminate || _dReConRewards.PositionReward < .1f;
-        terminate = terminate || _dReConRewards.ComVelocityReward < .001f; // disabled because our player controller turns to quickly
+        terminate = terminate || _dReConRewards.ComVelocityReward < .0001f;
+        terminate = terminate || _dReConRewards.ComDirectionReward < .1f;
         terminate = terminate || _dReConRewards.PointsVelocityReward < .001f;
         terminate = terminate || _dReConRewards.LocalPoseReward < .1f;
         // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
-        terminate = terminate && !lastSkipRewardAfterTeleportValue;
         if (terminate)
         {
             if (!dontResetOnZeroReward)
@@ -194,9 +192,10 @@ public class RagDollAgent : Agent
             Transform ragDollCom = _dReConObservations.GetRagDollCOM();
             Vector3 snapPosition = ragDollCom.position;
             snapPosition.y = 0f;
-            _mocapControllerArtanim.SnapTo(snapPosition);
-            AddReward(-.5f);
-            _skipRewardAfterTeleport = true;
+            var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
+            _dReConObservations.ShiftMocapCOM(snapDistance);
+            _dReConRewards.ShiftMocapCOM(snapDistance);
+            // AddReward(-.5f);
         }
     }
     float[] GetDebugActions(float[] vectorAction)
@@ -325,7 +324,6 @@ public class RagDollAgent : Agent
         _dReConRewards.OnReset();
         _dReConObservations.OnStep(timeDelta);
         _dReConRewards.OnStep(timeDelta);
-        _skipRewardAfterTeleport = false;
 #if UNITY_EDITOR		
 		if (DebugPauseOnReset)
 		{

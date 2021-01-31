@@ -19,11 +19,10 @@ public class MocapAnimatorController : MonoBehaviour
     bool _isGrounded;
     bool _previouslyGrounded;
     const float kAirborneTurnSpeedProportion = 5.4f;
-    const float kGroundTurnSpeedProportion = 200f;
+    public float kGroundTurnSpeedProportion = 200f;
     const float kGroundedRayDistance = 1f;
     const float kJumpAbortSpeed = 10f;
-    const float kMinEnemyDotCoeff = 0.2f;
-    const float kInverseOneEighty = 1f / 180f;
+    public float kInverseOneEighty = 1f / 180f;
     const float kStickingGravityProportion = 0.3f;
 
     Material materialUnderFoot;

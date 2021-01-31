@@ -127,8 +127,10 @@ public class DReConRewards : MonoBehaviour
         MocapCOMVelocity = _mocapBodyStats.CenterOfMassVelocity;
         RagDollCOMVelocity = _ragDollBodyStats.CenterOfMassVelocity;
         COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
-        ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
-        ComVelocityReward = Mathf.Exp(ComVelocityReward);
+        // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
+        // ComVelocityReward = Mathf.Exp(ComVelocityReward);
+        ComVelocityReward = COMVelocityDifference;
+        ComVelocityReward = Mathf.Exp(-2f*ComVelocityReward);
 
         // points velocity
         List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
@@ -164,19 +166,19 @@ public class DReConRewards : MonoBehaviour
         DistanceFactor = 1.4f*DistanceFactor;
         DistanceFactor = 1.01f-DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
-        ComPositionReward = Mathf.Exp(-2f * Mathf.Pow(DistanceFactor,2));
+        ComPositionReward = Mathf.Exp(-3f * (1f-DistanceFactor));
         // ComPositionReward = 1.3f*ComDistance;
         // ComPositionReward = 1.01f-ComPositionReward;
         // ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
         // ComPositionReward = Mathf.Pow(ComPositionReward,2);
 
-        // center of mass direction reward
+        // center of mass direction reward (from 0f to 1f)
         ComDirectionDistance = Vector3.Dot( 
             _mocapBodyStats.transform.forward, 
             _ragDollBodyStats.transform.forward);
-        ComDirectionReward = (ComDirectionDistance + 1f)/2f;
-        // ComDirectionReward = Mathf.Pow(ComDirectionReward,2);
-        ComDirectionReward = Mathf.Exp(-2f * Mathf.Pow(ComDirectionReward,2));
+        ComDirectionDistance = 1f-((ComDirectionDistance + 1f)/2f);
+        ComDirectionReward = ComDirectionDistance;
+        ComDirectionReward = Mathf.Exp(-4f * ComDirectionReward);
 
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
@@ -184,13 +186,14 @@ public class DReConRewards : MonoBehaviour
 
         // reward
         SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
-        Reward = (ComPositionReward * 0.3f) +
-                    (ComVelocityReward * 0.1f) +
-                    // (ComDirectionReward * 0.2f) +
-                    (PositionReward * 0.1f) +
-                    (LocalPoseReward * 0.4f) +
+        Reward = 0f +
+                    // (ComPositionReward * 0.1f) +
+                    (ComVelocityReward * 0.25f) +
+                    (ComDirectionReward * 0.25f) +
+                    (PositionReward * 0.2f) +
+                    (LocalPoseReward * 0.2f) +
                     (PointsVelocityReward * 0.1f);
-        Reward *= ComDirectionReward;
+        // Reward *= ComDirectionReward;
     }
     public void OnReset()
     {
@@ -201,6 +204,11 @@ public class DReConRewards : MonoBehaviour
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;
         _ragDollBodyStats.transform.rotation = _mocapBodyStats.transform.rotation;
     }
+    public void ShiftMocapCOM(Vector3 snapDistance)
+    {
+        _mocapBodyStats.ShiftCOM(snapDistance);
+    }
+
     void OnDrawGizmos()
     {
         if (_ragDollBodyStats == null)
