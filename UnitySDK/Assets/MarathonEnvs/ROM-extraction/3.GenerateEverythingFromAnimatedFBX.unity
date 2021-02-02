@@ -190,6 +190,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CharacterWithInteractiveAnimation
       objectReference: {fileID: 0}
+    - target: {fileID: 2536297657908844867, guid: eeb956a2da6aa47898a06a8987fe617e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eeb956a2da6aa47898a06a8987fe617e, type: 3}
 --- !u!95 &155186926 stripped

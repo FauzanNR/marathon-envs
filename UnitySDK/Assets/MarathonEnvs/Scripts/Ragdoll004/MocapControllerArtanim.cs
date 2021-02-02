@@ -308,7 +308,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		{
 			t.name = t.name.Replace("(Clone)", "");
 		}
-		clone.transform.SetParent(ragdollForMocap.transform, false);
+
+
 		// swap ArticulatedBody for RidgedBody
 		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
@@ -323,6 +324,12 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		{
 			rb.isKinematic = true;
 		}
+
+
+		//we do this after removing the ArticulationBody, since moving the root in the articulationBody creates TROUBLE
+		clone.transform.SetParent(ragdollForMocap.transform, false);
+
+
 		// set the root
 		this._rigidbodyRoot = clone.GetComponent<Rigidbody>();
 		// set the layers
