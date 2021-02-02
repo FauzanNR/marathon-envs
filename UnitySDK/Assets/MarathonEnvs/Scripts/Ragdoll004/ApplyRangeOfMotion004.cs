@@ -86,7 +86,7 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
         if (RangeOfMotion2Store == null || RangeOfMotion2Store.Values.Length == 0)
             return;
         // var ragdollAgent = GetComponent<RagDollAgent>();
-        var articulationBodies = GetComponentsInChildren<ArticulationBody>();
+        var articulationBodies = GetComponentsInChildren<ArticulationBody>(true);
         DegreesOfFreedom = 0;
         foreach (var rom in RangeOfMotion2Store.Values)
         {
@@ -108,7 +108,6 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
             body.swingYLock = ArticulationDofLock.LockedMotion;
             body.swingZLock = ArticulationDofLock.LockedMotion;
             body.jointType = ArticulationJointType.FixedJoint;
-
 
             body.anchorRotation = Quaternion.identity; //we make sure the anchor has no Rotation, otherwise the constraints do not make any sense
 
