@@ -99,13 +99,10 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4training = Instantiate(characterReference.gameObject).GetComponent<Animator>();
         character4training.gameObject.SetActive(true);
 
-        //we must assume it is already there
+        //we assume those are already there (i.e., an animated character with a controller) 
         //character4training.gameObject.AddComponent<CharacterController>();
-
-
-
-        MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
-        mac.IsGeneratedProcedurally = true;
+        //MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
+        //mac.IsGeneratedProcedurally = true;
 
 
         MocapControllerArtanim mca =character4training.gameObject.AddComponent<MocapControllerArtanim>();
@@ -142,6 +139,26 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         RagDollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
+
+
+
+
+        MocapAnimatorController004 animationcontroller = character4training.GetComponent<MocapAnimatorController004>();
+
+        if(animationcontroller != null)
+        //we make sure they are in the same layers:
+        {
+
+           int  _layerMask = 1 << ragdollMarathon.gameObject.layer;
+            _layerMask |= 1 << character4training.gameObject.layer;
+            _layerMask = ~(_layerMask);
+
+            character4training.GetComponent<MocapAnimatorController004>()._layerMask = _layerMask;
+            //TODO: this will only work if we have a MocapAnimatorController004. We should REMOVE this dependency
+
+        }
+
+
 
 
 

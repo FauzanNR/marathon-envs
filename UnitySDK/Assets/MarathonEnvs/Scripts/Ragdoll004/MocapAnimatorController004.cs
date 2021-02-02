@@ -1,9 +1,8 @@
 
-using Unity.MLAgents;
 using UnityEngine;
 
 
-public class MarathonAnimationController : MonoBehaviour
+public class MocapAnimatorController004 : MonoBehaviour
 {
     public float MaxForwardVelocity = 1f;        // Max run speed.
     public float MinTurnVelocity = 400f;         // Turn velocity when moving at maximum speed.
@@ -12,9 +11,13 @@ public class MarathonAnimationController : MonoBehaviour
     public bool debugForceJump;
 
 
-    //[SerializeField]
+    [SerializeField]
     Animator _anim;
+
+
+    [SerializeField]
     CharacterController _characterController;
+
 
     [SerializeField]
     InputController _inputController;
@@ -22,7 +25,7 @@ public class MarathonAnimationController : MonoBehaviour
     bool _isGrounded;
     bool _previouslyGrounded;
     const float kAirborneTurnSpeedProportion = 5.4f;
-    const float kGroundTurnSpeedProportion = 200f / 2;
+    const float kGroundTurnSpeedProportion = 200f/2;
     const float kGroundedRayDistance = 1f;
     const float kJumpAbortSpeed = 10f;
     const float kMinEnemyDotCoeff = 0.2f;
@@ -34,26 +37,18 @@ public class MarathonAnimationController : MonoBehaviour
     Vector3 _lastGroundForwardVelocity;
     float _desiredForwardSpeed;
     float _verticalVelocity = -1f;
-
+    
     Quaternion _targetDirection;    // direction we want to move towards
     float _angleDiff;               // delta between targetRotation and current roataion
     Quaternion _targetRotation;
     bool _readyToJump;
     bool _inCombo;
-    int _layerMask;
 
+    [HideInInspector]
+    public int _layerMask;
 
-    [Tooltip("for debugging, we disable this when setTpose in MarathonTestBedController is on") ]
+    [Tooltip("for debugging, we disable this when setTpose in MarathonTestBedController is on")]
     public bool doFixedUpdate = true;
-
-
-    [SerializeField]
-    bool _isGeneratedProcedurally = false;
-
-    public bool IsGeneratedProcedurally { set => _isGeneratedProcedurally = value; }
-
-
-
 
     protected bool IsMoveInput
     {
@@ -61,18 +56,41 @@ public class MarathonAnimationController : MonoBehaviour
     }
 
 
-    void OnEnable()
-    {
-        OnAgentInitialize();
-    }
+
+    [SerializeField]
+    bool _isGeneratedProcedurally = false;
 
 
-    public void OnAgentInitialize()
+
+	public void OnEnable()
     {
-        _anim = GetComponent<Animator>();
-        _characterController = GetComponent<CharacterController>();
+
+        if(!_anim)
+            _anim = GetComponent<Animator>();
+
+        if(!_characterController)
+            _characterController = GetComponent<CharacterController>();
+
+
+        if (!_inputController) //if it is used without a ragdoll agent (for example, for ROM extraction), we still need to initialize it
+            _inputController = GetComponent<InputController>();
+
+
         _targetDirection = Quaternion.Euler(0, 90, 0);
-      
+
+
+
+        //Moved to Training Environment Generator
+        /*
+        var ragDoll = _spawnableEnv.GetComponentInChildren<RagDollAgent>( true);//we include inactive childs
+        if (ragDoll)//in the ROM extraction case we do not have any ragdoll agent
+        {
+            _layerMask = 1 << ragDoll.gameObject.layer;
+            _layerMask |= 1 << this.gameObject.layer;
+            _layerMask = ~(_layerMask);
+        }
+
+        */
     }
 
     void Update()
@@ -81,8 +99,7 @@ public class MarathonAnimationController : MonoBehaviour
 
     void FixedUpdate()
     {
-
-        if (doFixedUpdate)
+    
             OnFixedUpdate();
     }
 
@@ -109,9 +126,12 @@ public class MarathonAnimationController : MonoBehaviour
     public void OnReset()
     {
 
+        if (_isGeneratedProcedurally)
+            doFixedUpdate = false;
 
 
-        _isGrounded = true;
+
+            _isGrounded = true;
         _previouslyGrounded = true;
         _inCombo = false;
         _readyToJump = false;
@@ -137,13 +157,13 @@ public class MarathonAnimationController : MonoBehaviour
         _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
         _anim.SetFloat("forwardVelocity", _forwardVelocity);
         _anim.SetBool("backflip", false);
-
+            
 
         OnFixedUpdate();
         _anim.Update(0f);
 
 
-
+     
 
     }
 
@@ -166,7 +186,7 @@ public class MarathonAnimationController : MonoBehaviour
                 movement = _anim.deltaPosition;
                 movement.y = 0f;
                 movement = Vector3.ProjectOnPlane(_anim.deltaPosition, hit.normal);
-
+                
                 // store material under foot
                 Renderer groundRenderer = hit.collider.GetComponentInChildren<Renderer>();
                 materialUnderFoot = groundRenderer ? groundRenderer.sharedMaterial : null;
@@ -199,17 +219,19 @@ public class MarathonAnimationController : MonoBehaviour
         // If Ellen is not on the ground then send the vertical speed to the animator.
         // This is so the vertical speed is kept when landing so the correct landing animation is played.
 
-        if (!_isGrounded)
-            _anim.SetFloat("verticalVelocity", verticalVelocity);
 
-        // Send whether or not Ellen is on the ground to the animator.
-        _anim.SetBool("onGround", _isGrounded);
-        
+        if (!_isGeneratedProcedurally) { 
+            if (!_isGrounded)
+                _anim.SetFloat("verticalVelocity", verticalVelocity);
+
+            // Send whether or not Ellen is on the ground to the animator.
+            _anim.SetBool("onGround", _isGrounded);
+        }
     }
 
     void RotateTarget(float deltaTime)
     {
-        if (!Mathf.Approximately(_inputController.CameraRotation.x * _inputController.CameraRotation.x, 0f))
+        if (!Mathf.Approximately(_inputController.CameraRotation.x*_inputController.CameraRotation.x, 0f))
         {
             float roation = _targetDirection.eulerAngles.y;
             float delta = _inputController.CameraRotation.x * kGroundTurnSpeedProportion * deltaTime;
@@ -220,8 +242,6 @@ public class MarathonAnimationController : MonoBehaviour
     }
     void SetTargetFromMoveInput()
     {
-        if (!_inputController) //if it is used without a ragdoll agent (for example, for ROM extraction), we still need to initialize it
-            OnAgentInitialize();
 
 
         Vector2 moveInput = _inputController.MovementVector;
@@ -234,25 +254,27 @@ public class MarathonAnimationController : MonoBehaviour
         // Create three variables, move input local to the player, flattened forward direction of the camera and a local target rotation.
         Vector2 moveInput = _inputController.MovementVector;
         Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-
+        
         Vector3 forward = _targetDirection * Vector3.forward;
         forward.y = 0f;
         forward.Normalize();
 
         Quaternion targetRotation;
-
-         // If the local movement direction is the opposite of forward then the target rotation should be towards the camera.
-         if (Mathf.Approximately(Vector3.Dot(localMovementDirection, Vector3.forward), -1.0f))
-         {
-             targetRotation = Quaternion.LookRotation(-forward);
-         }
-         else
-         {
-             // Otherwise the rotation should be the offset of the input from the camera's forward.
-             Quaternion cameraToInputOffset = Quaternion.FromToRotation(Vector3.forward, localMovementDirection);
-             targetRotation = Quaternion.LookRotation(cameraToInputOffset * forward);
-         }
-       
+        
+        // // If the local movement direction is the opposite of forward then the target rotation should be towards the camera.
+        // if (Mathf.Approximately(Vector3.Dot(localMovementDirection, Vector3.forward), -1.0f))
+        // {
+        //     targetRotation = Quaternion.LookRotation(-forward);
+        // }
+        // else
+        // {
+        //     // Otherwise the rotation should be the offset of the input from the camera's forward.
+        //     Quaternion cameraToInputOffset = Quaternion.FromToRotation(Vector3.forward, localMovementDirection);
+        //     targetRotation = Quaternion.LookRotation(cameraToInputOffset * forward);
+        // }
+        // targetRotation = Quaternion.LookRotation(-forward);
+        Quaternion cameraToInputOffset = Quaternion.FromToRotation(Vector3.forward, localMovementDirection);
+        targetRotation = Quaternion.LookRotation(cameraToInputOffset * forward);
 
 
         // The desired forward direction.
@@ -264,7 +286,7 @@ public class MarathonAnimationController : MonoBehaviour
 
         _angleDiff = Mathf.DeltaAngle(angleCurrent, targetAngle);
         _targetRotation = targetRotation;
-    }
+    }    
     void UpdateOrientation(float deltaTime)
     {
         _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
@@ -273,7 +295,7 @@ public class MarathonAnimationController : MonoBehaviour
         float groundedTurnSpeed = Mathf.Lerp(MaxTurnVelocity, MinTurnVelocity, _forwardVelocity / _desiredForwardSpeed);
         float actualTurnSpeed = _isGrounded ? groundedTurnSpeed : Vector3.Angle(transform.forward, localInput) * kInverseOneEighty * kAirborneTurnSpeedProportion * groundedTurnSpeed;
         _targetRotation = Quaternion.RotateTowards(transform.rotation, _targetRotation, actualTurnSpeed * deltaTime);
-        bool hasNan = float.IsNaN(_targetRotation.x) || float.IsNaN(_targetRotation.y) || float.IsNaN(_targetRotation.z);
+        bool hasNan = float.IsNaN(_targetRotation.x) || float.IsNaN(_targetRotation.y) ||float.IsNaN(_targetRotation.z);
         if (!hasNan)
             transform.rotation = _targetRotation;
     }
@@ -317,7 +339,7 @@ public class MarathonAnimationController : MonoBehaviour
                 _anim.SetBool("onGround", false);
             }
         }
-        else
+        else 
         {
             // If Ellen is airborne, the jump button is not held and Ellen is currently moving upwards...
             if (!_inputController.Jump && _verticalVelocity > 0.0f)
@@ -332,7 +354,7 @@ public class MarathonAnimationController : MonoBehaviour
             {
                 _verticalVelocity = 0f;
             }
-
+            
             // If Ellen is airborne, apply gravity.
             _verticalVelocity += Physics.gravity.y * deltaTime;
         }

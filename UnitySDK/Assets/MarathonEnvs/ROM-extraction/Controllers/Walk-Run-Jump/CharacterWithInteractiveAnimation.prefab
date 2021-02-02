@@ -537,7 +537,7 @@ GameObject:
   - component: {fileID: 1543015658233080656}
   - component: {fileID: 5290559212830056540}
   - component: {fileID: 8927233223366116906}
-  - component: {fileID: 2536297657908844869}
+  - component: {fileID: 7926423758671396512}
   - component: {fileID: 2536297657908844868}
   m_Layer: 15
   m_Name: CharacterWithInteractiveAnimation
@@ -600,7 +600,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &2536297657908844869
+--- !u!114 &7926423758671396512
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -609,7 +609,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2536297657908844867}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bc90b2df05924acd802f49b72a145fd, type: 3}
+  m_Script: {fileID: 11500000, guid: a2fe8075a5eee40eb8199e376a5eaac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   MaxForwardVelocity: 1
@@ -617,7 +617,10 @@ MonoBehaviour:
   MaxTurnVelocity: 400
   JumpSpeed: 10
   debugForceJump: 0
-  _inputController: {fileID: 2536297657908844868}
+  _anim: {fileID: 0}
+  _characterController: {fileID: 0}
+  _inputController: {fileID: 0}
+  _layerMask: 0
   doFixedUpdate: 1
   _isGeneratedProcedurally: 0
 --- !u!114 &2536297657908844868

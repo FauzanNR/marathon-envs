@@ -263,93 +263,6 @@ PrefabInstance:
       objectReference: {fileID: 9100000, guid: 60222b4e849c1ec47b60b4d00b772f0f, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57ff63287e80d214a9cff16bba965fc6, type: 3}
---- !u!1001 &1080312092
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 4
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1543015658233080656, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2536297657908844867, guid: eeb956a2da6aa47898a06a8987fe617e,
-        type: 3}
-      propertyPath: m_Name
-      value: CharacterWithInteractiveAnimation
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: eeb956a2da6aa47898a06a8987fe617e, type: 3}
---- !u!95 &1080312093 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 8927233223366116906, guid: eeb956a2da6aa47898a06a8987fe617e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1080312092}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1080312094 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1338473430108506582, guid: eeb956a2da6aa47898a06a8987fe617e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1080312092}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1080312095 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8750175203059895719, guid: eeb956a2da6aa47898a06a8987fe617e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1080312092}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1242214833
 GameObject:
   m_ObjectHideFlags: 0
@@ -555,9 +468,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1898a29c838a8f445af23e017c73e97a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  characterReference: {fileID: 1080312093}
-  characterReferenceHead: {fileID: 1080312095}
-  characterReferenceRoot: {fileID: 1080312094}
+  characterReference: {fileID: 0}
+  characterReferenceHead: {fileID: 0}
+  characterReferenceRoot: {fileID: 0}
   AgentName: AgentMove
   TrainingEnvName: TrainingEnvironment
   MinROMNeededForJoint: 5

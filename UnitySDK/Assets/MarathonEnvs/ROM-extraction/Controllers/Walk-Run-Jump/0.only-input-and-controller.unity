@@ -462,5 +462,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Source-InteractiveAnimation
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2536297657908844869, guid: eeb956a2da6aa47898a06a8987fe617e, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: eeb956a2da6aa47898a06a8987fe617e, type: 3}
