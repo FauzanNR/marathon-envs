@@ -565,6 +565,7 @@ MonoBehaviour:
   characterReferenceRoot: {fileID: 155186927}
   AgentName: AgentMove
   TrainingEnvName: TrainingEnvironment
+  LearningConfigName: ControllerMarathonMan-v1
   MinROMNeededForJoint: 5
   info2store: {fileID: 11400000, guid: 5c3315467e77843a7b00bbbb63f5e6ef, type: 2}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,
