@@ -98,7 +98,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         character4training = Instantiate(characterReference.gameObject).GetComponent<Animator>();
         character4training.gameObject.SetActive(true);
-        character4training.gameObject.AddComponent<CharacterController>();
+
+        //we must assume it is already there
+        //character4training.gameObject.AddComponent<CharacterController>();
 
 
 

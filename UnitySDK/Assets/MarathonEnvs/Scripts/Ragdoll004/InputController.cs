@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Unity.MLAgents;
+//using Unity.MLAgents;
 
 public class InputController : MonoBehaviour
 {
@@ -12,8 +12,14 @@ public class InputController : MonoBehaviour
     public bool NoJumpsInMockMode;
 
     [Header("User or Mock input states")]
-    public Vector2 TargetMovementVector; // User-input desired horizontal center of mass velocity.
-    public Vector2 MovementVector; // smoothed version of TargetMovementVector.
+    //public
+    Vector2 TargetMovementVector; // User-input desired horizontal center of mass velocity.
+
+    Vector2 _movementVector; // smoothed version of TargetMovementVector.
+
+    public Vector2 MovementVector { get { return _movementVector; } }
+
+
     public Vector2 CameraRotation; // User-input desired rotation for camera.
     public bool Jump; // User wants to jump
     public bool Backflip; // User wants to backflip
@@ -21,6 +27,8 @@ public class InputController : MonoBehaviour
     [Header("Read only (or debug)")]
     public Vector2 DesiredHorizontalVelocity; // MovementVector * Max Velovity
     public Vector3 HorizontalDirection; // Normalized vector in direction of travel (assume right angle to floor)
+
+
     public bool UseHumanInput;
     public bool DemoMockIfNoInput = true; // Demo mock mode if no human input
 
@@ -34,7 +42,7 @@ public class InputController : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        UseHumanInput = !Academy.Instance.IsCommunicatorOn;
+      //  UseHumanInput = !Academy.Instance.IsCommunicatorOn;
         _timeUnillDemo = 1f;
     }
 
@@ -66,33 +74,33 @@ public class InputController : MonoBehaviour
         // Determine change to speed based on whether there is currently any move input.
         float acceleration = TargetMovementVector.magnitude > 0 ? kGroundAcceleration : kGroundDeceleration;
 
-        var difference = (MovementVector - TargetMovementVector);
-        if (difference.magnitude > MovementVector.magnitude)
+        var difference = (_movementVector - TargetMovementVector);
+        if (difference.magnitude > _movementVector.magnitude)
         {
             acceleration *= 5f;
         }
 
         // Adjust the forward speed towards the desired speed.
-        MovementVector = Vector2.MoveTowards(MovementVector, TargetMovementVector, acceleration * deltaTime);
+        _movementVector = Vector2.MoveTowards(_movementVector, TargetMovementVector, acceleration * deltaTime);
 
         // Handle deadzone
-        if (MovementVector.magnitude < .1f)
+        if (_movementVector.magnitude < .1f)
         {
             if (TargetMovementVector.magnitude < .1f)
             {
                 TargetMovementVector = Vector2.zero;
-                MovementVector = Vector2.zero;
+                _movementVector = Vector2.zero;
             }
             else
             {
-                MovementVector = TargetMovementVector.normalized * .1f;
+                _movementVector = TargetMovementVector.normalized * .1f;
             }
         }
 
         // handle direction
-        if (!Mathf.Approximately(MovementVector.sqrMagnitude, 0f))
-            HorizontalDirection = new Vector3(MovementVector.normalized.x, 0f, MovementVector.normalized.y);
-        DesiredHorizontalVelocity = MovementVector.normalized * MaxVelocity * MovementVector.magnitude;
+        if (!Mathf.Approximately(_movementVector.sqrMagnitude, 0f))
+            HorizontalDirection = new Vector3(_movementVector.normalized.x, 0f, _movementVector.normalized.y);
+        DesiredHorizontalVelocity = _movementVector.normalized * MaxVelocity * _movementVector.magnitude;
     }
     void GetHumanInput()
     {
