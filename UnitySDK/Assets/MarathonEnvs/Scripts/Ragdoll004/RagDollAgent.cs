@@ -195,7 +195,7 @@ public class RagDollAgent : Agent
             var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
             _dReConObservations.ShiftMocapCOM(snapDistance);
             _dReConRewards.ShiftMocapCOM(snapDistance);
-            // AddReward(-.5f);
+            AddReward(-3f);
         }
     }
     float[] GetDebugActions(float[] vectorAction)

@@ -130,7 +130,7 @@ public class DReConRewards : MonoBehaviour
         // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
         // ComVelocityReward = Mathf.Exp(ComVelocityReward);
         ComVelocityReward = COMVelocityDifference;
-        ComVelocityReward = Mathf.Exp(-2f*ComVelocityReward);
+        ComVelocityReward = Mathf.Exp(-1f*ComVelocityReward);
 
         // points velocity
         List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
@@ -193,7 +193,7 @@ public class DReConRewards : MonoBehaviour
                     (PositionReward * 0.2f) +
                     (LocalPoseReward * 0.2f) +
                     (PointsVelocityReward * 0.1f);
-        // Reward *= ComDirectionReward;
+        // Reward *= ComVelocityReward;
     }
     public void OnReset()
     {
