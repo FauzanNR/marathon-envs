@@ -443,7 +443,8 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
         DReConRewards dcrew = temp.gameObject.AddComponent<DReConRewards>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
-        dcrew.targetedRootName = target.ArticulationBodyRoot.name; //it should be it's son, but let's see
+        dcrew.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
+
 
 
         temp.MaxStep = 2000;
@@ -458,11 +459,16 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         dcobs.BodyPartsToTrack = new List<string>();
 
         //TODO: this could be EVERY joint, if we follow NVIDIA's approach to a universal physics controller. Meanwhile...
-        dcobs.BodyPartsToTrack.Add(characterReferenceRoot.name);
-        dcobs.BodyPartsToTrack.Add(characterReferenceHead.name);
+        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceRoot.name);
+        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceHead.name);
+       
+        dcobs.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
+
+
+
         foreach (Transform t in characterReferenceLimbs)
         {
-            dcobs.BodyPartsToTrack.Add(t.name);
+            dcobs.BodyPartsToTrack.Add("articulation:" + t.name);
 
         }
 
