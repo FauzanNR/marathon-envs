@@ -193,7 +193,7 @@ PrefabInstance:
     - target: {fileID: 2536297657908844867, guid: eeb956a2da6aa47898a06a8987fe617e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: eeb956a2da6aa47898a06a8987fe617e, type: 3}
@@ -212,6 +212,30 @@ Transform:
 --- !u!4 &155186928 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8750175203059895719, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &155186929 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 242191795390770227, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &155186930 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7267423403766005736, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &155186931 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3230064557313339903, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &155186932 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5081139106030231059, guid: eeb956a2da6aa47898a06a8987fe617e,
     type: 3}
   m_PrefabInstance: {fileID: 155186925}
   m_PrefabAsset: {fileID: 0}
@@ -563,6 +587,11 @@ MonoBehaviour:
   characterReference: {fileID: 155186926}
   characterReferenceHead: {fileID: 155186928}
   characterReferenceRoot: {fileID: 155186927}
+  characterReferenceLimbs:
+  - {fileID: 155186929}
+  - {fileID: 155186930}
+  - {fileID: 155186932}
+  - {fileID: 155186931}
   AgentName: AgentMove
   TrainingEnvName: TrainingEnvironment
   LearningConfigName: ControllerMarathonMan-v1

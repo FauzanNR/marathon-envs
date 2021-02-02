@@ -25,6 +25,9 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     Transform characterReferenceRoot;
 
+    [SerializeField]
+    Transform[] characterReferenceLimbs;
+
 
     [Header("How we want the generated assets stored:")]
 
@@ -430,6 +433,21 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         temp.gameObject.AddComponent<SensorObservations>();
         DReConObservations dcobs = temp.gameObject.AddComponent<DReConObservations>();
         dcobs.targetedRootName = characterReferenceRoot.name;  // target.ArticulationBodyRoot.name;
+
+        dcobs.BodyPartsToTrack = new List<string>();
+
+        //TODO: this could be EVERY joint, if we follow NVIDIA's approach to a universal physics controller. Meanwhile...
+        dcobs.BodyPartsToTrack.Add(characterReferenceRoot.name);
+        dcobs.BodyPartsToTrack.Add(characterReferenceHead.name);
+        foreach (Transform t in characterReferenceLimbs)
+        {
+            dcobs.BodyPartsToTrack.Add(t.name);
+
+        }
+
+
+
+
 
 
         ApplyRangeOfMotion004 rom = temp.gameObject.AddComponent<ApplyRangeOfMotion004>();

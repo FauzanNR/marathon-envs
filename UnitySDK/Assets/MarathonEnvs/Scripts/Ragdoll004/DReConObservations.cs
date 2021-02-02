@@ -37,6 +37,7 @@ public class DReConObservations : MonoBehaviour
     public float[] PreviousActions;
 
     [Header("Settings")]
+    //shouldn't those be game objects, instead of strings?
     public List<string> BodyPartsToTrack;
 
     [Header("Gizmos")]

@@ -46,21 +46,14 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	//[SerializeField]
 	//bool _usesMotionMatching = false;
     private bool _usingMocapAnimatorController = false;
-	MocapAnimatorController _mocapAnimController;
+
+	//for the cases where we are not doing the procedural stuff:
+	//MocapAnimatorController _mocapAnimController;
+
+	MocapAnimatorController004 _mocapAnimController;
 
 	[SerializeField]
 	float _debugDistance = 0.0f;
-
-
-	//I try to configure here, directly, the offsets.
-
-
-	// [SerializeField]
-	// string rigBaseName = "mixamorig";
-
-	//  private List<Transform> _targetPoseTransforms = null;
-	//[SerializeField]
-	//Transform _targetMocapCharacter;
 
 
 
@@ -247,7 +240,11 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			return;
 		try
 		{
-			_mocapAnimController = GetComponent<MocapAnimatorController>();
+
+			if(_isGeneratedProcedurally)
+				_mocapAnimController = GetComponent<MocapAnimatorController004>();
+
+
 			string s = _mocapAnimController.name;//this should launch an exception if there is no animator
 			_usingMocapAnimatorController = true;
 		}
@@ -544,6 +541,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
             if (_usingMocapAnimatorController)
 		{
 			_mocapAnimController.OnReset();
+			//TODO. we should find a more general way to define those relations wiht MocapAnimatorController004, to decouple the different pieces of code
 
 		}
 		else
