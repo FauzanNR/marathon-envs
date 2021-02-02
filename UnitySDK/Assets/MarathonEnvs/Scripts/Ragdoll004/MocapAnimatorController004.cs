@@ -62,9 +62,16 @@ public class MocapAnimatorController004 : MonoBehaviour
 
 
 
-	public void OnEnable()
+    public void OnEnable()
     {
 
+        OnAgentInitialize();
+    }
+
+
+    //TODO: this is also called from RagdollAgent004. Dependency should be removed, somehow.
+    public void OnAgentInitialize()
+    { 
         if(!_anim)
             _anim = GetComponent<Animator>();
 

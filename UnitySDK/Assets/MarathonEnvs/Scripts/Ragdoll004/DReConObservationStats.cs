@@ -95,6 +95,10 @@ public class DReConObservationStats : MonoBehaviour
                 .Distinct()
                 .ToList();
         */
+
+
+
+        //TODO: fix this, it seems broken
         if (_rigidbodyParts?.Count > 0)
             _bodyParts = _rigidbodyParts
                 .SelectMany(x => x.GetComponentsInChildren<Transform>())

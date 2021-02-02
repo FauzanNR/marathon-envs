@@ -43,7 +43,7 @@ public class RagDollAgent : Agent
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
-    MocapAnimatorController _mocapAnimatorController;
+    MocapAnimatorController004 _mocapAnimatorController;
 
 
     bool _hasLazyInitialized;
@@ -281,7 +281,7 @@ public class RagDollAgent : Agent
         _dReConObservations.PreviousActions = individualMotors.ToArray();
 
         //_mocapAnimatorController = _mocapControllerArtanim.GetComponentInChildren<MocapAnimatorController>();
-        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<MocapAnimatorController>();
+        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<MocapAnimatorController004>();
 
 
 
