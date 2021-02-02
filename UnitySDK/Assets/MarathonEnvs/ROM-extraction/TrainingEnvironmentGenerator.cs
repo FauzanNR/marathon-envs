@@ -41,6 +41,11 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     public int MinROMNeededForJoint = 0;
 
 
+    [Tooltip("body mass in grams/ml")]
+    [SerializeField]
+    float massdensity = 1.01f;
+
+
     //[SerializeField]
     //ROMparserSwingTwist ROMparser;
 
@@ -313,15 +318,28 @@ If the script doing this is short, it works because this is finished before the 
                 c.material = colliderMaterial;
 
                 c.height = Vector3.Distance(dad.position, j.transform.position);
+
+
+
+                //ugly but it seems to work.
+                Vector3 direction = (dad.position - j.transform.position).normalized;
+                float[] directionarray = new float[3] { Mathf.Abs(direction.x), Mathf.Abs(direction.y), Mathf.Abs(direction.z) };
+                float maxdir = Mathf.Max(directionarray);
+
+                List<float> directionlist = new List<float>(directionarray);
+                c.direction = directionlist.IndexOf(maxdir);
+
+                 
+
                 c.center = (dad.position + j.transform.position) / 2.0f;
                 c.radius = c.height / 5;
 
 
+
                 // Rigidbody rb = go.AddComponent<Rigidbody>();
-                // rb.mass = 4;
                 ArticulationBody rb = go.AddComponent<ArticulationBody>();
                 rb.jointType = ArticulationJointType.FixedJoint;
-                rb.mass = 5;
+                rb.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
 
 
 
