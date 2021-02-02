@@ -29,7 +29,7 @@ public class RagDollAgent : Agent
     public bool dontResetOnZeroReward;
     public bool dontSnapMocapToRagdoll;
     public bool DebugPauseOnReset;
-    public bool UsePDControl = true;
+
 
     List<Rigidbody> _mocapBodyParts;
     List<ArticulationBody> _bodyParts;
@@ -140,13 +140,7 @@ public class RagDollAgent : Agent
         {
             vectorAction = GetDebugActions(vectorAction);
         }
-        if (UsePDControl)
-        {
-            var targets = GetMocapTargets();
-            vectorAction = vectorAction
-                .Zip(targets, (action, target)=> Mathf.Clamp(target + action *2f, -1f, 1f))
-                .ToArray();
-        }
+    
         if (!SkipRewardSmoothing)
             vectorAction = SmoothActions(vectorAction);
         if (ignorActions)
@@ -248,7 +242,6 @@ public class RagDollAgent : Agent
         {
             dontResetOnZeroReward = true;
             dontSnapMocapToRagdoll = true;
-            UsePDControl = false;
         }
 
         _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();

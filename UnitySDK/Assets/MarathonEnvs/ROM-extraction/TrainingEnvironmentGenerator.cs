@@ -387,7 +387,6 @@ If the script doing this is short, it works because this is finished before the 
         temp.MaxStep = 2000;
         temp.FixedDeltaTime = 0.0125f;
         temp.RequestCamera = true;
-        temp.UsePDControl = false; //TODO: remove
 
 
         temp.gameObject.AddComponent<SensorObservations>();
