@@ -31,6 +31,12 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     string TrainingEnvName;
 
+
+
+    [Header("Configuration options:")]
+    [SerializeField]
+    string LearningConfigName;
+
     [Range(0, 359)]
     public int MinROMNeededForJoint = 0;
 
@@ -355,19 +361,33 @@ If the script doing this is short, it works because this is finished before the 
 
 
 
+
+    //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
     void addTrainingParameters(RagdollControllerArtanim target, RagDollAgent temp) {
 
 
-        //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
-        temp.gameObject.AddComponent<BehaviorParameters>();
-        temp.gameObject.AddComponent<DecisionRequester>();
 
+        BehaviorParameters bp = temp.gameObject.GetComponent<BehaviorParameters>();
+
+        bp.BehaviorName = LearningConfigName;
+
+
+
+        DecisionRequester dr =temp.gameObject.AddComponent<DecisionRequester>();
+        dr.DecisionPeriod = 2;
+        dr.TakeActionsBetweenDecisions = false;
 
 
 
         DReConRewards dcrew = temp.gameObject.AddComponent<DReConRewards>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
         dcrew.targetedRootName = target.ArticulationBodyRoot.name; //it should be it's son, but let's see
+
+
+        temp.MaxStep = 2000;
+        temp.FixedDeltaTime = 0.0125f;
+        temp.RequestCamera = true;
+        temp.UsePDControl = false; //TODO: remove
 
 
         temp.gameObject.AddComponent<SensorObservations>();
@@ -420,6 +440,8 @@ If the script doing this is short, it works because this is finished before the 
 
             RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
             muscle.PowerVector = new Vector3(40, 40, 40);
+
+
             muscle.Muscle = ab.name;
 
             if (muscleteam.MusclePowers == null)
@@ -471,6 +493,10 @@ If the script doing this is short, it works because this is finished before the 
         generateMuscles();
 
         ROMonRagdoll.GetComponent<DecisionRequester>().DecisionPeriod = 2;
+
+
+
+
 
     }
 
