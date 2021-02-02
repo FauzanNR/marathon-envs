@@ -148,6 +148,27 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4synthesis.name = "Result:" + AgentName ;
 
 
+        //we remove everything except the transform
+        Component[] list = character4synthesis.GetComponents(typeof(Component));
+        foreach (Component c in list)
+        {
+
+            if (c is Transform || c is Animator || c is CharacterController)
+            {
+            }
+            else
+            {
+                DestroyImmediate(c);
+
+            }
+
+        }
+
+        character4synthesis.GetComponent<Animator>().runtimeAnimatorController = null;
+
+
+
+
         RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
         rca.IsGeneratedProcedurally = true;
 

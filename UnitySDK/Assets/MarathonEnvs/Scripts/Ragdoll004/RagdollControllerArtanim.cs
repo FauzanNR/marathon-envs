@@ -35,7 +35,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 	[SerializeField]
 	float _debugDistance= 0.0f;
 
-
+	[HideInInspector]
 	[SerializeField]
 	bool _isGeneratedProcedurally = false;
 

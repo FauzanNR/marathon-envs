@@ -86,16 +86,6 @@ public class MappingOffset
     }
 
 
-    //public void SetSon(Transform son) {
-
-    //    if (!_updateRigidBodies)
-    //        Debug.LogError("using son transform only makes sense when we are in the mode that updates the rigidbodies form the transforms. Please check how you initialize this class");
-
-    //    _tson = son;
-    
-    
-    //}
-
 
     public bool UpdateRigidBodies { get => _updateRigidBodies; set => _updateRigidBodies = value; }
 

@@ -389,8 +389,7 @@ MonoBehaviour:
       envPrefab: {fileID: 4882770942201970565, guid: 039f5bf4e1cc0214ea4f370014f59897,
         type: 3}
     - envId: ControllerProcedural-v0
-      envPrefab: {fileID: 4775709032997869881, guid: 9936fedc5369646959692a31ee701038,
-        type: 3}
+      envPrefab: {fileID: 2025421007, guid: 9936fedc5369646959692a31ee701038, type: 3}
     envIdDefault: ControllerProcedural-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
