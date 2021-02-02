@@ -73,7 +73,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 
 
 		if(_articulationbodies == null)
-			_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
+			_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>(true).ToList();
 
 
 
@@ -154,7 +154,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 			_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
             }
             else { 
-				_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>().ToList();
+				_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>(true).ToList();
 			}
 		}
 

@@ -368,13 +368,23 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
         //we add reference to the ragdoll, the articulationBodyRoot
+        
+        target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
+
+
+        //at this stage, every single articulatedBody is root. Check it out with the script below
+        /*
         foreach (Transform j in joints)
         {
             ArticulationBody ab = j.transform.GetComponent<ArticulationBody>();
-            if (ab.isRoot) {
-                target.ArticulationBodyRoot = ab;
+            if (ab.isRoot)
+            {
+                Debug.Log(ab.name + "is root ");
             }
         }
+        */
+
+
 
 
         RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
@@ -419,7 +429,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
         temp.gameObject.AddComponent<SensorObservations>();
         DReConObservations dcobs = temp.gameObject.AddComponent<DReConObservations>();
-        dcobs.targetedRootName = target.ArticulationBodyRoot.name;
+        dcobs.targetedRootName = characterReferenceRoot.name;  // target.ArticulationBodyRoot.name;
 
 
         ApplyRangeOfMotion004 rom = temp.gameObject.AddComponent<ApplyRangeOfMotion004>();
