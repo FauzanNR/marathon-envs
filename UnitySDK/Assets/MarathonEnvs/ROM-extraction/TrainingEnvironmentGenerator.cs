@@ -1,6 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
+
 using UnityEngine;
+
 
 using Unity.MLAgents.Policies;
 using Unity.MLAgents;
@@ -231,7 +234,9 @@ If the script doing this is short, it works because this is finished before the 
     }
 
 
-    RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
+
+
+RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
@@ -247,16 +252,21 @@ If the script doing this is short, it works because this is finished before the 
 
         }
 
-        Animator a = temp.GetComponent<Animator>();
-        if(a!= null)
-            DestroyImmediate(a);
-        CharacterController b = temp.GetComponent<CharacterController>();
-        if(b!=null)
-            DestroyImmediate(b);
-        RagdollControllerArtanim r = temp.GetComponent<RagdollControllerArtanim>();
-        if(r!=null)
-            DestroyImmediate(r);
 
+        //we remove everything except the transform
+        Component[] list = temp.GetComponents(typeof(Component));
+        foreach (Component c in list) {
+
+            if (c is Transform)
+            {
+            }
+            else {
+                DestroyImmediate(c);
+
+            }
+
+        }
+        
 
         temp.name = "Ragdoll:" + AgentName ;
         muscleteam=  temp.AddComponent<RagDoll004>();
