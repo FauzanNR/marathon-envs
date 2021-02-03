@@ -7,6 +7,7 @@ using UnityEngine;
 
 using Unity.MLAgents.Policies;
 using Unity.MLAgents;
+using System.Linq;
 
 public class TrainingEnvironmentGenerator : MonoBehaviour
 {
@@ -25,8 +26,15 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     Transform characterReferenceRoot;
 
+
+    [Tooltip("fingers will be excluded from physics-learning")]
     [SerializeField]
-    Transform[] characterReferenceLimbs;
+    Transform[] characterReferenceHands;
+
+    //we assume here is the end-effector, but feet have an articulaiton (sensors will be placed on these and their immediate parents)
+    [Tooltip("same as above but not taking into account fingers")]
+    [SerializeField]
+    Transform[] characterReferenceFeet;
 
 
     [Header("How we want the generated assets stored:")]
@@ -303,12 +311,48 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
         //TODO: this assumes the first son will always be the good one. A more secure method seems cautious 
-        Transform root = temp.transform.GetChild(0);
+        //Transform root = temp.transform.GetChild(0);
+
+        //string rootname = characterReferenceRoot.name + "(Clone)";
+        Transform[] pack = temp.GetComponentsInChildren<Transform>();
+
+        Transform root = pack.First<Transform>(x => x.name == characterReferenceRoot.name);
+
+
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
 
 
-         articulatedJoints = new List<ArticulationBody>();
+
+        List<Transform> listofjoints = new List<Transform>(joints);
+        //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
+        foreach (Transform t in characterReferenceHands) {
+            string limbname = t.name;// + "(Clone)";
+            Debug.Log("looking for bone" + limbname);
+
+            Transform limb = joints.First<Transform>(x => x.name == limbname);
+
+
+
+
+            List<Transform> childstodelete = new List<Transform>(limb.GetComponentsInChildren<Transform>());
+            childstodelete.Remove(limb);
+            foreach (Transform t2 in childstodelete)
+            {
+                listofjoints.Remove(t2);
+                t2.DetachChildren();//otherwise, it tries to destroy the children later, and fails.
+            }
+            foreach (Transform t2 in childstodelete)
+            {
+                DestroyImmediate(t2.gameObject);
+            }
+
+
+
+
+        }
+        joints = listofjoints.ToArray();
+        articulatedJoints = new List<ArticulationBody>();
 
 
         foreach (Transform j in joints) {
@@ -466,7 +510,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
 
-        foreach (Transform t in characterReferenceLimbs)
+        foreach (Transform t in characterReferenceFeet)
         {
             dcobs.BodyPartsToTrack.Add("articulation:" + t.name);
 

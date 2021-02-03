@@ -227,18 +227,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 155186925}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &155186931 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3230064557313339903, guid: eeb956a2da6aa47898a06a8987fe617e,
-    type: 3}
-  m_PrefabInstance: {fileID: 155186925}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &155186932 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5081139106030231059, guid: eeb956a2da6aa47898a06a8987fe617e,
-    type: 3}
-  m_PrefabInstance: {fileID: 155186925}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &852680419
 GameObject:
   m_ObjectHideFlags: 0
@@ -295,6 +283,12 @@ MonoBehaviour:
   stiffness: 40000
   damping: 0
   forceLimit: 3.4028235e+38
+--- !u!4 &987146275 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2989707572611595623, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1072644997
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -555,6 +549,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 30.697, z: 0}
+--- !u!4 &1692417829 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4134155648992135594, guid: eeb956a2da6aa47898a06a8987fe617e,
+    type: 3}
+  m_PrefabInstance: {fileID: 155186925}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2008991780
 GameObject:
   m_ObjectHideFlags: 0
@@ -587,11 +587,12 @@ MonoBehaviour:
   characterReference: {fileID: 155186926}
   characterReferenceHead: {fileID: 155186928}
   characterReferenceRoot: {fileID: 155186927}
-  characterReferenceLimbs:
+  characterReferenceHands:
   - {fileID: 155186929}
   - {fileID: 155186930}
-  - {fileID: 155186932}
-  - {fileID: 155186931}
+  characterReferenceFeet:
+  - {fileID: 987146275}
+  - {fileID: 1692417829}
   AgentName: AgentMove
   TrainingEnvName: TrainingEnvironment
   LearningConfigName: ControllerMarathonMan-v1
@@ -606,46 +607,6 @@ MonoBehaviour:
   character4synthesis: {fileID: 0}
   _outcome: {fileID: 0}
   articulatedJoints:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
