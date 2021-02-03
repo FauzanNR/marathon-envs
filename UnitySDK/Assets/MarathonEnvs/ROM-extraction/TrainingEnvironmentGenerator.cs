@@ -431,44 +431,14 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         }
 
 
+
+
         //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
 
 
-        //I add the sensors in the feet:
-        Transform[] pack2 = root.GetComponentsInChildren<Transform>();
-        foreach (Transform t in characterReferenceFeet)
-        {
 
-            Transform foot = pack2.First<Transform>(x => x.name == "articulation:"+t.name);
-
-            GameObject sensorL = new GameObject();
-            SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
-            sphL.radius = 0.03f;
-            sensorL.AddComponent<SensorBehavior>();
-            sensorL.AddComponent<HandleOverlap>();
-
-
-            //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
-            sensorL.transform.parent = foot;
-            sensorL.transform.localPosition = new Vector3(-0.02f, 0, 0);
-            sensorL.name = foot.name + "sensor_L";
-
-            GameObject sensorR = GameObject.Instantiate(sensorL);
-            sensorR.transform.parent = foot;
-            sensorR.transform.localPosition = new Vector3(0.02f, 0, 0);
-            sensorR.name = foot.name + "sensor_R";
-
-            //we add another sensor for the toe:
-            GameObject sensorT = GameObject.Instantiate(sensorL);
-            sensorT.transform.parent = foot.parent;
-            sensorT.transform.localPosition = new Vector3(0.0f, -0.01f, -0.04f);
-            sensorT.name = foot.name + "sensor_T";
-
-
-
-
-        }
+        addSensorsInFeet(root);
 
 
 
@@ -502,7 +472,47 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
     }
 
 
+    void addSensorsInFeet(Transform root) {
 
+        //I add the sensors in the feet:
+        Transform[] pack2 = root.GetComponentsInChildren<Transform>();
+        foreach (Transform t in characterReferenceFeet)
+        {
+
+            Transform foot = pack2.First<Transform>(x => x.name == "articulation:" + t.name);
+
+            GameObject sensorL = new GameObject();
+            SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
+            sphL.radius = 0.03f;
+            sensorL.AddComponent<SensorBehavior>();
+            sensorL.AddComponent<HandleOverlap>();
+
+
+            //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
+            sensorL.transform.parent = foot;
+            sensorL.transform.localPosition = new Vector3(-0.02f, 0, 0);
+            sensorL.name = foot.name + "sensor_L";
+
+            GameObject sensorR = GameObject.Instantiate(sensorL);
+            sensorR.transform.parent = foot;
+            sensorR.transform.localPosition = new Vector3(0.02f, 0, 0);
+            sensorR.name = foot.name + "sensor_R";
+
+            //we add another sensor for the toe:
+            GameObject sensorT = GameObject.Instantiate(sensorL);
+            sensorT.transform.parent = foot.parent;
+            sensorT.transform.localPosition = new Vector3(0.0f, -0.01f, -0.04f);
+            sensorT.name = foot.name + "sensor_T";
+
+
+
+
+        }
+
+
+
+
+    }
 
     //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
     void addTrainingParameters(RagdollControllerArtanim target, RagDollAgent temp) {
