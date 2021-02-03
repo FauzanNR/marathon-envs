@@ -32,7 +32,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     Transform[] characterReferenceHands;
 
     //we assume here is the end-effector, but feet have an articulaiton (sensors will be placed on these and their immediate parents)
-    [Tooltip("same as above but not taking into account fingers")]
+    //strategy to be checked: if for a quadruped we add the 4 feet here, does it work?
+    [Tooltip("same as above but not taking into account fingers. Put the last joint")]
     [SerializeField]
     Transform[] characterReferenceFeet;
 
@@ -310,10 +311,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         temp.gameObject.SetActive(false);
 
 
-        //TODO: this assumes the first son will always be the good one. A more secure method seems cautious 
-        //Transform root = temp.transform.GetChild(0);
-
-        //string rootname = characterReferenceRoot.name + "(Clone)";
+       
         Transform[] pack = temp.GetComponentsInChildren<Transform>();
 
         Transform root = pack.First<Transform>(x => x.name == characterReferenceRoot.name);
@@ -328,8 +326,6 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
         foreach (Transform t in characterReferenceHands) {
             string limbname = t.name;// + "(Clone)";
-            Debug.Log("looking for bone" + limbname);
-
             Transform limb = joints.First<Transform>(x => x.name == limbname);
 
 
@@ -367,7 +363,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
           
 
-
+            //note: probably not needed
             string namebase = j.name.Replace("(Clone)", "");
 
 
@@ -435,9 +431,49 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         }
 
 
-        //we add reference to the ragdoll, the articulationBodyRoot
-        
+        //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
+
+
+        //I add the sensors in the feet:
+        Transform[] pack2 = root.GetComponentsInChildren<Transform>();
+        foreach (Transform t in characterReferenceFeet)
+        {
+
+            Transform foot = pack2.First<Transform>(x => x.name == "articulation:"+t.name);
+
+            GameObject sensorL = new GameObject();
+            SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
+            sphL.radius = 0.03f;
+            sensorL.AddComponent<SensorBehavior>();
+            sensorL.AddComponent<HandleOverlap>();
+
+
+            //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
+            sensorL.transform.parent = foot;
+            sensorL.transform.localPosition = new Vector3(-0.02f, 0, 0);
+            sensorL.name = foot.name + "sensor_L";
+
+            GameObject sensorR = GameObject.Instantiate(sensorL);
+            sensorR.transform.parent = foot;
+            sensorR.transform.localPosition = new Vector3(0.02f, 0, 0);
+            sensorR.name = foot.name + "sensor_R";
+
+            //we add another sensor for the toe:
+            GameObject sensorT = GameObject.Instantiate(sensorL);
+            sensorT.transform.parent = foot.parent;
+            sensorT.transform.localPosition = new Vector3(0.0f, -0.01f, -0.04f);
+            sensorT.name = foot.name + "sensor_T";
+
+
+
+
+        }
+
+
+
+
+
 
 
         //at this stage, every single articulatedBody is root. Check it out with the script below
