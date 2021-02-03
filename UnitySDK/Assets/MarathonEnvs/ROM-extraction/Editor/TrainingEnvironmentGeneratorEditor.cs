@@ -66,9 +66,6 @@ public class TrainingEnvironmentGeneratorEditor : Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
-
-
-
         }
         //GUILayout.Label("After (3), activate the Ragdoll game object within the hierarchy of the training environment generated.");
 

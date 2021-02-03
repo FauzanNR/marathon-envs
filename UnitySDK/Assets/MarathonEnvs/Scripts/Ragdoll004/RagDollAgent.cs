@@ -122,6 +122,55 @@ public class RagDollAgent : Agent
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
     }
+
+    //adapted from previous function (Collect Observations)
+    public  int calculateDreConObservationsize()
+    {
+        int size = 0;
+
+        size +=
+        3  //sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
+        + 3 //sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
+        + 3 //sensor.AddObservation(_dReConObservations.RagDollCOMVelocity - _dReConObservations.MocapCOMVelocity);
+        + 2 //sensor.AddObservation(_dReConObservations.InputDesiredHorizontalVelocity);
+        + 1 //sensor.AddObservation(_dReConObservations.InputJump);
+        + 1 //sensor.AddObservation(_dReConObservations.InputBackflip);
+        + 2;//sensor.AddObservation(_dReConObservations.HorizontalVelocityDifference);
+
+
+        DReConObservations _checkDrecon = GetComponent<DReConObservations>();
+
+
+        //foreach (var stat in _dReConObservations.RagDollBodyStats)
+
+        foreach (string s in _checkDrecon.BodyPartsToTrack)
+
+        {
+            size +=
+             3 //sensor.AddObservation(stat.Position);
+             + 3; //sensor.AddObservation(stat.Velocity);
+        }
+        //foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
+        foreach (string s in _checkDrecon.BodyPartsToTrack)
+
+        {
+            size +=
+            +3 // sensor.AddObservation(stat.Position);
+            + 3; // sensor.AddObservation(stat.Velocity);
+        }
+
+        //action size and sensor size are calculated separately, we do not use:
+        //sensor.AddObservation(_dReConObservations.PreviousActions);
+        //sensor.AddObservation(_sensorObservations.SensorIsInTouch);
+
+        return size;
+    }
+
+
+
+
+
+
 	public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);

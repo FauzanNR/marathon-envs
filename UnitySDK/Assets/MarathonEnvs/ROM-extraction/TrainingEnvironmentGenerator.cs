@@ -659,9 +659,9 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
         ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>(true);
         ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
-        ROMonRagdoll.ApplyRangeOfMotionToRagDoll();
-        ROMonRagdoll.applyDoFOnBehaviorParameters();
+        ROMonRagdoll.ConfigureTrainingForRagdoll();
 
+        
         generateMuscles();
 
         ROMonRagdoll.GetComponent<DecisionRequester>().DecisionPeriod = 2;
