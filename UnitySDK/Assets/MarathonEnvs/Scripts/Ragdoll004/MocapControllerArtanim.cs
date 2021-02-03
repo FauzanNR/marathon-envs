@@ -46,21 +46,14 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 	//[SerializeField]
 	//bool _usesMotionMatching = false;
     private bool _usingMocapAnimatorController = false;
-	MocapAnimatorController _mocapAnimController;
+
+	//for the cases where we are not doing the procedural stuff:
+	//MocapAnimatorController _mocapAnimController;
+
+	MocapAnimatorController004 _mocapAnimController;
 
 	[SerializeField]
 	float _debugDistance = 0.0f;
-
-
-	//I try to configure here, directly, the offsets.
-
-
-	// [SerializeField]
-	// string rigBaseName = "mixamorig";
-
-	//  private List<Transform> _targetPoseTransforms = null;
-	//[SerializeField]
-	//Transform _targetMocapCharacter;
 
 
 
@@ -247,7 +240,11 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 			return;
 		try
 		{
-			_mocapAnimController = GetComponent<MocapAnimatorController>();
+
+			if(_isGeneratedProcedurally)
+				_mocapAnimController = GetComponent<MocapAnimatorController004>();
+
+
 			string s = _mocapAnimController.name;//this should launch an exception if there is no animator
 			_usingMocapAnimatorController = true;
 		}
@@ -308,7 +305,8 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		{
 			t.name = t.name.Replace("(Clone)", "");
 		}
-		clone.transform.SetParent(ragdollForMocap.transform, false);
+
+
 		// swap ArticulatedBody for RidgedBody
 		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
@@ -323,6 +321,12 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		{
 			rb.isKinematic = true;
 		}
+
+
+		//we do this after removing the ArticulationBody, since moving the root in the articulationBody creates TROUBLE
+		clone.transform.SetParent(ragdollForMocap.transform, false);
+
+
 		// set the root
 		this._rigidbodyRoot = clone.GetComponent<Rigidbody>();
 		// set the layers
@@ -537,6 +541,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
             if (_usingMocapAnimatorController)
 		{
 			_mocapAnimController.OnReset();
+			//TODO. we should find a more general way to define those relations wiht MocapAnimatorController004, to decouple the different pieces of code
 
 		}
 		else

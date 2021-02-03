@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEngine;
 
 using Unity.MLAgents.Policies;
-
+using Unity.MLAgents;
 
 public class ApplyRangeOfMotion004 : MonoBehaviour
 {
@@ -24,52 +24,27 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
       [Range(0,359)]
     public int MinROMNeededForJoint = 5;
 
-    public int DegreesOfFreedom = 0;
+   // [Tooltip("the space of actions")]
+   // public int DegreesOfFreedom = 0;
+
+  //  [Tooltip("the space of observations")]
+  //  public int ObservationDimensions = 0;
+
+
 
     [SerializeField]
     bool debugWithLargestROM = false;
 
 
-    private void OnEnable()
+
+    /*//NOT USED
+    int CalculateDoF()
     {
 
-        /*
-        if (applyROMInGamePlay)
-        {
-            ApplyRangeOfMotionToRagDoll();
 
-
-            CalculateDoF();
-            applyDoFOnBehaviorParameters();
-
-
-
-            if ( (RangeOfMotion2Store != null) && RangeOfMotion2Store.InferenceModel != null)
-                GetComponent<BehaviorParameters>().Model = RangeOfMotion2Store.InferenceModel;
-
-        }*/
-
-
-
-    }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void CalculateDoF()
-    {
         if (RangeOfMotion2Store == null || RangeOfMotion2Store.Values.Length == 0)
-            return;
-        DegreesOfFreedom = 0;
+            return -1;
+        int DegreesOfFreedom = 0;
         foreach (var rom in RangeOfMotion2Store.Values)
         {
             if (rom.rangeOfMotion.x > (float)MinROMNeededForJoint)
@@ -79,36 +54,69 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
             if (rom.rangeOfMotion.z >= (float)MinROMNeededForJoint)
                 DegreesOfFreedom++;
         }
+
+        return DegreesOfFreedom;
+
+    }*/
+
+    public void ConfigureTrainingForRagdoll() {
+       int dof = ApplyRangeOfMotionToRagDoll();
+        if (dof == -1)
+        {
+            Debug.LogError("Problems applying the range of motion to the ragdoll");
+        }
+        else {
+
+            ApplyDoFOnBehaviorParameters(dof);
+        }
+
     }
 
-    public void ApplyRangeOfMotionToRagDoll()
+
+    int ApplyRangeOfMotionToRagDoll()
     {
         if (RangeOfMotion2Store == null || RangeOfMotion2Store.Values.Length == 0)
-            return;
+            return -1;
         // var ragdollAgent = GetComponent<RagDollAgent>();
-        var articulationBodies = GetComponentsInChildren<ArticulationBody>();
-        DegreesOfFreedom = 0;
-        foreach (var rom in RangeOfMotion2Store.Values)
+        ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>(true);
+
+
+        //we only keep the ones that have colliders (and therefore do not correspond to joints).
+        List<ArticulationBody> listofAB = new List<ArticulationBody>();
+        foreach (ArticulationBody ab in articulationBodies) {
+            if (ab.GetComponent<Collider>() == null)
+                listofAB.Add(ab);
+
+        }
+        articulationBodies = listofAB.ToArray();
+
+        int DegreesOfFreedom = 0;
+
+        //below does not work because there are more Values than articulationBody (for example, fingers)
+        //foreach (var rom in RangeOfMotion2Store.Values)
+
+        //foreach (var rom in RangeOfMotion2Store.Values)
+        foreach(ArticulationBody body in articulationBodies)
         {
-            ArticulationBody body = null;
+
+            //string tname = temp[1];
+            string keyword = "articulation:";
+            string valuename = body.name.TrimStart(keyword.ToArray<char>());
 
 
-            try
-            {
-                body = articulationBodies.First(x => x.name == $"articulation:{rom.name}");
+            RangeOfMotionValue rom = RangeOfMotion2Store.Values.First(x => x.name == valuename);
 
-            }
-           catch (InvalidOperationException e) { Debug.Log("no articulationBody with name: " + rom.name + "Exception: " +e); }
-                
-                if (body == null)
-                return;
+            if(rom == null)
+                {
+                Debug.LogError("Could not find a rangoe of motionvalue for articulation: " + body.name);
+                return -1;
+                }
 
             bool isLocked = true;
             body.twistLock = ArticulationDofLock.LockedMotion;
             body.swingYLock = ArticulationDofLock.LockedMotion;
             body.swingZLock = ArticulationDofLock.LockedMotion;
             body.jointType = ArticulationJointType.FixedJoint;
-
 
             body.anchorRotation = Quaternion.identity; //we make sure the anchor has no Rotation, otherwise the constraints do not make any sense
 
@@ -170,13 +178,15 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
         }
 
+        return DegreesOfFreedom;
+
     }
 
 
      
 
 
-    public void applyDoFOnBehaviorParameters() {
+    void ApplyDoFOnBehaviorParameters(int DegreesOfFreedom) {
         // due to an obscure function call in the setter of ActionSpec inside bp, this can only run at runtime
         //the function is called SyncDeprecatedActionFields()
 
@@ -189,8 +199,24 @@ public class ApplyRangeOfMotion004 : MonoBehaviour
 
         myActionSpec.NumContinuousActions = DegreesOfFreedom;
         bp.BrainParameters.ActionSpec = myActionSpec;
-        Debug.Log("applied DoF on ActionSpec:" + myActionSpec.NumContinuousActions);
+        Debug.Log("Space of actions calculated at:" + myActionSpec.NumContinuousActions + " continuous dimensions");
 
+
+        /*
+         * To calculate the space of observations, apparently the formula is:
+        number of colliders(19) *12 +number of actions(54) + number of sensors(6) + misc addition observations(16) = 304
+        correction: it seeems to be:
+        number of actions + number of sensors + misc additional observations = 101
+        
+        */
+
+        //int numcolliders = GetComponentsInChildren<CapsuleCollider>().Length; //notice the sensors are Spherecolliders, so not included in this count
+        int numsensors = GetComponentsInChildren<SensorBehavior>().Length;
+        int num_miscelaneous = GetComponent<RagDollAgent>().calculateDreConObservationsize();
+
+        int ObservationDimensions =  DegreesOfFreedom + numsensors + num_miscelaneous;
+        bp.BrainParameters.VectorObservationSize = ObservationDimensions;
+        Debug.Log("Space of perceptions calculated at:" + bp.BrainParameters.VectorObservationSize + " continuous dimensions, with: " + "sensors: " + numsensors + "and DreCon miscelaneous: " + num_miscelaneous);
 
 
     }
