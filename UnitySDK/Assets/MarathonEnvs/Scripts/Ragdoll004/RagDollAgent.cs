@@ -29,7 +29,7 @@ public class RagDollAgent : Agent
     public bool dontResetOnZeroReward;
     public bool dontSnapMocapToRagdoll;
     public bool DebugPauseOnReset;
-
+    public bool UsePDControl = true;
 
     List<Rigidbody> _mocapBodyParts;
     List<ArticulationBody> _bodyParts;
@@ -43,7 +43,7 @@ public class RagDollAgent : Agent
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
-    MocapAnimatorController004 _mocapAnimatorController;
+    MocapAnimatorController _mocapAnimatorController;
 
 
     bool _hasLazyInitialized;
@@ -122,55 +122,6 @@ public class RagDollAgent : Agent
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
     }
-
-    //adapted from previous function (Collect Observations)
-    public  int calculateDreConObservationsize()
-    {
-        int size = 0;
-
-        size +=
-        3  //sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
-        + 3 //sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
-        + 3 //sensor.AddObservation(_dReConObservations.RagDollCOMVelocity - _dReConObservations.MocapCOMVelocity);
-        + 2 //sensor.AddObservation(_dReConObservations.InputDesiredHorizontalVelocity);
-        + 1 //sensor.AddObservation(_dReConObservations.InputJump);
-        + 1 //sensor.AddObservation(_dReConObservations.InputBackflip);
-        + 2;//sensor.AddObservation(_dReConObservations.HorizontalVelocityDifference);
-
-
-        DReConObservations _checkDrecon = GetComponent<DReConObservations>();
-
-
-        //foreach (var stat in _dReConObservations.RagDollBodyStats)
-
-        foreach (string s in _checkDrecon.BodyPartsToTrack)
-
-        {
-            size +=
-             3 //sensor.AddObservation(stat.Position);
-             + 3; //sensor.AddObservation(stat.Velocity);
-        }
-        //foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
-        foreach (string s in _checkDrecon.BodyPartsToTrack)
-
-        {
-            size +=
-            +3 // sensor.AddObservation(stat.Position);
-            + 3; // sensor.AddObservation(stat.Velocity);
-        }
-
-        //action size and sensor size are calculated separately, we do not use:
-        //sensor.AddObservation(_dReConObservations.PreviousActions);
-        //sensor.AddObservation(_sensorObservations.SensorIsInTouch);
-
-        return size;
-    }
-
-
-
-
-
-
 	public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);
@@ -189,7 +140,13 @@ public class RagDollAgent : Agent
         {
             vectorAction = GetDebugActions(vectorAction);
         }
-    
+        if (UsePDControl)
+        {
+            var targets = GetMocapTargets();
+            vectorAction = vectorAction
+                .Zip(targets, (action, target)=> Mathf.Clamp(target + action *2f, -1f, 1f))
+                .ToArray();
+        }
         if (!SkipRewardSmoothing)
             vectorAction = SmoothActions(vectorAction);
         if (ignorActions)
@@ -291,6 +248,7 @@ public class RagDollAgent : Agent
         {
             dontResetOnZeroReward = true;
             dontSnapMocapToRagdoll = true;
+            UsePDControl = false;
         }
 
         _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
@@ -330,7 +288,7 @@ public class RagDollAgent : Agent
         _dReConObservations.PreviousActions = individualMotors.ToArray();
 
         //_mocapAnimatorController = _mocapControllerArtanim.GetComponentInChildren<MocapAnimatorController>();
-        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<MocapAnimatorController004>();
+        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<MocapAnimatorController>();
 
 
 

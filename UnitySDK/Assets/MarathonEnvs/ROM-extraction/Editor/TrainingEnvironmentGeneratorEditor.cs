@@ -31,6 +31,15 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
+        /*
+        if (GUILayout.Button("2.Activate Ragdoll")) {
+
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+            t.activateRagdoll();
+
+        }
+        */
+
 
 
         if (GUILayout.Button("2 (optional) Generate ROM values"))
@@ -45,7 +54,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         }
         GUILayout.Label("If (2), press play until the values in the ROM file do not change. Then press stop.");
 
-        if (GUILayout.Button("3.Configure and Store")) {
+        if (GUILayout.Button("3.Configure")) {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
 
             //"3.We Configure Ragdoll and learning agent"
@@ -55,7 +64,21 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
 
 
-            //instructions below stores them, it can only be done in an editor script
+        }
+        GUILayout.Label("After (3), activate the Ragdoll game object within the hierarchy of the training environment generated.");
+
+
+
+        if (GUILayout.Button("4.Store Env as Prefab and ROM Values"))
+        {
+            TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
+
+
+
+            //"4.Store Env as Prefab and ROM Values"
+            
+
+            //this stores them, it can only be done in an editor script
 
             storeEnvAsPrefab(t.Outcome);
             //once stored we can destroy them to keep the scene clean
@@ -66,11 +89,8 @@ public class TrainingEnvironmentGeneratorEditor : Editor
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 
+
         }
-        //GUILayout.Label("After (3), activate the Ragdoll game object within the hierarchy of the training environment generated.");
-
-
-
 
 
 
