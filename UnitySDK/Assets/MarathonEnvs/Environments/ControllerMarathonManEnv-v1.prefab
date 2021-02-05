@@ -165,6 +165,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7412007324369319300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1973854535028386212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df87ca71a84fd44d9a8ffe3f75f024db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  info2store: {fileID: 11400000, guid: 0c66efce7ceb34780a9784cbdef32341, type: 2}
+  debugWithLargestROM: 0
 --- !u!1001 &3745292643924379816
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -270,7 +284,7 @@ PrefabInstance:
     - target: {fileID: 4810550302162678093, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
       propertyPath: m_RootOrder
-      value: 4
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5965315998760433598, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
@@ -285,7 +299,7 @@ PrefabInstance:
     - target: {fileID: 6392590009493042066, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 8081357739622870871, guid: c7f549aabbce548e7aae2b2101ae3062,
         type: 3}
@@ -371,7 +385,7 @@ PrefabInstance:
     - target: {fileID: 3686799810742117958, guid: c4813c0eb838d1b4fa513c76f6b99f5f,
         type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 3686799810742117958, guid: c4813c0eb838d1b4fa513c76f6b99f5f,
         type: 3}
@@ -425,7 +439,7 @@ PrefabInstance:
     - target: {fileID: 8719875636317608491, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 8719875636317608491, guid: 6a7e84e6b4b64c744857753e3e544b81,
         type: 3}
@@ -482,7 +496,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: MarathonMan004
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 2762019965930867294, guid: 6a7e84e6b4b64c744857753e3e544b81, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 6a7e84e6b4b64c744857753e3e544b81, type: 3}
 --- !u!1 &1973854535028386212 stripped
 GameObject:
@@ -511,7 +526,7 @@ PrefabInstance:
     - target: {fileID: 3686799810742117958, guid: 0db68a8912718904d967ab56e13a1785,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3686799810742117958, guid: 0db68a8912718904d967ab56e13a1785,
         type: 3}
