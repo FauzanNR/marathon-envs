@@ -15,16 +15,17 @@ public class RangeOfMotionValue
 }
 
 [CreateAssetMenu(fileName = "RangeOfMotion", menuName = "Parser/CreateRangeOfMotionFile")]
-public class RangeOfMotion004 : ScriptableObject
+public class RangeOfMotionValues : ScriptableObject
 {
-    public RangeOfMotionValue[] Values { get { return _values.ToArray(); }  }
+    public RangeOfMotionValue[] Values { get { return _values.ToArray(); } }
 
 
     //[HideInInspector]
     [SerializeField]
     List<RangeOfMotionValue> _values;
 
-    public void addJoint(Transform joint) {
+    public void addJoint(Transform joint)
+    {
         RangeOfMotionValue r = new RangeOfMotionValue();
         r.name = joint.name;
 
@@ -35,19 +36,20 @@ public class RangeOfMotion004 : ScriptableObject
     //a model trained with these constraints
     //NNModel InferenceModel;
 
-    public string[] getNames() {
-        
+    public string[] getNames()
+    {
+
 
         string[] temp = new string[Values.Length];
 
-        for(int i = 0; i <Values.Length; i++)
+        for (int i = 0; i < Values.Length; i++)
         {
             temp[i] = (Values[i].name);
 
 
         }
         return temp;
-    
+
     }
 
 

@@ -1,9 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+//using System;
+
 using UnityEngine;
+
 
 using Unity.MLAgents.Policies;
 using Unity.MLAgents;
+using System.Linq;
+using Unity.Barracuda;
+using System.ComponentModel;
 
 public class TrainingEnvironmentGenerator : MonoBehaviour
 {
@@ -23,6 +29,17 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     Transform characterReferenceRoot;
 
 
+    [Tooltip("fingers will be excluded from physics-learning")]
+    [SerializeField]
+    Transform[] characterReferenceHands;
+
+    //we assume here is the end-effector, but feet have an articulaiton (sensors will be placed on these and their immediate parents)
+    //strategy to be checked: if for a quadruped we add the 4 feet here, does it work?
+    [Tooltip("same as above but not taking into account fingers. Put the last joint")]
+    [SerializeField]
+    Transform[] characterReferenceFeet;
+
+
     [Header("How we want the generated assets stored:")]
 
     [SerializeField]
@@ -31,15 +48,30 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     string TrainingEnvName;
 
+
+
+    [Header("Configuration options:")]
+    [SerializeField]
+    string LearningConfigName;
+
     [Range(0, 359)]
     public int MinROMNeededForJoint = 0;
 
+
+    [Tooltip("body mass in grams/ml")]
+    [SerializeField]
+    float massdensity = 1.01f;
+
+
+    
+    [SerializeField]
+    string trainingLayerName = "marathon";
 
     //[SerializeField]
     //ROMparserSwingTwist ROMparser;
 
     [SerializeField]
-    public RangeOfMotion004 info2store;
+    public RangeOfMotionValues info2store;
 
 
     [Header("Prefabs to generate training environment:")]
@@ -76,7 +108,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
     [HideInInspector]
     [SerializeField]
-    RagDoll004 muscleteam;
+    Muscles muscleteam;
 
     public ManyWorlds.SpawnableEnv Outcome{ get { return _outcome; } }
 
@@ -98,16 +130,15 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
         character4training = Instantiate(characterReference.gameObject).GetComponent<Animator>();
         character4training.gameObject.SetActive(true);
-        character4training.gameObject.AddComponent<CharacterController>();
+
+        //we assume those are already there (i.e., an animated character with a controller) 
+        //character4training.gameObject.AddComponent<CharacterController>();
+        //MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
+        //mac.IsGeneratedProcedurally = true;
 
 
-
-        MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
-        mac.IsGeneratedProcedurally = true;
-
-
-        MocapControllerArtanim mca =character4training.gameObject.AddComponent<MocapControllerArtanim>();
-        mca.IsGeneratedProcedurally = true;
+        MapAnim2Ragdoll mca =character4training.gameObject.AddComponent<MapAnim2Ragdoll>();
+        //mca.IsGeneratedProcedurally = true;
 
         character4training.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
         character4training.name = "Source:" + AgentName;
@@ -119,7 +150,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
             for (int i =0; i < mats.Length; i++) {
                 mats[i] = trainerMaterial;
             }
-            
+            r.sharedMaterials = mats;
         }
 
         
@@ -132,14 +163,64 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4synthesis.name = "Result:" + AgentName ;
 
 
-        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
-        rca.IsGeneratedProcedurally = true;
+        //we remove everything except the transform
+        UnityEngine.Component[] list = character4synthesis.GetComponents(typeof(UnityEngine.Component));
+        foreach (UnityEngine.Component c in list)
+        {
+
+            if (c is Transform || c is Animator || c is CharacterController)
+            {
+            }
+            else
+            {
+                DestroyImmediate(c);
+
+            }
+
+        }
+
+        character4synthesis.GetComponent<Animator>().runtimeAnimatorController = null;
+
+
+
+
+        MapRagdoll2Anim rca = character4synthesis.gameObject.AddComponent<MapRagdoll2Anim>();
+      
 
         _outcome = Instantiate(referenceSpawnableEnvironment).GetComponent<ManyWorlds.SpawnableEnv>();
         _outcome.name = TrainingEnvName;
 
 
-        RagDollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
+        ProcRagdollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
+
+
+        Transform[] ts= ragdollMarathon.transform.GetComponentsInChildren<Transform>();
+        foreach (Transform t in ts) {
+            t.gameObject.layer = LayerMask.NameToLayer(trainingLayerName);
+        }
+
+
+
+
+        /*
+        AnimationController animationcontroller = character4training.GetComponent<AnimationController>();
+
+
+        
+        if(animationcontroller != null)
+        //we make sure they are in the same layers:
+        {
+
+           int  _layerMask = 1 << ragdollMarathon.gameObject.layer;
+            _layerMask |= 1 << character4training.gameObject.layer;
+            _layerMask = ~(_layerMask);
+
+            character4training.GetComponent<AnimationController>()._layerMask = _layerMask;
+            //TODO: this will only work if the character is animated with an AnimationController. We should REMOVE this dependency
+
+        }
+        */
+
 
 
 
@@ -195,13 +276,17 @@ If the script doing this is short, it works because this is finished before the 
     public void GenerateRagdollForMocap() {
 
 
-        MocapControllerArtanim mca = character4training.gameObject.GetComponent<MocapControllerArtanim>();
+        MapAnim2Ragdoll mca = character4training.gameObject.GetComponent<MapAnim2Ragdoll>();
         mca.DynamicallyCreateRagdollForMocap();
+
+  
 
     }
 
 
-    RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
+
+
+ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
@@ -217,19 +302,24 @@ If the script doing this is short, it works because this is finished before the 
 
         }
 
-        Animator a = temp.GetComponent<Animator>();
-        if(a!= null)
-            DestroyImmediate(a);
-        CharacterController b = temp.GetComponent<CharacterController>();
-        if(b!=null)
-            DestroyImmediate(b);
-        RagdollControllerArtanim r = temp.GetComponent<RagdollControllerArtanim>();
-        if(r!=null)
-            DestroyImmediate(r);
 
+        //we remove everything except the transform
+        UnityEngine.Component[] list = temp.GetComponents(typeof(UnityEngine.Component));
+        foreach (UnityEngine.Component c in list) {
+
+            if (c is Transform)
+            {
+            }
+            else {
+                DestroyImmediate(c);
+
+            }
+
+        }
+        
 
         temp.name = "Ragdoll:" + AgentName ;
-        muscleteam=  temp.AddComponent<RagDoll004>();
+        muscleteam=  temp.AddComponent<Muscles>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
@@ -238,13 +328,44 @@ If the script doing this is short, it works because this is finished before the 
         temp.gameObject.SetActive(false);
 
 
-        //TODO: this assumes the first son will always be the good one. A more secure method seems cautious 
-        Transform root = temp.transform.GetChild(0);
+       
+        Transform[] pack = temp.GetComponentsInChildren<Transform>();
+
+        Transform root = pack.First<Transform>(x => x.name == characterReferenceRoot.name);
+
+
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
 
 
-         articulatedJoints = new List<ArticulationBody>();
+
+        List<Transform> listofjoints = new List<Transform>(joints);
+        //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
+        foreach (Transform t in characterReferenceHands) {
+            string limbname = t.name;// + "(Clone)";
+            Transform limb = joints.First<Transform>(x => x.name == limbname);
+
+
+
+
+            List<Transform> childstodelete = new List<Transform>(limb.GetComponentsInChildren<Transform>());
+            childstodelete.Remove(limb);
+            foreach (Transform t2 in childstodelete)
+            {
+                listofjoints.Remove(t2);
+                t2.DetachChildren();//otherwise, it tries to destroy the children later, and fails.
+            }
+            foreach (Transform t2 in childstodelete)
+            {
+                DestroyImmediate(t2.gameObject);
+            }
+
+
+
+
+        }
+        joints = listofjoints.ToArray();
+        articulatedJoints = new List<ArticulationBody>();
 
 
         foreach (Transform j in joints) {
@@ -259,7 +380,7 @@ If the script doing this is short, it works because this is finished before the 
 
           
 
-
+            //note: probably not needed
             string namebase = j.name.Replace("(Clone)", "");
 
 
@@ -288,15 +409,28 @@ If the script doing this is short, it works because this is finished before the 
                 c.material = colliderMaterial;
 
                 c.height = Vector3.Distance(dad.position, j.transform.position);
+
+
+
+                //ugly but it seems to work.
+                Vector3 direction = (dad.position - j.transform.position).normalized;
+                float[] directionarray = new float[3] { Mathf.Abs(direction.x), Mathf.Abs(direction.y), Mathf.Abs(direction.z) };
+                float maxdir = Mathf.Max(directionarray);
+
+                List<float> directionlist = new List<float>(directionarray);
+                c.direction = directionlist.IndexOf(maxdir);
+
+                 
+
                 c.center = (dad.position + j.transform.position) / 2.0f;
                 c.radius = c.height / 5;
 
 
+
                 // Rigidbody rb = go.AddComponent<Rigidbody>();
-                // rb.mass = 4;
                 ArticulationBody rb = go.AddComponent<ArticulationBody>();
                 rb.jointType = ArticulationJointType.FixedJoint;
-                rb.mass = 5;
+                rb.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
 
 
 
@@ -314,17 +448,37 @@ If the script doing this is short, it works because this is finished before the 
         }
 
 
-        //we add reference to the ragdoll, the articulationBodyRoot
+
+
+        //I add reference to the ragdoll, the articulationBodyRoot:
+        target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
+
+
+
+        addSensorsInFeet(root);
+
+
+
+
+
+
+
+        //at this stage, every single articulatedBody is root. Check it out with the script below
+        /*
         foreach (Transform j in joints)
         {
             ArticulationBody ab = j.transform.GetComponent<ArticulationBody>();
-            if (ab.isRoot) {
-                target.ArticulationBodyRoot = ab;
+            if (ab.isRoot)
+            {
+                Debug.Log(ab.name + "is root ");
             }
         }
+        */
 
 
-        RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
+
+
+        ProcRagdollAgent _ragdoll4training = temp.AddComponent<ProcRagdollAgent>();
         //      _ragdoll4training.transform.parent = trainingenv.transform;
         //_ragdoll4training.transform.SetParent(trainingenv.transform);
 
@@ -335,31 +489,106 @@ If the script doing this is short, it works because this is finished before the 
     }
 
 
+    void addSensorsInFeet(Transform root) {
 
-    void addTrainingParameters(RagdollControllerArtanim target, RagDollAgent temp) {
+        //I add the sensors in the feet:
+        Transform[] pack2 = root.GetComponentsInChildren<Transform>();
+        foreach (Transform t in characterReferenceFeet)
+        {
+
+            Transform foot = pack2.First<Transform>(x => x.name == "articulation:" + t.name);
+
+            GameObject sensorL = new GameObject();
+            SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
+            sphL.radius = 0.03f;
+            sensorL.AddComponent<SensorBehavior>();
+            sensorL.AddComponent<HandleOverlap>();
 
 
-        //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
-        temp.gameObject.AddComponent<BehaviorParameters>();
-        temp.gameObject.AddComponent<DecisionRequester>();
+            //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
+            sensorL.transform.parent = foot;
+            sensorL.transform.localPosition = new Vector3(-0.02f, 0, 0);
+            sensorL.name = foot.name + "sensor_L";
+
+            GameObject sensorR = GameObject.Instantiate(sensorL);
+            sensorR.transform.parent = foot;
+            sensorR.transform.localPosition = new Vector3(0.02f, 0, 0);
+            sensorR.name = foot.name + "sensor_R";
+
+            //we add another sensor for the toe:
+            GameObject sensorT = GameObject.Instantiate(sensorL);
+            sensorT.transform.parent = foot.parent;
+            sensorT.transform.localPosition = new Vector3(0.0f, -0.01f, -0.04f);
+            sensorT.name = foot.name + "sensor_T";
 
 
 
 
-        DReConRewards dcrew = temp.gameObject.AddComponent<DReConRewards>();
+        }
+
+
+
+
+    }
+
+    //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
+    void addTrainingParameters(MapRagdoll2Anim target, ProcRagdollAgent temp) {
+
+
+
+        BehaviorParameters bp = temp.gameObject.GetComponent<BehaviorParameters>();
+
+        bp.BehaviorName = LearningConfigName;
+
+
+
+        DecisionRequester dr =temp.gameObject.AddComponent<DecisionRequester>();
+        dr.DecisionPeriod = 2;
+        dr.TakeActionsBetweenDecisions = false;
+
+
+
+        Rewards2Learn dcrew = temp.gameObject.AddComponent<Rewards2Learn>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
-        dcrew.targetedRootName = target.ArticulationBodyRoot.name; //it should be it's son, but let's see
+        dcrew.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
+
+
+
+        temp.MaxStep = 2000;
+        temp.FixedDeltaTime = 0.0125f;
+        temp.RequestCamera = true;
 
 
         temp.gameObject.AddComponent<SensorObservations>();
-        DReConObservations dcobs = temp.gameObject.AddComponent<DReConObservations>();
-        dcobs.targetedRootName = target.ArticulationBodyRoot.name;
+        Observations2Learn dcobs = temp.gameObject.AddComponent<Observations2Learn>();
+        dcobs.targetedRootName = characterReferenceRoot.name;  // target.ArticulationBodyRoot.name;
+
+        dcobs.BodyPartsToTrack = new List<string>();
+
+        //TODO: this could be EVERY joint, if we follow NVIDIA's approach to a universal physics controller. Meanwhile...
+        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceRoot.name);
+        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceHead.name);
+       
+        dcobs.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
 
 
-        ApplyRangeOfMotion004 rom = temp.gameObject.AddComponent<ApplyRangeOfMotion004>();
-        rom.RangeOfMotion2Store = info2store;
-        //rom.ApplyROMInGamePlay = true;
 
+        foreach (Transform t in characterReferenceFeet)
+        {
+            dcobs.BodyPartsToTrack.Add("articulation:" + t.name);
+
+        }
+
+
+
+
+
+
+        MapRangeOfMotion2Constraints rom = temp.gameObject.AddComponent<MapRangeOfMotion2Constraints>();
+
+        //used when we do not parse
+        rom.info2store = info2store;
+        
 
     }
 
@@ -387,7 +616,7 @@ If the script doing this is short, it works because this is finished before the 
         rom.theAnimator = characterReference;
         rom.skeletonRoot = characterReferenceRoot;
 
-        rom.targetRagdollRoot = character4synthesis.GetComponent<RagdollControllerArtanim>().ArticulationBodyRoot;
+        rom.targetRagdollRoot = character4synthesis.GetComponent<MapRagdoll2Anim>().ArticulationBodyRoot;
 
         rom.trainingEnv = _outcome;
 
@@ -399,12 +628,14 @@ If the script doing this is short, it works because this is finished before the 
 
         foreach(ArticulationBody ab in articulatedJoints) { 
 
-            RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
+            Muscles.MusclePower muscle = new Muscles.MusclePower();
             muscle.PowerVector = new Vector3(40, 40, 40);
+
+
             muscle.Muscle = ab.name;
 
             if (muscleteam.MusclePowers == null)
-                muscleteam.MusclePowers = new List<RagDoll004.MusclePower>();
+                muscleteam.MusclePowers = new List<Muscles.MusclePower>();
 
             muscleteam.MusclePowers.Add(muscle);
 
@@ -444,14 +675,24 @@ If the script doing this is short, it works because this is finished before the 
 
     public void ApplyROMasConstraintsAndConfigure() {
 
-        ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>(true);
-        ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
-        ROMonRagdoll.ApplyRangeOfMotionToRagDoll();
-        ROMonRagdoll.applyDoFOnBehaviorParameters();
+        MapRangeOfMotion2Constraints ROMonRagdoll = Outcome.GetComponentInChildren<MapRangeOfMotion2Constraints>(true);
+        //ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
 
+        if (ROMonRagdoll.info2store == null) {
+            ROMonRagdoll.info2store = this.info2store;
+
+        }
+
+        ROMonRagdoll.ConfigureTrainingForRagdoll(MinROMNeededForJoint);
+
+        
         generateMuscles();
 
         ROMonRagdoll.GetComponent<DecisionRequester>().DecisionPeriod = 2;
+
+
+
+
 
     }
 
