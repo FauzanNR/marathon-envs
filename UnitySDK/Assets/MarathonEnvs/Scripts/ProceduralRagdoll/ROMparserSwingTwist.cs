@@ -26,7 +26,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     [SerializeField]
     //public ROMinfoCollector info2store;
-    public RangeOfMotion004 info2store;
+    public RangeOfMotionValues info2store;
 
     //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
@@ -56,7 +56,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     public RangeOfMotionValue[] RangeOfMotionPreview;
 
-    MapAnimationController2RagdollRef _mocapControllerArtanim;
+    MapAnim2Ragdoll _mocapControllerArtanim;
     Vector3 _rootStartPosition;
     Quaternion _rootStartRotation;
 
@@ -117,7 +117,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
 
-        _mocapControllerArtanim = theAnimator.GetComponent<MapAnimationController2RagdollRef>();
+        _mocapControllerArtanim = theAnimator.GetComponent<MapAnim2Ragdoll>();
 
         // get root start position and rotation
         var articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
@@ -471,14 +471,14 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
     //This function is called from an Editor Script
-    public void Prepare4PrefabStorage(out RagDollAgent rda, out ManyWorlds.SpawnableEnv envPrefab)
+    public void Prepare4PrefabStorage(out ProcRagdollAgent rda, out ManyWorlds.SpawnableEnv envPrefab)
     {
 
 
         ArticulationBody targetRagdollPrefab = GameObject.Instantiate(targetRagdollRoot);
 
         //if there is a spawnableEnv, there is a ragdollAgent:
-        rda = targetRagdollPrefab.GetComponent<RagDollAgent>();
+        rda = targetRagdollPrefab.GetComponent<ProcRagdollAgent>();
 
         if (rda != null)
             Debug.Log("Setting up the  ragdoll agent");
@@ -543,7 +543,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                         rda.enabled = true;//this should already be the case, but just ot be cautious
                     }
 
-                    RagdollControllerArtanim agentOutcome = envPrefab.GetComponentInChildren<RagdollControllerArtanim>(true);
+                    MapRagdoll2Anim agentOutcome = envPrefab.GetComponentInChildren<MapRagdoll2Anim>(true);
                     if (agentOutcome != null)
                     {
                         agentOutcome.gameObject.SetActive(true);
@@ -575,7 +575,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
         //the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
-        MapAnimationController2RagdollRef mca = target.GetComponent<MapAnimationController2RagdollRef>();
+        MapAnim2Ragdoll mca = target.GetComponent<MapAnim2Ragdoll>();
         mca.enabled = true;
 
 

@@ -65,7 +65,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     //ROMparserSwingTwist ROMparser;
 
     [SerializeField]
-    public RangeOfMotion004 info2store;
+    public RangeOfMotionValues info2store;
 
 
     [Header("Prefabs to generate training environment:")]
@@ -102,7 +102,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
     [HideInInspector]
     [SerializeField]
-    RagDoll004 muscleteam;
+    Muscles muscleteam;
 
     public ManyWorlds.SpawnableEnv Outcome{ get { return _outcome; } }
 
@@ -131,7 +131,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         //mac.IsGeneratedProcedurally = true;
 
 
-        MapAnimationController2RagdollRef mca =character4training.gameObject.AddComponent<MapAnimationController2RagdollRef>();
+        MapAnim2Ragdoll mca =character4training.gameObject.AddComponent<MapAnim2Ragdoll>();
         //mca.IsGeneratedProcedurally = true;
 
         character4training.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
@@ -178,19 +178,19 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
 
-        RagdollControllerArtanim rca = character4synthesis.gameObject.AddComponent<RagdollControllerArtanim>();
-        rca.IsGeneratedProcedurally = true;
+        MapRagdoll2Anim rca = character4synthesis.gameObject.AddComponent<MapRagdoll2Anim>();
+      
 
         _outcome = Instantiate(referenceSpawnableEnvironment).GetComponent<ManyWorlds.SpawnableEnv>();
         _outcome.name = TrainingEnvName;
 
 
-        RagDollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
+        ProcRagdollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
 
 
 
 
-        MocapAnimatorController004 animationcontroller = character4training.GetComponent<MocapAnimatorController004>();
+        AnimationController animationcontroller = character4training.GetComponent<AnimationController>();
 
         if(animationcontroller != null)
         //we make sure they are in the same layers:
@@ -200,7 +200,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
             _layerMask |= 1 << character4training.gameObject.layer;
             _layerMask = ~(_layerMask);
 
-            character4training.GetComponent<MocapAnimatorController004>()._layerMask = _layerMask;
+            character4training.GetComponent<AnimationController>()._layerMask = _layerMask;
             //TODO: this will only work if we have a MocapAnimatorController004. We should REMOVE this dependency
 
         }
@@ -261,7 +261,7 @@ If the script doing this is short, it works because this is finished before the 
     public void GenerateRagdollForMocap() {
 
 
-        MapAnimationController2RagdollRef mca = character4training.gameObject.GetComponent<MapAnimationController2RagdollRef>();
+        MapAnim2Ragdoll mca = character4training.gameObject.GetComponent<MapAnim2Ragdoll>();
         mca.DynamicallyCreateRagdollForMocap();
 
     }
@@ -269,7 +269,7 @@ If the script doing this is short, it works because this is finished before the 
 
 
 
-RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target, ManyWorlds.SpawnableEnv trainingenv) {
+ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
         GameObject temp = GameObject.Instantiate(target.gameObject);
@@ -302,7 +302,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         
 
         temp.name = "Ragdoll:" + AgentName ;
-        muscleteam=  temp.AddComponent<RagDoll004>();
+        muscleteam=  temp.AddComponent<Muscles>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
@@ -461,7 +461,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
 
-        RagDollAgent _ragdoll4training = temp.AddComponent<RagDollAgent>();
+        ProcRagdollAgent _ragdoll4training = temp.AddComponent<ProcRagdollAgent>();
         //      _ragdoll4training.transform.parent = trainingenv.transform;
         //_ragdoll4training.transform.SetParent(trainingenv.transform);
 
@@ -515,7 +515,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
     }
 
     //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
-    void addTrainingParameters(RagdollControllerArtanim target, RagDollAgent temp) {
+    void addTrainingParameters(MapRagdoll2Anim target, ProcRagdollAgent temp) {
 
 
 
@@ -531,7 +531,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
 
-        DReConRewards dcrew = temp.gameObject.AddComponent<DReConRewards>();
+        Rewards2Learn dcrew = temp.gameObject.AddComponent<Rewards2Learn>();
         dcrew.headname = "articulation:" + characterReferenceHead.name;
         dcrew.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
 
@@ -543,7 +543,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
         temp.gameObject.AddComponent<SensorObservations>();
-        DReConObservations dcobs = temp.gameObject.AddComponent<DReConObservations>();
+        Observations2Learn dcobs = temp.gameObject.AddComponent<Observations2Learn>();
         dcobs.targetedRootName = characterReferenceRoot.name;  // target.ArticulationBodyRoot.name;
 
         dcobs.BodyPartsToTrack = new List<string>();
@@ -567,7 +567,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
 
 
-        ApplyRangeOfMotion004 rom = temp.gameObject.AddComponent<ApplyRangeOfMotion004>();
+        MapRangeOfMotion2Constraints rom = temp.gameObject.AddComponent<MapRangeOfMotion2Constraints>();
         rom.RangeOfMotion2Store = info2store;
         //rom.ApplyROMInGamePlay = true;
 
@@ -598,7 +598,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
         rom.theAnimator = characterReference;
         rom.skeletonRoot = characterReferenceRoot;
 
-        rom.targetRagdollRoot = character4synthesis.GetComponent<RagdollControllerArtanim>().ArticulationBodyRoot;
+        rom.targetRagdollRoot = character4synthesis.GetComponent<MapRagdoll2Anim>().ArticulationBodyRoot;
 
         rom.trainingEnv = _outcome;
 
@@ -610,14 +610,14 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
         foreach(ArticulationBody ab in articulatedJoints) { 
 
-            RagDoll004.MusclePower muscle = new RagDoll004.MusclePower();
+            Muscles.MusclePower muscle = new Muscles.MusclePower();
             muscle.PowerVector = new Vector3(40, 40, 40);
 
 
             muscle.Muscle = ab.name;
 
             if (muscleteam.MusclePowers == null)
-                muscleteam.MusclePowers = new List<RagDoll004.MusclePower>();
+                muscleteam.MusclePowers = new List<Muscles.MusclePower>();
 
             muscleteam.MusclePowers.Add(muscle);
 
@@ -657,7 +657,7 @@ RagDollAgent  generateRagDollFromAnimatedSource( RagdollControllerArtanim target
 
     public void ApplyROMasConstraintsAndConfigure() {
 
-        ApplyRangeOfMotion004 ROMonRagdoll = Outcome.GetComponentInChildren<ApplyRangeOfMotion004>(true);
+        MapRangeOfMotion2Constraints ROMonRagdoll = Outcome.GetComponentInChildren<MapRangeOfMotion2Constraints>(true);
         ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
         ROMonRagdoll.ConfigureTrainingForRagdoll();
 

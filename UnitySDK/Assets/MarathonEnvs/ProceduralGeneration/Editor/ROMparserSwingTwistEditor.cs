@@ -127,7 +127,7 @@ public class ROMparserSwingTwistEditor : Editor
 
 
 
-    void storeNewPrefabWithROM(RagDollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
+    void storeNewPrefabWithROM(ProcRagdollAgent rda, ManyWorlds.SpawnableEnv envPrefab = null)
     {
         ROMparserSwingTwist t = target as ROMparserSwingTwist;
 

@@ -41,13 +41,17 @@ public class MarathonTestBedController : MonoBehaviour
         Animator anim = sourceAgent.GetComponent<Animator>();
         anim.runtimeAnimatorController = null; // Resources.Load("MarathonEnvs/Animations/Tpose") as RuntimeAnimatorController;
 
+
+        Debug.Log("code commented may make the character not start as desired");
+        //TODO: find a replacement for all this pack
+        /*
         MocapAnimatorController animControl =  sourceAgent.GetComponent<MocapAnimatorController>();
         animControl.doFixedUpdate = false;
         animControl.MaxForwardVelocity = 0;
 
         MapAnimationController2RagdollRef animControlartanim = sourceAgent.GetComponent<MapAnimationController2RagdollRef>();
         animControlartanim.doFixedUpdate = false;
-
+        */
         InputController input = FindObjectOfType<InputController>();
         input.DemoMockIfNoInput = false;
 
@@ -106,7 +110,7 @@ public class MarathonTestBedController : MonoBehaviour
                     break;
                 default:
                     throw new System.ArgumentException($"agent.name: {agent.name}");
-                    break;
+                    //break;
             }
         //    if (FreezeHead && head != null)
         //        head.immovable = true;

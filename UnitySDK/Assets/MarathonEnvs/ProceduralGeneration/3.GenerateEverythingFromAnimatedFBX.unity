@@ -598,7 +598,7 @@ MonoBehaviour:
   LearningConfigName: ControllerMarathonMan-v1
   MinROMNeededForJoint: 5
   massdensity: 1.01
-  info2store: {fileID: 0}
+  info2store: {fileID: 11400000, guid: 3b41488414bde432aaf35949b2c4bae1, type: 2}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,
     type: 3}
   trainerMaterial: {fileID: 2100000, guid: 34d590f08bbd6d941bf9c959e933ffd5, type: 2}
