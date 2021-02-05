@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/MarathonEnvs/Scenes/MarathonEnvs.unity
+    path: Assets/MarathonEnvs/ProceduralGeneration/3.TrainUsingMarathonEnvs.unity
     guid: 5c94d8324b4a24bc6a6e46a649973baa
   m_configObjects: {}

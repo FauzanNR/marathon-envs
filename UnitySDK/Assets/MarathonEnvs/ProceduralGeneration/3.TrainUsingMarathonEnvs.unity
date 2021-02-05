@@ -340,56 +340,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Factory:
     spawnableEnvDefinitions:
-    - envId: Hopper-v0
-      envPrefab: {fileID: 6729178602655601323, guid: 562eb53b2c5eb47819b559b2afa6063c,
-        type: 3}
-    - envId: Walker2d-v0
-      envPrefab: {fileID: 7074754866492170401, guid: b3657881460b242f7963952291e61aec,
-        type: 3}
-    - envId: Ant-v0
-      envPrefab: {fileID: 5267836369973477872, guid: c3c332aefbae14d7bb05a9a9d1e92822,
-        type: 3}
-    - envId: MarathonMan-v0
-      envPrefab: {fileID: 1808530489697390385, guid: 7e60d2adba0a6460496d49f806ce6581,
-        type: 3}
-    - envId: MarathonManSparse-v0
-      envPrefab: {fileID: 225550369739865805, guid: e5ff581d16faa48b8827455b500a4fa5,
-        type: 3}
-    - envId: TerrainHopper-v0
-      envPrefab: {fileID: 7948975738073731536, guid: ab36b786276a623428519ab8ad2f0357,
-        type: 3}
-    - envId: TerrainWalker2d-v0
-      envPrefab: {fileID: 1191089632634983482, guid: 515881092c976a545900d4298620103a,
-        type: 3}
-    - envId: TerrainAnt-v0
-      envPrefab: {fileID: 7048895093900415956, guid: dd561613900448e47bc63ecccb726f8e,
-        type: 3}
-    - envId: TerrainMarathonMan-v0
-      envPrefab: {fileID: 4910402316152938656, guid: dd522fee983368f46be78694bfb2531c,
-        type: 3}
-    - envId: MarathonManWalking-v0
-      envPrefab: {fileID: 4994638086902540294, guid: d7c9fbb45d5364c579795c900c9f1c8a,
-        type: 3}
-    - envId: MarathonManRunning-v0
-      envPrefab: {fileID: 4994638086902540294, guid: 0eb30d28e47cb4c0e8687caa8c6b6f77,
-        type: 3}
-    - envId: MarathonManJazzDancing-v0
-      envPrefab: {fileID: 4994638086902540294, guid: 387bf2f0cab8448578cc8bfd9e89f8ea,
-        type: 3}
-    - envId: MarathonManMMAKick-v0
-      envPrefab: {fileID: 4994638086902540294, guid: 0e4a1c6b3ca6244fdb2dc61df5f8a645,
-        type: 3}
-    - envId: MarathonManPunchingBag-v0
-      envPrefab: {fileID: 4994638086902540294, guid: 0e94e3ef000c34bd1b44d27922c1c4fd,
-        type: 3}
-    - envId: MarathonManBackflip-v0
-      envPrefab: {fileID: 4994638086902540294, guid: 6e16b77232d1f4b2d9696aa19a59513b,
-        type: 3}
-    - envId: ControllerMarathonMan-v1
-      envPrefab: {fileID: 4882770942201970565, guid: 039f5bf4e1cc0214ea4f370014f59897,
-        type: 3}
     - envId: ControllerProcedural-v0
-      envPrefab: {fileID: 246714844169491680, guid: 16034957806c74fd6afbd0abecf47250,
+      envPrefab: {fileID: 2290599531976660134, guid: ce81a743a21eb42f7bc8223b7090a6ce,
         type: 3}
     envIdDefault: ControllerProcedural-v0
     trainingNumEnvsDefault: 1

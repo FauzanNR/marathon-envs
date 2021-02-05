@@ -144,7 +144,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
             for (int i =0; i < mats.Length; i++) {
                 mats[i] = trainerMaterial;
             }
-            
+            r.sharedMaterials = mats;
         }
 
         
