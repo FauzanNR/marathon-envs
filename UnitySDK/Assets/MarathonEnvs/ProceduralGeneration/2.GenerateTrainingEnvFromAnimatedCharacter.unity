@@ -193,7 +193,7 @@ PrefabInstance:
     - target: {fileID: 2536297657908844867, guid: eeb956a2da6aa47898a06a8987fe617e,
         type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5597996160511310328, guid: eeb956a2da6aa47898a06a8987fe617e,
         type: 3}
@@ -665,6 +665,7 @@ MonoBehaviour:
   LearningConfigName: ControllerMarathonMan-v1
   MinROMNeededForJoint: 5
   massdensity: 1.01
+  trainingLayerName: marathon
   info2store: {fileID: 11400000, guid: 3b41488414bde432aaf35949b2c4bae1, type: 2}
   referenceSpawnableEnvironment: {fileID: 2440664414745670990, guid: 2ab8c2e0c1b9bca44a2cde4636445344,
     type: 3}

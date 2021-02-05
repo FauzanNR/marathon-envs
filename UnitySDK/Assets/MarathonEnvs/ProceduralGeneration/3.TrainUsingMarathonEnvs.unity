@@ -341,7 +341,7 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: ControllerProcedural-v0
-      envPrefab: {fileID: 2290599531976660134, guid: ce81a743a21eb42f7bc8223b7090a6ce,
+      envPrefab: {fileID: 2655031566234709808, guid: ce81a743a21eb42f7bc8223b7090a6ce,
         type: 3}
     envIdDefault: ControllerProcedural-v0
     trainingNumEnvsDefault: 1

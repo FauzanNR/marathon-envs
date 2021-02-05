@@ -1,6 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System;
+//using System;
 
 using UnityEngine;
 
@@ -8,6 +8,8 @@ using UnityEngine;
 using Unity.MLAgents.Policies;
 using Unity.MLAgents;
 using System.Linq;
+using Unity.Barracuda;
+using System.ComponentModel;
 
 public class TrainingEnvironmentGenerator : MonoBehaviour
 {
@@ -60,6 +62,10 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     float massdensity = 1.01f;
 
+
+    
+    [SerializeField]
+    string trainingLayerName = "marathon";
 
     //[SerializeField]
     //ROMparserSwingTwist ROMparser;
@@ -158,8 +164,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
         //we remove everything except the transform
-        Component[] list = character4synthesis.GetComponents(typeof(Component));
-        foreach (Component c in list)
+        UnityEngine.Component[] list = character4synthesis.GetComponents(typeof(UnityEngine.Component));
+        foreach (UnityEngine.Component c in list)
         {
 
             if (c is Transform || c is Animator || c is CharacterController)
@@ -188,10 +194,19 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         ProcRagdollAgent ragdollMarathon = generateRagDollFromAnimatedSource(rca, _outcome);
 
 
+        Transform[] ts= ragdollMarathon.transform.GetComponentsInChildren<Transform>();
+        foreach (Transform t in ts) {
+            t.gameObject.layer = LayerMask.NameToLayer(trainingLayerName);
+        }
 
 
+
+
+        /*
         AnimationController animationcontroller = character4training.GetComponent<AnimationController>();
 
+
+        
         if(animationcontroller != null)
         //we make sure they are in the same layers:
         {
@@ -201,10 +216,10 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
             _layerMask = ~(_layerMask);
 
             character4training.GetComponent<AnimationController>()._layerMask = _layerMask;
-            //TODO: this will only work if we have a MocapAnimatorController004. We should REMOVE this dependency
+            //TODO: this will only work if the character is animated with an AnimationController. We should REMOVE this dependency
 
         }
-
+        */
 
 
 
@@ -264,6 +279,8 @@ If the script doing this is short, it works because this is finished before the 
         MapAnim2Ragdoll mca = character4training.gameObject.GetComponent<MapAnim2Ragdoll>();
         mca.DynamicallyCreateRagdollForMocap();
 
+  
+
     }
 
 
@@ -287,8 +304,8 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
         //we remove everything except the transform
-        Component[] list = temp.GetComponents(typeof(Component));
-        foreach (Component c in list) {
+        UnityEngine.Component[] list = temp.GetComponents(typeof(UnityEngine.Component));
+        foreach (UnityEngine.Component c in list) {
 
             if (c is Transform)
             {
