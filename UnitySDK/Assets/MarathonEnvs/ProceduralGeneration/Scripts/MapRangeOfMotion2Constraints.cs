@@ -19,10 +19,10 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
     */
 
 
-    public RangeOfMotionValues RangeOfMotion2Store;
+    public RangeOfMotionValues info2store;
 
     [Range(0, 359)]
-    public int MinROMNeededForJoint = 5;
+    int MinROMNeededForJoint = 5;
 
 
 
@@ -33,8 +33,11 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
 
 
-    public void ConfigureTrainingForRagdoll()
+    public void ConfigureTrainingForRagdoll(int minROM)
     {
+
+        MinROMNeededForJoint = minROM;
+
         int dof = ApplyRangeOfMotionToRagDoll();
         if (dof == -1)
         {
@@ -51,7 +54,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
     int ApplyRangeOfMotionToRagDoll()
     {
-        if (RangeOfMotion2Store == null || RangeOfMotion2Store.Values.Length == 0)
+        if (info2store == null || info2store.Values.Length == 0)
             return -1;
         // var ragdollAgent = GetComponent<RagDollAgent>();
         ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>(true);
@@ -81,7 +84,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
             string valuename = body.name.TrimStart(keyword.ToArray<char>());
 
 
-            RangeOfMotionValue rom = RangeOfMotion2Store.Values.First(x => x.name == valuename);
+            RangeOfMotionValue rom = info2store.Values.First(x => x.name == valuename);
 
             if (rom == null)
             {

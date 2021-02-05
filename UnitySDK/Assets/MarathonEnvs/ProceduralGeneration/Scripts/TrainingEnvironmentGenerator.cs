@@ -585,9 +585,10 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
         MapRangeOfMotion2Constraints rom = temp.gameObject.AddComponent<MapRangeOfMotion2Constraints>();
-        rom.RangeOfMotion2Store = info2store;
-        //rom.ApplyROMInGamePlay = true;
 
+        //used when we do not parse
+        rom.info2store = info2store;
+        
 
     }
 
@@ -675,8 +676,14 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
     public void ApplyROMasConstraintsAndConfigure() {
 
         MapRangeOfMotion2Constraints ROMonRagdoll = Outcome.GetComponentInChildren<MapRangeOfMotion2Constraints>(true);
-        ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
-        ROMonRagdoll.ConfigureTrainingForRagdoll();
+        //ROMonRagdoll.MinROMNeededForJoint = MinROMNeededForJoint;
+
+        if (ROMonRagdoll.info2store == null) {
+            ROMonRagdoll.info2store = this.info2store;
+
+        }
+
+        ROMonRagdoll.ConfigureTrainingForRagdoll(MinROMNeededForJoint);
 
         
         generateMuscles();
