@@ -10,17 +10,17 @@ using UnityEngine.Assertions;
 
 using System;
 
-public class ProcRagdollAgent : Agent 
+public class ProcRagdollAgent : Agent
 {
     [Header("Settings")]
-	public float FixedDeltaTime = 1f/60f;
+    public float FixedDeltaTime = 1f / 60f;
     public float SmoothBeta = 0.2f;
 
     [Header("Camera")]
 
     public bool RequestCamera;
-	public bool CameraFollowMe;
-	public Transform CameraTarget;    
+    public bool CameraFollowMe;
+    public Transform CameraTarget;
 
     [Header("... debug")]
     public bool SkipRewardSmoothing;
@@ -39,7 +39,7 @@ public class ProcRagdollAgent : Agent
     Muscles _ragDollSettings;
     TrackBodyStatesInWorldSpace _trackBodyStatesInWorldSpace;
     List<ArticulationBody> _motors;
-    MarathonTestBedController _debugController;  
+    MarathonTestBedController _debugController;
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
@@ -58,17 +58,18 @@ public class ProcRagdollAgent : Agent
 
     void Awake()
     {
-		if (RequestCamera && CameraTarget != null)
-		{
+        if (RequestCamera && CameraTarget != null)
+        {
             // Will follow the last object to be spawned
             var camera = FindObjectOfType<Camera>();
-            if(camera != null) { 
+            if (camera != null)
+            {
                 var follow = camera.GetComponent<SmoothFollow>();
                 if (follow != null)
                     follow.target = CameraTarget;
             }
         }
-        _hasAwake = true;        
+        _hasAwake = true;
     }
     void Update()
     {
@@ -87,17 +88,17 @@ public class ProcRagdollAgent : Agent
             EndEpisode();
         }
     }
-	override public void CollectObservations(VectorSensor sensor)
+    override public void CollectObservations(VectorSensor sensor)
     {
         Assert.IsTrue(_hasLazyInitialized);
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);        
+        _dReConRewards.OnStep(timeDelta);
 
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
-        sensor.AddObservation(_dReConObservations.RagDollCOMVelocity-_dReConObservations.MocapCOMVelocity);
+        sensor.AddObservation(_dReConObservations.RagDollCOMVelocity - _dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.InputDesiredHorizontalVelocity);
         sensor.AddObservation(_dReConObservations.InputJump);
         sensor.AddObservation(_dReConObservations.InputBackflip);
@@ -111,20 +112,20 @@ public class ProcRagdollAgent : Agent
         {
             sensor.AddObservation(stat.Position);
             sensor.AddObservation(stat.Velocity);
-        }                
+        }
         foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
         {
             sensor.AddObservation(stat.Position);
             sensor.AddObservation(stat.Velocity);
         }
         sensor.AddObservation(_dReConObservations.PreviousActions);
-        
+
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
     }
 
     //adapted from previous function (Collect Observations)
-    public  int calculateDreConObservationsize()
+    public int calculateDreConObservationsize()
     {
         int size = 0;
 
@@ -171,7 +172,7 @@ public class ProcRagdollAgent : Agent
 
 
 
-	public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);
 
@@ -189,26 +190,26 @@ public class ProcRagdollAgent : Agent
         {
             vectorAction = GetDebugActions(vectorAction);
         }
-    
+
         if (!SkipRewardSmoothing)
             vectorAction = SmoothActions(vectorAction);
         if (ignorActions)
-            vectorAction = vectorAction.Select(x=>0f).ToArray();
-		int i = 0;
-		foreach (var m in _motors)
-		{
+            vectorAction = vectorAction.Select(x => 0f).ToArray();
+        int i = 0;
+        foreach (var m in _motors)
+        {
             if (m.isRoot)
                 continue;
             if (dontUpdateMotor)
                 continue;
             Vector3 targetNormalizedRotation = Vector3.zero;
 
-			if (m.twistLock == ArticulationDofLock.LimitedMotion)
-				targetNormalizedRotation.x = vectorAction[i++];
+            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                targetNormalizedRotation.x = vectorAction[i++];
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-				targetNormalizedRotation.y = vectorAction[i++];
+                targetNormalizedRotation.y = vectorAction[i++];
             if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-				targetNormalizedRotation.z = vectorAction[i++];
+                targetNormalizedRotation.z = vectorAction[i++];
             UpdateMotor(m, targetNormalizedRotation);
         }
         _dReConObservations.PreviousActions = vectorAction;
@@ -246,7 +247,7 @@ public class ProcRagdollAgent : Agent
                 debugMotor = m.gameObject.AddComponent<DebugMotor>();
             }
             // clip to -1/+1
-            debugMotor.Actions = new Vector3 (
+            debugMotor.Actions = new Vector3(
                 Mathf.Clamp(debugMotor.Actions.x, -1f, 1f),
                 Mathf.Clamp(debugMotor.Actions.y, -1f, 1f),
                 Mathf.Clamp(debugMotor.Actions.z, -1f, 1f)
@@ -260,8 +261,8 @@ public class ProcRagdollAgent : Agent
             if (m.swingZLock == ArticulationDofLock.LimitedMotion)
                 debugActions.Add(targetNormalizedRotation.z);
         }
-        
-        debugActions = debugActions.Select(x=>Mathf.Clamp(x,-1f,1f)).ToList();
+
+        debugActions = debugActions.Select(x => Mathf.Clamp(x, -1f, 1f)).ToList();
         _debugController.Actions = debugActions.ToArray();
         return debugActions.ToArray();
     }
@@ -270,9 +271,9 @@ public class ProcRagdollAgent : Agent
     {
         // yt =β at +(1−β)yt−1
         if (_smoothedActions == null)
-            _smoothedActions = vectorAction.Select(x=>0f).ToArray();
+            _smoothedActions = vectorAction.Select(x => 0f).ToArray();
         _smoothedActions = vectorAction
-            .Zip(_smoothedActions, (a, y)=> SmoothBeta * a + (1f-SmoothBeta) * y)
+            .Zip(_smoothedActions, (a, y) => SmoothBeta * a + (1f - SmoothBeta) * y)
             .ToArray();
         return _smoothedActions;
     }
@@ -313,8 +314,8 @@ public class ProcRagdollAgent : Agent
         }
 
         _motors = GetComponentsInChildren<ArticulationBody>()
-            .Where(x=>x.jointType == ArticulationJointType.SphericalJoint)
-            .Where(x=>!x.isRoot)
+            .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+            .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
         var individualMotors = new List<float>();
@@ -342,8 +343,8 @@ public class ProcRagdollAgent : Agent
 
         _hasLazyInitialized = true;
     }
-	public override void OnEpisodeBegin()
-	{
+    public override void OnEpisodeBegin()
+    {
         Assert.IsTrue(_hasAwake);
         _smoothedActions = null;
         debugCopyMocap = false;
@@ -372,14 +373,14 @@ public class ProcRagdollAgent : Agent
         {
             _debugController.OnAgentEpisodeBegin();
         }
-    }   
+    }
 
     float[] GetMocapTargets()
     {
         if (_mocapTargets == null)
         {
             _mocapTargets = _motors
-                .Where(x=>!x.isRoot)
+                .Where(x => !x.isRoot)
                 .SelectMany(x => {
                     List<float> list = new List<float>();
                     if (x.twistLock == ArticulationDofLock.LimitedMotion)
@@ -392,12 +393,12 @@ public class ProcRagdollAgent : Agent
                 })
                 .ToArray();
         }
-        int i=0;
+        int i = 0;
         foreach (var joint in _motors)
-		{
+        {
             if (joint.isRoot)
                 continue;
-            Rigidbody mocapBody = _mocapBodyParts.First(x=>x.name == joint.name);
+            Rigidbody mocapBody = _mocapBodyParts.First(x => x.name == joint.name);
             Vector3 targetRotationInJointSpace = -(Quaternion.Inverse(joint.anchorRotation) * Quaternion.Inverse(mocapBody.transform.localRotation) * joint.parentAnchorRotation).eulerAngles;
             targetRotationInJointSpace = new Vector3(
                 Mathf.DeltaAngle(0, targetRotationInJointSpace.x),
@@ -406,27 +407,27 @@ public class ProcRagdollAgent : Agent
             if (joint.twistLock == ArticulationDofLock.LimitedMotion)
             {
                 var drive = joint.xDrive;
-                var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
                 var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.x -midpoint) / scale;
+                var target = (targetRotationInJointSpace.x - midpoint) / scale;
                 _mocapTargets[i] = target;
                 i++;
             }
             if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
             {
                 var drive = joint.yDrive;
-                var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
                 var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.y -midpoint) / scale;
+                var target = (targetRotationInJointSpace.y - midpoint) / scale;
                 _mocapTargets[i] = target;
                 i++;
             }
             if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
             {
                 var drive = joint.zDrive;
-                var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
                 var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.z -midpoint) / scale;
+                var target = (targetRotationInJointSpace.z - midpoint) / scale;
                 _mocapTargets[i] = target;
                 i++;
             }
@@ -458,9 +459,9 @@ public class ProcRagdollAgent : Agent
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.xDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x *scale);
+            var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
             drive.stiffness = power.x;
             drive.damping = damping;
@@ -471,9 +472,9 @@ public class ProcRagdollAgent : Agent
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.yDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y *scale);
+            var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
             drive.stiffness = power.y;
             drive.damping = damping;
@@ -484,16 +485,16 @@ public class ProcRagdollAgent : Agent
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.zDrive;
-            var scale = (drive.upperLimit-drive.lowerLimit) / 2f;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z *scale);
+            var target = midpoint + (targetNormalizedRotation.z * scale);
             drive.target = target;
             drive.stiffness = power.z;
             drive.damping = damping;
             drive.forceLimit = forceLimit;
             joint.zDrive = drive;
         }
-	}
+    }
 
     void FixedUpdate()
     {
@@ -507,7 +508,7 @@ public class ProcRagdollAgent : Agent
         if (_dReConRewards == null)
             return;
         var comTransform = _dReConRewards._ragDollBodyStats.transform;
-        var vector = new Vector3( _inputController.MovementVector.x, 0f, _inputController.MovementVector.y);
+        var vector = new Vector3(_inputController.MovementVector.x, 0f, _inputController.MovementVector.y);
         var pos = new Vector3(comTransform.position.x, 0.001f, comTransform.position.z);
         DrawArrow(pos, vector, Color.black);
     }
@@ -516,11 +517,11 @@ public class ProcRagdollAgent : Agent
         float headSize = 0.25f;
         float headAngle = 20.0f;
         Gizmos.color = color;
-		Gizmos.DrawRay(start, vector);
+        Gizmos.DrawRay(start, vector);
         if (vector != Vector3.zero)
-        { 
-            Vector3 right = Quaternion.LookRotation(vector) * Quaternion.Euler(0,180+headAngle,0) * new Vector3(0,0,1);
-            Vector3 left = Quaternion.LookRotation(vector) * Quaternion.Euler(0,180-headAngle,0) * new Vector3(0,0,1);
+        {
+            Vector3 right = Quaternion.LookRotation(vector) * Quaternion.Euler(0, 180 + headAngle, 0) * new Vector3(0, 0, 1);
+            Vector3 left = Quaternion.LookRotation(vector) * Quaternion.Euler(0, 180 - headAngle, 0) * new Vector3(0, 0, 1);
             Gizmos.DrawRay(start + vector, right * headSize);
             Gizmos.DrawRay(start + vector, left * headSize);
         }

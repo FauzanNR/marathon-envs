@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.MLAgents;
@@ -64,9 +64,10 @@ public class ObservationStats : MonoBehaviour
 
     string rootName = "articulation:Hips";
 
-    public void setRootName(string s) {
+    public void setRootName(string s)
+    {
         rootName = s;
-    
+
     }
 
 
@@ -112,22 +113,22 @@ public class ObservationStats : MonoBehaviour
 
 
 
-        var bodyPartNames = _bodyParts.Select(x=>x.name);
+        var bodyPartNames = _bodyParts.Select(x => x.name);
         if (_bodyPartsToTrack?.Count > 0)
             _bodyParts = _bodyPartsToTrack
-                .Where(x=>bodyPartNames.Contains(x))
-                .Select(x=>_bodyParts.First(y=>y.name == x))
+                .Where(x => bodyPartNames.Contains(x))
+                .Select(x => _bodyParts.First(y => y.name == x))
                 .ToList();
         Stats = _bodyParts
-            .Select(x=> new Stat{Name = x.name})
+            .Select(x => new Stat { Name = x.name })
             .ToList();
 
         //TODO: this is quite sketchy, we should have a better way to deal with this
         if (_root == null)
         {
-           Debug.Log("in game object: " + name + "my rootname is: " + rootName);
-            _root = _bodyParts.First(x=>x.name== rootName).gameObject;
-        }             
+            Debug.Log("in game object: " + name + "my rootname is: " + rootName);
+            _root = _bodyParts.First(x => x.name == rootName).gameObject;
+        }
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
     }
@@ -155,22 +156,26 @@ public class ObservationStats : MonoBehaviour
 
 
     // Return rotation from one rotation to another
-    public static Quaternion FromToRotation(Quaternion from, Quaternion to) {
+    public static Quaternion FromToRotation(Quaternion from, Quaternion to)
+    {
         if (to == from) return Quaternion.identity;
 
         return to * Quaternion.Inverse(from);
     }
 
     // Adjust the value of an angle to lie within [-pi, +pi].
-    public static float NormalizedAngle(float angle) {
-        if (angle < 180) {
+    public static float NormalizedAngle(float angle)
+    {
+        if (angle < 180)
+        {
             return angle * Mathf.Deg2Rad;
         }
         return (angle - 360) * Mathf.Deg2Rad;
     }
 
     // Calculate rotation between two rotations in radians. Adjusts the value to lie within [-pi, +pi].
-    public static Vector3 NormalizedEulerAngles(Vector3 eulerAngles) {
+    public static Vector3 NormalizedEulerAngles(Vector3 eulerAngles)
+    {
         var x = NormalizedAngle(eulerAngles.x);
         var y = NormalizedAngle(eulerAngles.y);
         var z = NormalizedAngle(eulerAngles.z);
@@ -178,7 +183,8 @@ public class ObservationStats : MonoBehaviour
     }
 
     // Find angular velocity. The delta rotation is converted to radians within [-pi, +pi].
-    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta) {
+    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+    {
         var rotationVelocity = FromToRotation(from, to);
         var angularVelocity = NormalizedEulerAngles(rotationVelocity.eulerAngles) / timeDelta;
         return angularVelocity;
@@ -222,10 +228,10 @@ public class ObservationStats : MonoBehaviour
             0f,
             _inputController.DesiredHorizontalVelocity.y);
         DesiredCenterOfMassVelocity = transform.InverseTransformVector(desiredCom);
-            
+
         // get Desired Center Of Mass horizontal velocity in f space
-        CenterOfMassVelocityDifference = DesiredCenterOfMassVelocity-CenterOfMassHorizontalVelocity;
-        
+        CenterOfMassVelocityDifference = DesiredCenterOfMassVelocity - CenterOfMassHorizontalVelocity;
+
         if (!LastIsSet)
         {
             LastRotation = transform.rotation;
@@ -238,7 +244,7 @@ public class ObservationStats : MonoBehaviour
         // get bodyParts stats in local space
         foreach (var bodyPart in _bodyParts)
         {
-            Stat bodyPartStat = Stats.First(x=>x.Name == bodyPart.name);
+            Stat bodyPartStat = Stats.First(x => x.Name == bodyPart.name);
 
             /*
             Vector3 c = Vector3.zero;
@@ -266,7 +272,7 @@ public class ObservationStats : MonoBehaviour
 
             bodyPartStat.Position = localPosition;
             bodyPartStat.Rotation = localRotation;
-            bodyPartStat.Velocity = (localPosition - bodyPartStat.LastLocalPosition)/timeDelta;
+            bodyPartStat.Velocity = (localPosition - bodyPartStat.LastLocalPosition) / timeDelta;
             bodyPartStat.AngualrVelocity = GetAngularVelocity(bodyPartStat.LastLocalRotation, localRotation, timeDelta);
             bodyPartStat.LastLocalPosition = localPosition;
             bodyPartStat.LastLocalRotation = localRotation;
@@ -274,37 +280,37 @@ public class ObservationStats : MonoBehaviour
         }
     }
 
-	Vector3 GetCenterOfMass(IEnumerable<Rigidbody> bodies)
-	{
-		var centerOfMass = Vector3.zero;
-		float totalMass = 0f;
-		foreach (Rigidbody ab in bodies)
-		{
-			centerOfMass += ab.worldCenterOfMass * ab.mass;
-			totalMass += ab.mass;
-		}
-		centerOfMass /= totalMass;
-		// centerOfMass -= _spawnableEnv.transform.position;
-		return centerOfMass;
-	}
-	Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
-	{
-		var centerOfMass = Vector3.zero;
-		float totalMass = 0f;
-		foreach (ArticulationBody ab in bodies)
-		{
-			centerOfMass += ab.worldCenterOfMass * ab.mass;
-			totalMass += ab.mass;
-		}
-		centerOfMass /= totalMass;
-		// centerOfMass -= _spawnableEnv.transform.position;
-		return centerOfMass;    
+    Vector3 GetCenterOfMass(IEnumerable<Rigidbody> bodies)
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (Rigidbody ab in bodies)
+        {
+            centerOfMass += ab.worldCenterOfMass * ab.mass;
+            totalMass += ab.mass;
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
+    }
+    Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (ArticulationBody ab in bodies)
+        {
+            centerOfMass += ab.worldCenterOfMass * ab.mass;
+            totalMass += ab.mass;
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
     }
 
     void OnDrawGizmosSelected()
     {
         if (_bodyPartsToTrack == null)
-            return;           
+            return;
         // draw arrow for desired input velocity
         // Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
         Vector3 pos = new Vector3(transform.position.x, .3f, transform.position.z);
@@ -312,7 +318,7 @@ public class ObservationStats : MonoBehaviour
         if (VelocityInWorldSpace)
             vector = transform.TransformVector(vector);
         DrawArrow(pos, vector, Color.green);
-        Vector3 desiredInputPos = pos+vector;
+        Vector3 desiredInputPos = pos + vector;
 
         if (HorizontalVelocity)
         {
@@ -321,7 +327,7 @@ public class ObservationStats : MonoBehaviour
             if (VelocityInWorldSpace)
                 vector = transform.TransformVector(vector);
             DrawArrow(pos, vector, Color.blue);
-            Vector3 actualPos = pos+vector;
+            Vector3 actualPos = pos + vector;
 
             // arrow for actual velocity difference
             vector = CenterOfMassVelocityDifference;
@@ -335,10 +341,10 @@ public class ObservationStats : MonoBehaviour
             if (VelocityInWorldSpace)
                 vector = transform.TransformVector(vector);
             DrawArrow(pos, vector, Color.blue);
-            Vector3 actualPos = pos+vector;
+            Vector3 actualPos = pos + vector;
 
             // arrow for actual velocity difference
-            vector = DesiredCenterOfMassVelocity-CenterOfMassVelocity;
+            vector = DesiredCenterOfMassVelocity - CenterOfMassVelocity;
             if (VelocityInWorldSpace)
                 vector = transform.TransformVector(vector);
             DrawArrow(actualPos, vector, Color.red);
@@ -350,12 +356,12 @@ public class ObservationStats : MonoBehaviour
         float headSize = 0.25f;
         float headAngle = 20.0f;
         Gizmos.color = color;
-		Gizmos.DrawRay(start, vector);
- 
+        Gizmos.DrawRay(start, vector);
+
         if (vector.magnitude > 0f)
-        { 
-            Vector3 right = Quaternion.LookRotation(vector) * Quaternion.Euler(0,180+headAngle,0) * new Vector3(0,0,1);
-            Vector3 left = Quaternion.LookRotation(vector) * Quaternion.Euler(0,180-headAngle,0) * new Vector3(0,0,1);
+        {
+            Vector3 right = Quaternion.LookRotation(vector) * Quaternion.Euler(0, 180 + headAngle, 0) * new Vector3(0, 0, 1);
+            Vector3 left = Quaternion.LookRotation(vector) * Quaternion.Euler(0, 180 - headAngle, 0) * new Vector3(0, 0, 1);
             Gizmos.DrawRay(start + vector, right * headSize);
             Gizmos.DrawRay(start + vector, left * headSize);
         }

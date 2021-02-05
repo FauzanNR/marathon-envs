@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Muscles : MonoBehaviour {
+public class Muscles : MonoBehaviour
+{
 
     [System.Serializable]
     public class MusclePower
@@ -25,31 +26,35 @@ public class Muscles : MonoBehaviour {
     bool skipCollisionSetup;
 
 
-	// Use this for initialization
-	void Start () {
-		Setup();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    // Use this for initialization
+    void Start()
+    {
+        Setup();
+    }
 
-	void Setup () {
+    // Update is called once per frame
+    void Update()
+    {
 
-        if (!skipCollisionSetup) { 
+    }
 
-		// handle collision overlaps
-        IgnoreCollision("articulation:Spine2", new []{ "LeftArm", "RightArm"});
-        IgnoreCollision("articulation:Hips", new []{ "RightUpLeg", "LeftUpLeg" });
+    void Setup()
+    {
 
-        IgnoreCollision("LeftForeArm", new []{ "LeftArm" });
-        IgnoreCollision("RightForeArm", new []{ "RightArm" });
-        IgnoreCollision("RightLeg", new []{ "RightUpLeg" });
-        IgnoreCollision("LeftLeg", new[] { "LeftUpLeg" });
+        if (!skipCollisionSetup)
+        {
 
-        IgnoreCollision("RightLeg", new []{"RightFoot"});
-        IgnoreCollision("LeftLeg", new []{"LeftFoot"});
+            // handle collision overlaps
+            IgnoreCollision("articulation:Spine2", new[] { "LeftArm", "RightArm" });
+            IgnoreCollision("articulation:Hips", new[] { "RightUpLeg", "LeftUpLeg" });
+
+            IgnoreCollision("LeftForeArm", new[] { "LeftArm" });
+            IgnoreCollision("RightForeArm", new[] { "RightArm" });
+            IgnoreCollision("RightLeg", new[] { "RightUpLeg" });
+            IgnoreCollision("LeftLeg", new[] { "LeftUpLeg" });
+
+            IgnoreCollision("RightLeg", new[] { "RightFoot" });
+            IgnoreCollision("LeftLeg", new[] { "LeftFoot" });
 
         }
 
@@ -57,8 +62,8 @@ public class Muscles : MonoBehaviour {
         var joints = GetComponentsInChildren<Joint>().ToList();
         foreach (var joint in joints)
             joint.enablePreprocessing = false;
-	}
-	void IgnoreCollision(string first, string[] seconds)
+    }
+    void IgnoreCollision(string first, string[] seconds)
     {
         foreach (var second in seconds)
         {
@@ -68,8 +73,8 @@ public class Muscles : MonoBehaviour {
     void IgnoreCollision(string first, string second)
     {
         var rigidbodies = GetComponentsInChildren<Rigidbody>().ToList();
-        var colliderOnes = rigidbodies.FirstOrDefault(x=>x.name.Contains(first))?.GetComponents<Collider>();
-        var colliderTwos = rigidbodies.FirstOrDefault(x=>x.name.Contains(second))?.GetComponents<Collider>();
+        var colliderOnes = rigidbodies.FirstOrDefault(x => x.name.Contains(first))?.GetComponents<Collider>();
+        var colliderTwos = rigidbodies.FirstOrDefault(x => x.name.Contains(second))?.GetComponents<Collider>();
         if (colliderOnes == null || colliderTwos == null)
             return;
         foreach (var c1 in colliderOnes)

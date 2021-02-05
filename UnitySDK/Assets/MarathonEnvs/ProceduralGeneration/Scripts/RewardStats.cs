@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -59,7 +59,7 @@ public class RewardStats : MonoBehaviour
     {
         Assert.IsFalse(_hasLazyInitialized);
         _hasLazyInitialized = true;
-                
+
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _articulationBodyParts = ObjectToTrack
             .GetComponentsInChildren<ArticulationBody>()
@@ -69,61 +69,61 @@ public class RewardStats : MonoBehaviour
             .GetComponentsInChildren<Rigidbody>()
             .Distinct()
             .ToList();
-        if (_rigidbodyParts?.Count>0)
-            _bodyParts = _rigidbodyParts.Select(x=>x.gameObject).ToList();
+        if (_rigidbodyParts?.Count > 0)
+            _bodyParts = _rigidbodyParts.Select(x => x.gameObject).ToList();
         else
-            _bodyParts = _articulationBodyParts.Select(x=>x.gameObject).ToList();
+            _bodyParts = _articulationBodyParts.Select(x => x.gameObject).ToList();
         _trackRotations = _bodyParts
-            .SelectMany(x=>x.GetComponentsInChildren<Transform>())
-            .Select(x=>x.gameObject)
+            .SelectMany(x => x.GetComponentsInChildren<Transform>())
+            .Select(x => x.gameObject)
             .Distinct()
-            .Where(x=>x.GetComponent<Rigidbody>() != null || x.GetComponent<ArticulationBody>() != null)
+            .Where(x => x.GetComponent<Rigidbody>() != null || x.GetComponent<ArticulationBody>() != null)
             .ToList();
         _colliders = _bodyParts
-            .SelectMany(x=>x.GetComponentsInChildren<Collider>())
-            .Where(x=>x.enabled)
-            .Where(x=>!x.name.Contains("senor"))
-            .Where(x=>x as CapsuleCollider != null)
+            .SelectMany(x => x.GetComponentsInChildren<Collider>())
+            .Where(x => x.enabled)
+            .Where(x => !x.name.Contains("senor"))
+            .Where(x => x as CapsuleCollider != null)
             .Distinct()
             .ToList();
         if (orderToCopy != null)
         {
             _bodyParts = orderToCopy._bodyParts
-                .Select(x=>_bodyParts.First(y=>y.name == x.name))
+                .Select(x => _bodyParts.First(y => y.name == x.name))
                 .ToList();
             _trackRotations = orderToCopy._trackRotations
-                .Select(x=>_trackRotations.First(y=>y.name == x.name))
+                .Select(x => _trackRotations.First(y => y.name == x.name))
                 .ToList();
             _colliders = orderToCopy._colliders
-                .Select(x=>_colliders.First(y=>y.name == x.name))
+                .Select(x => _colliders.First(y => y.name == x.name))
                 .ToList();
         }
-        Points = Enumerable.Range(0,_colliders.Count * 6)
-            .Select(x=>Vector3.zero)
+        Points = Enumerable.Range(0, _colliders.Count * 6)
+            .Select(x => Vector3.zero)
             .ToArray();
-        _lastPoints = Enumerable.Range(0,_colliders.Count * 6)
-            .Select(x=>Vector3.zero)
-            .ToArray();            
-        PointVelocity = Enumerable.Range(0,_colliders.Count * 6)
-            .Select(x=>Vector3.zero)
+        _lastPoints = Enumerable.Range(0, _colliders.Count * 6)
+            .Select(x => Vector3.zero)
             .ToArray();
-        Rotations = Enumerable.Range(0,_trackRotations.Count)
-            .Select(x=>Quaternion.identity)
+        PointVelocity = Enumerable.Range(0, _colliders.Count * 6)
+            .Select(x => Vector3.zero)
+            .ToArray();
+        Rotations = Enumerable.Range(0, _trackRotations.Count)
+            .Select(x => Quaternion.identity)
             .ToList();
         if (_root == null)
         {
-            _root = _bodyParts.First(x=>x.name== rootName);
-        }        
+            _root = _bodyParts.First(x => x.name == rootName);
+        }
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
         ColliderNames = _colliders
-            .Select(x=>x.name)
+            .Select(x => x.name)
             .ToList();
         RotationNames = _trackRotations
-            .Select(x=>x.name)
+            .Select(x => x.name)
             .ToList();
         BodyPartNames = _bodyParts
-            .Select(x=>x.name)
+            .Select(x => x.name)
             .ToList();
     }
     public void OnReset()
@@ -179,7 +179,7 @@ public class RewardStats : MonoBehaviour
         CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
 
         LastCenterOfMassInWorldSpace = newCOM;
-        
+
         GetAllPoints(Points);
         if (!LastIsSet)
         {
@@ -214,9 +214,11 @@ public class RewardStats : MonoBehaviour
         return distances;
     }
 
-    public List<float> GetPointVelocityDistancesFrom(RewardStats target) {
+    public List<float> GetPointVelocityDistancesFrom(RewardStats target)
+    {
         List<float> distances = new List<float>();
-        for (int i = 0; i < PointVelocity.Length; i++) {
+        for (int i = 0; i < PointVelocity.Length; i++)
+        {
             float distance = (PointVelocity[i] - target.PointVelocity[i]).magnitude;
             distances.Add(distance);
         }
@@ -259,9 +261,9 @@ public class RewardStats : MonoBehaviour
             BoxCollider box = collider as BoxCollider;
             SphereCollider sphere = collider as SphereCollider;
             Vector3 c = Vector3.zero;
-            Bounds b = new Bounds(c,c);
+            Bounds b = new Bounds(c, c);
 
-            if (collider.name=="head")
+            if (collider.name == "head")
             {
                 c = c;
             }
@@ -269,15 +271,15 @@ public class RewardStats : MonoBehaviour
             if (capsule != null)
             {
                 c = capsule.center;
-                var r = capsule.radius*2;
+                var r = capsule.radius * 2;
                 var h = capsule.height;
-                h = Mathf.Max(r,h); // capsules height is clipped at r
+                h = Mathf.Max(r, h); // capsules height is clipped at r
                 if (capsule.direction == 0)
-                    b = new Bounds(c, new Vector3(h,r,r));
+                    b = new Bounds(c, new Vector3(h, r, r));
                 else if (capsule.direction == 1)
-                    b = new Bounds(c, new Vector3(r,h,r));
+                    b = new Bounds(c, new Vector3(r, h, r));
                 else if (capsule.direction == 2)
-                    b = new Bounds(c, new Vector3(r,r,h));
+                    b = new Bounds(c, new Vector3(r, r, h));
                 else throw new NotImplementedException();
             }
             else if (box != null)
@@ -288,8 +290,8 @@ public class RewardStats : MonoBehaviour
             else if (sphere != null)
             {
                 c = sphere.center;
-                var r = sphere.radius*2;
-                b = new Bounds(c, new Vector3(r,r,r));
+                var r = sphere.radius * 2;
+                b = new Bounds(c, new Vector3(r, r, r));
             }
             else
                 throw new NotImplementedException();
@@ -324,40 +326,40 @@ public class RewardStats : MonoBehaviour
             pointBuffer[idx++] = point6;
         }
     }
-	Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
-	{
-		var centerOfMass = Vector3.zero;
-		float totalMass = 0f;
-		foreach (ArticulationBody ab in bodies)
-		{
-			centerOfMass += ab.worldCenterOfMass * ab.mass;
-			totalMass += ab.mass;
-		}
-		centerOfMass /= totalMass;
-		// centerOfMass -= _spawnableEnv.transform.position;
-		return centerOfMass;        
-	}    
-	Vector3 GetCenterOfMass(IEnumerable<Rigidbody> bodies)
-	{
-		var centerOfMass = Vector3.zero;
-		float totalMass = 0f;
-		foreach (Rigidbody ab in bodies)
-		{
-			centerOfMass += ab.worldCenterOfMass * ab.mass;
-			totalMass += ab.mass;
-		}
-		centerOfMass /= totalMass;
-		// centerOfMass -= _spawnableEnv.transform.position;
-		return centerOfMass;
-	}    
+    Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (ArticulationBody ab in bodies)
+        {
+            centerOfMass += ab.worldCenterOfMass * ab.mass;
+            totalMass += ab.mass;
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
+    }
+    Vector3 GetCenterOfMass(IEnumerable<Rigidbody> bodies)
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (Rigidbody ab in bodies)
+        {
+            centerOfMass += ab.worldCenterOfMass * ab.mass;
+            totalMass += ab.mass;
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
+    }
     public void DrawPointDistancesFrom(RewardStats target, int objIdex)
     {
         int start = 0;
-        int end = Points.Length-1;
-        if (objIdex >=0)
+        int end = Points.Length - 1;
+        if (objIdex >= 0)
         {
-            start = objIdex*6;
-            end = (objIdex*6)+6;
+            start = objIdex * 6;
+            end = (objIdex * 6) + 6;
         }
         for (int i = start; i < end; i++)
         {

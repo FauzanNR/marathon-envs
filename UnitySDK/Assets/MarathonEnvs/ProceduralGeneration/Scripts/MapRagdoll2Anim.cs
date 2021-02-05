@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,22 +6,25 @@ using UnityEngine;
 
 public class MapRagdoll2Anim : MonoBehaviour
 
-    //this class does exactly the symetrical of MocapControllerArtanim: it maps animations from a ragdoll to a rigged character
+//this class does exactly the symetrical of MocapControllerArtanim: it maps animations from a ragdoll to a rigged character
 {
 
-    [SerializeField]
+	[SerializeField]
 	ArticulationBody _articulationBodyRoot;
 
-    //to generate an environment automatically from a rigged character and an animation (see folder ROM-extraction)
-    public ArticulationBody ArticulationBodyRoot { set => _articulationBodyRoot = value; 
-		get =>  _articulationBodyRoot; }
-  
+	//to generate an environment automatically from a rigged character and an animation (see folder ROM-extraction)
+	public ArticulationBody ArticulationBodyRoot
+	{
+		set => _articulationBodyRoot = value;
+		get => _articulationBodyRoot;
+	}
 
-    private List<ArticulationBody> _articulationbodies = null;
+
+	private List<ArticulationBody> _articulationbodies = null;
 
 	private List<Transform> _targetPoseTransforms = null;
 
-    private List<MappingOffset> _offsetsRB2targetPoseTransforms = null;
+	private List<MappingOffset> _offsetsRB2targetPoseTransforms = null;
 
 
 
@@ -32,38 +35,40 @@ public class MapRagdoll2Anim : MonoBehaviour
 
 	//not used in 
 	[SerializeField]
-	float _debugDistance= 0.0f;
+	float _debugDistance = 0.0f;
 
 
-	
 
 
-    // Start is called before the first frame update
-    public void Start()
-    {
-       
-    }
+
+	// Start is called before the first frame update
+	public void Start()
+	{
+
+	}
 
 
 
 	//this one is for the case where everything is generated procedurally
-	void  SetOffsetRB2anim() {
+	void SetOffsetRB2anim()
+	{
 
-		if(_targetPoseTransforms == null)
+		if (_targetPoseTransforms == null)
 			_targetPoseTransforms = GetComponentsInChildren<Transform>().ToList();
 
-		if(_offsetsRB2targetPoseTransforms == null)
+		if (_offsetsRB2targetPoseTransforms == null)
 			_offsetsRB2targetPoseTransforms = new List<MappingOffset>();
 
 
-		if(_articulationbodies == null)
+		if (_articulationbodies == null)
 			_articulationbodies = _articulationBodyRoot.GetComponentsInChildren<ArticulationBody>(true).ToList();
 
 
 
 
 
-		foreach (ArticulationBody ab in _articulationbodies) {
+		foreach (ArticulationBody ab in _articulationbodies)
+		{
 
 			//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
 
@@ -82,7 +87,8 @@ public class MapRagdoll2Anim : MonoBehaviour
 
 			//if structure is "articulation:" + t.name, it comes from a joint:
 
-			if (temp[0].Equals("articulation")) { 
+			if (temp[0].Equals("articulation"))
+			{
 
 				Transform t = _targetPoseTransforms.First(x => x.name == tname);
 
@@ -110,7 +116,7 @@ public class MapRagdoll2Anim : MonoBehaviour
 
 
 
-	
+
 
 	void MimicPhysicalChar()
 	{
@@ -131,20 +137,20 @@ public class MapRagdoll2Anim : MonoBehaviour
 
 	}
 
-    private void FixedUpdate()
-    {
+	private void FixedUpdate()
+	{
 		MimicAnimationArtanim();
-    }
-    void MimicAnimationArtanim()
+	}
+	void MimicAnimationArtanim()
 	{
 
 
-        if (_offsetsRB2targetPoseTransforms == null)
+		if (_offsetsRB2targetPoseTransforms == null)
 		{
 
-            
-				SetOffsetRB2anim();
-            
+
+			SetOffsetRB2anim();
+
 
 		}
 		else

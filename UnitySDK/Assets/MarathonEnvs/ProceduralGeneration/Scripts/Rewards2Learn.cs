@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.MLAgents;
@@ -27,8 +27,8 @@ public class Rewards2Learn : MonoBehaviour
     public float SumOfRotationSqrDifferences;
     public float LocalPoseReward;
 
-   
-    
+
+
     [Header("Center of Mass Velocity Reward")]
     public Vector3 MocapCOMVelocity;
     public Vector3 RagDollCOMVelocity;
@@ -105,15 +105,15 @@ public class Rewards2Learn : MonoBehaviour
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
         _mocapBodyStats.OnAgentInitialize(_mocapBodyStats.ObjectToTrack.transform);
 
-        _ragDollBodyStats= new GameObject("RagDollDReConRewardStats").AddComponent<RewardStats>();
+        _ragDollBodyStats = new GameObject("RagDollDReConRewardStats").AddComponent<RewardStats>();
         _ragDollBodyStats.setRootName(targetedRootName);
 
 
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _ragDollBodyStats.OnAgentInitialize(transform, _mocapBodyStats);      
+        _ragDollBodyStats.OnAgentInitialize(transform, _mocapBodyStats);
 
-        _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);    
+        _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);
     }
 
     // Update is called once per frame
@@ -124,8 +124,8 @@ public class Rewards2Learn : MonoBehaviour
 
         // position reward
         List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
-        PositionReward = -7.37f/(distances.Count/6f);
-        List<float> sqrDistances = distances.Select(x=> x*x).ToList();
+        PositionReward = -7.37f / (distances.Count / 6f);
+        List<float> sqrDistances = distances.Select(x => x * x).ToList();
         SumOfDistances = distances.Sum();
         SumOfSqrDistances = sqrDistances.Sum();
         PositionReward *= SumOfSqrDistances;
@@ -134,26 +134,26 @@ public class Rewards2Learn : MonoBehaviour
         // center of mass velocity reward
         MocapCOMVelocity = _mocapBodyStats.CenterOfMassVelocity;
         RagDollCOMVelocity = _ragDollBodyStats.CenterOfMassVelocity;
-        COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
-        ComReward = -Mathf.Pow(COMVelocityDifference,2);
+        COMVelocityDifference = (MocapCOMVelocity - RagDollCOMVelocity).magnitude;
+        ComReward = -Mathf.Pow(COMVelocityDifference, 2);
         ComReward = Mathf.Exp(ComReward);
 
         // points velocity
         List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
-        List<float> sqrVelocityDistances = velocityDistances.Select(x=> x*x).ToList();
+        List<float> sqrVelocityDistances = velocityDistances.Select(x => x * x).ToList();
         PointsVelocityDifferenceSquared = sqrVelocityDistances.Sum();
-        PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
+        PointsVelocityReward = (-1f / _mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
         PointsVelocityReward = Mathf.Exp(PointsVelocityReward);
 
         // local pose reward
         if (RotationDifferences == null || RotationDifferences.Count < _mocapBodyStats.Rotations.Count)
-            RotationDifferences = Enumerable.Range(0,_mocapBodyStats.Rotations.Count)
-            .Select(x=>0f)
+            RotationDifferences = Enumerable.Range(0, _mocapBodyStats.Rotations.Count)
+            .Select(x => 0f)
             .ToList();
         SumOfRotationDifferences = 0f;
         SumOfRotationSqrDifferences = 0f;
         for (int i = 0; i < _mocapBodyStats.Rotations.Count; i++)
-        { 
+        {
             var angle = Quaternion.Angle(_mocapBodyStats.Rotations[i], _ragDollBodyStats.Rotations[i]);
             Assert.IsTrue(angle <= 180f);
             angle = ObservationStats.NormalizedAngle(angle);
@@ -162,15 +162,15 @@ public class Rewards2Learn : MonoBehaviour
             SumOfRotationDifferences += angle;
             SumOfRotationSqrDifferences += sqrAngle;
         }
-        LocalPoseReward = -6.5f/RotationDifferences.Count;
+        LocalPoseReward = -6.5f / RotationDifferences.Count;
         LocalPoseReward *= SumOfRotationSqrDifferences;
         LocalPoseReward = Mathf.Exp(LocalPoseReward);
 
         // distance factor
         ComDistance = (_mocapBodyStats.transform.position - _ragDollBodyStats.transform.position).magnitude;
-        DistanceFactor = Mathf.Pow(ComDistance,2);
-        DistanceFactor = 1.4f*DistanceFactor;
-        DistanceFactor = 1.01f-DistanceFactor;
+        DistanceFactor = Mathf.Pow(ComDistance, 2);
+        DistanceFactor = 1.4f * DistanceFactor;
+        DistanceFactor = 1.01f - DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
 
         // // direction factor
@@ -187,14 +187,14 @@ public class Rewards2Learn : MonoBehaviour
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
-        SumOfSubRewards = PositionReward+ComReward+PointsVelocityReward+LocalPoseReward;
-        Reward = DistanceFactor*SumOfSubRewards;
+        SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
+        Reward = DistanceFactor * SumOfSubRewards;
         // Reward = (DirectionFactor*SumOfSubRewards) * DistanceFactor;
     }
     public void OnReset()
     {
         Assert.IsTrue(_hasLazyInitialized);
-       
+
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;
@@ -204,7 +204,7 @@ public class Rewards2Learn : MonoBehaviour
     {
         if (_ragDollBodyStats == null)
             return;
-        var max = (_ragDollBodyStats.Points.Length/6)-1;
+        var max = (_ragDollBodyStats.Points.Length / 6) - 1;
         ObjectForPointDistancesGizmo = Mathf.Clamp(ObjectForPointDistancesGizmo, -1, max);
         // _mocapBodyStats.DrawPointDistancesFrom(_ragDollBodyStats, ObjectForPointDistancesGizmo);
         _ragDollBodyStats.DrawPointDistancesFrom(_mocapBodyStats, ObjectForPointDistancesGizmo);

@@ -21,10 +21,10 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
     public RangeOfMotionValues RangeOfMotion2Store;
 
-      [Range(0,359)]
+    [Range(0, 359)]
     public int MinROMNeededForJoint = 5;
 
-  
+
 
 
     [SerializeField]
@@ -33,13 +33,15 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
 
 
-    public void ConfigureTrainingForRagdoll() {
-       int dof = ApplyRangeOfMotionToRagDoll();
+    public void ConfigureTrainingForRagdoll()
+    {
+        int dof = ApplyRangeOfMotionToRagDoll();
         if (dof == -1)
         {
             Debug.LogError("Problems applying the range of motion to the ragdoll");
         }
-        else {
+        else
+        {
 
             ApplyDoFOnBehaviorParameters(dof);
         }
@@ -57,7 +59,8 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
         //we only keep the ones that have colliders (and therefore do not correspond to joints).
         List<ArticulationBody> listofAB = new List<ArticulationBody>();
-        foreach (ArticulationBody ab in articulationBodies) {
+        foreach (ArticulationBody ab in articulationBodies)
+        {
             if (ab.GetComponent<Collider>() == null)
                 listofAB.Add(ab);
 
@@ -70,7 +73,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
         //foreach (var rom in RangeOfMotion2Store.Values)
 
         //foreach (var rom in RangeOfMotion2Store.Values)
-        foreach(ArticulationBody body in articulationBodies)
+        foreach (ArticulationBody body in articulationBodies)
         {
 
             //string tname = temp[1];
@@ -80,11 +83,11 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
             RangeOfMotionValue rom = RangeOfMotion2Store.Values.First(x => x.name == valuename);
 
-            if(rom == null)
-                {
+            if (rom == null)
+            {
                 Debug.LogError("Could not find a rangoe of motionvalue for articulation: " + body.name);
                 return -1;
-                }
+            }
 
             bool isLocked = true;
             body.twistLock = ArticulationDofLock.LockedMotion;
@@ -97,13 +100,14 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
             if (rom.rangeOfMotion.x > (float)MinROMNeededForJoint)
             {
                 DegreesOfFreedom++;
-                isLocked=false;
+                isLocked = false;
                 body.twistLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.xDrive;
                 drive.lowerLimit = rom.lower.x;
                 drive.upperLimit = rom.upper.x;
                 body.xDrive = drive;
-                if (debugWithLargestROM) {
+                if (debugWithLargestROM)
+                {
                     drive.lowerLimit = -170;
                     drive.upperLimit = +170;
                 }
@@ -112,7 +116,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
             if (rom.rangeOfMotion.y >= (float)MinROMNeededForJoint)
             {
                 DegreesOfFreedom++;
-                isLocked=false;
+                isLocked = false;
                 body.swingYLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.yDrive;
                 drive.lowerLimit = rom.lower.y;
@@ -130,7 +134,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
             if (rom.rangeOfMotion.z >= (float)MinROMNeededForJoint)
             {
                 DegreesOfFreedom++;
-                isLocked=false;
+                isLocked = false;
                 body.swingZLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.zDrive;
                 drive.lowerLimit = rom.lower.z;
@@ -157,10 +161,11 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
     }
 
 
-     
 
 
-    void ApplyDoFOnBehaviorParameters(int DegreesOfFreedom) {
+
+    void ApplyDoFOnBehaviorParameters(int DegreesOfFreedom)
+    {
         // due to an obscure function call in the setter of ActionSpec inside bp, this can only run at runtime
         //the function is called SyncDeprecatedActionFields()
 
@@ -188,7 +193,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
         int numsensors = GetComponentsInChildren<SensorBehavior>().Length;
         int num_miscelaneous = GetComponent<ProcRagdollAgent>().calculateDreConObservationsize();
 
-        int ObservationDimensions =  DegreesOfFreedom + numsensors + num_miscelaneous;
+        int ObservationDimensions = DegreesOfFreedom + numsensors + num_miscelaneous;
         bp.BrainParameters.VectorObservationSize = ObservationDimensions;
         Debug.Log("Space of perceptions calculated at:" + bp.BrainParameters.VectorObservationSize + " continuous dimensions, with: " + "sensors: " + numsensors + "and DreCon miscelaneous: " + num_miscelaneous);
 
