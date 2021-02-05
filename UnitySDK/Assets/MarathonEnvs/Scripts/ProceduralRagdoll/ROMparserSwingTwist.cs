@@ -56,7 +56,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
     public RangeOfMotionValue[] RangeOfMotionPreview;
 
-    MocapControllerArtanim _mocapControllerArtanim;
+    MapAnimationController2RagdollRef _mocapControllerArtanim;
     Vector3 _rootStartPosition;
     Quaternion _rootStartRotation;
 
@@ -117,7 +117,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
 
-        _mocapControllerArtanim = theAnimator.GetComponent<MocapControllerArtanim>();
+        _mocapControllerArtanim = theAnimator.GetComponent<MapAnimationController2RagdollRef>();
 
         // get root start position and rotation
         var articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
@@ -575,7 +575,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
         //the animation source is a son of the SpawnableEnv, or it does not find the MocapControllerArtanim when it initializes
-        MocapControllerArtanim mca = target.GetComponent<MocapControllerArtanim>();
+        MapAnimationController2RagdollRef mca = target.GetComponent<MapAnimationController2RagdollRef>();
         mca.enabled = true;
 
 

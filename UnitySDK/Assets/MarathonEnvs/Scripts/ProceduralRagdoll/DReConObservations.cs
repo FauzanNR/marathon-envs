@@ -71,7 +71,7 @@ public class DReConObservations : MonoBehaviour
 
 
 
-        _mocapBodyStats.ObjectToTrack = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
+        _mocapBodyStats.ObjectToTrack = _spawnableEnv.GetComponentInChildren<MapAnimationController2RagdollRef>();
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
         _mocapBodyStats.OnAgentInitialize(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);

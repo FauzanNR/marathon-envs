@@ -17,7 +17,8 @@ public class DebugJoints : MonoBehaviour
     MarathonTestBedController _debugController;
     // Start is called before the first frame update
     ManyWorlds.SpawnableEnv _spawnableEnv;
-    MocapControllerArtanim _mocapController;
+    //MapAnimationController2RagdollRef _mocapController;
+
     Rigidbody _target;
     public Vector3 TargetRotationInJointSpace;
     public Vector3 RotationInJointSpace;
@@ -35,8 +36,17 @@ public class DebugJoints : MonoBehaviour
         _parentBody = _body.transform.parent.GetComponentInParent<ArticulationBody>();
         _debugController = FindObjectOfType<MarathonTestBedController>();
         _spawnableEnv = GetComponentInParent<ManyWorlds.SpawnableEnv>();
-        _mocapController = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
-        var mocapBodyParts = _mocapController.GetComponentsInChildren<Rigidbody>().ToList();
+        //_mocapController = _spawnableEnv.GetComponentInChildren<MapAnimationController2RagdollRef>();
+        //var mocapBodyParts = _mocapController.GetComponentsInChildren<Rigidbody>().ToList();
+
+
+        //TODO: find option that works for both generative and non-generative cases
+        //the option below allows us to
+        //NOT assume that the animation controller will be mocapControllerARtanim,
+        //nor the class in the procedural generation MapAnimationController2RagdollRef
+        //it will generate trouble, though, with previous cases
+        var mocapBodyParts = _spawnableEnv.GetComponentsInChildren<Rigidbody>().ToList();
+
         _target = mocapBodyParts.First(x=>x.name == _body.name);
     }
 

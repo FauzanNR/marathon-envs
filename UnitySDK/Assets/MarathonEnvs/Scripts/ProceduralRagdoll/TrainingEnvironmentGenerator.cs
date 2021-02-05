@@ -131,8 +131,8 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         //mac.IsGeneratedProcedurally = true;
 
 
-        MocapControllerArtanim mca =character4training.gameObject.AddComponent<MocapControllerArtanim>();
-        mca.IsGeneratedProcedurally = true;
+        MapAnimationController2RagdollRef mca =character4training.gameObject.AddComponent<MapAnimationController2RagdollRef>();
+        //mca.IsGeneratedProcedurally = true;
 
         character4training.gameObject.AddComponent<TrackBodyStatesInWorldSpace>();
         character4training.name = "Source:" + AgentName;
@@ -261,7 +261,7 @@ If the script doing this is short, it works because this is finished before the 
     public void GenerateRagdollForMocap() {
 
 
-        MocapControllerArtanim mca = character4training.gameObject.GetComponent<MocapControllerArtanim>();
+        MapAnimationController2RagdollRef mca = character4training.gameObject.GetComponent<MapAnimationController2RagdollRef>();
         mca.DynamicallyCreateRagdollForMocap();
 
     }

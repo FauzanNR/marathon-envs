@@ -45,7 +45,7 @@ public class MarathonTestBedController : MonoBehaviour
         animControl.doFixedUpdate = false;
         animControl.MaxForwardVelocity = 0;
 
-        MocapControllerArtanim animControlartanim = sourceAgent.GetComponent<MocapControllerArtanim>();
+        MapAnimationController2RagdollRef animControlartanim = sourceAgent.GetComponent<MapAnimationController2RagdollRef>();
         animControlartanim.doFixedUpdate = false;
 
         InputController input = FindObjectOfType<InputController>();

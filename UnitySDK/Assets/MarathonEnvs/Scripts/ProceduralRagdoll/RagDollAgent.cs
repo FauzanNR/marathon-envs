@@ -54,7 +54,7 @@ public class RagDollAgent : Agent
     [Space(16)]
     [SerializeField]
     bool _hasAwake = false;
-    MocapControllerArtanim _mocapControllerArtanim;
+    MapAnimationController2RagdollRef _mocapControllerArtanim;
 
     void Awake()
     {
@@ -293,7 +293,7 @@ public class RagDollAgent : Agent
             dontSnapMocapToRagdoll = true;
         }
 
-        _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
+        _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MapAnimationController2RagdollRef>();
         _mocapBodyParts = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().ToList();
 
         _bodyParts = GetComponentsInChildren<ArticulationBody>().ToList();

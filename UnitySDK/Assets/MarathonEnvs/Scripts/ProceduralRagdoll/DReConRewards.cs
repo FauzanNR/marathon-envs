@@ -53,7 +53,7 @@ public class DReConRewards : MonoBehaviour
     public int ObjectForPointDistancesGizmo;
 
     SpawnableEnv _spawnableEnv;
-    MocapControllerArtanim _mocap;
+    MapAnimationController2RagdollRef _mocap;
     GameObject _ragDoll;
     InputController _inputController;
 
@@ -82,7 +82,7 @@ public class DReConRewards : MonoBehaviour
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         Assert.IsNotNull(_spawnableEnv);
 
-        _mocap = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
+        _mocap = _spawnableEnv.GetComponentInChildren<MapAnimationController2RagdollRef>();
 
         _ragDoll = _spawnableEnv.GetComponentInChildren<RagDollAgent>().gameObject;
         Assert.IsNotNull(_mocap);
