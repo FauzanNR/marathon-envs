@@ -25,10 +25,10 @@ public class AnimationController : MonoBehaviour
     bool _isGrounded;
     bool _previouslyGrounded;
     const float kAirborneTurnSpeedProportion = 5.4f;
-    const float kGroundTurnSpeedProportion = 200f/2;
+    const float kGroundTurnSpeedProportion = 200f / 2;
     const float kGroundedRayDistance = 1f;
     const float kJumpAbortSpeed = 10f;
-   
+
     const float kInverseOneEighty = 1f / 180f;
     const float kStickingGravityProportion = 0.3f;
 
@@ -36,7 +36,7 @@ public class AnimationController : MonoBehaviour
     Vector3 _lastGroundForwardVelocity;
     float _desiredForwardSpeed;
     float _verticalVelocity = -1f;
-    
+
     Quaternion _targetDirection;    // direction we want to move towards
     float _angleDiff;               // delta between targetRotation and current roataion
     Quaternion _targetRotation;
@@ -73,11 +73,11 @@ public class AnimationController : MonoBehaviour
 
     //TODO: this is also called from RagdollAgent004. Dependency should be removed, somehow.
     public void OnAgentInitialize()
-    { 
-        if(!_anim)
+    {
+        if (!_anim)
             _anim = GetComponent<Animator>();
 
-        if(!_characterController)
+        if (!_characterController)
             _characterController = GetComponent<CharacterController>();
 
 
@@ -108,8 +108,8 @@ public class AnimationController : MonoBehaviour
 
     void FixedUpdate()
     {
-    
-            OnFixedUpdate();
+
+        OnFixedUpdate();
     }
 
 
@@ -140,7 +140,7 @@ public class AnimationController : MonoBehaviour
 
 
 
-            _isGrounded = true;
+        _isGrounded = true;
         _previouslyGrounded = true;
         _inCombo = false;
         _readyToJump = false;
@@ -166,13 +166,13 @@ public class AnimationController : MonoBehaviour
         _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
         _anim.SetFloat("forwardVelocity", _forwardVelocity);
         _anim.SetBool("backflip", false);
-            
+
 
         OnFixedUpdate();
         _anim.Update(0f);
 
 
-     
+
 
     }
 
@@ -195,7 +195,7 @@ public class AnimationController : MonoBehaviour
                 movement = _anim.deltaPosition;
                 movement.y = 0f;
                 movement = Vector3.ProjectOnPlane(_anim.deltaPosition, hit.normal);
-                
+
                 // store material under foot
                 Renderer groundRenderer = hit.collider.GetComponentInChildren<Renderer>();
                 materialUnderFoot = groundRenderer ? groundRenderer.sharedMaterial : null;
@@ -229,7 +229,8 @@ public class AnimationController : MonoBehaviour
         // This is so the vertical speed is kept when landing so the correct landing animation is played.
 
 
-        if (!_isGeneratedProcedurally) { 
+        if (!_isGeneratedProcedurally)
+        {
             if (!_isGrounded)
                 _anim.SetFloat("verticalVelocity", verticalVelocity);
 
@@ -240,7 +241,7 @@ public class AnimationController : MonoBehaviour
 
     void RotateTarget(float deltaTime)
     {
-        if (!Mathf.Approximately(_inputController.CameraRotation.x*_inputController.CameraRotation.x, 0f))
+        if (!Mathf.Approximately(_inputController.CameraRotation.x * _inputController.CameraRotation.x, 0f))
         {
             float roation = _targetDirection.eulerAngles.y;
             float delta = _inputController.CameraRotation.x * kGroundTurnSpeedProportion * deltaTime;
@@ -263,13 +264,13 @@ public class AnimationController : MonoBehaviour
         // Create three variables, move input local to the player, flattened forward direction of the camera and a local target rotation.
         Vector2 moveInput = _inputController.MovementVector;
         Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;
-        
+
         Vector3 forward = _targetDirection * Vector3.forward;
         forward.y = 0f;
         forward.Normalize();
 
         Quaternion targetRotation;
-        
+
         // // If the local movement direction is the opposite of forward then the target rotation should be towards the camera.
         // if (Mathf.Approximately(Vector3.Dot(localMovementDirection, Vector3.forward), -1.0f))
         // {
@@ -295,7 +296,7 @@ public class AnimationController : MonoBehaviour
 
         _angleDiff = Mathf.DeltaAngle(angleCurrent, targetAngle);
         _targetRotation = targetRotation;
-    }    
+    }
     void UpdateOrientation(float deltaTime)
     {
         _anim.SetFloat("angleDeltaRad", _angleDiff * Mathf.Deg2Rad);
@@ -304,7 +305,7 @@ public class AnimationController : MonoBehaviour
         float groundedTurnSpeed = Mathf.Lerp(MaxTurnVelocity, MinTurnVelocity, _forwardVelocity / _desiredForwardSpeed);
         float actualTurnSpeed = _isGrounded ? groundedTurnSpeed : Vector3.Angle(transform.forward, localInput) * kInverseOneEighty * kAirborneTurnSpeedProportion * groundedTurnSpeed;
         _targetRotation = Quaternion.RotateTowards(transform.rotation, _targetRotation, actualTurnSpeed * deltaTime);
-        bool hasNan = float.IsNaN(_targetRotation.x) || float.IsNaN(_targetRotation.y) ||float.IsNaN(_targetRotation.z);
+        bool hasNan = float.IsNaN(_targetRotation.x) || float.IsNaN(_targetRotation.y) || float.IsNaN(_targetRotation.z);
         if (!hasNan)
             transform.rotation = _targetRotation;
     }
@@ -348,7 +349,7 @@ public class AnimationController : MonoBehaviour
                 _anim.SetBool("onGround", false);
             }
         }
-        else 
+        else
         {
             // If Ellen is airborne, the jump button is not held and Ellen is currently moving upwards...
             if (!_inputController.Jump && _verticalVelocity > 0.0f)
@@ -363,7 +364,7 @@ public class AnimationController : MonoBehaviour
             {
                 _verticalVelocity = 0f;
             }
-            
+
             // If Ellen is airborne, apply gravity.
             _verticalVelocity += Physics.gravity.y * deltaTime;
         }
