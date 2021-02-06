@@ -222,7 +222,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1499194022771185243}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -621,7 +621,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3618667955577488616}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -1429,7 +1429,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6620903151815319636}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -2706,7 +2706,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8719610834567201839}
   - component: {fileID: 7641843802677264542}
-  - component: {fileID: 5563187025173742896}
+  - component: {fileID: 753357962654151138}
   m_Layer: 14
   m_Name: LeftHand
   m_TagString: Untagged
@@ -2741,8 +2741,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Parent: {fileID: 8721806364151867171}
---- !u!135 &5563187025173742896
-SphereCollider:
+--- !u!65 &753357962654151138
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -2752,8 +2752,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.025
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.18, y: 0.03, z: 0.1}
+  m_Center: {x: -0.09, y: -0.008, z: 0.025}
 --- !u!1 &8721795517134667573
 GameObject:
   m_ObjectHideFlags: 0
@@ -2763,7 +2763,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8719986123157941757}
-  - component: {fileID: 6549431724995893410}
+  - component: {fileID: 5371229505169230644}
   - component: {fileID: 1012036716365501883}
   m_Layer: 14
   m_Name: RightHand
@@ -2786,19 +2786,19 @@ Transform:
   m_Father: {fileID: 1198069920422691408}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &6549431724995893410
-SphereCollider:
+--- !u!65 &5371229505169230644
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8721795517134667573}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.025
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 0.18, y: 0.03, z: 0.1}
+  m_Center: {x: 0.09, y: -0.008, z: 0.025}
 --- !u!114 &1012036716365501883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4011,7 +4011,7 @@ BoxCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9031411401833641881}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: 38b7ea504254a4fa986e42a7bb16c8df, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2

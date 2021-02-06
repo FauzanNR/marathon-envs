@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657874, g: 0.49641275, b: 0.5748172, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -388,10 +388,10 @@ MonoBehaviour:
     - envId: ControllerMarathonMan-v1
       envPrefab: {fileID: 4882770942201970565, guid: 039f5bf4e1cc0214ea4f370014f59897,
         type: 3}
-    envIdDefault: Hopper-v0
+    envIdDefault: ControllerMarathonMan-v1
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
-  DebugSkipPopUp: 1
+  DebugSkipPopUp: 0
 --- !u!1 &1715640920
 GameObject:
   m_ObjectHideFlags: 0
