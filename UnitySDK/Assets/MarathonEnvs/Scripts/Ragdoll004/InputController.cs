@@ -57,6 +57,7 @@ public class InputController : MonoBehaviour
     }
     public void OnReset()
     {
+        MovementVector = Vector3.zero;
         SetRandomHorizontalDirection();
         _delayUntilNextAction = -1f;
         DoUpdate(Time.fixedDeltaTime);

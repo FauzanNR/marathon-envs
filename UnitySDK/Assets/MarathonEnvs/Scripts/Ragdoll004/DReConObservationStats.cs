@@ -55,7 +55,7 @@ public class DReConObservationStats : MonoBehaviour
 
 
     SpawnableEnv _spawnableEnv;
-    List<Transform> _bodyParts;
+    List<Collider> _bodyParts;
     internal List<Rigidbody> _rigidbodyParts;
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
@@ -353,5 +353,11 @@ public class DReConObservationStats : MonoBehaviour
             Gizmos.DrawRay(start + vector, right * headSize);
             Gizmos.DrawRay(start + vector, left * headSize);
         }
+    }
+    public void ShiftCOM (Vector3 snapDistance)
+    {
+        Vector3 newCOM = LastCenterOfMassInWorldSpace + snapDistance;
+        LastCenterOfMassInWorldSpace = newCOM;
+        transform.position = newCOM;
     }
 }

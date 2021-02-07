@@ -47,7 +47,6 @@ public class RagDollAgent : Agent
 
 
     bool _hasLazyInitialized;
-    bool _skipRewardAfterTeleport;
     float[] _smoothedActions;
     float[] _mocapTargets;
 
@@ -93,7 +92,6 @@ public class RagDollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);        
 
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
@@ -125,6 +123,11 @@ public class RagDollAgent : Agent
 	public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);
+
+        float timeDelta = Time.fixedDeltaTime;
+        if (!_decisionRequester.TakeActionsBetweenDecisions)
+            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        _dReConRewards.OnStep(timeDelta);        
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -170,11 +173,11 @@ public class RagDollAgent : Agent
         }
         _dReConObservations.PreviousActions = vectorAction;
 
-        if (!_skipRewardAfterTeleport)
-            AddReward(_dReConRewards.Reward);
-        _skipRewardAfterTeleport = false;
+        AddReward(_dReConRewards.Reward);
+
         // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward < 1f)
         if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+
         {
             if (!dontResetOnZeroReward)
                 EndEpisode();
@@ -187,7 +190,6 @@ public class RagDollAgent : Agent
             snapPosition.y = 0f;
             _mocapControllerArtanim.SnapTo(snapPosition);
             AddReward(-.5f);
-            _skipRewardAfterTeleport = true;
         }
     }
     float[] GetDebugActions(float[] vectorAction)
@@ -319,7 +321,6 @@ public class RagDollAgent : Agent
         _dReConRewards.OnReset();
         _dReConObservations.OnStep(timeDelta);
         _dReConRewards.OnStep(timeDelta);
-        _skipRewardAfterTeleport = false;
 #if UNITY_EDITOR		
 		if (DebugPauseOnReset)
 		{
