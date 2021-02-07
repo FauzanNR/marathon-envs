@@ -83,7 +83,6 @@ public class DReConObservationStats : MonoBehaviour
         _articulationBodyParts = ObjectToTrack.GetComponentsInChildren<ArticulationBody>().ToList();
 
 
-        /*
         if (_rigidbodyParts?.Count > 0)
             _bodyParts = _rigidbodyParts
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
@@ -94,19 +93,16 @@ public class DReConObservationStats : MonoBehaviour
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
                 .Distinct()
                 .ToList();
-        */
-        if (_rigidbodyParts?.Count > 0)
-            _bodyParts = _rigidbodyParts
-                .SelectMany(x => x.GetComponentsInChildren<Transform>())
-                .Distinct()
-                .ToList();
-        else
-            _bodyParts = _articulationBodyParts
-                .SelectMany(x => x.GetComponentsInChildren<Transform>())
-                .Distinct()
-                .ToList();
-
-
+        // if (_rigidbodyParts?.Count > 0)
+        //     _bodyParts = _rigidbodyParts
+        //         .SelectMany(x => x.GetComponentsInChildren<Transform>())
+        //         .Distinct()
+        //         .ToList();
+        // else
+        //     _bodyParts = _articulationBodyParts
+        //         .SelectMany(x => x.GetComponentsInChildren<Transform>())
+        //         .Distinct()
+        //         .ToList();
 
         var bodyPartNames = _bodyParts.Select(x=>x.name);
         if (_bodyPartsToTrack?.Count > 0)
@@ -234,7 +230,6 @@ public class DReConObservationStats : MonoBehaviour
         {
             Stat bodyPartStat = Stats.First(x=>x.Name == bodyPart.name);
 
-            /*
             Vector3 c = Vector3.zero;
             CapsuleCollider capsule = bodyPart as CapsuleCollider;
             BoxCollider box = bodyPart as BoxCollider;
@@ -246,8 +241,7 @@ public class DReConObservationStats : MonoBehaviour
             else if (sphere != null)
                 c = sphere.center;
             Vector3 worldPosition = bodyPart.transform.TransformPoint(c);
-            */
-            Vector3 worldPosition = transform.position;
+            // Vector3 worldPosition = transform.position;
 
             Quaternion worldRotation = bodyPart.transform.rotation;
             Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
