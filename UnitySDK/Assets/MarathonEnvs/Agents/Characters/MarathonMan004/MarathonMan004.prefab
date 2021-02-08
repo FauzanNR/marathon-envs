@@ -2981,7 +2981,7 @@ MonoBehaviour:
   - Muscle: articulation:Spine1
     PowerVector: {x: 40, y: 40, z: 40}
   - Muscle: articulation:RightUpLeg
-    PowerVector: {x: 40, y: 120, z: 40}
+    PowerVector: {x: 120, y: 40, z: 40}
   - Muscle: articulation:Spine2
     PowerVector: {x: 40, y: 40, z: 40}
   - Muscle: articulation:RightLeg
@@ -2989,7 +2989,7 @@ MonoBehaviour:
   - Muscle: articulation:RightFoot
     PowerVector: {x: 40, y: 20, z: 20}
   - Muscle: articulation:LeftUpLeg
-    PowerVector: {x: 40, y: 120, z: 40}
+    PowerVector: {x: 120, y: 40, z: 40}
   - Muscle: articulation:LeftLeg
     PowerVector: {x: 80, y: 80, z: 80}
   - Muscle: articulation:LeftFoot
