@@ -254,7 +254,7 @@ public class RagDollAgent : Agent
         }
 
         _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
-        _mocapBodyParts = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().ToList();
+        _mocapBodyParts = _mocapControllerArtanim.GetRigidBodies();
 
         _bodyParts = GetComponentsInChildren<ArticulationBody>().ToList();
         _dReConObservations = GetComponent<DReConObservations>();

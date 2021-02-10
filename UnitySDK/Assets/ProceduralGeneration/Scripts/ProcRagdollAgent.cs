@@ -295,7 +295,7 @@ public class ProcRagdollAgent : Agent
         }
 
         _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
-        _mocapBodyParts = _mocapControllerArtanim.GetComponentsInChildren<Rigidbody>().ToList();
+        _mocapBodyParts = _mocapControllerArtanim.GetRigidBodies();
 
         _bodyParts = GetComponentsInChildren<ArticulationBody>().ToList();
         _dReConObservations = GetComponent<Observations2Learn>();

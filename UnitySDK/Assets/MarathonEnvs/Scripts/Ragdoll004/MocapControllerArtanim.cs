@@ -649,4 +649,10 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		transform.position = snapPosition;
 		return snapDistance;
 	}
+
+	public List<Rigidbody> GetRigidBodies()
+	{
+		LazyInitialize();
+		return GetComponentsInChildren<Rigidbody>().ToList();
+	}
 }

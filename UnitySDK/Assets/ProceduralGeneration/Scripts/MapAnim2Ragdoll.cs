@@ -508,4 +508,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	{
 		transform.position = snapPosition;
 	}
+	public List<Rigidbody> GetRigidBodies()
+	{
+		LazyInitialize();
+		return GetComponentsInChildren<Rigidbody>().ToList();
+	}
 }
