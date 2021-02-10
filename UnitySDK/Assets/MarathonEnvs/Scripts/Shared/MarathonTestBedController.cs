@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using MLAgents;
+using Unity.MLAgents;
 using UnityEngine;
 
 public class MarathonTestBedController : MonoBehaviour
@@ -80,16 +80,23 @@ public class MarathonTestBedController : MonoBehaviour
                     // if (FreezeHead && !FreezeHips)
                     //     rb.GetComponentInChildren<FixedJoint>().connectedBody = head;
                     break;
-                case "Ragdoll-MarathonMan004":
                 case "RagDoll":
                     if (!_hasFrozen && setTpose)
                         loadTposeanim();
-
-
                     _hasFrozen = true;
                     children = agent.GetComponentsInChildren<ArticulationBody>();
                     head = children.FirstOrDefault(x=>x.name=="torso");
                     butt = children.FirstOrDefault(x=>x.name=="butt");
+                    break;
+                case "Ragdoll-MarathonMan004":
+                case "MarathonMan004":
+                case "MarathonMan004Constrained":
+                    if (!_hasFrozen && setTpose)
+                        loadTposeanim();
+                    _hasFrozen = true;
+                    children = agent.GetComponentsInChildren<ArticulationBody>();
+                    head = children.FirstOrDefault(x=>x.name=="head");
+                    butt = children.FirstOrDefault(x=>x.name=="articulation:Hips");
                     break;
                 case "humanoid":
                     _hasFrozen = true;
@@ -98,6 +105,7 @@ public class MarathonTestBedController : MonoBehaviour
                     butt = children.FirstOrDefault(x=>x.name=="butt");
                     break;
                 default:
+                    throw new System.ArgumentException($"agent.name: {agent.name}");
                     break;
             }
         //    if (FreezeHead && head != null)
@@ -107,11 +115,17 @@ public class MarathonTestBedController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    public void OnAgentEpisodeBegin()
     {
         if (!_hasFrozen)
             FreezeBodyParts();
+        if (setTpose)
+            loadTposeanim();
+    }
+
+    // Update is called once per frame
+    void FixedUpdate()
+    {
         if (ApplyRandomActions)
         {
             Actions = Actions.Select(x=>Random.Range(-1f,1f)).ToArray();

@@ -10,71 +10,71 @@ This page covers how to train using the ML-Agents toolkit
 
 * You will need to replace the path `\` with `/`
 * On MacOS
-  * Replace `"envs\MarathonEnvs\Unity Environment.exe"` with `"envs/MarathonEnvs"`
+  * Replace `"envs\MarathonEnvs\Marathon Environment.exe"` with `"envs/MarathonEnvs"`
 * On Linux
-  * Replace `"envs\MarathonEnvs\Unity Environment.exe"` with `"envs/MarathonEnvs/Unity Environment.x86_64"`
+  * Replace `"envs\MarathonEnvs\Marathon Environment.exe"` with `"envs/MarathonEnvs/Marathon Environment.x86_64"`
 
 ### Windows
 
 #### Hopper-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=10 --run-id=Hopper538 --env-args --spawn-env=Hopper-v0 --num-spawn-envs=50 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=Hopper-001 --env-args --spawn-env=Hopper-v0 --num-spawn-envs=10
 ```
 
 #### Walker2d-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=10 --run-id=Walker2d-502 --env-args --spawn-env=Walker2d-v0 --num-spawn-envs=50 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=Walker2d-001 --env-args --spawn-env=Walker2d-v0 --num-spawn-envs=10
 ```
 
 #### Ant-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=Ant401 --env-args --spawn-env=Ant-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=Ant-001 --env-args --spawn-env=Ant-v0 --num-spawn-envs=10
 ```
 
 #### MarathonMan-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=MarathonMan401 --env-args --spawn-env=MarathonMan-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=MarathonMan-001 --env-args --spawn-env=MarathonMan-v0 --num-spawn-envs=10
 ```
 
 #### MarathonManSparse-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=MarathonManSparse401 --env-args --spawn-env=MarathonManSparse-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --run-id=MarathonManSparse-001 --env-args --spawn-env=MarathonManSparse-v0 --num-spawn-envs=10
 ```
 
 #### TerrainHopper-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=TerrainHopper401 --env-args --spawn-env=TerrainHopper-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainHopper-000 --env-args --spawn-env=TerrainHopper-v0 --num-spawn-envs=100
 ```
 
 #### TerrainWalker2d-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=TerrainWalker2d401 --env-args --spawn-env=TerrainWalker2d-v0 --num-spawn-envs=100
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainWalker2d-001 --env-args --spawn-env=TerrainWalker2d-v0 --num-spawn-envs=100
 ```
 
 #### TerrainAnt-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=TerrainAnt401 --env-args --spawn-env=TerrainAnt-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainAnt-001 --env-args --spawn-env=TerrainAnt-v0 --num-spawn-envs=100
 ```
 
 #### TerrainMarathonMan-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=1 --run-id=TerrainMarathonMan401 --env-args --spawn-env=TerrainMarathonMan-v0 --num-spawn-envs=100 
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environments.exe" --no-graphics --num-envs=10 --run-id=TerrainMarathonMan-001 --env-args --spawn-env=TerrainMarathonMan-v0 --num-spawn-envs=100
 ```
 
 
 #### MarathonManBackflip-v0
 
 ``` shell
-mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Unity Environment.exe" --num-envs=4 --no-graphics --run-id=MarathonManBackflip --env-args --spawn-env=MarathonManBackflip-v0 --num-spawn-envs=64
+mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --no-graphics --run-id=MarathonManBackflip-001 --env-args --spawn-env=MarathonManBackflip-v0 --num-spawn-envs=10
 ```
 ----
 
