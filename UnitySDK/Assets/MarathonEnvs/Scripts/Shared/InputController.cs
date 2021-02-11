@@ -6,10 +6,10 @@ using Unity.MLAgents;
 public class InputController : MonoBehaviour
 {
     [Header("Options")]
-    public float MaxVelocity;
+    public float MaxVelocity = 8f;
     [Range(0f,1f)]
     public float ClipInput;
-    public bool NoJumpsInMockMode;
+    public bool NoJumpsInMockMode = true;
 
     [Header("User or Mock input states")]
     public Vector2 TargetMovementVector; // User-input desired horizontal center of mass velocity.
@@ -21,7 +21,7 @@ public class InputController : MonoBehaviour
     [Header("Read only (or debug)")]
     public Vector2 DesiredHorizontalVelocity; // MovementVector * Max Velovity
     public Vector3 HorizontalDirection; // Normalized vector in direction of travel (assume right angle to floor)
-    public bool UseHumanInput;
+    public bool UseHumanInput = true;
     public bool DemoMockIfNoInput = true; // Demo mock mode if no human input
 
     float _delayUntilNextAction;

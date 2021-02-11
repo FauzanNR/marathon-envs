@@ -635,15 +635,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b028a18f3817e4b768154fd94047e4d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MaxVelocity: 0
+  MaxVelocity: 8
   ClipInput: 0
-  NoJumpsInMockMode: 0
+  NoJumpsInMockMode: 1
+  TargetMovementVector: {x: 0, y: 0}
+  MovementVector: {x: 0, y: 0}
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
   DesiredHorizontalVelocity: {x: 0, y: 0}
   HorizontalDirection: {x: 0, y: 0, z: 0}
-  UseHumanInput: 0
+  UseHumanInput: 1
   DemoMockIfNoInput: 1
 --- !u!1 &2629833451011002648
 GameObject:
