@@ -282,6 +282,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			var rb = bodyGameobject.AddComponent<Rigidbody>();
 			rb.mass = abody.mass;
 			rb.useGravity = abody.useGravity;
+			// it makes no sense but if i do not set the layer here, then some objects dont have the correct layer
+			rb.gameObject.layer  = this.gameObject.layer;
 			DestroyImmediate(abody);
 		}
 		// make Kinematic
@@ -295,6 +297,19 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		clone.transform.SetParent(ragdollForMocap.transform, false);
 
 
+		// setup HandleOverlap
+		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
+		{
+			// remove cloned HandledOverlap
+			var oldHandleOverlap = rb.GetComponent<HandleOverlap>();
+			if (oldHandleOverlap != null)
+			{
+				DestroyImmediate(oldHandleOverlap);
+			}
+			var handleOverlap = rb.gameObject.AddComponent<HandleOverlap>();
+			handleOverlap.Parent = clone.gameObject;
+		}
+
 		// set the root
 		this._rigidbodyRoot = clone.GetComponent<Rigidbody>();
 		// set the layers
@@ -303,15 +318,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			child.gameObject.layer  = this.gameObject.layer;
 		}
-		// setup HandleOverlap
-		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
+		foreach (Transform child in clone.transform)
 		{
-			// remove cloned HandledOverlap
-			var oldHandleOverlap = rb.GetComponent<HandleOverlap>();
-			DestroyImmediate(oldHandleOverlap);
-			var handleOverlap = rb.gameObject.AddComponent<HandleOverlap>();
-			handleOverlap.Parent = clone.gameObject;
+			child.gameObject.layer  = this.gameObject.layer;
 		}
+
 
 	}
 	void SetupSensors()
