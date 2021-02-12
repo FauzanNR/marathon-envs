@@ -181,6 +181,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
 
         myActionSpec.NumContinuousActions = DegreesOfFreedom;
+        myActionSpec.BranchSizes = new List<int>().ToArray();
         bp.BrainParameters.ActionSpec = myActionSpec;
         Debug.Log("Space of actions calculated at:" + myActionSpec.NumContinuousActions + " continuous dimensions");
 
