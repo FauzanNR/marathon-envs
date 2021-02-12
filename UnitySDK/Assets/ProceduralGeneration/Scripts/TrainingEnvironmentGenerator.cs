@@ -675,13 +675,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         ROMonRagdoll.GetComponent<DecisionRequester>().DecisionPeriod = 2;
 
-
-
-
-
+        ROMonRagdoll.gameObject.SetActive(true); 
     }
-
-
-
-
 }
