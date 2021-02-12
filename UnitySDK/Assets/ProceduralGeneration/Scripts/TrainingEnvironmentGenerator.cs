@@ -367,88 +367,73 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         joints = listofjoints.ToArray();
         articulatedJoints = new List<ArticulationBody>();
 
+        var colliders = new List<CapsuleCollider>();
 
         foreach (Transform j in joints) {
             ArticulationBody ab = j.gameObject.AddComponent<ArticulationBody>();
             ab.anchorRotation = Quaternion.identity;
-
             ab.mass = 0.1f;
-
-
-
             articulatedJoints.Add(ab);
-
-          
 
             //note: probably not needed
             string namebase = j.name.Replace("(Clone)", "");
 
-
             j.name = "articulation:" + namebase;
 
-            //we only add a collider if it has a parent:
-            Transform dad = ab.transform.parent;
-
-            ArticulationBody articulatedDad = null;
-
-            if (dad != null)
-            {
-                articulatedDad = dad.GetComponent<ArticulationBody>();
-            }
-
-            if(articulatedDad != null) { 
-
-                GameObject go = new GameObject();
-                go.transform.parent = dad;
-
-                //dad.gameObject
-
-                go.name = "collider:" + namebase;
-
-                CapsuleCollider c = go.AddComponent<CapsuleCollider>();
-                c.material = colliderMaterial;
-
-                c.height = Vector3.Distance(dad.position, j.transform.position);
-
-
-
-                //ugly but it seems to work.
-                Vector3 direction = (dad.position - j.transform.position).normalized;
-                float[] directionarray = new float[3] { Mathf.Abs(direction.x), Mathf.Abs(direction.y), Mathf.Abs(direction.z) };
-                float maxdir = Mathf.Max(directionarray);
-
-                List<float> directionlist = new List<float>(directionarray);
-                c.direction = directionlist.IndexOf(maxdir);
-
-                 
-
-                c.center = (dad.position + j.transform.position) / 2.0f;
-                c.radius = c.height / 5;
-
-
-
-                // Rigidbody rb = go.AddComponent<Rigidbody>();
-                ArticulationBody rb = go.AddComponent<ArticulationBody>();
-                rb.jointType = ArticulationJointType.FixedJoint;
-                rb.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
-
-
-
-                HandleOverlap ho = go.AddComponent<HandleOverlap>();
-
-                //ho.Parent = dad.gameObject;
-                ho.Parent = root.gameObject;
-
-
-
-
-            }
-                    
-        
+            GameObject go = new GameObject();
+            go.transform.position = j.gameObject.transform.position;
+            go.transform.parent = j.gameObject.transform;
+            go.name = "collider:" + namebase;
+            CapsuleCollider c = go.AddComponent<CapsuleCollider>();
+            c.material = colliderMaterial;
+            c.height = .12f;
+            c.radius = c.height;
+            ab = go.AddComponent<ArticulationBody>();
+            ab.anchorRotation = Quaternion.identity;
+            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); 
+            colliders.Add(c);
         }
 
+        List<string> colliderNamesToDelete = new List<string>();
+        foreach (var c in colliders)
+        {
+            string namebase = c.name.Replace("collider:", "");
+            Transform j = joints.First(x=>x.name=="articulation:" + namebase);
+            // if root, skip
+            var articulatedDad = j.GetComponent<ArticulationBody>();
+            if (articulatedDad == null || articulatedDad.transform == joints[0])
+                continue;
+            j = joints.FirstOrDefault(x=>x.transform.parent.name=="articulation:" + namebase);
+            if (j==null)
+            {
+                // mark to delete as is an end point
+                colliderNamesToDelete.Add(c.name);
+                continue;
+            }
+            var ab = j.GetComponent<ArticulationBody>();
+            if (ab == null || ab.transform == joints[0])
+                continue;
+            Vector3 dadPosition = articulatedDad.transform.position;
+            c.height = Vector3.Distance(dadPosition, j.transform.position);
 
+            //ugly but it seems to work.
+            Vector3 direction = (dadPosition - j.transform.position).normalized;
+            float[] directionarray = new float[3] { Mathf.Abs(direction.x), Mathf.Abs(direction.y), Mathf.Abs(direction.z) };
+            float maxdir = Mathf.Max(directionarray);
+            List<float> directionlist = new List<float>(directionarray);
+            c.direction = directionlist.IndexOf(maxdir);
 
+            c.center = (j.transform.position - dadPosition) / 2.0f;
+            c.radius = c.height / 7;
+            ab = c.GetComponent<ArticulationBody>();
+            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
+        }
+        foreach (var name in colliderNamesToDelete)
+        {
+            var toDel = colliders.First(x=>x.name == name);
+            colliders.Remove(toDel);
+            GameObject.DestroyImmediate(toDel);
+        }
 
         //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
@@ -501,9 +486,9 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             GameObject sensorL = new GameObject();
             SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
             sphL.radius = 0.03f;
+            sphL.isTrigger = true;
             sensorL.AddComponent<SensorBehavior>();
             sensorL.AddComponent<HandleOverlap>();
-
 
             //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
             sensorL.transform.parent = foot;

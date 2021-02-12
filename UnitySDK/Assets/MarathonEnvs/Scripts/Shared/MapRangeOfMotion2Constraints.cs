@@ -80,11 +80,12 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
         {
 
             //string tname = temp[1];
-            string keyword = "articulation:";
-            string valuename = body.name.TrimStart(keyword.ToArray<char>());
+            string keyword1 = "articulation:";
+            string keyword2 = "collider:";
+            string valuename = body.name.TrimStart(keyword1.ToArray<char>());
+            valuename = valuename.TrimStart(keyword2.ToArray<char>());
 
-
-            RangeOfMotionValue rom = info2store.Values.First(x => x.name == valuename);
+            RangeOfMotionValue rom = info2store.Values.FirstOrDefault(x => x.name == valuename);
 
             if (rom == null)
             {

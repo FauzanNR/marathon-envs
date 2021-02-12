@@ -11,7 +11,15 @@ public class RangeOfMotionValue
     public string name;
     public Vector3 lower;
     public Vector3 upper;
-    public Vector3 rangeOfMotion;
+    public Vector3 rangeOfMotion { get {
+        var diff = upper - lower;
+        var rom = new Vector3(
+            Mathf.Abs(diff.x),
+            Mathf.Abs(diff.y),
+            Mathf.Abs(diff.z)
+        );
+        return rom;
+    }}
 }
 
 [CreateAssetMenu(fileName = "RangeOfMotion", menuName = "Parser/CreateRangeOfMotionFile")]

@@ -239,12 +239,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1122198031079574500}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.0000000063342855, y: 0.16671668, z: -0.025161678}
+  m_LocalPosition: {x: 0, y: 0.16671668, z: -0.025161678}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8750175203059895719}
   m_Father: {fileID: 703924211182374439}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1161218108359495548
 GameObject:
@@ -273,8 +273,8 @@ Transform:
   m_LocalPosition: {x: -0.0000000034574863, y: 0.09100011, z: -0.013734171}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 4856879633788039861}
   - {fileID: 295498894977563335}
+  - {fileID: 4856879633788039861}
   - {fileID: 5709980300616715856}
   m_Father: {fileID: 2781120040346645506}
   m_RootOrder: 0
@@ -537,8 +537,7 @@ GameObject:
   - component: {fileID: 1543015658233080656}
   - component: {fileID: 5290559212830056540}
   - component: {fileID: 8927233223366116906}
-  - component: {fileID: 7926423758671396512}
-  - component: {fileID: 2536297657908844868}
+  - component: {fileID: 774524902895976045}
   m_Layer: 15
   m_Name: CharacterWithInteractiveAnimation
   m_TagString: Untagged
@@ -600,30 +599,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &7926423758671396512
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2536297657908844867}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2fe8075a5eee40eb8199e376a5eaac1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxForwardVelocity: 1
-  MinTurnVelocity: 400
-  MaxTurnVelocity: 1200
-  JumpSpeed: 5
-  debugForceJump: 0
-  _anim: {fileID: 0}
-  _characterController: {fileID: 0}
-  _inputController: {fileID: 0}
-  _layerMask: 0
-  doFixedUpdate: 1
-  _isGeneratedProcedurally: 0
---- !u!114 &2536297657908844868
+--- !u!114 &774524902895976045
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2065,7 +2041,7 @@ Transform:
   m_Children:
   - {fileID: 2760089615722157547}
   m_Father: {fileID: 703924211182374439}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8277096075110965361
 GameObject:

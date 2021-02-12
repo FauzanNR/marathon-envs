@@ -327,27 +327,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                     Debug.Log("Could not find a joint name matching " + s + " and specifically: " + parts[1]);
             else
             {
-                //var diff = info2store.minRotations[index] - info2store.maxRotations[index];
-                var diff = info2store.Values[index].upper - info2store.Values[index].lower;
-
-                info2store.Values[index].rangeOfMotion = new Vector3(
-                    Mathf.Abs(diff.x),
-                    Mathf.Abs(diff.y),
-                    Mathf.Abs(diff.z)
-                );
                 preview.Add(info2store.Values[index]);
-                //var rangeOfMotion = new Vector3(
-                //    Mathf.Abs(diff.x),
-                //    Mathf.Abs(diff.y),
-                //    Mathf.Abs(diff.z)
-                //);
-                //var p = new RangeOfMotionValue{
-                //    name=parts[1],
-                //    lower = info2store.minRotations[index],
-                //    upper = info2store.maxRotations[index],
-                //    rangeOfMotion = rangeOfMotion
-                //};             
-                //preview.Add(p);
             }
         }
         RangeOfMotionPreview = preview.ToArray();
