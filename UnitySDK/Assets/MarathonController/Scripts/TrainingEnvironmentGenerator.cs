@@ -373,6 +373,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             ArticulationBody ab = j.gameObject.AddComponent<ArticulationBody>();
             ab.anchorRotation = Quaternion.identity;
             ab.mass = 0.1f;
+            ab.jointType = ArticulationJointType.FixedJoint;
             articulatedJoints.Add(ab);
 
             //note: probably not needed
@@ -390,6 +391,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             c.radius = c.height;
             ab = go.AddComponent<ArticulationBody>();
             ab.anchorRotation = Quaternion.identity;
+            ab.jointType = ArticulationJointType.FixedJoint;
             ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); 
             colliders.Add(c);
         }
@@ -557,17 +559,18 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         dcobs.BodyPartsToTrack = new List<string>();
 
         //TODO: this could be EVERY joint, if we follow NVIDIA's approach to a universal physics controller. Meanwhile...
-        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceRoot.name);
-        dcobs.BodyPartsToTrack.Add("articulation:" + characterReferenceHead.name);
+        dcobs.BodyPartsToTrack.Add("collider:" + characterReferenceRoot.name);
+        dcobs.BodyPartsToTrack.Add("collider:" + characterReferenceHead.name);
        
         dcobs.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
 
-
-
         foreach (Transform t in characterReferenceFeet)
         {
-            dcobs.BodyPartsToTrack.Add("articulation:" + t.name);
-
+            dcobs.BodyPartsToTrack.Add("collider:" + t.name);
+        }
+        foreach (Transform t in characterReferenceHands)
+        {
+            dcobs.BodyPartsToTrack.Add("collider:" + t.name);
         }
 
 
