@@ -127,7 +127,10 @@ public class ObservationStats : MonoBehaviour
         if (_root == null)
         {
             Debug.Log("in game object: " + name + "my rootname is: " + rootName);
-            _root = _bodyParts.First(x => x.name == rootName).gameObject;
+            if (_rigidbodyParts?.Count > 0)
+                _root = _rigidbodyParts.First(x => x.name == rootName).gameObject;
+            else
+                _root = _articulationBodyParts.First(x => x.name == rootName).gameObject;
         }
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
