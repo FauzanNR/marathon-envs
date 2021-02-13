@@ -78,6 +78,7 @@ public class RewardStats : MonoBehaviour
             .Select(x => x.gameObject)
             .Distinct()
             .Where(x => x.GetComponent<Rigidbody>() != null || x.GetComponent<ArticulationBody>() != null)
+            .Where(x=>x.name.StartsWith("articulation:"))
             .ToList();
         _colliders = _bodyParts
             .SelectMany(x => x.GetComponentsInChildren<Collider>())
