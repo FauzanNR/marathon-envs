@@ -471,6 +471,8 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         //      _ragdoll4training.transform.parent = trainingenv.transform;
         //_ragdoll4training.transform.SetParent(trainingenv.transform);
 
+        _ragdoll4training.CameraTarget = root;
+
     
 
         return _ragdoll4training;
