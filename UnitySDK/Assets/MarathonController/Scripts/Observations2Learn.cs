@@ -36,10 +36,6 @@ public class Observations2Learn : MonoBehaviour
     [Tooltip("Smoothed actions produced in the previous step of the policy are collected in t −1")]
     public float[] PreviousActions;
 
-    [Header("Settings")]
-    //shouldn't those be game objects, instead of strings?
-    public List<string> BodyPartsToTrack;
-
     [Header("Gizmos")]
     public bool VelocityInWorldSpace = true;
     public bool PositionInWorldSpace = true;
@@ -62,9 +58,6 @@ public class Observations2Learn : MonoBehaviour
 
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
-        BodyPartDifferenceStats = BodyPartsToTrack
-            .Select(x => new BodyPartDifferenceStats { Name = x })
-            .ToList();
 
         _mocapBodyStats = new GameObject("MocapDReConObservationStats").AddComponent<ObservationStats>();
         _mocapBodyStats.setRootName(targetedRootName);
@@ -74,16 +67,30 @@ public class Observations2Learn : MonoBehaviour
         _mocapBodyStats.ObjectToTrack = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
 
         _mocapBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _mocapBodyStats.OnAgentInitialize(BodyPartsToTrack, _mocapBodyStats.ObjectToTrack.transform);
+        _mocapBodyStats.OnAgentInitialize(_mocapBodyStats.ObjectToTrack.transform);
 
         _ragDollBodyStats = new GameObject("RagDollDReConObservationStats").AddComponent<ObservationStats>();
         _ragDollBodyStats.setRootName(targetedRootName);
 
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
-        _ragDollBodyStats.OnAgentInitialize(BodyPartsToTrack, transform);
+        _ragDollBodyStats.OnAgentInitialize(transform);
+
+        BodyPartDifferenceStats = _mocapBodyStats.Stats
+            .Select(x => new BodyPartDifferenceStats { Name = x.Name })
+            .ToList();
+
     }
 
+    public List<Collider> EstimateBodyPartsToTrack()
+    {
+        var colliders = GetComponentsInChildren<Collider>()
+            .Where(x => x.enabled)
+            .Where(x => !x.isTrigger)
+            .Distinct()
+            .ToList();
+        return colliders;
+    }
 
 
     public void OnStep(float timeDelta)
@@ -118,11 +125,9 @@ public class Observations2Learn : MonoBehaviour
             _ragDollBodyStats.CenterOfMassVelocityDifference.x,
             _ragDollBodyStats.CenterOfMassVelocityDifference.z);
 
-        MocapBodyStats = BodyPartsToTrack
-            .Select(x => _mocapBodyStats.Stats.First(y => y.Name == x))
-            .ToList();
-        RagDollBodyStats = BodyPartsToTrack
-            .Select(x => _ragDollBodyStats.Stats.First(y => y.Name == x))
+        MocapBodyStats = _mocapBodyStats.Stats.ToList();
+        RagDollBodyStats = MocapBodyStats
+            .Select(x => _ragDollBodyStats.Stats.First(y => y.Name == x.Name))
             .ToList();
         // BodyPartStats = 
         foreach (var differenceStats in BodyPartDifferenceStats)
@@ -139,6 +144,10 @@ public class Observations2Learn : MonoBehaviour
     public Transform GetRagDollCOM()
     {
         return _ragDollBodyStats.transform;
+    }
+    public void ShiftMocapCOM(Vector3 snapDistance)
+    {
+        _ragDollBodyStats.ShiftCOM(snapDistance);
     }
     void OnDrawGizmos()
     {

@@ -47,7 +47,6 @@ public class ProcRagdollAgent : Agent
 
 
     bool _hasLazyInitialized;
-    bool _skipRewardAfterTeleport;
     float[] _smoothedActions;
     float[] _mocapTargets;
 
@@ -94,7 +93,6 @@ public class ProcRagdollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);
 
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
@@ -144,7 +142,7 @@ public class ProcRagdollAgent : Agent
 
         //foreach (var stat in _dReConObservations.RagDollBodyStats)
 
-        foreach (string s in _checkDrecon.BodyPartsToTrack)
+        foreach (var collider in _checkDrecon.EstimateBodyPartsToTrack())
 
         {
             size +=
@@ -152,7 +150,7 @@ public class ProcRagdollAgent : Agent
              + 3; //sensor.AddObservation(stat.Velocity);
         }
         //foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
-        foreach (string s in _checkDrecon.BodyPartsToTrack)
+        foreach (var collider in _checkDrecon.EstimateBodyPartsToTrack())
 
         {
             size +=
@@ -175,6 +173,11 @@ public class ProcRagdollAgent : Agent
     public override void OnActionReceived(float[] vectorAction)
     {
         Assert.IsTrue(_hasLazyInitialized);
+
+        float timeDelta = Time.fixedDeltaTime;
+        if (!_decisionRequester.TakeActionsBetweenDecisions)
+            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        _dReConRewards.OnStep(timeDelta);
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -214,9 +217,7 @@ public class ProcRagdollAgent : Agent
         }
         _dReConObservations.PreviousActions = vectorAction;
 
-        if (!_skipRewardAfterTeleport)
-            AddReward(_dReConRewards.Reward);
-        _skipRewardAfterTeleport = false;
+        AddReward(_dReConRewards.Reward);
         // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward < 1f)
         if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
         {
@@ -231,7 +232,6 @@ public class ProcRagdollAgent : Agent
             snapPosition.y = 0f;
             _mocapControllerArtanim.SnapTo(snapPosition);
             AddReward(-.5f);
-            _skipRewardAfterTeleport = true;
         }
     }
     float[] GetDebugActions(float[] vectorAction)
@@ -362,7 +362,6 @@ public class ProcRagdollAgent : Agent
         _dReConRewards.OnReset();
         _dReConObservations.OnStep(timeDelta);
         _dReConRewards.OnStep(timeDelta);
-        _skipRewardAfterTeleport = false;
 #if UNITY_EDITOR		
 		if (DebugPauseOnReset)
 		{

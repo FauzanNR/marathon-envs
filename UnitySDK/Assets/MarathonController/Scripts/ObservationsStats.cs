@@ -25,7 +25,6 @@ public class ObservationStats : MonoBehaviour
     }
 
     public MonoBehaviour ObjectToTrack;
-    List<string> _bodyPartsToTrack;
 
     [Header("Anchor stats")]
     public Vector3 HorizontalDirection; // Normalized vector in direction of travel (assume right angle to floor)
@@ -55,7 +54,7 @@ public class ObservationStats : MonoBehaviour
 
 
     SpawnableEnv _spawnableEnv;
-    List<Transform> _bodyParts;
+    List<Collider> _bodyParts;
     internal List<Rigidbody> _rigidbodyParts;
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
@@ -70,21 +69,16 @@ public class ObservationStats : MonoBehaviour
 
     }
 
-
-
-    public void OnAgentInitialize(List<string> bodyPartsToTrack, Transform defaultTransform)
+    public void OnAgentInitialize(Transform defaultTransform)
     {
         Assert.IsFalse(_hasLazyInitialized);
         _hasLazyInitialized = true;
 
-        _bodyPartsToTrack = bodyPartsToTrack;
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _rigidbodyParts = ObjectToTrack.GetComponentsInChildren<Rigidbody>().ToList();
         _articulationBodyParts = ObjectToTrack.GetComponentsInChildren<ArticulationBody>().ToList();
 
-
-        /*
         if (_rigidbodyParts?.Count > 0)
             _bodyParts = _rigidbodyParts
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
@@ -95,30 +89,13 @@ public class ObservationStats : MonoBehaviour
                 .SelectMany(x=>x.GetComponentsInChildren<Collider>())
                 .Distinct()
                 .ToList();
-        */
 
+        _bodyParts = _bodyParts
+            .Where(x => x.enabled)
+            .Where(x => !x.isTrigger)
+            .Distinct()
+            .ToList();
 
-
-        //TODO: fix this, it seems broken
-        if (_rigidbodyParts?.Count > 0)
-            _bodyParts = _rigidbodyParts
-                .SelectMany(x => x.GetComponentsInChildren<Transform>())
-                .Distinct()
-                .ToList();
-        else
-            _bodyParts = _articulationBodyParts
-                .SelectMany(x => x.GetComponentsInChildren<Transform>())
-                .Distinct()
-                .ToList();
-
-
-
-        var bodyPartNames = _bodyParts.Select(x => x.name);
-        if (_bodyPartsToTrack?.Count > 0)
-            _bodyParts = _bodyPartsToTrack
-                .Where(x => bodyPartNames.Contains(x))
-                .Select(x => _bodyParts.First(y => y.name == x))
-                .ToList();
         Stats = _bodyParts
             .Select(x => new Stat { Name = x.name })
             .ToList();
@@ -249,7 +226,6 @@ public class ObservationStats : MonoBehaviour
         {
             Stat bodyPartStat = Stats.First(x => x.Name == bodyPart.name);
 
-            /*
             Vector3 c = Vector3.zero;
             CapsuleCollider capsule = bodyPart as CapsuleCollider;
             BoxCollider box = bodyPart as BoxCollider;
@@ -261,8 +237,6 @@ public class ObservationStats : MonoBehaviour
             else if (sphere != null)
                 c = sphere.center;
             Vector3 worldPosition = bodyPart.transform.TransformPoint(c);
-            */
-            Vector3 worldPosition = transform.position;
 
             Quaternion worldRotation = bodyPart.transform.rotation;
             Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
@@ -312,7 +286,7 @@ public class ObservationStats : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if (_bodyPartsToTrack == null)
+        if (_bodyParts == null || _bodyParts.Count ==0)
             return;
         // draw arrow for desired input velocity
         // Vector3 pos = new Vector3(transform.position.x, transform.position.y, transform.position.z);
@@ -368,5 +342,11 @@ public class ObservationStats : MonoBehaviour
             Gizmos.DrawRay(start + vector, right * headSize);
             Gizmos.DrawRay(start + vector, left * headSize);
         }
+    }
+    public void ShiftCOM (Vector3 snapDistance)
+    {
+        Vector3 newCOM = LastCenterOfMassInWorldSpace + snapDistance;
+        LastCenterOfMassInWorldSpace = newCOM;
+        transform.position = newCOM;
     }
 }

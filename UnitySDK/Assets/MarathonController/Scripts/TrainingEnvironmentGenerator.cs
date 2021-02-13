@@ -556,27 +556,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         Observations2Learn dcobs = temp.gameObject.AddComponent<Observations2Learn>();
         dcobs.targetedRootName = characterReferenceRoot.name;  // target.ArticulationBodyRoot.name;
 
-        dcobs.BodyPartsToTrack = new List<string>();
-
-        //TODO: this could be EVERY joint, if we follow NVIDIA's approach to a universal physics controller. Meanwhile...
-        dcobs.BodyPartsToTrack.Add("collider:" + characterReferenceRoot.name);
-        dcobs.BodyPartsToTrack.Add("collider:" + characterReferenceHead.name);
-       
         dcobs.targetedRootName = "articulation:" + characterReferenceRoot.name; //it should be it's son, but let's see
-
-        foreach (Transform t in characterReferenceFeet)
-        {
-            dcobs.BodyPartsToTrack.Add("collider:" + t.name);
-        }
-        foreach (Transform t in characterReferenceHands)
-        {
-            dcobs.BodyPartsToTrack.Add("collider:" + t.name);
-        }
-
-
-
-
-
 
         MapRangeOfMotion2Constraints rom = temp.gameObject.AddComponent<MapRangeOfMotion2Constraints>();
 

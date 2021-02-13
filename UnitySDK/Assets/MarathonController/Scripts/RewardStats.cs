@@ -82,7 +82,7 @@ public class RewardStats : MonoBehaviour
         _colliders = _bodyParts
             .SelectMany(x => x.GetComponentsInChildren<Collider>())
             .Where(x => x.enabled)
-            .Where(x => !x.name.Contains("senor"))
+            .Where(x => !x.isTrigger)
             .Distinct()
             .ToList();
         if (orderToCopy != null)
@@ -382,5 +382,11 @@ public class RewardStats : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawRay(toTarget, velocityTarget);
         }
+    }
+    public void ShiftCOM (Vector3 snapDistance)
+    {
+        Vector3 newCOM = LastCenterOfMassInWorldSpace + snapDistance;
+        LastCenterOfMassInWorldSpace = newCOM;
+        transform.position = newCOM;
     }
 }
