@@ -3042,7 +3042,7 @@ MonoBehaviour:
   m_Model: {fileID: 5022602860645237092, guid: 0e791689cf0300c4fbe8be76f09fccff, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: ControllerMarathonMan-v1
+  m_BehaviorName: DReCon-v0
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1

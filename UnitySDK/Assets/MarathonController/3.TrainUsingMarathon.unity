@@ -450,10 +450,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Factory:
     spawnableEnvDefinitions:
-    - envId: ControllerProcedural-v0
-      envPrefab: {fileID: 1492108136843671507, guid: 989f54bc2839949829b2d3034de292f2,
+    - envId: MarConHumanoid-v0
+      envPrefab: {fileID: 6429944725415231238, guid: 849a21ae559bc4ee480c23ca1d2683d1,
         type: 3}
-    envIdDefault: ControllerProcedural-v0
+    envIdDefault: MarConHumanoid-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 0
