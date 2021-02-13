@@ -438,7 +438,11 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
 
-
+        foreach (var articulationBody in root.GetComponentsInChildren<ArticulationBody>())
+        {
+            var overlap = articulationBody.gameObject.AddComponent<HandleOverlap>();
+            overlap.Parent = target.ArticulationBodyRoot.gameObject;
+        }
 
         addSensorsInFeet(root);
 
