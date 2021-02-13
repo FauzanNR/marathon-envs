@@ -165,7 +165,7 @@ public class ROMparserSwingTwistEditor : Editor
 
             targetEnv.name = "ControllerMarathonManEnv";
 
-            string localEnvPath = "Assets/MarathonEnvs/Environments/" + targetEnv.name + ".prefab";
+            string localEnvPath = "Assets/MarathonController/Environments/" + targetEnv.name + ".prefab";
 
             // Make sure the file name is unique, in case an existing Prefab has the same name.
             string uniqueLocalEnvPath = AssetDatabase.GenerateUniqueAssetPath(localEnvPath);
