@@ -83,7 +83,6 @@ public class RewardStats : MonoBehaviour
             .SelectMany(x => x.GetComponentsInChildren<Collider>())
             .Where(x => x.enabled)
             .Where(x => !x.name.Contains("senor"))
-            .Where(x => x as CapsuleCollider != null)
             .Distinct()
             .ToList();
         if (orderToCopy != null)
