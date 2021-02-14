@@ -451,7 +451,7 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: MarConHumanoid-v0
-      envPrefab: {fileID: 6429944725415231238, guid: 849a21ae559bc4ee480c23ca1d2683d1,
+      envPrefab: {fileID: 884079593499418970, guid: 497767e1cd741724f935d26c61705efe,
         type: 3}
     envIdDefault: MarConHumanoid-v0
     trainingNumEnvsDefault: 1
