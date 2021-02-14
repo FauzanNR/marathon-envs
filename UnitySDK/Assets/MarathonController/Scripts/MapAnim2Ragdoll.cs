@@ -23,8 +23,12 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	[SerializeField]
 	Rigidbody _rigidbodyRoot;
 
-	private List<Rigidbody> _rigidbodies;
-	private List<Transform> _transforms;
+	List<Transform> _animTransforms;
+	List<Transform> _ragdollTransforms;
+
+
+	// private List<Rigidbody> _rigidbodies;
+	// private List<Transform> _transforms;
 
 	public bool RequestCamera;
 	public bool CameraFollowMe;
@@ -33,10 +37,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	Vector3 _resetPosition;
 	Quaternion _resetRotation;
 
-
-
-
-
 	[Space(20)]
 
 	//TODO: find a way to remove this dependency (otherwise, not fully procedural)
@@ -44,12 +44,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	AnimationController _mocapAnimController;
 
-	[SerializeField]
-	float _debugDistance = 0.0f;
-
-
-
-
+	// [SerializeField]
+	// float _debugDistance = 0.0f;
 
 	private List<MappingOffset> _offsetsSource2RB = null;
 
@@ -59,142 +55,116 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	bool _hasLazyInitialized;
 
+	// void SetOffsetSourcePose2RBInProceduralWorld() {
+
+	// 	_transforms = GetComponentsInChildren<Transform>().ToList();
+
+	// 	_offsetsSource2RB = new List<MappingOffset>();
 
 
-	void SetOffsetSourcePose2RBInProceduralWorld() {
+	// 	if (_rigidbodies == null)
+	// 	{
+	// 		_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
+	// 		// _transforms = GetComponentsInChildren<Transform>().ToList();
+	// 	}
+	// 	foreach (Rigidbody rb in _rigidbodies)
+	// 	{
 
-		_transforms = GetComponentsInChildren<Transform>().ToList();
+	// 		//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
 
-		_offsetsSource2RB = new List<MappingOffset>();
+	// 		string[] temp = rb.name.Split(':');
 
+	// 		//string tname = temp[1];
+	// 		string tname = rb.name.TrimStart(temp[0].ToArray<char>());
 
-		if (_rigidbodies == null)
-		{
-			_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
-			// _transforms = GetComponentsInChildren<Transform>().ToList();
-		}
+	// 		tname = tname.TrimStart(':');
 
+	// 		//if structure is "articulation:" + t.name, it comes from a joint:
 
+	// 		if (temp[0].Equals("articulation"))
+	// 		{
 
-		foreach (Rigidbody rb in _rigidbodies)
-		{
+	// 			Transform t = _transforms.First(x => x.name == tname);
 
-			//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
+	// 			//TODO: check these days if those values are different from 0, sometimes
+	// 			Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(t.rotation);
 
-			string[] temp = rb.name.Split(':');
+	// 			MappingOffset r = new MappingOffset(t, rb, qoffset);
 
-			//string tname = temp[1];
-			string tname = rb.name.TrimStart(temp[0].ToArray<char>());
+	// 			_offsetsSource2RB.Add(r);
+	// 			r.UpdateRigidBodies = true;//TODO: check if really needed, probably the constructor already does it
+	// 		}
+	// 	}
+	// }
 
-			tname = tname.TrimStart(':');
-
-
-			//if structure is "articulation:" + t.name, it comes from a joint:
-
-			if (temp[0].Equals("articulation"))
-			{
-
-				Transform t = _transforms.First(x => x.name == tname);
-
-
-				//TODO: check these days if those values are different from 0, sometimes
-				Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(t.rotation);
-
-				MappingOffset r = new MappingOffset(t, rb, qoffset);
-
-				_offsetsSource2RB.Add(r);
-				r.UpdateRigidBodies = true;//TODO: check if really needed, probably the constructor already does it
+	// MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
+	// {
+	// 	//here we set up:
+	// 	// a. the transform of the rigged character input
+	// 	// NO b. the rigidbody of the physical character
+	// 	// c. the offset calculated between the rigged character INPUT, and the rigidbody
 
 
+	// 	if (_transforms == null)
+	// 	{
+	// 		_transforms = GetComponentsInChildren<Transform>().ToList();
+	// 		//Debug.Log("the number of transforms  in source pose is: " + _transforms.Count);
 
-			}
-		}
+	// 	}
 
+	// 	if (_offsetsSource2RB == null)
+	// 	{
+	// 		_offsetsSource2RB = new List<MappingOffset>();
 
+	// 	}
 
-	}
+	// 	if (_rigidbodies == null )
+	// 	{
+	// 		_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
+	// 		// _transforms = GetComponentsInChildren<Transform>().ToList();
+	// 	}
 
+	// 	Rigidbody rb = null;
 
+	// 	try
+	// 	{
+	// 		rb = _rigidbodies.First(x => x.name == rbname);
+	// 	}
+	// 	catch (Exception e)
+	// 	{
+	// 		Debug.LogError("no rigidbody with name " + rbname);
+	// 	}
 
+	// 	Transform tref = null;
+	// 	try
+	// 	{
 
-	MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
-	{
-		//here we set up:
-		// a. the transform of the rigged character input
-		// NO b. the rigidbody of the physical character
-		// c. the offset calculated between the rigged character INPUT, and the rigidbody
+	// 		tref = _transforms.First(x => x.name == tname);
 
+	// 	}
+	// 	catch (Exception e)
+	// 	{
+	// 		Debug.LogError("no bone transform with name in input pose " + tname);
 
-		if (_transforms == null)
-		{
-			_transforms = GetComponentsInChildren<Transform>().ToList();
-			//Debug.Log("the number of transforms  in source pose is: " + _transforms.Count);
+	// 	}
 
-		}
+	// 	//from refPose to Physical body:
+	// 	//q_{physical_body} = q_{offset} * q_{refPose}
+	// 	//q_{offset} = q_{physical_body} * Quaternion.Inverse(q_{refPose})
 
-
-		if (_offsetsSource2RB == null)
-		{
-			_offsetsSource2RB = new List<MappingOffset>();
-
-		}
-
-		if (_rigidbodies == null )
-		{
-			_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
-			// _transforms = GetComponentsInChildren<Transform>().ToList();
-		}
-
-
-
-
-		Rigidbody rb = null;
-
-
-		try
-		{
-			rb = _rigidbodies.First(x => x.name == rbname);
-
-		}
-		catch (Exception e)
-		{
-
-			Debug.LogError("no rigidbody with name " + rbname);
-
-		}
+	// 	//Quaternion qoffset = rb.transform.localRotation * Quaternion.Inverse(tref.localRotation);
 
 
-	
-		Transform tref = null;
-		try
-		{
-
-			tref = _transforms.First(x => x.name == tname);
-
-		}
-		catch (Exception e)
-		{
-			Debug.LogError("no bone transform with name in input pose " + tname);
-
-		}
-
-		//from refPose to Physical body:
-		//q_{physical_body} = q_{offset} * q_{refPose}
-		//q_{offset} = q_{physical_body} * Quaternion.Inverse(q_{refPose})
-
-		//Quaternion qoffset = rb.transform.localRotation * Quaternion.Inverse(tref.localRotation);
+	// 	//using the global rotation instead of the local one prevents from dependencies on bones that are not mapped to the rigid body (like the shoulder)
+	// 	Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(tref.rotation);
 
 
-		//using the global rotation instead of the local one prevents from dependencies on bones that are not mapped to the rigid body (like the shoulder)
-		Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(tref.rotation);
+	// 	MappingOffset r = new MappingOffset(tref, rb, qoffset);
+	// 	r.UpdateRigidBodies = true;//not really needed, the constructor already does it
 
-
-		MappingOffset r = new MappingOffset(tref, rb, qoffset);
-		r.UpdateRigidBodies = true;//not really needed, the constructor already does it
-
-		_offsetsSource2RB.Add(r);
-		return r;
-	}
+	// 	_offsetsSource2RB.Add(r);
+	// 	return r;
+	// }
 
 
 
@@ -209,17 +179,13 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			return;
 		try
 		{
-
-			
 			_mocapAnimController = GetComponent<AnimationController>();
-
-
 			string s = _mocapAnimController.name;//this should launch an exception if there is no animator
 			_usingMocapAnimatorController = true;
 		}
 		catch(Exception e) {
 			_usingMocapAnimatorController = false;
-			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController");
+			Debug.LogWarning("Mocap Controller is working WITHOUT AnimationController");
 		}
 
 
@@ -250,6 +216,22 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         }
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
+
+		_ragdollTransforms = 
+			GetComponentsInChildren<Transform>()
+			.Where(x=>x.name.StartsWith("articulation"))
+			.ToList();
+		var ragdollNames = _ragdollTransforms
+			.Select(x=>x.name)
+			.ToList();
+		var animNames = ragdollNames
+			.Select(x=>x.Replace("articulation:",""))
+			.ToList();
+		var animTransforms = animNames
+			.Select(x=>GetComponentsInChildren<Transform>().FirstOrDefault(y=>y.name == x))
+			.Where(x=>x!=null)
+			.ToList();
+		_animTransforms = animTransforms;
 
 		_hasLazyInitialized = true;
     }
@@ -322,8 +304,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			child.gameObject.layer  = this.gameObject.layer;
 		}
-
-
 	}
 	void SetupSensors()
 	{
@@ -359,47 +339,39 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             // if (NormalizedTime <= endTime) {
             // }       
         }
-
 		MimicAnimation();
-		
-
-
     }
-
-	//void MimicAnimationArtanimInProceduralWorld() {
 
 	void MimicAnimation() {
 		if (!anim.enabled)
 			return;
-		else
-			SetOffsetSourcePose2RBInProceduralWorld();
 
-
-	}
-
-
-	
-
-
-	void MimicCynematicChar()
-	{
-
-		try
+		foreach (var animTransform in _animTransforms)
 		{
-			foreach (MappingOffset o in _offsetsSource2RB)
-			{
-				o.UpdateRotation();
-
-			}
+			var ragdollTransform = _ragdollTransforms
+				.First(x=>x.name == $"articulation:{animTransform.name}");
+			ragdollTransform.position = animTransform.position;
+			ragdollTransform.rotation = animTransform.rotation;
 		}
-		catch (Exception e)
-		{
-			Debug.Log("not calibrated yet...");
-
-		}
-
-
+		// SetOffsetSourcePose2RBInProceduralWorld();
+		// MimicCynematicChar();
 	}
+	// void MimicCynematicChar()
+	// {
+
+	// 	try
+	// 	{
+	// 		foreach (MappingOffset o in _offsetsSource2RB)
+	// 		{
+	// 			o.UpdateRotation();
+
+	// 		}
+	// 	}
+	// 	catch (Exception e)
+	// 	{
+	// 		Debug.Log("not calibrated yet...");
+	// 	}
+	// }
 
 
 
