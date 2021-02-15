@@ -177,6 +177,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     {
 		if (_hasLazyInitialized)
 			return;
+
+		// check if we need to create our ragdoll
+		var ragdoll4Mocap = GetComponentsInChildren<Transform>()
+			.Where(x=>x.name == "RagdollForMocap")
+			.FirstOrDefault();
+		if (ragdoll4Mocap == null)
+			DynamicallyCreateRagdollForMocap();
+
 		try
 		{
 			_mocapAnimController = GetComponent<AnimationController>();
