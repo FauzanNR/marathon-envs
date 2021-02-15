@@ -105,11 +105,8 @@ public class MarathonTestBedController : MonoBehaviour
                     butt = children.FirstOrDefault(x=>x.name=="butt");
                     break;
                 default:
-                    children = agent.GetComponentsInChildren<ArticulationBody>()
-                        .Where(x=>x.GetComponent<Collider>() != null)
-                        .ToArray();
-                    head = children.FirstOrDefault(x=>x.name.ToLower().Contains("head"));
                     children = agent.GetComponentsInChildren<ArticulationBody>();
+                    head = children.FirstOrDefault(x=>x.name.ToLower().Contains("head"));
                     butt = children.FirstOrDefault(x=>x.isRoot);
                     if (head == null || butt == null)
                         throw new System.ArgumentException($"agent.name: {agent.name}");

@@ -46,8 +46,8 @@ public class AnimationController : MonoBehaviour
     [SerializeField]
     Material materialUnderFoot;
 
-    [HideInInspector]
-    public int _layerMask;
+    public LayerMask IgnoreLayers;
+    
 
     [Tooltip("for debugging, we disable this when setTpose in MarathonTestBedController is on")]
     public bool doFixedUpdate = true;
@@ -188,8 +188,9 @@ public class AnimationController : MonoBehaviour
         {
             // find ground
             RaycastHit hit;
-            Ray ray = new Ray(transform.position + Vector3.up * kGroundedRayDistance * 0.5f, -Vector3.up);
-            if (Physics.Raycast(ray, out hit, kGroundedRayDistance, _layerMask, QueryTriggerInteraction.Ignore))
+            var rayStart = transform.position + ((Vector3.up * kGroundedRayDistance) * 0.5f);
+            Ray ray = new Ray(rayStart, -Vector3.up);
+            if (Physics.Raycast(ray, out hit, kGroundedRayDistance, ~IgnoreLayers, QueryTriggerInteraction.Ignore))
             {
                 // project velocity on plane
                 movement = _anim.deltaPosition;
