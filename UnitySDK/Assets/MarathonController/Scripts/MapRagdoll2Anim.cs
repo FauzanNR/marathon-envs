@@ -151,13 +151,13 @@ public class MapRagdoll2Anim : MonoBehaviour
 				_ragdollTransforms.Add(ragdollTransform);
 			}
 		}
+		// copy position for root (assume first target is root)
+		_animTransforms[0].position = _ragdollTransforms[0].position;
 		// copy rotation
 		for (int i = 0; i < _animTransforms.Count; i++)
 		{
 			_animTransforms[i].rotation = _ragdollTransforms[i].rotation;
 		}	
-		// copy position for root (assume first target is root)
-		_animTransforms[0].position = _ragdollTransforms[0].position;
 	}
 	// void MimicAnimationArtanim()
 	// {

@@ -356,13 +356,13 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	void MimicAnimation() {
 		if (!anim.enabled)
 			return;
+		// copy position for root (assume first target is root)
+		_ragdollTransforms[0].position = _animTransforms[0].position;
 		// copy rotation
 		for (int i = 0; i < _animTransforms.Count; i++)
 		{
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
 		}	
-		// copy position for root (assume first target is root)
-		_ragdollTransforms[0].position = _animTransforms[0].position;
 
 		// SetOffsetSourcePose2RBInProceduralWorld();
 		// MimicCynematicChar();
