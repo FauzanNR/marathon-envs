@@ -118,16 +118,17 @@ public class MapRagdoll2Anim : MonoBehaviour
 	// 	}
 	// }
 
-	private void FixedUpdate()
+	// use LateUpdate as physics runs at 2x and we only need to run once per render
+	private void LateUpdate()
 	{
 		// MimicAnimationArtanim();
 		if (_animTransforms == null)
 		{
-			_ragdollTransforms = 
+			var ragdollTransforms = 
 				_articulationBodyRoot.GetComponentsInChildren<Transform>()
 				.Where(x=>x.name.StartsWith("articulation"))
 				.ToList();
-			var ragdollNames = _ragdollTransforms
+			var ragdollNames = ragdollTransforms
 				.Select(x=>x.name)
 				.ToList();
 			var animNames = ragdollNames
@@ -137,15 +138,26 @@ public class MapRagdoll2Anim : MonoBehaviour
 				.Select(x=>GetComponentsInChildren<Transform>().FirstOrDefault(y=>y.name == x))
 				.Where(x=>x!=null)
 				.ToList();
-			_animTransforms = animTransforms;
+			_animTransforms = new List<Transform>();
+			_ragdollTransforms = new List<Transform>();
+			// first time, copy position and rotation
+			foreach (var animTransform in animTransforms)
+			{
+				var ragdollTransform = ragdollTransforms
+					.First(x=>x.name == $"articulation:{animTransform.name}");
+				animTransform.position = ragdollTransform.position;
+				animTransform.rotation = ragdollTransform.rotation;
+				_animTransforms.Add(animTransform);
+				_ragdollTransforms.Add(ragdollTransform);
+			}
 		}
-		foreach (var animTransform in _animTransforms)
+		// copy rotation
+		for (int i = 0; i < _animTransforms.Count; i++)
 		{
-			var ragdollTransform = _ragdollTransforms
-				.First(x=>x.name == $"articulation:{animTransform.name}");
-			animTransform.position = ragdollTransform.position;
-			animTransform.rotation = ragdollTransform.rotation;
-		}		
+			_animTransforms[i].rotation = _ragdollTransforms[i].rotation;
+		}	
+		// copy position for root (assume first target is root)
+		_animTransforms[0].position = _ragdollTransforms[0].position;
 	}
 	// void MimicAnimationArtanim()
 	// {

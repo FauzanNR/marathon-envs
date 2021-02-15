@@ -188,20 +188,38 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			Debug.LogWarning("Mocap Controller is working WITHOUT AnimationController");
 		}
 
+		var ragdollTransforms = 
+			GetComponentsInChildren<Transform>()
+			.Where(x=>x.name.StartsWith("articulation"))
+			.ToList();
+		var ragdollNames = ragdollTransforms
+			.Select(x=>x.name)
+			.ToList();
+		var animNames = ragdollNames
+			.Select(x=>x.Replace("articulation:",""))
+			.ToList();
+		var animTransforms = animNames
+			.Select(x=>GetComponentsInChildren<Transform>().FirstOrDefault(y=>y.name == x))
+			.Where(x=>x!=null)
+			.ToList();
+		_animTransforms = new List<Transform>();
+		_ragdollTransforms = new List<Transform>();
+		// first time, copy position and rotation
+		foreach (var animTransform in animTransforms)
+		{
+			var ragdollTransform = ragdollTransforms
+				.First(x=>x.name == $"articulation:{animTransform.name}");
+			ragdollTransform.position = animTransform.position;
+			ragdollTransform.rotation = animTransform.rotation;
+			_animTransforms.Add(animTransform);
+			_ragdollTransforms.Add(ragdollTransform);
+		}
 
 	
 
         SetupSensors();
 
-		anim = GetComponent<Animator>();
 		//if (_usingMocapAnimatorController && !_isGeneratedProcedurally)
-
-		if (_usingMocapAnimatorController)
-
-		{
-
-			anim.Update(0f);
-		}
 
 			if (RequestCamera && CameraTarget != null)
 		{
@@ -217,23 +235,15 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
 
-		_ragdollTransforms = 
-			GetComponentsInChildren<Transform>()
-			.Where(x=>x.name.StartsWith("articulation"))
-			.ToList();
-		var ragdollNames = _ragdollTransforms
-			.Select(x=>x.name)
-			.ToList();
-		var animNames = ragdollNames
-			.Select(x=>x.Replace("articulation:",""))
-			.ToList();
-		var animTransforms = animNames
-			.Select(x=>GetComponentsInChildren<Transform>().FirstOrDefault(y=>y.name == x))
-			.Where(x=>x!=null)
-			.ToList();
-		_animTransforms = animTransforms;
-
 		_hasLazyInitialized = true;
+
+		// NOTE: do after setting _hasLazyInitialized as can trigger infinate loop
+		anim = GetComponent<Animator>();
+		if (_usingMocapAnimatorController)
+		{
+			anim.Update(0f);
+		}
+
     }
 
 
@@ -313,7 +323,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    void FixedUpdate()
+    // void FixedUpdate()
+	void OnAnimatorMove()
     {
 		LazyInitialize();
         if (doFixedUpdate)
@@ -345,14 +356,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	void MimicAnimation() {
 		if (!anim.enabled)
 			return;
-
-		foreach (var animTransform in _animTransforms)
+		// copy rotation
+		for (int i = 0; i < _animTransforms.Count; i++)
 		{
-			var ragdollTransform = _ragdollTransforms
-				.First(x=>x.name == $"articulation:{animTransform.name}");
-			ragdollTransform.position = animTransform.position;
-			ragdollTransform.rotation = animTransform.rotation;
-		}
+			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
+		}	
+		// copy position for root (assume first target is root)
+		_ragdollTransforms[0].position = _animTransforms[0].position;
+
 		// SetOffsetSourcePose2RBInProceduralWorld();
 		// MimicCynematicChar();
 	}
