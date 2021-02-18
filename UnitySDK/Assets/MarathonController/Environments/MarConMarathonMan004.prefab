@@ -5290,8 +5290,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MaxForwardVelocity: 1
   MinTurnVelocity: 400
-  MaxTurnVelocity: 400
-  JumpSpeed: 10
+  MaxTurnVelocity: 1200
+  JumpSpeed: 5
   debugForceJump: 0
   _anim: {fileID: 0}
   _characterController: {fileID: 0}

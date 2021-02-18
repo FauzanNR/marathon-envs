@@ -6,8 +6,8 @@ public class AnimationController : MonoBehaviour
 {
     public float MaxForwardVelocity = 1f;        // Max run speed.
     public float MinTurnVelocity = 400f;         // Turn velocity when moving at maximum speed.
-    public float MaxTurnVelocity = 1200f / 3;        // Turn velocity when stationary.
-    public float JumpSpeed = 10f;                // 
+    public float MaxTurnVelocity = 1200f;        // Turn velocity when stationary.
+    public float JumpSpeed = 5f;                // 
     public bool debugForceJump;
 
 
