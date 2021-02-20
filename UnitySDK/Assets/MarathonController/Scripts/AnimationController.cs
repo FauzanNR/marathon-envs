@@ -253,7 +253,8 @@ public class AnimationController : MonoBehaviour
     }
     void SetTargetFromMoveInput()
     {
-
+        if (!_inputController) //if it is used without a ragdoll agent (for example, for ROM extraction), we still need to initialize it
+            OnAgentInitialize();
 
         Vector2 moveInput = _inputController.MovementVector;
         Vector3 localMovementDirection = new Vector3(moveInput.x, 0f, moveInput.y).normalized;

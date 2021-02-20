@@ -80,7 +80,7 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
 
         // hadle mocap going out of bounds
-        if (!_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position))
+        if (!_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position+new Vector3(0f, .1f, 0f)))
         {
             _mocapControllerArtanim.transform.position = _spawnableEnv.transform.position;
             _trackBodyStatesInWorldSpace.LinkStatsToRigidBodies();

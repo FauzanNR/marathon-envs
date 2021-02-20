@@ -276,6 +276,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 
 		// swap ArticulatedBody for RidgedBody
+        List<string> bodiesNamesToDelete = new List<string>();
 		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
 			var bodyGameobject = abody.gameObject;
@@ -284,7 +285,15 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			rb.useGravity = abody.useGravity;
 			// it makes no sense but if i do not set the layer here, then some objects dont have the correct layer
 			rb.gameObject.layer  = this.gameObject.layer;
+			bodiesNamesToDelete.Add(abody.name);
+		}
+		foreach (var name in bodiesNamesToDelete)
+		{
+			var abody = clone
+				.GetComponentsInChildren<ArticulationBody>()
+				.First(x=>x.name == name);
 			DestroyImmediate(abody);
+
 		}
 		// make Kinematic
 		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
@@ -314,13 +323,17 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		this._rigidbodyRoot = clone.GetComponent<Rigidbody>();
 		// set the layers
 		ragdollForMocap.layer = this.gameObject.layer;
-		foreach (Transform child in ragdollForMocap.transform)
+		foreach (Transform child in ragdollForMocap.GetComponentInChildren<Transform>())
 		{
 			child.gameObject.layer  = this.gameObject.layer;
 		}
-		foreach (Transform child in clone.transform)
+		var triggers = ragdollForMocap
+			.GetComponentsInChildren<Collider>()
+			.Where(x=>x.isTrigger);
+		foreach (var trigger in triggers)
 		{
-			child.gameObject.layer  = this.gameObject.layer;
+			trigger.gameObject.SetActive(false);
+			trigger.gameObject.SetActive(true);
 		}
 	}
 	void SetupSensors()
