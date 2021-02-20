@@ -84,6 +84,11 @@ public class RewardStats : MonoBehaviour
             .SelectMany(x => x.GetComponentsInChildren<Collider>())
             .Where(x => x.enabled)
             .Where(x => !x.isTrigger)
+            .Where(x=> {
+                var ignoreCollider = x.GetComponent<IgnoreColliderForReward>();
+                if (ignoreCollider == null)
+                    return true;
+                return !ignoreCollider.enabled;})
             .Distinct()
             .ToList();
         if (orderToCopy != null)

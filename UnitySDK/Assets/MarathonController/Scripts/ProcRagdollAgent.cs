@@ -15,6 +15,7 @@ public class ProcRagdollAgent : Agent
     [Header("Settings")]
     public float FixedDeltaTime = 1f / 60f;
     public float SmoothBeta = 0.2f;
+    public bool ReproduceDReCon;
 
     [Header("Camera")]
 
@@ -90,6 +91,11 @@ public class ProcRagdollAgent : Agent
     override public void CollectObservations(VectorSensor sensor)
     {
         Assert.IsTrue(_hasLazyInitialized);
+        if (ReproduceDReCon)
+        {
+            AddDReConObservations(sensor);
+            return;
+        }
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
@@ -121,6 +127,35 @@ public class ProcRagdollAgent : Agent
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
     }
+    void AddDReConObservations(VectorSensor sensor)
+    {
+        float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        _dReConObservations.OnStep(timeDelta);
+
+        sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
+        sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
+        sensor.AddObservation(_dReConObservations.RagDollCOMVelocity - _dReConObservations.MocapCOMVelocity);
+        sensor.AddObservation(_dReConObservations.InputDesiredHorizontalVelocity);
+        sensor.AddObservation(_dReConObservations.InputJump);
+        sensor.AddObservation(_dReConObservations.InputBackflip);
+        sensor.AddObservation(_dReConObservations.HorizontalVelocityDifference);
+        // foreach (var stat in _dReConObservations.MocapBodyStats)
+        // {
+        //     sensor.AddObservation(stat.Position);
+        //     sensor.AddObservation(stat.Velocity);
+        // }
+        foreach (var stat in _dReConObservations.RagDollBodyStats)
+        {
+            sensor.AddObservation(stat.Position);
+            sensor.AddObservation(stat.Velocity);
+        }
+        foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
+        {
+            sensor.AddObservation(stat.Position);
+            sensor.AddObservation(stat.Velocity);
+        }
+        sensor.AddObservation(_dReConObservations.PreviousActions);
+    }
 
     //adapted from previous function (Collect Observations)
     public int calculateDreConObservationsize()
@@ -142,7 +177,7 @@ public class ProcRagdollAgent : Agent
 
         //foreach (var stat in _dReConObservations.RagDollBodyStats)
 
-        foreach (var collider in _checkDrecon.EstimateBodyPartsToTrack())
+        foreach (var collider in _checkDrecon.EstimateBodyPartsForObservation())
 
         {
             size +=
@@ -150,7 +185,7 @@ public class ProcRagdollAgent : Agent
              + 3; //sensor.AddObservation(stat.Velocity);
         }
         //foreach (var stat in _dReConObservations.BodyPartDifferenceStats)
-        foreach (var collider in _checkDrecon.EstimateBodyPartsToTrack())
+        foreach (var collider in _checkDrecon.EstimateBodyPartsForObservation())
 
         {
             size +=

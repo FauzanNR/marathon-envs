@@ -93,6 +93,11 @@ public class ObservationStats : MonoBehaviour
         _bodyParts = _bodyParts
             .Where(x => x.enabled)
             .Where(x => !x.isTrigger)
+            .Where(x=> {
+                var ignoreCollider = x.GetComponent<IgnoreColliderForObservation>();
+                if (ignoreCollider == null)
+                    return true;
+                return !ignoreCollider.enabled;})
             .Distinct()
             .ToList();
 

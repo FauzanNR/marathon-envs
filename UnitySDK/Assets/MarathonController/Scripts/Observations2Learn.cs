@@ -82,11 +82,30 @@ public class Observations2Learn : MonoBehaviour
 
     }
 
-    public List<Collider> EstimateBodyPartsToTrack()
+    public List<Collider> EstimateBodyPartsForObservation()
     {
         var colliders = GetComponentsInChildren<Collider>()
             .Where(x => x.enabled)
             .Where(x => !x.isTrigger)
+            .Where(x=> {
+                var ignoreCollider = x.GetComponent<IgnoreColliderForObservation>();
+                if (ignoreCollider == null)
+                    return true;
+                return !ignoreCollider.enabled;})
+            .Distinct()
+            .ToList();
+        return colliders;
+    }
+    public List<Collider> EstimateBodyPartsForReward()
+    {
+        var colliders = GetComponentsInChildren<Collider>()
+            .Where(x => x.enabled)
+            .Where(x => !x.isTrigger)
+            .Where(x=> {
+                var ignoreCollider = x.GetComponent<IgnoreColliderForReward>();
+                if (ignoreCollider == null)
+                    return true;
+                return !ignoreCollider.enabled;})
             .Distinct()
             .ToList();
         return colliders;

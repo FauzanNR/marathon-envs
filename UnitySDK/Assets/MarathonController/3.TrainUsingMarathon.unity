@@ -453,6 +453,9 @@ MonoBehaviour:
     - envId: MarConHumanoid-v0
       envPrefab: {fileID: 884079593499418970, guid: bfeda77cbec1d4ce4835049e3cdde182,
         type: 3}
+    - envId: DReConHumanoid-v0
+      envPrefab: {fileID: 884079593499418970, guid: 32ae3dba713e54b22910e58a8722e75d,
+        type: 3}
     envIdDefault: MarConHumanoid-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
