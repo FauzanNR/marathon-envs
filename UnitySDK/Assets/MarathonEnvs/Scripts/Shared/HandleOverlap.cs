@@ -6,39 +6,17 @@ namespace Unity.MLAgents
     {
         public GameObject Parent;
 
-        int _lateUpdateSteps;
-
-        /// <summary>
-        /// OnCollisionEnter is called when this collider/rigidbody has begun
-        /// touching another rigidbody/collider.
-        /// </summary>
-        /// <param name="other">The Collision data associated with this collision.</param>
-        void OnCollisionEnter(Collision other)
+        void OnEnable()
         {
-            Collider myCollider = GetComponent<Collider>();
-            if (myCollider == null)
+            enabled = false;
+            if (Parent == null)
                 return;
-            if (!enabled)
+            var collider = GetComponent<Collider>();
+            var parentCollider = Parent.GetComponent<Collider>();
+            if (collider == null || parentCollider == null)
                 return;
-            // skip if other does not share Parent
-            HandleOverlap otherOverlap = other.gameObject.GetComponent<HandleOverlap>();
-            if (otherOverlap == null)
-                return;
-            if (otherOverlap.Parent != Parent)
-            {
-                //Debug.Log("the parent of: " + name + "is not: " + Parent.name);
-                return;
-
-            }
-            Physics.IgnoreCollision(myCollider, other.collider);
-        }
-
-        void LateUpdate()
-        {
-            // ensure we had atleast once full physics step
-            if (_lateUpdateSteps > 0)
-                enabled = false;
-            _lateUpdateSteps++;
+            // Debug.Log($"Physics.IgnoreCollision: {collider.name} and {parentCollider.name}");
+            Physics.IgnoreCollision(collider, parentCollider);
         }
     }
 }
