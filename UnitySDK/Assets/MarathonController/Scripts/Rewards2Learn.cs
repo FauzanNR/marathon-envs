@@ -200,10 +200,6 @@ public class Rewards2Learn : MonoBehaviour
         _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;
         _ragDollBodyStats.transform.rotation = _mocapBodyStats.transform.rotation;
     }
-    public void ShiftMocapCOM(Vector3 snapDistance)
-    {
-        _mocapBodyStats.ShiftCOM(snapDistance);
-    }
     void OnDrawGizmos()
     {
         if (_ragDollBodyStats == null)

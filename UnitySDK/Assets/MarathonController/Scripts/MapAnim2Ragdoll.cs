@@ -25,6 +25,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	List<Transform> _animTransforms;
 	List<Transform> _ragdollTransforms;
+	List<Rigidbody> _ragDollRigidbody;
 
 
 	// private List<Rigidbody> _rigidbodies;
@@ -38,6 +39,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	Quaternion _resetRotation;
 
 	[Space(20)]
+	[Header("Stats")]
+    public Vector3 CenterOfMassVelocity;
+    public float CenterOfMassVelocityMagnitude;
+    public Vector3 LastCenterOfMassInWorldSpace;
+
 
 	//TODO: find a way to remove this dependency (otherwise, not fully procedural)
 	private bool _usingMocapAnimatorController = false;
@@ -54,120 +60,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     public bool doFixedUpdate = true;
 
 	bool _hasLazyInitialized;
-
-	// void SetOffsetSourcePose2RBInProceduralWorld() {
-
-	// 	_transforms = GetComponentsInChildren<Transform>().ToList();
-
-	// 	_offsetsSource2RB = new List<MappingOffset>();
-
-
-	// 	if (_rigidbodies == null)
-	// 	{
-	// 		_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
-	// 		// _transforms = GetComponentsInChildren<Transform>().ToList();
-	// 	}
-	// 	foreach (Rigidbody rb in _rigidbodies)
-	// 	{
-
-	// 		//ArticulationBody ab = _articulationbodies.First(x => x.name == abname);
-
-	// 		string[] temp = rb.name.Split(':');
-
-	// 		//string tname = temp[1];
-	// 		string tname = rb.name.TrimStart(temp[0].ToArray<char>());
-
-	// 		tname = tname.TrimStart(':');
-
-	// 		//if structure is "articulation:" + t.name, it comes from a joint:
-
-	// 		if (temp[0].Equals("articulation"))
-	// 		{
-
-	// 			Transform t = _transforms.First(x => x.name == tname);
-
-	// 			//TODO: check these days if those values are different from 0, sometimes
-	// 			Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(t.rotation);
-
-	// 			MappingOffset r = new MappingOffset(t, rb, qoffset);
-
-	// 			_offsetsSource2RB.Add(r);
-	// 			r.UpdateRigidBodies = true;//TODO: check if really needed, probably the constructor already does it
-	// 		}
-	// 	}
-	// }
-
-	// MappingOffset SetOffsetSourcePose2RB(string rbname, string tname)
-	// {
-	// 	//here we set up:
-	// 	// a. the transform of the rigged character input
-	// 	// NO b. the rigidbody of the physical character
-	// 	// c. the offset calculated between the rigged character INPUT, and the rigidbody
-
-
-	// 	if (_transforms == null)
-	// 	{
-	// 		_transforms = GetComponentsInChildren<Transform>().ToList();
-	// 		//Debug.Log("the number of transforms  in source pose is: " + _transforms.Count);
-
-	// 	}
-
-	// 	if (_offsetsSource2RB == null)
-	// 	{
-	// 		_offsetsSource2RB = new List<MappingOffset>();
-
-	// 	}
-
-	// 	if (_rigidbodies == null )
-	// 	{
-	// 		_rigidbodies = _rigidbodyRoot.GetComponentsInChildren<Rigidbody>().ToList();
-	// 		// _transforms = GetComponentsInChildren<Transform>().ToList();
-	// 	}
-
-	// 	Rigidbody rb = null;
-
-	// 	try
-	// 	{
-	// 		rb = _rigidbodies.First(x => x.name == rbname);
-	// 	}
-	// 	catch (Exception e)
-	// 	{
-	// 		Debug.LogError("no rigidbody with name " + rbname);
-	// 	}
-
-	// 	Transform tref = null;
-	// 	try
-	// 	{
-
-	// 		tref = _transforms.First(x => x.name == tname);
-
-	// 	}
-	// 	catch (Exception e)
-	// 	{
-	// 		Debug.LogError("no bone transform with name in input pose " + tname);
-
-	// 	}
-
-	// 	//from refPose to Physical body:
-	// 	//q_{physical_body} = q_{offset} * q_{refPose}
-	// 	//q_{offset} = q_{physical_body} * Quaternion.Inverse(q_{refPose})
-
-	// 	//Quaternion qoffset = rb.transform.localRotation * Quaternion.Inverse(tref.localRotation);
-
-
-	// 	//using the global rotation instead of the local one prevents from dependencies on bones that are not mapped to the rigid body (like the shoulder)
-	// 	Quaternion qoffset = rb.transform.rotation * Quaternion.Inverse(tref.rotation);
-
-
-	// 	MappingOffset r = new MappingOffset(tref, rb, qoffset);
-	// 	r.UpdateRigidBodies = true;//not really needed, the constructor already does it
-
-	// 	_offsetsSource2RB.Add(r);
-	// 	return r;
-	// }
-
-
-
 
 	public void OnAgentInitialize()
 	{
@@ -222,8 +114,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			_animTransforms.Add(animTransform);
 			_ragdollTransforms.Add(ragdollTransform);
 		}
-
-	
+		_ragDollRigidbody = _ragdollTransforms
+			.Select(x=>x.GetComponent<Rigidbody>())
+			.Where(x=> x != null)
+			.ToList();
 
         SetupSensors();
 
@@ -383,28 +277,30 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		for (int i = 0; i < _animTransforms.Count; i++)
 		{
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
-		}	
-
-		// SetOffsetSourcePose2RBInProceduralWorld();
-		// MimicCynematicChar();
+		}
+        // get Center Of Mass velocity in f space
+        float timeDelta = Time.fixedDeltaTime;
+		var newCOM = GetCenterOfMass();
+        var velocity = newCOM - LastCenterOfMassInWorldSpace;
+        velocity /= timeDelta;
+        CenterOfMassVelocity = transform.InverseTransformVector(velocity);
+        CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+		LastCenterOfMassInWorldSpace = newCOM;
 	}
-	// void MimicCynematicChar()
-	// {
-
-	// 	try
-	// 	{
-	// 		foreach (MappingOffset o in _offsetsSource2RB)
-	// 		{
-	// 			o.UpdateRotation();
-
-	// 		}
-	// 	}
-	// 	catch (Exception e)
-	// 	{
-	// 		Debug.Log("not calibrated yet...");
-	// 	}
-	// }
-
+	
+    Vector3 GetCenterOfMass()
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (Rigidbody ab in _ragDollRigidbody)
+        {
+            centerOfMass += ab.worldCenterOfMass * ab.mass;
+            totalMass += ab.mass;
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
+    }
 
 
 	public void OnReset(Quaternion resetRotation)
@@ -423,16 +319,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		else
 		{
 			Debug.Log("I am resetting the reference animation with MxMAnimator (no _mocapController)");
-
-		
-
-
 		}
-
-
-
-
-
 		transform.position = _resetPosition;
 		// handle character controller skin width
 		var characterController = GetComponent<CharacterController>();
@@ -445,7 +332,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		transform.rotation = resetRotation;
 		
 		MimicAnimation();
-		
+		LastCenterOfMassInWorldSpace = GetCenterOfMass();
+		CenterOfMassVelocity = Vector3.zero;
+		CenterOfMassVelocityMagnitude = 0f;
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
@@ -524,6 +413,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		snapPosition.y = transform.position.y;
 		var snapDistance = snapPosition-transform.position;
 		transform.position = snapPosition;
+		LastCenterOfMassInWorldSpace = GetCenterOfMass();
 		return snapDistance;
 	}
 	public List<Rigidbody> GetRigidBodies()

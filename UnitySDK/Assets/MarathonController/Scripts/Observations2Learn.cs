@@ -164,10 +164,6 @@ public class Observations2Learn : MonoBehaviour
     {
         return _ragDollBodyStats.transform;
     }
-    public void ShiftMocapCOM(Vector3 snapDistance)
-    {
-        _ragDollBodyStats.ShiftCOM(snapDistance);
-    }
     void OnDrawGizmos()
     {
         if (_mocapBodyStats == null)

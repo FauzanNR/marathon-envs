@@ -17,11 +17,6 @@ public class RewardStats : MonoBehaviour
     public Vector3 CenterOfMassVelocity;
     public float CenterOfMassVelocityMagnitude;
 
-    // [Header("debug")]
-    // public Vector3 debugA;
-    // public Vector3 debugB;
-    // public Vector3 debugC;
-
     [HideInInspector]
     public Vector3 LastCenterOfMassInWorldSpace;
     [HideInInspector]
@@ -33,6 +28,7 @@ public class RewardStats : MonoBehaviour
     List<ArticulationBody> _articulationBodyParts;
     List<GameObject> _bodyParts;
     GameObject _root;
+    MapAnim2Ragdoll _mapAnim2Ragdoll;
     List<GameObject> _trackRotations;
     public List<Quaternion> Rotations;
     public Vector3[] Points;
@@ -60,6 +56,7 @@ public class RewardStats : MonoBehaviour
         Assert.IsFalse(_hasLazyInitialized);
         _hasLazyInitialized = true;
 
+        _mapAnim2Ragdoll = defaultTransform.GetComponent<MapAnim2Ragdoll>();
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _articulationBodyParts = ObjectToTrack
             .GetComponentsInChildren<ArticulationBody>()
@@ -159,30 +156,38 @@ public class RewardStats : MonoBehaviour
 
     public void SetStatusForStep(float timeDelta)
     {
-        // find Center Of Mass and velocity
-        Vector3 newCOM;
-        if (_rigidbodyParts?.Count > 0)
-            newCOM = GetCenterOfMass(_rigidbodyParts);
-        else
-            newCOM = GetCenterOfMass(_articulationBodyParts);
-        if (!LastIsSet)
-        {
-            LastCenterOfMassInWorldSpace = newCOM;
-        }
-
         // generate Horizontal Direction
         var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
 
-        // set this object to be f space
-        transform.position = newCOM;
-        transform.rotation = Quaternion.Euler(newHorizontalDirection);
-
         // get Center Of Mass velocity in f space
-        var velocity = transform.position - LastCenterOfMassInWorldSpace;
-        velocity /= timeDelta;
-        CenterOfMassVelocity = transform.InverseTransformVector(velocity);
-        CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
-
+        Vector3 newCOM;
+        // if Moocap, then get from anim2Ragdoll
+        if (_mapAnim2Ragdoll != null)
+        {
+            newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            if (!LastIsSet)
+            {
+                LastCenterOfMassInWorldSpace = newCOM;
+            }
+            CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
+            CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
+            transform.position = newCOM;
+            transform.rotation = Quaternion.Euler(newHorizontalDirection);
+        }
+        else
+        {
+            newCOM = GetCenterOfMass();
+            if (!LastIsSet)
+            {
+                LastCenterOfMassInWorldSpace = newCOM;
+            }
+            transform.position = newCOM;
+            transform.rotation = Quaternion.Euler(newHorizontalDirection);
+            var velocity = transform.position - LastCenterOfMassInWorldSpace;
+            velocity /= timeDelta;
+            CenterOfMassVelocity = transform.InverseTransformVector(velocity);
+            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;            
+        }
         LastCenterOfMassInWorldSpace = newCOM;
 
         GetAllPoints(Points);
@@ -331,24 +336,11 @@ public class RewardStats : MonoBehaviour
             pointBuffer[idx++] = point6;
         }
     }
-    Vector3 GetCenterOfMass(IEnumerable<ArticulationBody> bodies)
+    Vector3 GetCenterOfMass()
     {
         var centerOfMass = Vector3.zero;
         float totalMass = 0f;
-        foreach (ArticulationBody ab in bodies)
-        {
-            centerOfMass += ab.worldCenterOfMass * ab.mass;
-            totalMass += ab.mass;
-        }
-        centerOfMass /= totalMass;
-        // centerOfMass -= _spawnableEnv.transform.position;
-        return centerOfMass;
-    }
-    Vector3 GetCenterOfMass(IEnumerable<Rigidbody> bodies)
-    {
-        var centerOfMass = Vector3.zero;
-        float totalMass = 0f;
-        foreach (Rigidbody ab in bodies)
+        foreach (ArticulationBody ab in _articulationBodyParts)
         {
             centerOfMass += ab.worldCenterOfMass * ab.mass;
             totalMass += ab.mass;
@@ -388,11 +380,5 @@ public class RewardStats : MonoBehaviour
             Gizmos.color = Color.green;
             Gizmos.DrawRay(toTarget, velocityTarget);
         }
-    }
-    public void ShiftCOM (Vector3 snapDistance)
-    {
-        Vector3 newCOM = LastCenterOfMassInWorldSpace + snapDistance;
-        LastCenterOfMassInWorldSpace = newCOM;
-        transform.position = newCOM;
     }
 }

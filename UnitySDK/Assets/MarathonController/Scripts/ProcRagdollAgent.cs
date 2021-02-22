@@ -91,14 +91,15 @@ public class ProcRagdollAgent : Agent
     override public void CollectObservations(VectorSensor sensor)
     {
         Assert.IsTrue(_hasLazyInitialized);
+
+        float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        _dReConObservations.OnStep(timeDelta);
+
         if (ReproduceDReCon)
         {
             AddDReConObservations(sensor);
             return;
         }
-
-        float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-        _dReConObservations.OnStep(timeDelta);
 
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
@@ -129,9 +130,6 @@ public class ProcRagdollAgent : Agent
     }
     void AddDReConObservations(VectorSensor sensor)
     {
-        float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-        _dReConObservations.OnStep(timeDelta);
-
         sensor.AddObservation(_dReConObservations.MocapCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity);
         sensor.AddObservation(_dReConObservations.RagDollCOMVelocity - _dReConObservations.MocapCOMVelocity);
@@ -261,12 +259,13 @@ public class ProcRagdollAgent : Agent
         }
         // else if (_dReConRewards.HeadDistance > 1.5f)
         else if (_dReConRewards.Reward <= 0.1f && !dontSnapMocapToRagdoll)
+        // else if (!dontSnapMocapToRagdoll)
         {
             Transform ragDollCom = _dReConObservations.GetRagDollCOM();
             Vector3 snapPosition = ragDollCom.position;
             snapPosition.y = 0f;
-            _mocapControllerArtanim.SnapTo(snapPosition);
-            AddReward(-.5f);
+            var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
+            // AddReward(-.5f);
         }
     }
     float[] GetDebugActions(float[] vectorAction)
