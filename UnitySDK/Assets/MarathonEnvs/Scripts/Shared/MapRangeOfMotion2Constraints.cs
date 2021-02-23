@@ -56,35 +56,22 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
     {
         if (info2store == null || info2store.Values.Length == 0)
             return -1;
-        // var ragdollAgent = GetComponent<RagDollAgent>();
-        ArticulationBody[] articulationBodies = GetComponentsInChildren<ArticulationBody>(true);
 
-
-        //we only keep the ones that have colliders (and therefore do not correspond to joints).
-        List<ArticulationBody> listofAB = new List<ArticulationBody>();
-        foreach (ArticulationBody ab in articulationBodies)
-        {
-            if (ab.GetComponent<Collider>() == null)
-                listofAB.Add(ab);
-
-        }
-        articulationBodies = listofAB.ToArray();
+        ArticulationBody[] articulationBodies = 
+            GetComponentsInChildren<ArticulationBody>(true)
+            .Where(x=>x.name.StartsWith("articulation:"))
+            .ToArray();
 
         int DegreesOfFreedom = 0;
 
-        //below does not work because there are more Values than articulationBody (for example, fingers)
-        //foreach (var rom in RangeOfMotion2Store.Values)
-
-        //foreach (var rom in RangeOfMotion2Store.Values)
         foreach (ArticulationBody body in articulationBodies)
         {
+            string keyword1 = "articulation:";
+            string keyword2 = "collider:";
+            string valuename = body.name.TrimStart(keyword1.ToArray<char>());
+            valuename = valuename.TrimStart(keyword2.ToArray<char>());
 
-            //string tname = temp[1];
-            string keyword = "articulation:";
-            string valuename = body.name.TrimStart(keyword.ToArray<char>());
-
-
-            RangeOfMotionValue rom = info2store.Values.First(x => x.name == valuename);
+            RangeOfMotionValue rom = info2store.Values.FirstOrDefault(x => x.name == valuename);
 
             if (rom == null)
             {
@@ -180,6 +167,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
 
         myActionSpec.NumContinuousActions = DegreesOfFreedom;
+        myActionSpec.BranchSizes = new List<int>().ToArray();
         bp.BrainParameters.ActionSpec = myActionSpec;
         Debug.Log("Space of actions calculated at:" + myActionSpec.NumContinuousActions + " continuous dimensions");
 

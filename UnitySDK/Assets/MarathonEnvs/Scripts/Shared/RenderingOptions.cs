@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.MLAgents;
 
 public class RenderingOptions : MonoBehaviour
 {
@@ -31,10 +32,12 @@ public class RenderingOptions : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (renderOnlyTarget != currentRenderingState)
+        bool isTrainingMode = Academy.Instance.IsCommunicatorOn;
+        bool onlyTarget = renderOnlyTarget || isTrainingMode;
+        if (onlyTarget != currentRenderingState)
         {
-            currentRenderingState = renderOnlyTarget;
-            if (renderOnlyTarget)
+            currentRenderingState = onlyTarget;
+            if (onlyTarget)
             {
                 foreach (SkinnedMeshRenderer r in SkinnedRenderers)
                     r.enabled = false;
