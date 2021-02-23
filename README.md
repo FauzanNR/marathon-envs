@@ -2,9 +2,9 @@
 
 ## 1. Introduction
 
-I have used this Repository to integrate the use of physics-based characters, as found in the project *Marathon Environments*, with usual character animation techniques, based on  skinned characters. This project is a fork of *Marathon Environments*, and the Readme of the initial project can be found [here](README-marathon-environments.md). Joe Booth is the main developer of   *Marathon Environment*, and has also helped substantially in this project. Valérie Juillard, a colleague from the [Artanim Foundation](www.artanim.ch) has provided some of the animations.
+This is the repository of *Marathon Environments*, which combines benchmarks for physics-based character animation with  skinned characters, to simplify its use. The main contributors, so far, are Joe Booth and Joan Llobera. Valérie Juillard, a colleague from the [Artanim Foundation](www.artanim.ch) has provided some of the animations.
 
-The typical thing that you can get using this tool is an animated character that is physically plausible, and that it imitates a reference animation. In the small clip below the blue character is the physics character, and the red, semi-transparent one, is the reference animation. 
+The typical task that you can get solved using this tool is the creation of an animated character that is physically plausible, and that it imitates a reference animation. In the small clip below the blue character is the physics character, and the red, semi-transparent one, is the reference animation. 
 
 
 
@@ -20,11 +20,13 @@ The typical thing that you can get using this tool is an animated character that
 
 
 
-**Problem:** The main problem is to aovid getting results that look like  if they came with this *department of silly walks* effect, which obviously does not appear in the demos of the papers. It is annoying, and we absolutely need to solve it if we want to have something that can be used in practice... 
+**Challenge:** The main problem to solve in physics-based animation seems to be to  avoid getting results that look like  if they came with this *department of silly walks* effect, which obviously does not appear in the demos of the papers. It is annoying, and we absolutely need to solve it if we want to have something that can be used in practice... 
 
 ![Weird Walks](img/marathon-man-silly-walks.gif)
 
 
+
+ This project is a fork of *Marathon Environments*, and the Readme of the initial project can be found [here](README-marathon-environments.md). Joe Booth was the main developer of the original  *Marathon Environments*, and has also helped substantially in this fork.
 
 This document has the following sections:
 
@@ -34,7 +36,7 @@ This document has the following sections:
 
 
 
-Document last updated: 09.02.2021
+Document last updated: 23.02.2021
 
 
 
