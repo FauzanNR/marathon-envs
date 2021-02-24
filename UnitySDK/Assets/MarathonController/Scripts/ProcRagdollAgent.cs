@@ -251,21 +251,47 @@ public class ProcRagdollAgent : Agent
         _dReConObservations.PreviousActions = vectorAction;
 
         AddReward(_dReConRewards.Reward);
-        // if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward < 1f)
-        if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+
+        if (ReproduceDReCon)
         {
-            if (!dontResetOnZeroReward)
-                EndEpisode();
+            // DReCon Logic
+            if (_dReConRewards.HeadHeightDistance > 0.5f || _dReConRewards.Reward <= 0f)
+            {
+                if (!dontResetOnZeroReward)
+                    EndEpisode();
+            }
+            else if (_dReConRewards.Reward <= 0.1f && !dontSnapMocapToRagdoll)
+            {
+                Transform ragDollCom = _dReConObservations.GetRagDollCOM();
+                Vector3 snapPosition = ragDollCom.position;
+                snapPosition.y = 0f;
+                var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
+                // AddReward(-.5f);
+            }
         }
-        // else if (_dReConRewards.HeadDistance > 1.5f)
-        else if (_dReConRewards.Reward <= 0.1f && !dontSnapMocapToRagdoll)
-        // else if (!dontSnapMocapToRagdoll)
+        else
         {
-            Transform ragDollCom = _dReConObservations.GetRagDollCOM();
-            Vector3 snapPosition = ragDollCom.position;
-            snapPosition.y = 0f;
-            var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
-            // AddReward(-.5f);
+            // Our Logic
+            bool terminate = false;
+            terminate = terminate || _dReConRewards.PositionReward < .01f;
+            terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
+            // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
+            terminate = terminate || _dReConRewards.PointsVelocityReward < .001f;
+            terminate = terminate || _dReConRewards.LocalPoseReward < .1f;
+            // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
+            if (terminate && StepCount > 9)
+            {
+                if (!dontResetOnZeroReward)
+                    EndEpisode();
+            }
+            else if (!dontSnapMocapToRagdoll)
+            {
+                Transform ragDollCom = _dReConObservations.GetRagDollCOM();
+                Vector3 snapPosition = ragDollCom.position;
+                snapPosition.y = 0f;
+                var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
+                // AddReward(-.5f);
+            }            
         }
     }
     float[] GetDebugActions(float[] vectorAction)
@@ -371,7 +397,7 @@ public class ProcRagdollAgent : Agent
 
         _mocapControllerArtanim.OnAgentInitialize();
         _dReConObservations.OnAgentInitialize();
-        _dReConRewards.OnAgentInitialize();
+        _dReConRewards.OnAgentInitialize(ReproduceDReCon);
         _trackBodyStatesInWorldSpace.OnAgentInitialize();
         _mocapAnimatorController.OnAgentInitialize();
 
