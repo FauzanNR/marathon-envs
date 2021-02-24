@@ -216,13 +216,15 @@ public class Rewards2Learn : MonoBehaviour
         // reward
         SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
         Reward = 0f +
-                    (ComPositionReward * 0.1f) +
+                    // (ComPositionReward * 0.1f) +
                     // (ComVelocityReward * 0.25f) +
-                    (ComDirectionReward * 0.25f) +
-                    (PositionReward * 0.25f) +
+                    // (ComDirectionReward * 0.25f) +
+                    (PositionReward * 0.5f) +
                     (LocalPoseReward * 0.25f) +
-                    (PointsVelocityReward * 0.15f);
-        Reward *= ComVelocityReward;      
+                    (PointsVelocityReward * 0.25f);
+        var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
+        var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
+        Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
     }
 
     void DReConRewards(float timeDelta)
