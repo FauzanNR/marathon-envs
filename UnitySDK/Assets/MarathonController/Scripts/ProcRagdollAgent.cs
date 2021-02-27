@@ -511,6 +511,58 @@ public class ProcRagdollAgent : Agent
             power = _ragDollSettings.MusclePowers.First(x => x.Muscle == joint.name).PowerVector;
 
         }
+        catch (Exception)
+        {
+            Debug.Log("there is no muscle for joint " + joint.name);
+
+        }
+
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            joint.xDrive = CalcDrive(joint.xDrive, power.x, targetNormalizedRotation.x);
+        }
+
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            joint.yDrive = CalcDrive(joint.yDrive, power.y, targetNormalizedRotation.y);
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+            joint.zDrive = CalcDrive(joint.zDrive, power.z, targetNormalizedRotation.z);
+        }
+    }
+    ArticulationDrive CalcDrive(ArticulationDrive drive, float power, float action)
+    {
+        float stiffness = _ragDollSettings.Stiffness;
+        float damping = _ragDollSettings.Damping;
+        float forceLimit = _ragDollSettings.ForceLimit;
+        float actionAbs = Mathf.Abs(action);
+        power *= _ragDollSettings.PowerScale;
+        action *= power;
+
+        // float stiffnessMod = Mathf.Clamp(actionAbs*10f, 0f, 1f);
+        // stiffness *= stiffnessMod;
+        float dampingMod = Mathf.Clamp(actionAbs*10f, 0f, 1f);
+        damping *= dampingMod;
+
+        drive.stiffness = stiffness;
+        drive.damping = damping;
+        drive.forceLimit = forceLimit;
+        drive.targetVelocity = action;
+        return drive;
+    }
+
+    void LegacyUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation)
+    {
+        //Vector3 power = _ragDollSettings.MusclePowers.First(x=>x.Muscle == joint.name).PowerVector;
+
+        Vector3 power = Vector3.zero;
+        try
+        {
+            power = _ragDollSettings.MusclePowers.First(x => x.Muscle == joint.name).PowerVector;
+
+        }
         catch (Exception e)
         {
             Debug.Log("there is no muscle for joint " + joint.name);

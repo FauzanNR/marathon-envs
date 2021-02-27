@@ -3778,6 +3778,7 @@ MonoBehaviour:
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
+  PowerScale: 10
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
 MonoBehaviour:
