@@ -511,7 +511,8 @@ public class ProcRagdollAgent : Agent
         }
 
 
-        power *= _ragDollSettings.Stiffness;
+        // power *= _ragDollSettings.Stiffness;
+        float stiffness = _ragDollSettings.Stiffness;
         float damping = _ragDollSettings.Damping;
         float forceLimit = _ragDollSettings.ForceLimit;
 
@@ -522,9 +523,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
-            drive.stiffness = power.x;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.x*forceLimit;
             joint.xDrive = drive;
         }
 
@@ -535,9 +536,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
-            drive.stiffness = power.y;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.y*forceLimit;
             joint.yDrive = drive;
         }
 
@@ -548,9 +549,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.z * scale);
             drive.target = target;
-            drive.stiffness = power.z;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.z*forceLimit;
             joint.zDrive = drive;
         }
     }

@@ -3775,9 +3775,9 @@ MonoBehaviour:
   - Muscle: articulation:mixamorig:RightHand
     PowerVector: {x: 40, y: 40, z: 40}
   MotorScale: 1
-  Stiffness: 50
-  Damping: 100
-  ForceLimit: 3.4028235e+38
+  Stiffness: 3000
+  Damping: 130
+  ForceLimit: 300000
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
 MonoBehaviour:
