@@ -323,6 +323,13 @@ public class ProcRagdollAgent : Agent
         }
 
         debugActions = debugActions.Select(x => Mathf.Clamp(x, -1f, 1f)).ToList();
+        if (_debugController.ApplyRandomActions)
+        {
+            debugActions = debugActions
+                .Select(x => UnityEngine.Random.Range(-_debugController.RandomRange, _debugController.RandomRange))
+                .ToList();
+        }
+
         _debugController.Actions = debugActions.ToArray();
         return debugActions.ToArray();
     }

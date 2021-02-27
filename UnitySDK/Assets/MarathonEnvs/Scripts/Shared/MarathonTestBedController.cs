@@ -13,6 +13,8 @@ public class MarathonTestBedController : MonoBehaviour
     [Tooltip("Apply a random number to each action each framestep")]
     /**< \brief Apply a random number to each action each framestep*/
     public bool ApplyRandomActions = true;
+    [Range(0f,1f)]
+    public float RandomRange = 1f;
 
     //public bool FreezeHead = false;
     public bool FreezeHips = false;
