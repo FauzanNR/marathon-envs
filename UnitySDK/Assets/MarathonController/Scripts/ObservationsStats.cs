@@ -58,7 +58,7 @@ public class ObservationStats : MonoBehaviour
     internal List<Rigidbody> _rigidbodyParts;
     internal List<ArticulationBody> _articulationBodyParts;
     GameObject _root;
-    InputController _inputController;
+    IAnimationController _animationController;
     bool _hasLazyInitialized;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
@@ -77,7 +77,7 @@ public class ObservationStats : MonoBehaviour
 
         _mapAnim2Ragdoll = defaultTransform.GetComponent<MapAnim2Ragdoll>();
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
-        _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
+        _animationController = _spawnableEnv.GetComponentInChildren<IAnimationController>();
         _rigidbodyParts = ObjectToTrack.GetComponentsInChildren<Rigidbody>().ToList();
         _articulationBodyParts = ObjectToTrack.GetComponentsInChildren<ArticulationBody>().ToList();
 
@@ -220,10 +220,7 @@ public class ObservationStats : MonoBehaviour
         CenterOfMassHorizontalVelocityMagnitude = CenterOfMassHorizontalVelocity.magnitude;
 
         // get Desired Center Of Mass horizontal velocity in f space
-        Vector3 desiredCom = new Vector3(
-            _inputController.DesiredHorizontalVelocity.x,
-            0f,
-            _inputController.DesiredHorizontalVelocity.y);
+        Vector3 desiredCom = _animationController.GetDesiredVelocity();
         DesiredCenterOfMassVelocity = transform.InverseTransformVector(desiredCom);
 
         // get Desired Center Of Mass horizontal velocity in f space

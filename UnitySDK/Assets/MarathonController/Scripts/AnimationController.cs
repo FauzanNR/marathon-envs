@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-public class AnimationController : MonoBehaviour
+public class AnimationController : MonoBehaviour, IAnimationController
 {
     public float MaxForwardVelocity = 1f;        // Max run speed.
     public float MinTurnVelocity = 400f;         // Turn velocity when moving at maximum speed.
@@ -100,6 +100,14 @@ public class AnimationController : MonoBehaviour
         }
 
         */
+    }
+    public Vector3 GetDesiredVelocity()
+    {
+        Vector3 desiredVelocity = new Vector3(
+            _inputController.DesiredHorizontalVelocity.x,
+            0f,
+            _inputController.DesiredHorizontalVelocity.y);
+        return desiredVelocity;
     }
 
     void Update()

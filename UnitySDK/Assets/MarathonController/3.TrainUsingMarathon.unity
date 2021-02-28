@@ -460,10 +460,10 @@ MonoBehaviour:
     - envId: MarConQuadruped-v0
       envPrefab: {fileID: 4102260425739354826, guid: 167406519fb5f4510bee5dcbe78e5f68,
         type: 3}
-    envIdDefault: MarConHumanoid-v0
+    envIdDefault: MarConQuadruped-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
-  DebugSkipPopUp: 0
+  DebugSkipPopUp: 1
 --- !u!4 &1741962962
 Transform:
   m_ObjectHideFlags: 0

@@ -48,7 +48,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	//TODO: find a way to remove this dependency (otherwise, not fully procedural)
 	private bool _usingMocapAnimatorController = false;
 
-	AnimationController _mocapAnimController;
+	IAnimationController _mocapAnimController;
 
 	// [SerializeField]
 	// float _debugDistance = 0.0f;
@@ -77,14 +77,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		if (ragdoll4Mocap == null)
 			DynamicallyCreateRagdollForMocap();
 
-		try
+		_mocapAnimController = GetComponent<IAnimationController>();
+		_usingMocapAnimatorController = _mocapAnimController != null;
+		if (!_usingMocapAnimatorController)
 		{
-			_mocapAnimController = GetComponent<AnimationController>();
-			string s = _mocapAnimController.name;//this should launch an exception if there is no animator
-			_usingMocapAnimatorController = true;
-		}
-		catch(Exception e) {
-			_usingMocapAnimatorController = false;
 			Debug.LogWarning("Mocap Controller is working WITHOUT AnimationController");
 		}
 
