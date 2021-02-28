@@ -543,8 +543,8 @@ public class ProcRagdollAgent : Agent
 
         // float stiffnessMod = Mathf.Clamp(actionAbs*10f, 0f, 1f);
         // stiffness *= stiffnessMod;
-        float dampingMod = Mathf.Clamp(actionAbs*10f, 0f, 1f);
-        damping *= dampingMod;
+        // float dampingMod = Mathf.Clamp(actionAbs*10f, 0f, 1f);
+        // damping *= dampingMod;
 
         drive.stiffness = stiffness;
         drive.damping = damping;

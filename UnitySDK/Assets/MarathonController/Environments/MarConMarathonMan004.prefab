@@ -3827,7 +3827,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  SmoothBeta: 0.6
+  SmoothBeta: 0.3
   ReproduceDReCon: 0
   RequestCamera: 1
   CameraFollowMe: 0
