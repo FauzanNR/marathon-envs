@@ -316,6 +316,17 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             }
 
         }
+
+        // remove any renderers from the ragdoll
+        var meshNamesToDelete = temp.GetComponentsInChildren<MeshRenderer>()
+            .Select(x=>x.name)
+            .ToArray();
+        foreach (var name in meshNamesToDelete)
+        {
+            var toDel = temp.GetComponentsInChildren<Transform>().First(x=>x.name == name);
+            toDel.transform.parent = null;
+            GameObject.DestroyImmediate(toDel.gameObject);
+        }
         
 
         temp.name = "Ragdoll:" + AgentName ;
@@ -336,7 +347,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
-
 
 
         List<Transform> listofjoints = new List<Transform>(joints);
@@ -475,7 +485,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         _ragdoll4training.CameraTarget = root;
 
-    
 
         return _ragdoll4training;
 
