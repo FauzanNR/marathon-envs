@@ -272,20 +272,6 @@ If the script doing this is short, it works because this is finished before the 
     */
 
 
-
-    public void GenerateRagdollForMocap() {
-
-
-        MapAnim2Ragdoll mca = character4training.gameObject.GetComponent<MapAnim2Ragdoll>();
-        mca.DynamicallyCreateRagdollForMocap();
-
-  
-
-    }
-
-
-
-
 ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
