@@ -185,6 +185,7 @@ MonoBehaviour:
   - 0
   - 0
   ApplyRandomActions: 0
+  RandomRange: 1
   FreezeHips: 1
   DontUpdateMotor: 0
   setTpose: 1
@@ -455,6 +456,9 @@ MonoBehaviour:
         type: 3}
     - envId: DReConHumanoid-v0
       envPrefab: {fileID: 884079593499418970, guid: 32ae3dba713e54b22910e58a8722e75d,
+        type: 3}
+    - envId: MarConQuadruped-v0
+      envPrefab: {fileID: 4102260425739354826, guid: 167406519fb5f4510bee5dcbe78e5f68,
         type: 3}
     envIdDefault: MarConHumanoid-v0
     trainingNumEnvsDefault: 1
