@@ -399,10 +399,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             c.material = colliderMaterial;
             c.height = .12f;
             c.radius = c.height;
-            ab = go.AddComponent<ArticulationBody>();
-            ab.anchorRotation = Quaternion.identity;
-            ab.jointType = ArticulationJointType.FixedJoint;
-            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); 
             colliders.Add(c);
         }
 
@@ -411,9 +407,9 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         {
             string namebase = c.name.Replace("collider:", "");
             Transform j = joints.First(x=>x.name=="articulation:" + namebase);
-            // if root, skip
+            // if not ArticulationBody, skip
             var articulatedDad = j.GetComponent<ArticulationBody>();
-            if (articulatedDad == null || articulatedDad.transform == joints[0])
+            if (articulatedDad == null)
                 continue;
             j = joints.FirstOrDefault(x=>x.transform.parent.name=="articulation:" + namebase);
             if (j==null)
@@ -437,7 +433,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
             c.center = (j.transform.position - dadPosition) / 2.0f;
             c.radius = c.height / 7;
-            ab = c.GetComponent<ArticulationBody>();
+            ab = c.transform.parent.GetComponent<ArticulationBody>();
             ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
         }
         foreach (var name in colliderNamesToDelete)
