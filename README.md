@@ -45,7 +45,7 @@ Document last updated: 23.02.2021
 The Unity project has two parts. Both can be find in *UnitySDK > Assets*: 
 
 - In folder *MarathonEnvs* there are several benchmarks of physics-based animation, implemented on the basis of different papers in the field that have appeared in the last 5-10 years.
-- In folder *ProceduralGeneration* there are 3 scenes that can be used to generate a training environment from an existing interactive controller. There is also a sub-folder called *AnimationControllers* that contains 3 examples of those:
+- In folder *MarathonController* there are 3 scenes that can be used to generate a training environment from an existing interactive controller. There is also a sub-folder called *AnimationControllers* that contains 3 examples of those:
   - In *Walk-Run-Jump* there is an example of a humanoid performing different navigation, animated with Mecanim
   - In *Procedural-from-FBX* there is an example of a humanoid animated extracting the animation from a video
   - In *Quadruped* there is an example of a dog running around. The animations of this dog have been created by Valérie Juillard, adapting adapted from [mocap data provided by Sebastian Starke](https://github.com/sebastianstarke/AI4Animation#siggraph-2018mode-adaptive-neural-networks-for-quadruped-motion-controlhe-zhangsebastian-starketaku-komurajun-saitoacm-trans-graph-37-4-article-145joint-first-authors). As stated in their [README](https://github.com/sebastianstarke/AI4Animation), *it is not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the  University of Edinburgh, Adobe Systems and Electronic Arts. Licensing is possible if you want to use the code for commercial use. For scientific use, please reference this repository together with the relevant  publications below. The motion capture data is available only under the terms of the [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.*
@@ -192,7 +192,7 @@ To simplify the creation of a training environment, you can do it directly from 
 
 To do so:
 
-1. Open the scene found in `Assets > ProceduralGeneration > 2.GenerateTrainingEnvFromAnimatedCharacter.unity`
+1. Open the scene found in `Assets > MarathonController > 2.GenerateTrainingEnvFromAnimatedCharacter.unity`
 
 2. Add the animated character that you prefer
 
