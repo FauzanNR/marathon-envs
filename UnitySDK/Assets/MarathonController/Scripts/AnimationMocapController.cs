@@ -39,6 +39,7 @@ public class AnimationMocapController : MonoBehaviour, IAnimationController
         if (_anim == null)
             return;
         var movement = _anim.deltaPosition;
+        movement.y = 0f;
         MovementVelocity = movement / Time.deltaTime;
         this.transform.position += movement;
     }
