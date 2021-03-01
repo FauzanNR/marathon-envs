@@ -2,7 +2,7 @@
 
 ## 1. Introduction
 
-This is the repository of *Marathon Environments*, which combines benchmarks for physics-based character animation with  skinned characters, to simplify its use. The main contributors, so far, are Joe Booth and Joan Llobera. Valérie Juillard, a colleague from the [Artanim Foundation](www.artanim.ch) has provided some of the animations.
+This is the repository of *Marathon Environments*, which combines benchmarks for physics-based character animation with  skinned characters, to simplify its use. The main contributors, so far, are Joe Booth and Joan Llobera. Valérie Juillard, a colleague from the [Artanim Foundation](https://artanim.ch/) has provided some of the animations.
 
 The typical task that you can get solved using this tool is the creation of an animated character that is physically plausible, and that it imitates a reference animation. In the small clip below the blue character is the physics character, and the red, semi-transparent one, is the reference animation. 
 
@@ -60,7 +60,7 @@ As an extra test for the procedural generation, we are playing with Motion Match
 
 ### 1.2 Licensing
 
-The contributions of Dr Joan Llobera are not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the [Artanim Foundation](www.artanim.ch). Licensing is possible if you want to use the code for commercial use. The motion capture data is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
+The contributions of Dr Joan Llobera are not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the [Artanim Foundation](https://artanim.ch/). Licensing is possible if you want to use the code for commercial use. The motion capture data is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
 
 
 
