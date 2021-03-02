@@ -44,7 +44,7 @@ public class ProcRagdollAgent : Agent
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
-    AnimationController _mocapAnimatorController;
+    IAnimationController _mocapAnimatorController;
 
 
     bool _hasLazyInitialized;
@@ -323,6 +323,13 @@ public class ProcRagdollAgent : Agent
         }
 
         debugActions = debugActions.Select(x => Mathf.Clamp(x, -1f, 1f)).ToList();
+        if (_debugController.ApplyRandomActions)
+        {
+            debugActions = debugActions
+                .Select(x => UnityEngine.Random.Range(-_debugController.RandomRange, _debugController.RandomRange))
+                .ToList();
+        }
+
         _debugController.Actions = debugActions.ToArray();
         return debugActions.ToArray();
     }
@@ -390,8 +397,7 @@ public class ProcRagdollAgent : Agent
         }
         _dReConObservations.PreviousActions = individualMotors.ToArray();
 
-        //_mocapAnimatorController = _mocapControllerArtanim.GetComponentInChildren<MocapAnimatorController>();
-        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<AnimationController>();
+        _mocapAnimatorController = _mocapControllerArtanim.GetComponent<IAnimationController>();
 
 
 
@@ -408,12 +414,20 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasAwake);
         _smoothedActions = null;
         debugCopyMocap = false;
-        _inputController.OnReset();
 
         _mocapAnimatorController.OnReset();
-        var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);
-        var rotation = Quaternion.Euler(0f, angle, 0f);
-        _mocapControllerArtanim.OnReset(rotation);
+        if (_inputController != null)
+        {
+            _inputController.OnReset();
+            var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);
+            var rotation = Quaternion.Euler(0f, angle, 0f);
+            _mocapControllerArtanim.OnReset(rotation);
+        }
+        else
+        {
+            var rotation = _mocapControllerArtanim.transform.rotation;
+            _mocapControllerArtanim.OnReset(rotation);
+        }
         _mocapControllerArtanim.CopyStatesTo(this.gameObject);
 
         // _trackBodyStatesInWorldSpace.CopyStatesTo(this.gameObject);
@@ -564,7 +578,7 @@ public class ProcRagdollAgent : Agent
     }
     void OnDrawGizmos()
     {
-        if (_dReConRewards == null)
+        if (_dReConRewards == null || _inputController == null)
             return;
         var comTransform = _dReConRewards._ragDollBodyStats.transform;
         var vector = new Vector3(_inputController.MovementVector.x, 0f, _inputController.MovementVector.y);

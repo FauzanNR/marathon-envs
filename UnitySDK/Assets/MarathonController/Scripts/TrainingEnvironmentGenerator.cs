@@ -272,20 +272,6 @@ If the script doing this is short, it works because this is finished before the 
     */
 
 
-
-    public void GenerateRagdollForMocap() {
-
-
-        MapAnim2Ragdoll mca = character4training.gameObject.GetComponent<MapAnim2Ragdoll>();
-        mca.DynamicallyCreateRagdollForMocap();
-
-  
-
-    }
-
-
-
-
 ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, ManyWorlds.SpawnableEnv trainingenv) {
 
    
@@ -316,6 +302,17 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             }
 
         }
+
+        // remove any renderers from the ragdoll
+        var meshNamesToDelete = temp.GetComponentsInChildren<MeshRenderer>()
+            .Select(x=>x.name)
+            .ToArray();
+        foreach (var name in meshNamesToDelete)
+        {
+            var toDel = temp.GetComponentsInChildren<Transform>().First(x=>x.name == name);
+            toDel.transform.parent = null;
+            GameObject.DestroyImmediate(toDel.gameObject);
+        }
         
 
         temp.name = "Ragdoll:" + AgentName ;
@@ -336,7 +333,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
-
 
 
         List<Transform> listofjoints = new List<Transform>(joints);
@@ -388,12 +384,8 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             go.name = "collider:" + namebase;
             CapsuleCollider c = go.AddComponent<CapsuleCollider>();
             c.material = colliderMaterial;
-            c.height = .12f;
+            c.height = .06f;
             c.radius = c.height;
-            ab = go.AddComponent<ArticulationBody>();
-            ab.anchorRotation = Quaternion.identity;
-            ab.jointType = ArticulationJointType.FixedJoint;
-            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); 
             colliders.Add(c);
         }
 
@@ -402,9 +394,9 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         {
             string namebase = c.name.Replace("collider:", "");
             Transform j = joints.First(x=>x.name=="articulation:" + namebase);
-            // if root, skip
+            // if not ArticulationBody, skip
             var articulatedDad = j.GetComponent<ArticulationBody>();
-            if (articulatedDad == null || articulatedDad.transform == joints[0])
+            if (articulatedDad == null)
                 continue;
             j = joints.FirstOrDefault(x=>x.transform.parent.name=="articulation:" + namebase);
             if (j==null)
@@ -428,15 +420,16 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
             c.center = (j.transform.position - dadPosition) / 2.0f;
             c.radius = c.height / 7;
-            ab = c.GetComponent<ArticulationBody>();
+            ab = c.transform.parent.GetComponent<ArticulationBody>();
             ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
         }
-        foreach (var name in colliderNamesToDelete)
-        {
-            var toDel = colliders.First(x=>x.name == name);
-            colliders.Remove(toDel);
-            GameObject.DestroyImmediate(toDel);
-        }
+        // for now, do not delete end colliders as seams to delete feet
+        // foreach (var name in colliderNamesToDelete)
+        // {
+        //     var toDel = colliders.First(x=>x.name == name);
+        //     colliders.Remove(toDel);
+        //     GameObject.DestroyImmediate(toDel);
+        // }
 
         //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
@@ -476,7 +469,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         _ragdoll4training.CameraTarget = root;
 
-    
 
         return _ragdoll4training;
 
@@ -489,40 +481,21 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         Transform[] pack2 = root.GetComponentsInChildren<Transform>();
         foreach (Transform t in characterReferenceFeet)
         {
-
             Transform foot = pack2.First<Transform>(x => x.name == "articulation:" + t.name);
 
-            GameObject sensorL = new GameObject();
-            SphereCollider sphL = sensorL.AddComponent<SphereCollider>();
-            sphL.radius = 0.03f;
-            sphL.isTrigger = true;
-            sensorL.AddComponent<SensorBehavior>();
-            sensorL.AddComponent<HandleOverlap>();
+            // base the senor on the collider
+            Collider footCollider = foot.GetComponentInChildren<Collider>();
 
-            //TODO: we are assuming it faces towards the +z axis. It could be done more generic looking into the direction of the collider
-            sensorL.transform.parent = foot;
-            sensorL.transform.localPosition = new Vector3(-0.02f, 0, 0);
-            sensorL.name = foot.name + "sensor_L";
-
-            GameObject sensorR = GameObject.Instantiate(sensorL);
-            sensorR.transform.parent = foot;
-            sensorR.transform.localPosition = new Vector3(0.02f, 0, 0);
-            sensorR.name = foot.name + "sensor_R";
-
-            //we add another sensor for the toe:
-            GameObject sensorT = GameObject.Instantiate(sensorL);
-            sensorT.transform.parent = foot.parent;
-            sensorT.transform.localPosition = new Vector3(0.0f, -0.01f, -0.04f);
-            sensorT.name = foot.name + "sensor_T";
-
-
-
-
+            GameObject sensorGameObject = GameObject.Instantiate(footCollider.gameObject);
+            sensorGameObject.name += "_sensor";
+            Collider sensor = sensorGameObject.GetComponent<Collider>();
+            sensor.isTrigger = true;
+            sensorGameObject.AddComponent<HandleOverlap>();
+            sensorGameObject.AddComponent<SensorBehavior>();
+            sensorGameObject.transform.parent = footCollider.transform.parent;
+            sensorGameObject.transform.position = footCollider.transform.position;
+            sensorGameObject.transform.rotation = footCollider.transform.rotation;
         }
-
-
-
-
     }
 
     //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict

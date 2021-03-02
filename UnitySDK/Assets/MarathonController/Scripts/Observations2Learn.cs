@@ -138,8 +138,11 @@ public class Observations2Learn : MonoBehaviour
         InputDesiredHorizontalVelocity = new Vector2(
             _ragDollBodyStats.DesiredCenterOfMassVelocity.x,
             _ragDollBodyStats.DesiredCenterOfMassVelocity.z);
-        InputJump = _inputController.Jump;
-        InputBackflip = _inputController.Backflip;
+        if (_inputController != null)
+        {
+            InputJump = _inputController.Jump;
+            InputBackflip = _inputController.Backflip;
+        }
         HorizontalVelocityDifference = new Vector2(
             _ragDollBodyStats.CenterOfMassVelocityDifference.x,
             _ragDollBodyStats.CenterOfMassVelocityDifference.z);
