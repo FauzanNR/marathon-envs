@@ -343,6 +343,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
         foreach (Transform t in characterReferenceHands) {
             string limbname = t.name;// + "(Clone)";
+            Debug.Log("checking sons of: " + limbname);
             Transform limb = joints.First<Transform>(x => x.name == limbname);
 
 
