@@ -30,6 +30,8 @@ public class ProcRagdollAgent : Agent
     public bool dontResetOnZeroReward;
     public bool dontSnapMocapToRagdoll;
     public bool DebugPauseOnReset;
+    public bool dontResetWhenOutOfBounds;
+
 
 
     List<Rigidbody> _mocapBodyParts;
@@ -81,7 +83,9 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
 
         // hadle mocap going out of bounds
-        if (!_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position+new Vector3(0f, .1f, 0f)))
+        bool isOutOfBounds = !_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mocapControllerArtanim.transform.position+new Vector3(0f, .1f, 0f));
+        bool reset = isOutOfBounds && dontResetWhenOutOfBounds == false;
+        if (reset)
         {
             _mocapControllerArtanim.transform.position = _spawnableEnv.transform.position;
             _trackBodyStatesInWorldSpace.LinkStatsToRigidBodies();
@@ -264,7 +268,7 @@ public class ProcRagdollAgent : Agent
             {
                 Transform ragDollCom = _dReConObservations.GetRagDollCOM();
                 Vector3 snapPosition = ragDollCom.position;
-                snapPosition.y = 0f;
+                // snapPosition.y = 0f;
                 var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
                 // AddReward(-.5f);
             }
@@ -288,7 +292,7 @@ public class ProcRagdollAgent : Agent
             {
                 Transform ragDollCom = _dReConObservations.GetRagDollCOM();
                 Vector3 snapPosition = ragDollCom.position;
-                snapPosition.y = 0f;
+                // snapPosition.y = 0f;
                 var snapDistance = _mocapControllerArtanim.SnapTo(snapPosition);
                 // AddReward(-.5f);
             }            
