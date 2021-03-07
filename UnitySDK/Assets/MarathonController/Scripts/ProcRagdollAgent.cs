@@ -273,16 +273,18 @@ public class ProcRagdollAgent : Agent
         {
             // Our Logic
             bool terminate = false;
-            terminate = terminate || _dReConRewards.PositionReward < .01f;
-            terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
+            terminate = terminate || _dReConRewards.PositionReward < 1E-3f;
+            terminate = terminate || _dReConRewards.ComVelocityReward < 1E-40f;
             // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
-            terminate = terminate || _dReConRewards.PointsVelocityReward < .001f;
-            terminate = terminate || _dReConRewards.LocalPoseReward < .1f;
+            // terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-10;
+            terminate = terminate || _dReConRewards.LocalPoseReward < 1E-3f;
             // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
+            if (dontResetOnZeroReward)
+                terminate = false;
+            // terminate = false; // HACK disable for now
             if (terminate && StepCount > 9)
             {
-                if (!dontResetOnZeroReward)
-                    EndEpisode();
+                EndEpisode();
             }
             else if (!dontSnapMocapToRagdoll)
             {

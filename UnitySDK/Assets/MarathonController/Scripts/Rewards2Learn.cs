@@ -135,16 +135,40 @@ public class Rewards2Learn : MonoBehaviour
             return;
         }
 
+        // deep sort scales
+        float num_points = _ragDollBodyStats.Points.Length;
+        float num_joints = num_points / 6f;
+        float pose_scale = 2.0f / 15f * num_joints;
+        // div by 6 because is based on points
+        float vel_scale = 0.1f / 15f * num_joints;
+        // note is 10 in code, but 40 in paper. div by 6 because is based on points
+        const float position_scale = 10f / 6f; // was end_eff_scale
+        // const float root_scale = 5f;
+        const float com_scale = 10f;
+
+        const float pose_w = 0.5f;
+        const float vel_w = 0.05f;
+        const float position_w = 0.15f; // was end_eff_w
+        // const float root_w = 0.2f;
+        const float com_w = 0.1f;
+
+
         // position reward
         // position reward
         List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
-        // PositionReward = -7.37f/(distances.Count/6f);
         PositionReward = -0.3f;
         List<float> sqrDistances = distances.Select(x=> x*x).ToList();
         SumOfDistances = distances.Sum();
-        SumOfSqrDistances = sqrDistances.Sum();
-        PositionReward *= SumOfSqrDistances;
-        PositionReward = Mathf.Exp(PositionReward);
+        SumOfSqrDistances = sqrDistances
+            // .Select(x=> Mathf.Clamp(x,0f,1f))
+            .Sum();
+        // PositionReward *= SumOfSqrDistances;
+        // PositionReward = Mathf.Exp(PositionReward);
+        PositionReward = Mathf.Exp(-position_scale * SumOfSqrDistances);
+        if (PositionReward == 0f)
+        {
+            PositionReward = 0f;
+        }
 
         // center of mass velocity reward
         MocapCOMVelocity = _mocapBodyStats.CenterOfMassVelocity;
@@ -152,15 +176,17 @@ public class Rewards2Learn : MonoBehaviour
         COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
         // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
         // ComVelocityReward = Mathf.Exp(ComVelocityReward);
-        ComVelocityReward = COMVelocityDifference;
-        ComVelocityReward = Mathf.Exp(-1f*ComVelocityReward);
+        ComVelocityReward = Mathf.Pow(COMVelocityDifference,2);
+        ComVelocityReward = Mathf.Exp(-com_scale*ComVelocityReward);
 
         // points velocity
         List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
         List<float> sqrVelocityDistances = velocityDistances.Select(x=> x*x).ToList();
-        PointsVelocityDifferenceSquared = sqrVelocityDistances.Sum();
-        PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
-        PointsVelocityReward = Mathf.Exp(PointsVelocityReward);
+        PointsVelocityDifferenceSquared = sqrVelocityDistances
+            // .Select(x=> Mathf.Clamp(x,0f,1f))
+            .Sum();
+        // PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
+        PointsVelocityReward = Mathf.Exp(-vel_scale * PointsVelocityDifferenceSquared);
 
         // local pose reward
         if (RotationDifferences == null || RotationDifferences.Count < _mocapBodyStats.Rotations.Count)
@@ -179,9 +205,10 @@ public class Rewards2Learn : MonoBehaviour
             SumOfRotationDifferences += angle;
             SumOfRotationSqrDifferences += sqrAngle;
         }
-        LocalPoseReward = -6.5f/RotationDifferences.Count;
-        LocalPoseReward *= SumOfRotationSqrDifferences;
-        LocalPoseReward = Mathf.Exp(LocalPoseReward);
+        // LocalPoseReward = -6.5f/RotationDifferences.Count;
+        // LocalPoseReward *= SumOfRotationSqrDifferences;
+        // LocalPoseReward = Mathf.Exp(LocalPoseReward);
+        LocalPoseReward = Mathf.Exp(-pose_scale * SumOfRotationSqrDifferences);
 
         // distance factor
         ComDistance = (_mocapBodyStats.transform.position - _ragDollBodyStats.transform.position).magnitude;
@@ -189,11 +216,8 @@ public class Rewards2Learn : MonoBehaviour
         DistanceFactor = 1.4f*DistanceFactor;
         DistanceFactor = 1.01f-DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
-        ComPositionReward = Mathf.Exp(-3f * (1f-DistanceFactor));
-        // ComPositionReward = 1.3f*ComDistance;
-        // ComPositionReward = 1.01f-ComPositionReward;
-        // ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
-        // ComPositionReward = Mathf.Pow(ComPositionReward,2);
+        // ComPositionReward = Mathf.Exp(-3f * (1f-DistanceFactor));
+        ComPositionReward = Mathf.Exp(-com_scale * (1f-DistanceFactor));
 
         // center of mass direction reward (from 0f to 1f)
         ComDirectionDistance = Vector3.Dot( 
@@ -201,7 +225,9 @@ public class Rewards2Learn : MonoBehaviour
             _ragDollBodyStats.transform.forward);
         ComDirectionDistance = 1f-((ComDirectionDistance + 1f)/2f);
         ComDirectionReward = ComDirectionDistance;
-        ComDirectionReward = Mathf.Exp(-4f * ComDirectionReward);
+        // ComDirectionReward = Mathf.Exp(-4f * ComDirectionReward);
+        ComDirectionReward = Mathf.Exp(-com_scale*ComDirectionReward);
+
 
         // // COM velocity factor
         // var comVelocityFactor = COMVelocityDifference;
@@ -217,14 +243,14 @@ public class Rewards2Learn : MonoBehaviour
         SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
         Reward = 0f +
                     // (ComPositionReward * 0.1f) +
-                    // (ComVelocityReward * 0.25f) +
-                    // (ComDirectionReward * 0.25f) +
-                    (PositionReward * 0.5f) +
-                    (LocalPoseReward * 0.25f) +
-                    (PointsVelocityReward * 0.25f);
-        var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
-        var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
-        Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
+                    (ComVelocityReward * com_w) +
+                    (ComDirectionReward * com_w) +
+                    (PositionReward * position_w) +
+                    (LocalPoseReward * pose_w) +
+                    (PointsVelocityReward * vel_w);
+        // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
+        // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
+        // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
     }
 
     void DReConRewards(float timeDelta)
