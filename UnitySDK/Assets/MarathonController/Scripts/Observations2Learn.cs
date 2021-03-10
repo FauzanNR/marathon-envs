@@ -167,6 +167,12 @@ public class Observations2Learn : MonoBehaviour
     {
         return _ragDollBodyStats.transform;
     }
+    public Vector3 GetMocapCOMVelocityInWorldSpace()
+    {
+        var velocity = _mocapBodyStats.CenterOfMassVelocity;
+        var velocityInWorldSpace = _mocapBodyStats.transform.TransformVector(velocity);
+        return velocityInWorldSpace;
+    }
     void OnDrawGizmos()
     {
         if (_mocapBodyStats == null)

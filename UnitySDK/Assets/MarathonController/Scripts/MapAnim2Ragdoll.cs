@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UnityEngine.AI;
 using System.Linq.Expressions;
 
 public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision 
@@ -60,6 +60,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     public bool doFixedUpdate = true;
 
 	bool _hasLazyInitialized;
+
+	bool _hackyNavAgentMode;
 
 	public void OnAgentInitialize()
 	{
@@ -130,6 +132,20 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             var follow = camera.GetComponent<SmoothFollow>();
             follow.target = CameraTarget;
         }
+		var navAgent = GetComponent<NavMeshAgent>();
+		if (navAgent)
+		{
+			var radius = 16f;
+            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * radius;
+            NavMeshHit hit;
+            Vector3 finalPosition = Vector3.zero;
+            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+            {
+                finalPosition = hit.position;
+            }
+			transform.position = finalPosition;
+			_hackyNavAgentMode = true;
+		}
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
 
@@ -306,26 +322,19 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         if (!doFixedUpdate)
             return;
 
-            if (_usingMocapAnimatorController)
+		if (!_hackyNavAgentMode)
 		{
-			_mocapAnimController.OnReset();
-			//TODO. we should find a more general way to define those relations wiht MocapAnimatorController004, to decouple the different pieces of code
-
+			transform.position = _resetPosition;
+			// handle character controller skin width
+			var characterController = GetComponent<CharacterController>();
+			if (characterController != null)
+			{
+				var pos = transform.position;
+				pos.y += characterController.skinWidth;
+				transform.position = pos;
+			}
+			transform.rotation = resetRotation;
 		}
-		else
-		{
-			Debug.Log("I am resetting the reference animation with MxMAnimator (no _mocapController)");
-		}
-		transform.position = _resetPosition;
-		// handle character controller skin width
-		var characterController = GetComponent<CharacterController>();
-		if (characterController != null)
-		{
-			var pos = transform.position;
-			pos.y += characterController.skinWidth;
-			transform.position = pos;
-		}
-		transform.rotation = resetRotation;
 		
 		MimicAnimation();
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
@@ -404,6 +413,24 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         }
 		root.gameObject.SetActive(true);
     }	   
+	public void CopyVelocityTo(GameObject targetGameObject, Vector3 velocity)
+    {
+		LazyInitialize();
+
+        var targets = targetGameObject.GetComponentsInChildren<ArticulationBody>().ToList();
+		if (targets?.Count == 0)
+			return;
+        var root = targets.First(x=>x.isRoot);
+
+		float totalVelocity = 0f;
+		foreach (var target in targets)
+        {
+			// var source = GetComponentsInChildren<Rigidbody>().First(x=>x.name == target.name);
+            // target.velocity = source.velocity;
+			// totalVelocity += source.velocity.magnitude;
+			target.velocity = velocity;
+        }
+	}
 	public Vector3 SnapTo(Vector3 snapPosition)
 	{
 		snapPosition.y = transform.position.y;

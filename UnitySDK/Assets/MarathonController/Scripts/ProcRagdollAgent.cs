@@ -433,6 +433,7 @@ public class ProcRagdollAgent : Agent
             _mocapControllerArtanim.OnReset(rotation);
         }
         _mocapControllerArtanim.CopyStatesTo(this.gameObject);
+        _mocapControllerArtanim.CopyVelocityTo(this.gameObject, _dReConObservations.GetMocapCOMVelocityInWorldSpace());
 
         // _trackBodyStatesInWorldSpace.CopyStatesTo(this.gameObject);
         float timeDelta = float.MinValue;
