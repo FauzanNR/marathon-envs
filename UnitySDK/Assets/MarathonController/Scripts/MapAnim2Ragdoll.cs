@@ -250,8 +250,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    // void FixedUpdate()
-	void OnAnimatorMove()
+    void FixedUpdate()
+	// void OnAnimatorMove()
     {
 		LazyInitialize();
         if (doFixedUpdate)
