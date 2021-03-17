@@ -233,8 +233,6 @@ public class ProcRagdollAgent : Agent
 
         if (!SkipRewardSmoothing)
             vectorAction = SmoothActions(vectorAction);
-        if (ignorActions)
-            vectorAction = vectorAction.Select(x => 0f).ToArray();
         int i = 0;
         foreach (var m in _motors)
         {
@@ -250,7 +248,10 @@ public class ProcRagdollAgent : Agent
                 targetNormalizedRotation.y = vectorAction[i++];
             if (m.swingZLock == ArticulationDofLock.LimitedMotion)
                 targetNormalizedRotation.z = vectorAction[i++];
-            UpdateMotor(m, targetNormalizedRotation);
+            if (!ignorActions)
+            {
+                UpdateMotor(m, targetNormalizedRotation);
+            }
         }
         _dReConObservations.PreviousActions = vectorAction;
 
