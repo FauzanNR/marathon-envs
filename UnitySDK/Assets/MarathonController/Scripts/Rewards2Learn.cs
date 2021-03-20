@@ -146,11 +146,11 @@ public class Rewards2Learn : MonoBehaviour
         // const float root_scale = 5f;
         const float com_scale = 10f;
 
-        const float pose_w = 0.5f;
-        const float vel_w = 0.05f;
-        const float position_w = 0.15f; // was end_eff_w
+        const float pose_w = 0.2f;//0.5f;
+        const float vel_w = 0.2f;//0.05f;
+        const float position_w = 0.2f;//0.15f; // was end_eff_w
         // const float root_w = 0.2f;
-        const float com_w = 0.1f;
+        const float com_w = 0.2f; // * 2
 
 
         // position reward

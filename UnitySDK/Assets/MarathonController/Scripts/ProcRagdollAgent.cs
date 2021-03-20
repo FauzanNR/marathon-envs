@@ -278,11 +278,11 @@ public class ProcRagdollAgent : Agent
         {
             // Our Logic
             bool terminate = false;
-            terminate = terminate || _dReConRewards.PositionReward < 1E-3f;
-            terminate = terminate || _dReConRewards.ComVelocityReward < 1E-40f;
+            terminate = terminate || _dReConRewards.PositionReward < 1E-5f;
+            terminate = terminate || _dReConRewards.ComVelocityReward < 1E-20f;
             // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
-            // terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-10;
-            terminate = terminate || _dReConRewards.LocalPoseReward < 1E-3f;
+            // terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-5f;
+            terminate = terminate || _dReConRewards.LocalPoseReward < 1E-5f;
             // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
             if (dontResetOnZeroReward)
                 terminate = false;
@@ -519,8 +519,6 @@ public class ProcRagdollAgent : Agent
 
     void UpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation)
     {
-        //Vector3 power = _ragDollSettings.MusclePowers.First(x=>x.Muscle == joint.name).PowerVector;
-
         Vector3 power = Vector3.zero;
         try
         {
@@ -533,10 +531,14 @@ public class ProcRagdollAgent : Agent
 
         }
 
-
-        power *= _ragDollSettings.Stiffness;
-        float damping = _ragDollSettings.Damping;
-        float forceLimit = _ragDollSettings.ForceLimit;
+        // For a physically realistic simulation - ,  
+        var m = joint.mass;
+        var d = _ragDollSettings.DampingRatio; // d should be 0..1.
+        var n = _ragDollSettings.NaturalFrequency; // n should be in the range 1..20
+        var k = Mathf.Pow(n,2) * m;
+        var c = d * (2 * Mathf.Sqrt(k * m));
+        var stiffness = k;
+        var damping = c;
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
@@ -545,9 +547,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
-            drive.stiffness = power.x;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.x * _ragDollSettings.ForceScale;
             joint.xDrive = drive;
         }
 
@@ -558,9 +560,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
-            drive.stiffness = power.y;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.y * _ragDollSettings.ForceScale;
             joint.yDrive = drive;
         }
 
@@ -571,9 +573,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.z * scale);
             drive.target = target;
-            drive.stiffness = power.z;
+            drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = forceLimit;
+            drive.forceLimit = power.z * _ragDollSettings.ForceScale;
             joint.zDrive = drive;
         }
     }
