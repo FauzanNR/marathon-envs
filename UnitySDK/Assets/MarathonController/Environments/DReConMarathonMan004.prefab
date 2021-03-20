@@ -3778,6 +3778,9 @@ MonoBehaviour:
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
+  DampingRatio: 0.9
+  NaturalFrequency: 20
+  ForceScale: 0.3
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
 MonoBehaviour:
@@ -3837,6 +3840,7 @@ MonoBehaviour:
   dontResetOnZeroReward: 0
   dontSnapMocapToRagdoll: 0
   DebugPauseOnReset: 0
+  dontResetWhenOutOfBounds: 0
   _hasAwake: 0
 --- !u!114 &6127195731589601736
 MonoBehaviour:
@@ -3878,9 +3882,13 @@ MonoBehaviour:
   MocapCOMVelocity: {x: 0, y: 0, z: 0}
   RagDollCOMVelocity: {x: 0, y: 0, z: 0}
   COMVelocityDifference: 0
+  ComVelocityReward: 0
   ComReward: 0
+  ComDirectionDistance: 0
+  ComDirectionReward: 0
   ComDistance: 0
   DistanceFactor: 0
+  ComPositionReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -5492,6 +5500,13 @@ MonoBehaviour:
   RequestCamera: 0
   CameraFollowMe: 0
   CameraTarget: {fileID: 0}
+  CenterOfMassVelocity: {x: 0, y: 0, z: 0}
+  CenterOfMassVelocityMagnitude: 0
+  LastCenterOfMassInWorldSpace: {x: 0, y: 0, z: 0}
+  LastPosition: []
+  LastRotation: []
+  Velocities: []
+  AngularVelocities: []
   doFixedUpdate: 1
 --- !u!114 &2449651893934142826
 MonoBehaviour:

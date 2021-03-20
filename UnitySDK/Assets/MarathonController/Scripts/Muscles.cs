@@ -19,9 +19,9 @@ public class Muscles : MonoBehaviour
     public float Stiffness = 50f;
     public float Damping = 100f;
     public float ForceLimit = float.MaxValue;
-    public float DampingRatio = 0.8f;
-    public float NaturalFrequency = 10f;
-    public float ForceScale = .1f;
+    public float DampingRatio = 0.9f;
+    public float NaturalFrequency = 20f;
+    public float ForceScale = .3f;
 
 
     [Header("Debug Collisions")]
