@@ -241,7 +241,8 @@ public class ProcRagdollAgent : Agent
             if (dontUpdateMotor)
                 continue;
             Vector3 targetNormalizedRotation = Vector3.zero;
-
+			if (m.jointType != ArticulationJointType.SphericalJoint)
+                continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
                 targetNormalizedRotation.x = vectorAction[i++];
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -322,6 +323,8 @@ public class ProcRagdollAgent : Agent
             );
             Vector3 targetNormalizedRotation = debugMotor.Actions;
 
+			if (m.jointType != ArticulationJointType.SphericalJoint)
+                continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
                 debugActions.Add(targetNormalizedRotation.x);
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -396,6 +399,8 @@ public class ProcRagdollAgent : Agent
         var individualMotors = new List<float>();
         foreach (var m in _motors)
         {
+			if (m.jointType != ArticulationJointType.SphericalJoint)
+                continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
                 individualMotors.Add(0f);
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -424,20 +429,26 @@ public class ProcRagdollAgent : Agent
         debugCopyMocap = false;
 
         _mocapAnimatorController.OnReset();
+        Vector3 resetVelocity = Vector3.zero;
         if (_inputController != null)
         {
+            // resets to source anim
             _inputController.OnReset();
             var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);
             var rotation = Quaternion.Euler(0f, angle, 0f);
             _mocapControllerArtanim.OnReset(rotation);
+            resetVelocity = Vector3.zero;
+            _mocapControllerArtanim.CopyStatesTo(this.gameObject);
         }
         else
         {
+            // source anim is continious
             var rotation = _mocapControllerArtanim.transform.rotation;
             _mocapControllerArtanim.OnReset(rotation);
+            resetVelocity = _mocapAnimatorController.GetDesiredVelocity();
+            _mocapControllerArtanim.CopyStatesTo(this.gameObject);
+            _mocapControllerArtanim.CopyVelocityTo(this.gameObject, resetVelocity);
         }
-        _mocapControllerArtanim.CopyStatesTo(this.gameObject);
-        _mocapControllerArtanim.CopyVelocityTo(this.gameObject, _mocapAnimatorController.GetDesiredVelocity());
 
         // _trackBodyStatesInWorldSpace.CopyStatesTo(this.gameObject);
         float timeDelta = float.Epsilon;
@@ -465,6 +476,8 @@ public class ProcRagdollAgent : Agent
                 .Where(x => !x.isRoot)
                 .SelectMany(x => {
                     List<float> list = new List<float>();
+        			if (x.jointType != ArticulationJointType.SphericalJoint)
+                        return list.ToArray();
                     if (x.twistLock == ArticulationDofLock.LimitedMotion)
                         list.Add(0f);
                     if (x.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -486,6 +499,8 @@ public class ProcRagdollAgent : Agent
                 Mathf.DeltaAngle(0, targetRotationInJointSpace.x),
                 Mathf.DeltaAngle(0, targetRotationInJointSpace.y),
                 Mathf.DeltaAngle(0, targetRotationInJointSpace.z));
+			if (joint.jointType != ArticulationJointType.SphericalJoint)
+                continue;
             if (joint.twistLock == ArticulationDofLock.LimitedMotion)
             {
                 var drive = joint.xDrive;
