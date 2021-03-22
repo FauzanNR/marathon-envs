@@ -451,16 +451,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		List<int> indexes = new List<int>();
 		root.GetJointPositions(localRotations);
 		root.GetDofStartIndices(indexes);
-        foreach (var targetRb in targets)
+		foreach (var targetRb in targets)
         {
 			var stat = _ragDollRigidbody.First(x=>x.name == targetRb.name);
-            foreach (var childAb in target.GetComponentsInChildren<ArticulationBody>())
-            {
-                // // childAb.transform.localPosition = Vector3.zero;
-                // // childAb.transform.localEulerAngles = Vector3.zero;
-                childAb.angularVelocity = Vector3.zero;
-                childAb.velocity = Vector3.zero;
-            }
 			if (targetRb.isRoot)
 				continue;
 			int i = indexes[targetRb.index];
@@ -480,6 +473,13 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 				}
 			}
         }
+		foreach (var childAb in root.GetComponentsInChildren<ArticulationBody>())
+		{
+			// // childAb.transform.localPosition = Vector3.zero;
+			// // childAb.transform.localEulerAngles = Vector3.zero;
+			childAb.angularVelocity = Vector3.zero;
+			childAb.velocity = Vector3.zero;
+		}
 		var localRotationsRad = localRotations
 			.Select(x=>(x < 180f ? x : x-360f) * Mathf.Deg2Rad).ToList();
 		var dofCount = localRotations.Count();
@@ -487,16 +487,16 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		root.GetJointPositions(curJointPositions);
 		curJointPositions = curJointPositions
 			.Select(x=>Mathf.Rad2Deg * x).ToList();
-		root.SetDriveTargets(localRotationsRad);
-		root.SetDriveTargetVelocities(Enumerable.Range(0,dofCount)
-                    .Select(x=>0f).ToList());
-		root.SetJointAccelerations(Enumerable.Range(0,dofCount)
-                    .Select(x=>0f).ToList());
-		root.SetJointForces(Enumerable.Range(0,dofCount)
-                    .Select(x=>0f).ToList());
+		// root.SetDriveTargets(localRotationsRad);
+		// root.SetDriveTargetVelocities(Enumerable.Range(0,dofCount)
+        //             .Select(x=>0f).ToList());
+		// root.SetJointAccelerations(Enumerable.Range(0,dofCount)
+        //             .Select(x=>0f).ToList());
+		// root.SetJointForces(Enumerable.Range(0,dofCount)
+        //             .Select(x=>0f).ToList());
 		root.SetJointPositions(localRotationsRad);
-		root.SetJointVelocities(Enumerable.Range(0,dofCount)
-                    .Select(x=>0f).ToList());
+		// root.SetJointVelocities(Enumerable.Range(0,dofCount)
+        //             .Select(x=>0f).ToList());
     }	   
 	public void CopyVelocityTo(GameObject targetGameObject, Vector3 velocity)
     {
