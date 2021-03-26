@@ -30,7 +30,7 @@ The Unity project has two parts. Both can be find in *UnitySDK > Assets*:
 - In folder *ProceduralGeneration* there are 3 scenes that can be used to generate a training environment from an existing interactive controller. There is also a sub-folder called *AnimationControllers* that contains 3 examples of those:
   - In *Walk-Run-Jump* there is an example of a humanoid performing different navigation, animated with Mecanim
   - In *Procedural-from-FBX* there is an example of a humanoid animated extracting the animation from a video
-  - In *Quadruped* there is an example of a dog running around. The animations of this dog have been created by Valérie Juillard, adapting adapted from [mocap data provided by Sebastian Starke](https://github.com/sebastianstarke/AI4Animation#siggraph-2018mode-adaptive-neural-networks-for-quadruped-motion-controlhe-zhangsebastian-starketaku-komurajun-saitoacm-trans-graph-37-4-article-145joint-first-authors). As stated in their [README](https://github.com/sebastianstarke/AI4Animation), *it is not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the  University of Edinburgh, Adobe Systems and Electronic Arts. Licensing is possible if you want to use the code for commercial use. For scientific use, please reference this repository together with the relevant  publications below. The motion capture data is available only under the terms of the [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.*
+  - In *Quadruped* there is an example of a dog running around. The animations of this dog have been created by Valérie Juillard, adapting adapted from [mocap data provided by Sebastian Starke](https://github.com/sebastianstarke/AI4Animation#siggraph-2018mode-adaptive-neural-networks-for-quadruped-motion-controlhe-zhangsebastian-starketaku-komurajun-saitoacm-trans-graph-37-4-article-145joint-first-authors). 
 
 ![animated-dog](images/animated-dog.gif)
 
@@ -42,9 +42,11 @@ As an extra test for the procedural generation, we are playing with Motion Match
 
 ### 1.2 Licensing
 
-The contributions of Dr Joan Llobera are not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the [Artanim Foundation](www.artanim.ch). Licensing is possible if you want to use the code for commercial use. The motion capture data is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
+The contributions of both Joe Booth and Joan Llobera are under Apache License Version 2.0, January 2004  http://www.apache.org/licenses/LICENSE-2.0
 
+The motion data for the quadruped is adapted under the available under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
 
+As stated in their [README](https://github.com/sebastianstarke/AI4Animation), *it is not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the  University of Edinburgh, Adobe Systems and Electronic Arts. Licensing is possible if you want to use the code for commercial use. For scientific use, please reference this repository together with the relevant  publications below. The motion capture data is available only under the terms of the [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.*
 
 
 
