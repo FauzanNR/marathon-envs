@@ -1,4 +1,7 @@
 
-The contributions of Dr Joan Llobera are not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the [Artanim Foundation](www.artanim.ch). Licensing is possible if you want to use the code for commercial use. The motion capture data is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
 
-The contributions of Joe Booth are under Apache License Version 2.0, January 2004  http://www.apache.org/licenses/LICENSE-2.0
+All the code in this repository is available under Apache License Version 2.0, January 2004  http://www.apache.org/licenses/LICENSE-2.0
+
+
+
+The motion capture data for the quadruped is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
