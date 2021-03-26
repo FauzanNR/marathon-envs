@@ -1,0 +1,168 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2774db094247c4810922f4534abbb6a2, type: 3}
+  m_Name: RangeOfMotion
+  m_EditorClassIdentifier: 
+  _values:
+  - name: Hips
+    lower: {x: -16.237183, y: -179.8224, z: -12.422638}
+    upper: {x: 16.567356, y: 179.66798, z: 47.492836}
+  - name: LeftUpLeg
+    lower: {x: -21.79013, y: -5.4983215, z: 0}
+    upper: {x: 0, y: 14.23031, z: 157.94377}
+  - name: LeftLeg
+    lower: {x: -11.787903, y: -37.04071, z: -131.52734}
+    upper: {x: 30.90815, y: 3.0033388, z: 0}
+  - name: LeftFoot
+    lower: {x: -4.4403687, y: 0, z: -78.569855}
+    upper: {x: 0.8790525, y: 15.413157, z: 3.6041956}
+  - name: LeftFoot_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_L_Foot_End
+    lower: {x: 0, y: 0, z: -0.060455322}
+    upper: {x: 0.7255254, y: 93.58636, z: 0}
+  - name: M_L_Foot
+    lower: {x: 0, y: 0, z: -5.9567566}
+    upper: {x: 6.1493025, y: 93.33092, z: 0}
+  - name: M_L_Leg
+    lower: {x: 0, y: 0, z: -61.794098}
+    upper: {x: 16.714579, y: 69.45748, z: 0}
+  - name: M_L_UpLeg
+    lower: {x: 0, y: 0, z: -85.79135}
+    upper: {x: 12.7798195, y: 45.778122, z: 0}
+  - name: M_Hips
+    lower: {x: -0.12768555, y: 0, z: 0}
+    upper: {x: 0, y: 90.69056, z: 0.26438338}
+  - name: RightUpLeg
+    lower: {x: -12.048096, y: -11.380585, z: 0}
+    upper: {x: 7.8192973, y: 13.967083, z: 152.35646}
+  - name: M_R_UpLeg
+    lower: {x: 0, y: 0, z: -96.47778}
+    upper: {x: 12.305148, y: 39.788612, z: 0}
+  - name: RightLeg
+    lower: {x: -40.62262, y: -7.7683105, z: -129.33873}
+    upper: {x: 12.66827, y: 23.963531, z: 0}
+  - name: M_R_Leg
+    lower: {x: 0, y: 0, z: -64.45279}
+    upper: {x: 17.500677, y: 65.78335, z: 0}
+  - name: RightFoot
+    lower: {x: -2.9884949, y: -7.496338, z: -80.331116}
+    upper: {x: 4.098852, y: 7.2719607, z: 10.473964}
+  - name: M_R_Foot
+    lower: {x: 0, y: 0, z: -2.7343445}
+    upper: {x: 5.7160997, y: 86.708305, z: 0}
+  - name: RightFoot_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_R_Foot_End
+    lower: {x: -0.47149658, y: 0, z: 0}
+    upper: {x: 0, y: 86.41315, z: 3.1370237}
+  - name: Spine
+    lower: {x: -6.5466614, y: -2.944336, z: -179.99959}
+    upper: {x: 3.0459516, y: 6.920518, z: 179.99701}
+  - name: M_Spine
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.00014663562, y: 0.24022846, z: 174.73389}
+  - name: Spine1
+    lower: {x: -6.9806213, y: -69.43997, z: -40.99774}
+    upper: {x: 13.746823, y: 64.90195, z: 47.26899}
+  - name: LeftShoulder
+    lower: {x: -44.346558, y: 0, z: 0}
+    upper: {x: 0, y: 131.88036, z: 24.6793}
+  - name: LeftArm
+    lower: {x: -69.37744, y: -179.984, z: -179.88167}
+    upper: {x: 19.781853, y: 179.95744, z: 179.80168}
+  - name: LeftForeArm
+    lower: {x: -57.91452, y: -132.55043, z: 0}
+    upper: {x: 21.498125, y: 30.99752, z: 131.51665}
+  - name: LeftHand
+    lower: {x: -2.9457092, y: -21.220581, z: -69.326935}
+    upper: {x: 12.675738, y: 80.73083, z: 46.600967}
+  - name: LeftHand_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_L_Hand_End
+    lower: {x: 0, y: 0, z: -108.15787}
+    upper: {x: 21.508762, y: 16.175583, z: 0}
+  - name: M_L_Hand
+    lower: {x: 0, y: 0, z: -101.792145}
+    upper: {x: 21.041191, y: 21.2977, z: 0}
+  - name: M_L_ForeArm
+    lower: {x: 0, y: 0, z: -92.25543}
+    upper: {x: 15.234869, y: 34.16419, z: 0}
+  - name: M_L_Arm
+    lower: {x: 0, y: 0, z: -64.58902}
+    upper: {x: 21.016926, y: 46.203903, z: 0}
+  - name: M_Spine1
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0.16047594, y: 0.18046016, z: 175.58385}
+  - name: Neck
+    lower: {x: -35.213104, y: -74.31448, z: -49.365692}
+    upper: {x: 27.660046, y: 77.393875, z: 37.068623}
+  - name: Head
+    lower: {x: -6.1573486, y: -161.91081, z: -69.27286}
+    upper: {x: 89.87028, y: 20.950893, z: 71.04917}
+  - name: Head_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_Head
+    lower: {x: 0, y: -67.947876, z: -58.065918}
+    upper: {x: 41.767323, y: 0, z: 0}
+  - name: M_Neck
+    lower: {x: 0, y: 0, z: -164.66693}
+    upper: {x: 1.9038634, y: 1.5850445, z: 0}
+  - name: RightShoulder
+    lower: {x: -48.735474, y: -27.842438, z: -118.75026}
+    upper: {x: 0, y: 3.4879541, z: 0}
+  - name: RightArm
+    lower: {x: -70.75592, y: -174.41794, z: -101.89755}
+    upper: {x: 45.081356, y: 161.91878, z: 87.52579}
+  - name: M_R_Arm
+    lower: {x: 0, y: 0, z: -23.596527}
+    upper: {x: 14.791753, y: 113.23318, z: 0}
+  - name: RightForeArm
+    lower: {x: -28.204163, y: -72.83917, z: 0}
+    upper: {x: 27.483156, y: 139.72379, z: 113.722824}
+  - name: M_R_ForeArm
+    lower: {x: 0, y: 0, z: -26.183868}
+    upper: {x: 2.8770635, y: 116.86672, z: 0}
+  - name: RightHand
+    lower: {x: -7.235443, y: -47.699036, z: -85.128174}
+    upper: {x: 11.245615, y: 83.44354, z: 35.88498}
+  - name: M_R_Hand
+    lower: {x: -5.6926575, y: 0, z: -36.15909}
+    upper: {x: 0, y: 112.57808, z: 0}
+  - name: RightHand_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_R_Hand_End
+    lower: {x: -14.299408, y: 0, z: -43.220154}
+    upper: {x: 0, y: 112.74514, z: 0}
+  - name: Tail
+    lower: {x: -89.379456, y: -179.68176, z: -177.24625}
+    upper: {x: 87.42892, y: 179.46486, z: 179.58194}
+  - name: M_Tail
+    lower: {x: -29.11444, y: 0, z: -33.264618}
+    upper: {x: 0, y: 78.76206, z: 0}
+  - name: Tail1
+    lower: {x: -89.64392, y: -175.28967, z: -177.32475}
+    upper: {x: 89.92867, y: 171.54378, z: 177.14871}
+  - name: M_Tail1
+    lower: {x: -2.575409, y: 0, z: -2.5115356}
+    upper: {x: 0, y: 90.258095, z: 0}
+  - name: Tail1_End
+    lower: {x: 0, y: 0, z: 0}
+    upper: {x: 0, y: 0, z: 0}
+  - name: M_Tail_End
+    lower: {x: -7.6820374, y: 0, z: 0}
+    upper: {x: 0, y: 88.01529, z: 2.3631058}

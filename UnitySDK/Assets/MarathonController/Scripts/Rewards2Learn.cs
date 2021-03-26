@@ -34,12 +34,17 @@ public class Rewards2Learn : MonoBehaviour
     public Vector3 RagDollCOMVelocity;
 
     public float COMVelocityDifference;
+    public float ComVelocityReward;
     public float ComReward;
 
+    [Header("Center of Mass Direction Reward")]
+    public float ComDirectionDistance;
+    public float ComDirectionReward;
 
-    [Header("Distance Factor")]
+    [Header("Center of Mass Position Reward")]
     public float ComDistance;
     public float DistanceFactor;
+    public float ComPositionReward;
 
     // [Header("Direction Factor")]
     // public float DirectionDistance;
@@ -66,6 +71,7 @@ public class Rewards2Learn : MonoBehaviour
     Transform _ragDollHead;
 
     bool _hasLazyInitialized;
+    bool _reproduceDReCon;
 
     [Header("Things to check for rewards")]
     public string headname = "head";
@@ -73,11 +79,12 @@ public class Rewards2Learn : MonoBehaviour
     public string targetedRootName = "articulation:Hips";
 
 
-    public void OnAgentInitialize()
+    public void OnAgentInitialize(bool reproduceDReCon)
     {
         Assert.IsFalse(_hasLazyInitialized);
 
         _hasLazyInitialized = true;
+        _reproduceDReCon = reproduceDReCon;
 
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
         Assert.IsNotNull(_spawnableEnv);
@@ -122,6 +129,106 @@ public class Rewards2Learn : MonoBehaviour
         _mocapBodyStats.SetStatusForStep(timeDelta);
         _ragDollBodyStats.SetStatusForStep(timeDelta);
 
+        if (_reproduceDReCon)
+        {
+            DReConRewards(timeDelta);
+            return;
+        }
+
+        // position reward
+        // position reward
+        List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
+        // PositionReward = -7.37f/(distances.Count/6f);
+        PositionReward = -0.3f;
+        List<float> sqrDistances = distances.Select(x=> x*x).ToList();
+        SumOfDistances = distances.Sum();
+        SumOfSqrDistances = sqrDistances.Sum();
+        PositionReward *= SumOfSqrDistances;
+        PositionReward = Mathf.Exp(PositionReward);
+
+        // center of mass velocity reward
+        MocapCOMVelocity = _mocapBodyStats.CenterOfMassVelocity;
+        RagDollCOMVelocity = _ragDollBodyStats.CenterOfMassVelocity;
+        COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
+        // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
+        // ComVelocityReward = Mathf.Exp(ComVelocityReward);
+        ComVelocityReward = COMVelocityDifference;
+        ComVelocityReward = Mathf.Exp(-1f*ComVelocityReward);
+
+        // points velocity
+        List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
+        List<float> sqrVelocityDistances = velocityDistances.Select(x=> x*x).ToList();
+        PointsVelocityDifferenceSquared = sqrVelocityDistances.Sum();
+        PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
+        PointsVelocityReward = Mathf.Exp(PointsVelocityReward);
+
+        // local pose reward
+        if (RotationDifferences == null || RotationDifferences.Count < _mocapBodyStats.Rotations.Count)
+            RotationDifferences = Enumerable.Range(0,_mocapBodyStats.Rotations.Count)
+            .Select(x=>0f)
+            .ToList();
+        SumOfRotationDifferences = 0f;
+        SumOfRotationSqrDifferences = 0f;
+        for (int i = 0; i < _mocapBodyStats.Rotations.Count; i++)
+        { 
+            var angle = Quaternion.Angle(_mocapBodyStats.Rotations[i], _ragDollBodyStats.Rotations[i]);
+            Assert.IsTrue(angle <= 180f);
+            angle = DReConObservationStats.NormalizedAngle(angle);
+            var sqrAngle = angle * angle;
+            RotationDifferences[i] = angle;
+            SumOfRotationDifferences += angle;
+            SumOfRotationSqrDifferences += sqrAngle;
+        }
+        LocalPoseReward = -6.5f/RotationDifferences.Count;
+        LocalPoseReward *= SumOfRotationSqrDifferences;
+        LocalPoseReward = Mathf.Exp(LocalPoseReward);
+
+        // distance factor
+        ComDistance = (_mocapBodyStats.transform.position - _ragDollBodyStats.transform.position).magnitude;
+        DistanceFactor = Mathf.Pow(ComDistance,2);
+        DistanceFactor = 1.4f*DistanceFactor;
+        DistanceFactor = 1.01f-DistanceFactor;
+        DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
+        ComPositionReward = Mathf.Exp(-3f * (1f-DistanceFactor));
+        // ComPositionReward = 1.3f*ComDistance;
+        // ComPositionReward = 1.01f-ComPositionReward;
+        // ComPositionReward = Mathf.Clamp(ComPositionReward, 0f, 1f);
+        // ComPositionReward = Mathf.Pow(ComPositionReward,2);
+
+        // center of mass direction reward (from 0f to 1f)
+        ComDirectionDistance = Vector3.Dot( 
+            _mocapBodyStats.transform.forward, 
+            _ragDollBodyStats.transform.forward);
+        ComDirectionDistance = 1f-((ComDirectionDistance + 1f)/2f);
+        ComDirectionReward = ComDirectionDistance;
+        ComDirectionReward = Mathf.Exp(-4f * ComDirectionReward);
+
+        // // COM velocity factor
+        // var comVelocityFactor = COMVelocityDifference;
+        // comVelocityFactor = comVelocityFactor / 2f;
+        // comVelocityFactor = 1.01f - comVelocityFactor;
+        // comVelocityFactor = Mathf.Clamp(comVelocityFactor, 0f, 1f);
+
+        // misc
+        HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
+        HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
+
+        // reward
+        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
+        Reward = 0f +
+                    // (ComPositionReward * 0.1f) +
+                    // (ComVelocityReward * 0.25f) +
+                    // (ComDirectionReward * 0.25f) +
+                    (PositionReward * 0.5f) +
+                    (LocalPoseReward * 0.25f) +
+                    (PointsVelocityReward * 0.25f);
+        var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
+        var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
+        Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
+    }
+
+    void DReConRewards(float timeDelta)
+    {
         // position reward
         List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
         PositionReward = -7.37f / (distances.Count / 6f);

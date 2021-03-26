@@ -10,6 +10,12 @@
 /UnitySDK/Assets/Gizmos*
 /UnitySDK/Assets/Demonstrations*
 
+#tests with motion matching
+UnitySDK/Assets/MotionMatching
+UnitySDK/Assets/MotionMatching.meta
+
+
+
 # Tensorflow Model Info
 /models
 /summaries

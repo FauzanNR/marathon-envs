@@ -2,31 +2,13 @@
 
 ## 1. Introduction
 
-This is the repository of *Marathon Environments*, which combines benchmarks for physics-based character animation with  skinned characters, to simplify its use. The main contributors, so far, are Joe Booth and Joan Llobera. Valérie Juillard, a colleague from the [Artanim Foundation](https://artanim.ch/) has provided some of the animations.
+I have used this Repository to integrate the use of physics-based characters, as found in the project *Marathon Environments*, with usual character animation techniques, based on  skinned characters. This project is a fork of *Marathon Environments*, and the Readme of the initial project can be found [here](README-marathon-environments.md). Joe Booth is the main developer of   *Marathon Environment*, and has also helped substantially in this project. Valérie Juillard, a colleague from the [Artanim Foundation](www.artanim.ch) has provided some of the animations.
 
-The typical task that you can get solved using this tool is the creation of an animated character that is physically plausible, and that it imitates a reference animation. In the small clip below the blue character is the physics character, and the red, semi-transparent one, is the reference animation. 
-
-
-
-![MarathonManEnvV1-trained](images/MarathonManEnvV1-trained.gif)
-
-
-
-
-
-
-
-
-
-
-
-**Challenge:** The main problem to solve in physics-based animation seems to be to  avoid getting results that look like  if they came with this *department of silly walks* effect, which obviously does not appear in the demos of the papers. It is annoying, and we absolutely need to solve it if we want to have something that can be used in practice... 
+**Problem:** The main problem is to aovid getting results that look like  if they came with this *department of silly walks* effect, which obviously does not appear in the demos of the papers. It is annoying, and we absolutely need to solve it if we want to have something that can be used in practice... 
 
 ![Weird Walks](img/marathon-man-silly-walks.gif)
 
 
-
- This project is a fork of *Marathon Environments*, and the Readme of the initial project can be found [here](README-marathon-environments.md). Joe Booth was the main developer of the original  *Marathon Environments*, and has also helped substantially in this fork.
 
 This document has the following sections:
 
@@ -36,7 +18,7 @@ This document has the following sections:
 
 
 
-Document last updated: 23.02.2021
+Document last updated: 09.02.2021
 
 
 
@@ -45,10 +27,10 @@ Document last updated: 23.02.2021
 The Unity project has two parts. Both can be find in *UnitySDK > Assets*: 
 
 - In folder *MarathonEnvs* there are several benchmarks of physics-based animation, implemented on the basis of different papers in the field that have appeared in the last 5-10 years.
-- In folder *MarathonController* there are 3 scenes that can be used to generate a training environment from an existing interactive controller. There is also a sub-folder called *Controllers* that contains 3 examples of those:
+- In folder *ProceduralGeneration* there are 3 scenes that can be used to generate a training environment from an existing interactive controller. There is also a sub-folder called *AnimationControllers* that contains 3 examples of those:
   - In *Walk-Run-Jump* there is an example of a humanoid performing different navigation, animated with Mecanim
   - In *Procedural-from-FBX* there is an example of a humanoid animated extracting the animation from a video
-  - In *Quadruped* there is an example of a dog running around. The animations of this dog have been created by Valérie Juillard, adapting adapted from [mocap data provided by Sebastian Starke](https://github.com/sebastianstarke/AI4Animation#siggraph-2018mode-adaptive-neural-networks-for-quadruped-motion-controlhe-zhangsebastian-starketaku-komurajun-saitoacm-trans-graph-37-4-article-145joint-first-authors). As stated in their [README](https://github.com/sebastianstarke/AI4Animation), *it is not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the  University of Edinburgh, Adobe Systems and Electronic Arts. Licensing is possible if you want to use the code for commercial use. For scientific use, please reference this repository together with the relevant  publications below. The motion capture data is available only under the terms of the [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.*
+  - In *Quadruped* there is an example of a dog running around. The animations of this dog have been created by Valérie Juillard, adapting adapted from [mocap data provided by Sebastian Starke](https://github.com/sebastianstarke/AI4Animation#siggraph-2018mode-adaptive-neural-networks-for-quadruped-motion-controlhe-zhangsebastian-starketaku-komurajun-saitoacm-trans-graph-37-4-article-145joint-first-authors). 
 
 ![animated-dog](images/animated-dog.gif)
 
@@ -60,9 +42,11 @@ As an extra test for the procedural generation, we are playing with Motion Match
 
 ### 1.2 Licensing
 
-The contributions of Dr Joan Llobera are not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the [Artanim Foundation](https://artanim.ch/). Licensing is possible if you want to use the code for commercial use. The motion capture data is available only under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
+The contributions of both Joe Booth and Joan Llobera are under Apache License Version 2.0, January 2004  http://www.apache.org/licenses/LICENSE-2.0
 
+The motion data for the quadruped is adapted under the available under the terms of the  [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.
 
+As stated in their [README](https://github.com/sebastianstarke/AI4Animation), *it is not available for commercial use or redistribution. The intellectual  property for different scientific contributions belongs to the  University of Edinburgh, Adobe Systems and Electronic Arts. Licensing is possible if you want to use the code for commercial use. For scientific use, please reference this repository together with the relevant  publications below. The motion capture data is available only under the terms of the [Attribution-NonCommercial 4.0 International](https://creativecommons.org/licenses/by-nc/4.0/legalcode) (CC BY-NC 4.0) license.*
 
 
 
@@ -70,7 +54,7 @@ The contributions of Dr Joan Llobera are not available for commercial use or red
 
 #### 1 Behaviour synthesized
 
-The main goal has *almost*  been achieved: skinned characters are matched with ragdolls (see below, and gif on top of this readme)
+The main goal has *almost*  been achieved: skinned characters are matched with ragdolls.
 
 
 ![Example-current-status](img/trained-with-automatic-constraint-parsing.gif)
@@ -192,7 +176,7 @@ To simplify the creation of a training environment, you can do it directly from 
 
 To do so:
 
-1. Open the scene found in `Assets > MarathonController > 2.GenerateTrainingEnvFromAnimatedCharacter.unity`
+1. Open the scene found in `Assets > ProceduralGeneration > 2.GenerateTrainingEnvFromAnimatedCharacter.unity`
 
 2. Add the animated character that you prefer
 

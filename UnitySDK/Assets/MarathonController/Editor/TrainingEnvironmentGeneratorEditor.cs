@@ -26,7 +26,6 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         {
             TrainingEnvironmentGenerator t = target as TrainingEnvironmentGenerator;
             t.GenerateTrainingEnv();
-            t.GenerateRagdollForMocap();
         }
 
 
