@@ -3834,7 +3834,7 @@ MonoBehaviour:
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
-  SkipRewardSmoothing: 0
+  SkipRewardSmoothing: 1
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
