@@ -35,12 +35,10 @@ public class ProcRagdollAgent : Agent
 
 
     List<Rigidbody> _mocapBodyParts;
-    List<ArticulationBody> _bodyParts;
     SpawnableEnv _spawnableEnv;
     Observations2Learn _dReConObservations;
     Rewards2Learn _dReConRewards;
     Muscles _ragDollSettings;
-    TrackBodyStatesInWorldSpace _trackBodyStatesInWorldSpace;
     List<ArticulationBody> _motors;
     MarathonTestBedController _debugController;
     InputController _inputController;
@@ -88,7 +86,6 @@ public class ProcRagdollAgent : Agent
         if (reset)
         {
             _mocapControllerArtanim.transform.position = _spawnableEnv.transform.position;
-            _trackBodyStatesInWorldSpace.LinkStatsToRigidBodies();
             EndEpisode();
         }
     }
@@ -375,11 +372,8 @@ public class ProcRagdollAgent : Agent
         _mocapControllerArtanim = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
         _mocapBodyParts = _mocapControllerArtanim.GetRigidBodies();
 
-        _bodyParts = GetComponentsInChildren<ArticulationBody>().ToList();
         _dReConObservations = GetComponent<Observations2Learn>();
         _dReConRewards = GetComponent<Rewards2Learn>();
-
-        _trackBodyStatesInWorldSpace = _mocapControllerArtanim.GetComponent<TrackBodyStatesInWorldSpace>();
 
         _ragDollSettings = GetComponent<Muscles>();
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
@@ -417,7 +411,6 @@ public class ProcRagdollAgent : Agent
         _mocapControllerArtanim.OnAgentInitialize();
         _dReConObservations.OnAgentInitialize();
         _dReConRewards.OnAgentInitialize(ReproduceDReCon);
-        _trackBodyStatesInWorldSpace.OnAgentInitialize();
         _mocapAnimatorController.OnAgentInitialize();
 
         _hasLazyInitialized = true;
@@ -450,7 +443,6 @@ public class ProcRagdollAgent : Agent
             _mocapControllerArtanim.CopyVelocityTo(this.gameObject, resetVelocity);
         }
 
-        // _trackBodyStatesInWorldSpace.CopyStatesTo(this.gameObject);
         float timeDelta = float.Epsilon;
         _dReConObservations.OnReset();
         _dReConRewards.OnReset();
