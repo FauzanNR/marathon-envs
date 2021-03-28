@@ -379,11 +379,6 @@ public class ProcRagdollAgent : Agent
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _sensorObservations = GetComponent<SensorObservations>();
 
-        foreach (var body in GetComponentsInChildren<ArticulationBody>())
-        {
-            body.solverIterations = 255;
-            body.solverVelocityIterations = 255;
-        }
 
         _motors = GetComponentsInChildren<ArticulationBody>()
             .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
