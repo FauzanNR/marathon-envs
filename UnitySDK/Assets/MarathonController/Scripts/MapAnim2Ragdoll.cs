@@ -446,10 +446,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		// root.gameObject.SetActive(false);
 		var rstat = _ragDollRigidbody.First(x=>x.name == root.name);
 		root.TeleportRoot(rstat.position, rstat.rotation);
+		root.transform.position = rstat.position;
+		root.transform.rotation = rstat.rotation;
 		root.gameObject.SetActive(true);
 		List<float> localRotations = new List<float>();
+		List<float> clampedLocalRotations = new List<float>();
 		List<int> indexes = new List<int>();
 		root.GetJointPositions(localRotations);
+		root.GetJointPositions(clampedLocalRotations);
 		root.GetDofStartIndices(indexes);
 		foreach (var targetRb in targets)
         {
@@ -461,14 +465,32 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			{
 				if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
 				{
+					var deg = stat.transform.localRotation.eulerAngles.x;
+					deg = (deg < 180f ? deg : deg-360f);
+					clampedLocalRotations[i] = Mathf.Clamp(
+						deg,
+						targetRb.xDrive.lowerLimit,
+						targetRb.xDrive.upperLimit);
 					localRotations[i++] = stat.transform.localRotation.eulerAngles.x;
 				}
 				if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
 				{
+					var deg = stat.transform.localRotation.eulerAngles.y;
+					deg = (deg < 180f ? deg : deg-360f);
+					clampedLocalRotations[i] = Mathf.Clamp(
+						deg,
+						targetRb.yDrive.lowerLimit,
+						targetRb.yDrive.upperLimit);
 					localRotations[i++] = stat.transform.localRotation.eulerAngles.y;
 				}
 				if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
 				{
+					var deg = stat.transform.localRotation.eulerAngles.z;
+					deg = (deg < 180f ? deg : deg-360f);
+					clampedLocalRotations[i] = Mathf.Clamp(
+						deg,
+						targetRb.zDrive.lowerLimit,
+						targetRb.zDrive.upperLimit);
 					localRotations[i++] = stat.transform.localRotation.eulerAngles.z;
 				}
 			}
@@ -480,8 +502,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			childAb.angularVelocity = Vector3.zero;
 			childAb.velocity = Vector3.zero;
 		}
-		var localRotationsRad = localRotations
-			.Select(x=>(x < 180f ? x : x-360f) * Mathf.Deg2Rad).ToList();
+		// var localRotationsRad = localRotations
+		// 	.Select(x=>(x < 180f ? x : x-360f) * Mathf.Deg2Rad).ToList();
+		var localRotationsRad = clampedLocalRotations
+			.Select(x=>x * Mathf.Deg2Rad).ToList();
 		var dofCount = localRotations.Count();
 		var curJointPositions = new List<float>();
 		root.GetJointPositions(curJointPositions);
