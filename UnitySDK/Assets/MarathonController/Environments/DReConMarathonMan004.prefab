@@ -3829,16 +3829,16 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  SmoothBeta: 0.2
+  SmoothBeta: 0.6
   ReproduceDReCon: 1
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
-  SkipRewardSmoothing: 1
+  SkipRewardSmoothing: 0
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
-  dontSnapMocapToRagdoll: 0
+  dontSnapMocapToRagdoll: 1
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
   _hasAwake: 0
@@ -5479,7 +5479,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   doFixedUpdate: 1
-  _isGeneratedProcedurally: 0
 --- !u!114 &1087573813168869382
 MonoBehaviour:
   m_ObjectHideFlags: 0
