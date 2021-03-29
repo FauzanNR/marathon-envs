@@ -536,14 +536,15 @@ public class ProcRagdollAgent : Agent
         // For a physically realistic simulation - ,  
         var m = joint.mass;
         var d = _ragDollSettings.DampingRatio; // d should be 0..1.
-        var n = _ragDollSettings.NaturalFrequency; // n should be in the range 1..20
-        var k = Mathf.Pow(n,2) * m;
-        var c = d * (2 * Mathf.Sqrt(k * m));
-        var stiffness = k;
-        var damping = c;
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
+            var n = power.x * _ragDollSettings.ForceScale;
+            var k = Mathf.Pow(n,2) * m;
+            var c = d * (2 * Mathf.Sqrt(k * m));
+            var stiffness = k;
+            var damping = c;
+
             var drive = joint.xDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
@@ -551,12 +552,18 @@ public class ProcRagdollAgent : Agent
             drive.target = target;
             drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = power.x * _ragDollSettings.ForceScale;
+            drive.forceLimit = _ragDollSettings.ForceLimit;
             joint.xDrive = drive;
         }
 
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
         {
+            var n = power.y * _ragDollSettings.ForceScale;
+            var k = Mathf.Pow(n,2) * m;
+            var c = d * (2 * Mathf.Sqrt(k * m));
+            var stiffness = k;
+            var damping = c;
+
             var drive = joint.yDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
@@ -564,12 +571,18 @@ public class ProcRagdollAgent : Agent
             drive.target = target;
             drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = power.y * _ragDollSettings.ForceScale;
+            drive.forceLimit = _ragDollSettings.ForceLimit;
             joint.yDrive = drive;
         }
 
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
         {
+            var n = power.z * _ragDollSettings.ForceScale;
+            var k = Mathf.Pow(n,2) * m;
+            var c = d * (2 * Mathf.Sqrt(k * m));
+            var stiffness = k;
+            var damping = c;
+
             var drive = joint.zDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
@@ -577,7 +590,7 @@ public class ProcRagdollAgent : Agent
             drive.target = target;
             drive.stiffness = stiffness;
             drive.damping = damping;
-            drive.forceLimit = power.z * _ragDollSettings.ForceScale;
+            drive.forceLimit = _ragDollSettings.ForceLimit;
             joint.zDrive = drive;
         }
     }

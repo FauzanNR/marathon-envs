@@ -20,7 +20,7 @@ public class Muscles : MonoBehaviour
     public float Damping = 100f;
     public float ForceLimit = float.MaxValue;
     public float DampingRatio = 0.9f;
-    public float NaturalFrequency = 20f;
+    // public float NaturalFrequency = 20f;
     public float ForceScale = .3f;
 
 
