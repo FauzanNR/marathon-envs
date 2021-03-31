@@ -400,11 +400,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 				transform.position = pos;
 			}
 			transform.rotation = resetRotation;
-			MimicAnimation();
-			LastCenterOfMassInWorldSpace = GetCenterOfMass();
-			CenterOfMassVelocity = Vector3.zero;
-			CenterOfMassVelocityMagnitude = 0f;
 		}
+		MimicAnimation();
+		LastCenterOfMassInWorldSpace = GetCenterOfMass();
+		CenterOfMassVelocity = Vector3.zero;
+		CenterOfMassVelocityMagnitude = 0f;
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
@@ -448,50 +448,77 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		root.TeleportRoot(rstat.position, rstat.rotation);
 		root.transform.position = rstat.position;
 		root.transform.rotation = rstat.rotation;
-		root.gameObject.SetActive(true);
-		List<float> localRotations = new List<float>();
-		List<float> clampedLocalRotations = new List<float>();
-		List<int> indexes = new List<int>();
-		root.GetJointPositions(localRotations);
-		root.GetJointPositions(clampedLocalRotations);
-		root.GetDofStartIndices(indexes);
+		// root.gameObject.SetActive(true);
 		foreach (var targetRb in targets)
         {
 			var stat = _ragDollRigidbody.First(x=>x.name == targetRb.name);
 			if (targetRb.isRoot)
 				continue;
-			int i = indexes[targetRb.index];
+			// bool shouldDebug = targetRb.name == "articulation:mixamorig:RightArm";
+			// bool didDebug = false;
+
 			if (targetRb.jointType == ArticulationJointType.SphericalJoint)
 			{
+				float stiffness = 0f;
+				float damping = float.MaxValue;
+				float forceLimit = 0f;
+				// if (shouldDebug)
+				// 	didDebug = true;
+				Vector3 decomposedRotation = DecomposeQuanterium(stat.transform.localRotation);
+				int j=0;
+				List<float> thisJointPosition = Enumerable.Range(0,targetRb.dofCount).Select(x=>0f).ToList(); 
+				
 				if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
 				{
-					var deg = stat.transform.localRotation.eulerAngles.x;
-					deg = (deg < 180f ? deg : deg-360f);
-					clampedLocalRotations[i] = Mathf.Clamp(
-						deg,
-						targetRb.xDrive.lowerLimit,
-						targetRb.xDrive.upperLimit);
-					localRotations[i++] = stat.transform.localRotation.eulerAngles.x;
+					var drive = targetRb.xDrive;
+					var deg = decomposedRotation.x;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.xDrive = drive;
 				}
 				if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
 				{
-					var deg = stat.transform.localRotation.eulerAngles.y;
-					deg = (deg < 180f ? deg : deg-360f);
-					clampedLocalRotations[i] = Mathf.Clamp(
-						deg,
-						targetRb.yDrive.lowerLimit,
-						targetRb.yDrive.upperLimit);
-					localRotations[i++] = stat.transform.localRotation.eulerAngles.y;
+					var drive = targetRb.yDrive;
+					var deg = decomposedRotation.y;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.yDrive = drive;
 				}
 				if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
 				{
-					var deg = stat.transform.localRotation.eulerAngles.z;
-					deg = (deg < 180f ? deg : deg-360f);
-					clampedLocalRotations[i] = Mathf.Clamp(
-						deg,
-						targetRb.zDrive.lowerLimit,
-						targetRb.zDrive.upperLimit);
-					localRotations[i++] = stat.transform.localRotation.eulerAngles.z;
+					var drive = targetRb.zDrive;
+					var deg = decomposedRotation.z;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.zDrive = drive;
+				}
+				switch (targetRb.dofCount)
+				{
+					case 1:
+						targetRb.jointPosition = new ArticulationReducedSpace(thisJointPosition[0]);
+						break;
+					case 2:
+						targetRb.jointPosition = new ArticulationReducedSpace(
+							thisJointPosition[0],
+							thisJointPosition[1]);
+						break;
+					case 3:
+						targetRb.jointPosition = new ArticulationReducedSpace(
+							thisJointPosition[0],
+							thisJointPosition[1],
+							thisJointPosition[2]);
+						break;
+					default:
+						break;
 				}
 			}
         }
@@ -502,26 +529,41 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			childAb.angularVelocity = Vector3.zero;
 			childAb.velocity = Vector3.zero;
 		}
-		// var localRotationsRad = localRotations
-		// 	.Select(x=>(x < 180f ? x : x-360f) * Mathf.Deg2Rad).ToList();
-		var localRotationsRad = clampedLocalRotations
-			.Select(x=>x * Mathf.Deg2Rad).ToList();
-		var dofCount = localRotations.Count();
-		var curJointPositions = new List<float>();
-		root.GetJointPositions(curJointPositions);
-		curJointPositions = curJointPositions
-			.Select(x=>Mathf.Rad2Deg * x).ToList();
-		// root.SetDriveTargets(localRotationsRad);
+		// var curJointPositions = new List<float>();
+		// root.GetJointPositions(curJointPositions);
+		// var dofCount = curJointPositions.Count();
+		// // root.SetDriveTargets(localRotationsRad);
 		// root.SetDriveTargetVelocities(Enumerable.Range(0,dofCount)
         //             .Select(x=>0f).ToList());
 		// root.SetJointAccelerations(Enumerable.Range(0,dofCount)
         //             .Select(x=>0f).ToList());
 		// root.SetJointForces(Enumerable.Range(0,dofCount)
         //             .Select(x=>0f).ToList());
-		root.SetJointPositions(localRotationsRad);
+		// // root.SetJointPositions(localRotationsRad);
 		// root.SetJointVelocities(Enumerable.Range(0,dofCount)
         //             .Select(x=>0f).ToList());
-    }	   
+    }
+	Vector3 DecomposeQuanterium(Quaternion localRotation)
+	{
+		//the decomposition in swing-twist, typically works like this:
+		Quaternion swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
+		// Quaternion swing = new Quaternion(localRotation.x, localRotation.y, localRotation.z, localRotation.w);
+		swing = swing.normalized;
+
+		Quaternion twist = Quaternion.Inverse(swing) * localRotation;
+
+		Vector3 decomposition = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
+
+		//we make sure we keep the values nearest to 0 (with a modulus)
+		if (Mathf.Abs(decomposition.x - 360) < Mathf.Abs(decomposition.x))
+			decomposition.x = (decomposition.x - 360);
+		if (Mathf.Abs(decomposition.y - 360) < Mathf.Abs(decomposition.y))
+			decomposition.y = (decomposition.y - 360);
+		if (Mathf.Abs(decomposition.z - 360) < Mathf.Abs(decomposition.z))
+			decomposition.z = (decomposition.z - 360);
+		return decomposition;
+	}
+
 	public void CopyVelocityTo(GameObject targetGameObject, Vector3 velocity)
     {
 		LazyInitialize();
