@@ -49,6 +49,9 @@ public class Rewards2Learn : MonoBehaviour
     // [Header("Direction Factor")]
     // public float DirectionDistance;
     // public float DirectionFactor;
+    [Header("Energy Reward")]
+    public float EnergyError;
+    public float EnergyReward;
 
 
     [Header("Misc")]
@@ -235,6 +238,14 @@ public class Rewards2Learn : MonoBehaviour
         // comVelocityFactor = 1.01f - comVelocityFactor;
         // comVelocityFactor = Mathf.Clamp(comVelocityFactor, 0f, 1f);
 
+        // Calc Energy Error
+        EnergyError = _ragDollBodyStats.PointVelocity
+            .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+            .Average();
+        EnergyError = Mathf.Abs(EnergyError);
+        EnergyReward = Mathf.Exp(-10f * EnergyError);
+        EnergyReward = Mathf.Clamp(EnergyReward, 0f, 1f);
+
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
@@ -248,6 +259,7 @@ public class Rewards2Learn : MonoBehaviour
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
                     (PointsVelocityReward * vel_w);
+        Reward += EnergyReward * .1f; 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
         // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
@@ -319,9 +331,20 @@ public class Rewards2Learn : MonoBehaviour
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
+        // TODO remove from DReCon
+        // Calc Energy Error
+        EnergyError = _ragDollBodyStats.PointVelocity
+            .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+            .Average();
+        EnergyError = Mathf.Abs(EnergyError);
+        EnergyReward = Mathf.Exp(-10f * EnergyError);
+        EnergyReward = Mathf.Clamp(EnergyReward, 0f, 1f);
+
+
         // reward
         SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
         Reward = DistanceFactor * SumOfSubRewards;
+        Reward += EnergyReward * .1f; // TODO remove from DReCon
         // Reward = (DirectionFactor*SumOfSubRewards) * DistanceFactor;
     }
     public void OnReset()
