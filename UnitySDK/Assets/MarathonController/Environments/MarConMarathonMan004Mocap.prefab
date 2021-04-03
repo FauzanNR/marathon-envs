@@ -3778,7 +3778,7 @@ MonoBehaviour:
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
-  DampingRatio: 0.9
+  DampingRatio: 1
   NaturalFrequency: 20
   ForceScale: 0.3
   skipCollisionSetup: 0
@@ -3829,7 +3829,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  SmoothBeta: 0.2
+  SmoothBeta: 0.3
   ReproduceDReCon: 0
   RequestCamera: 1
   CameraFollowMe: 0
@@ -4749,7 +4749,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4323325860100505826}
-  - component: {fileID: 1045879518673034801}
   - component: {fileID: 4840040794799920610}
   - component: {fileID: 237941673018179006}
   m_Layer: 15
@@ -4776,24 +4775,6 @@ Transform:
   m_Father: {fileID: 1675824069701164127}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &1045879518673034801
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4012779199770969919}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.68
-  m_Radius: 0.15
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!95 &4840040794799920610
 Animator:
   serializedVersion: 3
