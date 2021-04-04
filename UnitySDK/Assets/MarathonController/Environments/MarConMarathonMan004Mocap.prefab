@@ -3804,10 +3804,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 6a0170f7809774645b6b045717f6421b, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 8d7cb1e69d8884ca18faf3bb8d5ac44e, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: MarCon-v0
+  m_BehaviorName: MarConMocap-v0
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1

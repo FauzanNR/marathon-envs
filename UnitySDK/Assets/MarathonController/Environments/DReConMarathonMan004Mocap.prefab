@@ -3804,10 +3804,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 0e1d500cb7f867541bbce2e47d9797c1, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 65658400015114572bdcccf3f0dde2a0, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: DReCon-v0
+  m_BehaviorName: DReConMocap-v0
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -3889,6 +3889,8 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   ComPositionReward: 0
+  EnergyError: 0
+  EnergyReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -3928,6 +3930,12 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
+  EnergyAngularMocap: 0
+  EnergyAngularRagDoll: 0
+  EnergyDifferenceAngular: 0
+  EnergyPositionalMocap: 0
+  EnergyPositionalRagDoll: 0
+  EnergyDifferencePositional: 0
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
   targetedRootName: articulation:mixamorig:Hips
