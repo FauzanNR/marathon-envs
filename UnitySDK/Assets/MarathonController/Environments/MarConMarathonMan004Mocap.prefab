@@ -3889,6 +3889,8 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   ComPositionReward: 0
+  EnergyError: 0
+  EnergyReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -3928,6 +3930,12 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
+  EnergyAngularMocap: 0
+  EnergyAngularRagDoll: 0
+  EnergyDifferenceAngular: 0
+  EnergyPositionalMocap: 0
+  EnergyPositionalRagDoll: 0
+  EnergyDifferencePositional: 0
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
   targetedRootName: articulation:mixamorig:Hips
@@ -5382,7 +5390,7 @@ Animator:
   m_GameObject: {fileID: 5033867405855703570}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f4b99d8bdc0873c4d8e812bb5baa82be, type: 3}
-  m_Controller: {fileID: 9100000, guid: d6b88590516206a42815c6a65079d979, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5cac92e633dd36f489252560d21bdc08, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 1
   m_ApplyRootMotion: 1

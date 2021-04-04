@@ -154,6 +154,7 @@ public class Rewards2Learn : MonoBehaviour
         const float position_w = 0.2f;//0.15f; // was end_eff_w
         // const float root_w = 0.2f;
         const float com_w = 0.2f; // * 2
+        const float energy_w = 0.2f;
 
 
         // position reward
@@ -251,15 +252,15 @@ public class Rewards2Learn : MonoBehaviour
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
-        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward;
+        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward+EnergyReward;
         Reward = 0f +
                     // (ComPositionReward * 0.1f) +
                     (ComVelocityReward * com_w) +
                     (ComDirectionReward * com_w) +
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
-                    (PointsVelocityReward * vel_w);
-        Reward += EnergyReward * .1f; 
+                    (PointsVelocityReward * vel_w) +
+                    (EnergyReward * energy_w); 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
         // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
@@ -344,7 +345,7 @@ public class Rewards2Learn : MonoBehaviour
         // reward
         SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
         Reward = DistanceFactor * SumOfSubRewards;
-        Reward += EnergyReward * .1f; // TODO remove from DReCon
+        Reward += EnergyReward; // TODO remove from DReCon
         // Reward = (DirectionFactor*SumOfSubRewards) * DistanceFactor;
     }
     public void OnReset()

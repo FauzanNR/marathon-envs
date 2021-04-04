@@ -36,6 +36,21 @@ public class Observations2Learn : MonoBehaviour
     [Tooltip("Smoothed actions produced in the previous step of the policy are collected in t −1")]
     public float[] PreviousActions;
 
+    [Tooltip("Macap: ave of joint angular velocity")]
+    public float EnergyAngularMocap;
+    [Tooltip("RagDoll: ave of joint angular velocity")]
+    public float EnergyAngularRagDoll;
+    [Tooltip("RagDoll-Macap: ave of joint angular velocity")]
+    public float EnergyDifferenceAngular;
+
+    [Tooltip("Macap: ave of joint velocity in local space")]
+    public float EnergyPositionalMocap;
+    [Tooltip("RagDoll: ave of joint velocity in local space")]
+    public float EnergyPositionalRagDoll;
+    [Tooltip("RagDoll-Macap: ave of joint velocity in local space")]
+    public float EnergyDifferencePositional;
+
+
     [Header("Gizmos")]
     public bool VelocityInWorldSpace = true;
     public bool PositionInWorldSpace = true;
@@ -162,6 +177,25 @@ public class Observations2Learn : MonoBehaviour
             differenceStats.AngualrVelocity = mocapStats.AngualrVelocity - ragDollStats.AngualrVelocity;
             differenceStats.Rotation = ObservationStats.GetAngularVelocity(mocapStats.Rotation, ragDollStats.Rotation, timeDelta);
         }
+        EnergyAngularMocap = MocapBodyStats
+            .Select(x=>x.AngualrVelocity.magnitude)
+            .Average();
+        EnergyAngularRagDoll = RagDollBodyStats
+            .Select(x=>x.AngualrVelocity.magnitude)
+            .Average();
+        EnergyDifferenceAngular = RagDollBodyStats
+            .Zip(MocapBodyStats, (x,y) => x.AngualrVelocity.magnitude-y.AngualrVelocity.magnitude)
+            .Average();
+        EnergyPositionalMocap = MocapBodyStats
+            .Select(x=>x.Velocity.magnitude)
+            .Average();
+        EnergyPositionalRagDoll = RagDollBodyStats
+            .Select(x=>x.Velocity.magnitude)
+            .Average();
+        EnergyDifferencePositional = RagDollBodyStats
+            .Zip(MocapBodyStats, (x,y) => x.Velocity.magnitude-y.Velocity.magnitude)
+            .Average();
+        
     }
     public Transform GetRagDollCOM()
     {
