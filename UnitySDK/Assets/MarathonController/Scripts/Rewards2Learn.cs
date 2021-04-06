@@ -142,20 +142,28 @@ public class Rewards2Learn : MonoBehaviour
         float num_points = _ragDollBodyStats.Points.Length;
         float num_joints = num_points / 6f;
         float pose_scale = 2.0f / 15f * num_joints;
-        // div by 6 because is based on points
         float vel_scale = 0.1f / 15f * num_joints;
-        // note is 10 in code, but 40 in paper. div by 6 because is based on points
-        const float position_scale = 10f / 6f; // was end_eff_scale
+        // note is 10 in code, but 40 in paper. 
+        const float position_scale = 10f; // was end_eff_scale
         // const float root_scale = 5f;
         const float com_scale = 10f;
 
-        const float pose_w = 0.2f;//0.5f;
-        const float vel_w = 0.2f;//0.05f;
-        const float position_w = 0.2f;//0.15f; // was end_eff_w
-        // const float root_w = 0.2f;
-        const float com_w = 0.2f; // * 2
-        const float energy_w = 0.2f;
+        // DeepMimic
+        // const float pose_w = 0.5f;
+        // const float vel_w = 0.05f;
+        // const float position_w = 0.15f; // was end_eff_w
+        // // const float root_w = 0.2f;
+        // const float com_w = 0.2f; // * 2
+        // const float energy_w = 0.2f;
 
+        // UniCon
+        const float pose_w = 0.4f;
+        const float vel_w = 0.1f;
+        const float position_w = 0.1f;
+        // const float com_direction_w = 0.1f; 
+        const float com_direction_w = 0.2f; 
+        const float com_velocity_w = 0.1f; 
+        const float energy_w = 0.2f;
 
         // position reward
         // position reward
@@ -168,7 +176,7 @@ public class Rewards2Learn : MonoBehaviour
             .Sum();
         // PositionReward *= SumOfSqrDistances;
         // PositionReward = Mathf.Exp(PositionReward);
-        PositionReward = Mathf.Exp(-position_scale * SumOfSqrDistances);
+        PositionReward = Mathf.Exp(-position_scale * (SumOfSqrDistances / 6f));
         if (PositionReward == 0f)
         {
             PositionReward = 0f;
@@ -190,7 +198,7 @@ public class Rewards2Learn : MonoBehaviour
             // .Select(x=> Mathf.Clamp(x,0f,1f))
             .Sum();
         // PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
-        PointsVelocityReward = Mathf.Exp(-vel_scale * PointsVelocityDifferenceSquared);
+        PointsVelocityReward = Mathf.Exp(-vel_scale * (PointsVelocityDifferenceSquared / 6f));
 
         // local pose reward
         if (RotationDifferences == null || RotationDifferences.Count < _mocapBodyStats.Rotations.Count)
@@ -204,6 +212,8 @@ public class Rewards2Learn : MonoBehaviour
             var angle = Quaternion.Angle(_mocapBodyStats.Rotations[i], _ragDollBodyStats.Rotations[i]);
             Assert.IsTrue(angle <= 180f);
             angle = DReConObservationStats.NormalizedAngle(angle);
+            angle = Mathf.Abs(angle);
+            angle = angle / Mathf.PI;
             var sqrAngle = angle * angle;
             RotationDifferences[i] = angle;
             SumOfRotationDifferences += angle;
@@ -212,6 +222,8 @@ public class Rewards2Learn : MonoBehaviour
         // LocalPoseReward = -6.5f/RotationDifferences.Count;
         // LocalPoseReward *= SumOfRotationSqrDifferences;
         // LocalPoseReward = Mathf.Exp(LocalPoseReward);
+        // var aveRotationSqrDifferences = SumOfRotationSqrDifferences / _mocapBodyStats.Rotations.Count;
+        // LocalPoseReward = Mathf.Exp(-pose_scale * aveRotationSqrDifferences);
         LocalPoseReward = Mathf.Exp(-pose_scale * SumOfRotationSqrDifferences);
 
         // distance factor
@@ -255,8 +267,8 @@ public class Rewards2Learn : MonoBehaviour
         SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward+EnergyReward;
         Reward = 0f +
                     // (ComPositionReward * 0.1f) +
-                    (ComVelocityReward * com_w) +
-                    (ComDirectionReward * com_w) +
+                    (ComVelocityReward * com_velocity_w) + // com_w) +
+                    (ComDirectionReward * com_direction_w) + // com_w) +
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
                     (PointsVelocityReward * vel_w) +
