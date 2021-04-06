@@ -283,7 +283,7 @@ public class ProcRagdollAgent : Agent
             // terminate = terminate || _dReConRewards.LocalPoseReward < 1E-5f;
             // // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
             terminate = terminate || _dReConRewards.PositionReward < .01f;
-            terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
+            // terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
             terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
             if (_dReConRewards.PointsVelocityReward > 0f) // HACK
                 terminate = terminate || _dReConRewards.PointsVelocityReward < .01f;
@@ -351,12 +351,50 @@ public class ProcRagdollAgent : Agent
     float[] SmoothActions(float[] vectorAction)
     {
         // yt =β at +(1−β)yt−1
-        if (_smoothedActions == null)
-            _smoothedActions = vectorAction.Select(x => 0f).ToArray();
-        _smoothedActions = vectorAction
-            .Zip(_smoothedActions, (a, y) => SmoothBeta * a + (1f - SmoothBeta) * y)
+        var smoothedActions = vectorAction
+            .Zip(_dReConObservations.PreviousActions, (a, y) => SmoothBeta * a + (1f - SmoothBeta) * y)
             .ToArray();
-        return _smoothedActions;
+        return smoothedActions;
+    }
+    float[] GetActionsFromRagdollState()
+    {
+        var vectorActions = new List<float>();
+        foreach (var m in _motors)
+        {
+            if (m.isRoot)
+                continue;
+            int i = 0;
+			if (m.jointType != ArticulationJointType.SphericalJoint)
+                continue;
+            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = m.xDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
+                var target = (deg - midpoint) / scale;
+                vectorActions.Add(target);
+            }
+            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = m.yDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
+                var target = (deg - midpoint) / scale;
+                vectorActions.Add(target);
+            }
+            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = m.zDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
+                var target = (deg - midpoint) / scale;
+                vectorActions.Add(target);
+            }
+        }
+        return vectorActions.ToArray();
     }
     public override void Initialize()
     {
@@ -392,18 +430,7 @@ public class ProcRagdollAgent : Agent
             .Distinct()
             .ToList();
         var individualMotors = new List<float>();
-        foreach (var m in _motors)
-        {
-			if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                individualMotors.Add(0f);
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                individualMotors.Add(0f);
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                individualMotors.Add(0f);
-        }
-        _dReConObservations.PreviousActions = individualMotors.ToArray();
+        _dReConObservations.PreviousActions = GetActionsFromRagdollState();
 
         _mocapAnimatorController = _mocapControllerArtanim.GetComponent<IAnimationController>();
 
@@ -459,6 +486,7 @@ public class ProcRagdollAgent : Agent
         {
             _debugController.OnAgentEpisodeBegin();
         }
+        _dReConObservations.PreviousActions = GetActionsFromRagdollState();
     }
 
     float[] GetMocapTargets()
