@@ -252,12 +252,16 @@ public class Rewards2Learn : MonoBehaviour
         // comVelocityFactor = Mathf.Clamp(comVelocityFactor, 0f, 1f);
 
         // Calc Energy Error
+
+        /*
         VelDifferenceError = _ragDollBodyStats.PointVelocity
             .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
             .Average();
         VelDifferenceError = Mathf.Abs(VelDifferenceError);
         VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
         VelDifferenceReward = Mathf.Clamp(VelDifferenceReward, 0f, 1f);
+        */
+
 
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
@@ -271,8 +275,8 @@ public class Rewards2Learn : MonoBehaviour
                     (ComDirectionReward * com_direction_w) + // com_w) +
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
-                    (PointsVelocityReward * vel_w) +
-                    (VelDifferenceReward * energy_w); 
+                    (PointsVelocityReward * vel_w);// +
+                   // (VelDifferenceReward * energy_w); 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
         // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
