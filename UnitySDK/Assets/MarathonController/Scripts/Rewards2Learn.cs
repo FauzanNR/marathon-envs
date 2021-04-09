@@ -252,31 +252,28 @@ public class Rewards2Learn : MonoBehaviour
         // comVelocityFactor = Mathf.Clamp(comVelocityFactor, 0f, 1f);
 
         // Calc Energy Error
-
-        /*
         VelDifferenceError = _ragDollBodyStats.PointVelocity
             .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
             .Average();
         VelDifferenceError = Mathf.Abs(VelDifferenceError);
         VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
         VelDifferenceReward = Mathf.Clamp(VelDifferenceReward, 0f, 1f);
-        */
-
 
         // misc
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
-        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward+VelDifferenceReward;
+        // SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward+VelDifferenceReward;
+        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+VelDifferenceReward;
         Reward = 0f +
                     // (ComPositionReward * 0.1f) +
                     (ComVelocityReward * com_velocity_w) + // com_w) +
                     (ComDirectionReward * com_direction_w) + // com_w) +
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
-                    (PointsVelocityReward * vel_w);// +
-                   // (VelDifferenceReward * energy_w); 
+                    // (PointsVelocityReward * vel_w) +
+                    (VelDifferenceReward * energy_w); 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
         // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
@@ -348,21 +345,9 @@ public class Rewards2Learn : MonoBehaviour
         HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
-        // TODO remove from DReCon
-        // Calc Energy Error
-        VelDifferenceError = _ragDollBodyStats.PointVelocity
-            .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
-            .Average();
-        VelDifferenceError = Mathf.Abs(VelDifferenceError);
-        VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
-        VelDifferenceReward = Mathf.Clamp(VelDifferenceReward, 0f, 1f);
-
-
         // reward
-        //        SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
-        SumOfSubRewards = PositionReward + ComReward + LocalPoseReward;
+        SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
         Reward = DistanceFactor * SumOfSubRewards;
-        Reward += VelDifferenceReward; // TODO remove from DReCon
         // Reward = (DirectionFactor*SumOfSubRewards) * DistanceFactor;
     }
     public void OnReset()
