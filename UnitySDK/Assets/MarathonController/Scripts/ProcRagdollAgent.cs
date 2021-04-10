@@ -279,14 +279,14 @@ public class ProcRagdollAgent : Agent
             terminate = terminate || _dReConRewards.PositionReward < 1E-5f;
             terminate = terminate || _dReConRewards.ComVelocityReward < 1E-20f;
             // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
-            if (_dReConRewards.PointsVelocityReward > 0f) // HACK
-                terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-5f;
+            if (_dReConRewards.VelDifferenceReward > 0f) // HACK
+                terminate = terminate || _dReConRewards.VelDifferenceReward < 1E-5f;
             terminate = terminate || _dReConRewards.LocalPoseReward < 1E-5f;
             // terminate = terminate || _dReConRewards.PositionReward < .01f;
             // // terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
             // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
-            // if (_dReConRewards.PointsVelocityReward > 0f) // HACK
-            //     terminate = terminate || _dReConRewards.PointsVelocityReward < .01f;
+            // if (_dReConRewards.VelDifferenceReward > 0f) // HACK
+            //     terminate = terminate || _dReConRewards.VelDifferenceReward < .01f;
             // terminate = terminate || _dReConRewards.LocalPoseReward < .01f;
             if (dontResetOnZeroReward)
                 terminate = false;
