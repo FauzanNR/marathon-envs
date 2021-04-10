@@ -24,7 +24,7 @@ public class ProcRagdollAgent : Agent
     public Transform CameraTarget;
 
     [Header("... debug")]
-    public bool SkipRewardSmoothing;
+    public bool SkipActionSmoothing;
     public bool debugCopyMocap;
     public bool ignorActions;
     public bool dontResetOnZeroReward;
@@ -228,7 +228,7 @@ public class ProcRagdollAgent : Agent
             vectorAction = GetDebugActions(vectorAction);
         }
 
-        if (!SkipRewardSmoothing)
+        if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
         int i = 0;
         foreach (var m in _motors)
@@ -276,22 +276,20 @@ public class ProcRagdollAgent : Agent
         {
             // Our Logic
             bool terminate = false;
-            // terminate = terminate || _dReConRewards.PositionReward < 1E-5f;
-            // terminate = terminate || _dReConRewards.ComVelocityReward < 1E-20f;
-            // // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
-            // // terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-5f;
-            // terminate = terminate || _dReConRewards.LocalPoseReward < 1E-5f;
-            // // terminate = terminate || _dReConRewards.HeadHeightDistance > 0.5f;
-            terminate = terminate || _dReConRewards.PositionReward < .01f;
-            // terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
-            terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
+            terminate = terminate || _dReConRewards.PositionReward < 1E-5f;
+            terminate = terminate || _dReConRewards.ComVelocityReward < 1E-20f;
+            // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
             if (_dReConRewards.PointsVelocityReward > 0f) // HACK
-                terminate = terminate || _dReConRewards.PointsVelocityReward < .01f;
-            terminate = terminate || _dReConRewards.LocalPoseReward < .01f;
+                terminate = terminate || _dReConRewards.PointsVelocityReward < 1E-5f;
+            terminate = terminate || _dReConRewards.LocalPoseReward < 1E-5f;
+            // terminate = terminate || _dReConRewards.PositionReward < .01f;
+            // // terminate = terminate || _dReConRewards.ComVelocityReward < .01f;
+            // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
+            // if (_dReConRewards.PointsVelocityReward > 0f) // HACK
+            //     terminate = terminate || _dReConRewards.PointsVelocityReward < .01f;
+            // terminate = terminate || _dReConRewards.LocalPoseReward < .01f;
             if (dontResetOnZeroReward)
                 terminate = false;
-            // terminate = false; // HACK disable for now
-            // if (terminate && StepCount > 9)
             if (terminate)
             {
                 EndEpisode();
