@@ -3834,11 +3834,11 @@ MonoBehaviour:
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
-  SkipRewardSmoothing: 0
+  SkipActionSmoothing: 0
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
-  dontSnapMocapToRagdoll: 1
+  dontSnapMocapToRagdoll: 0
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
   _hasAwake: 0
@@ -3889,6 +3889,8 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   ComPositionReward: 0
+  VelDifferenceError: 0
+  VelDifferenceReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -3928,6 +3930,16 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
+  RagDollJointPositions: []
+  RagDollJointVelocities: []
+  RagDollJointAccelerations: []
+  RagDollJointForces: []
+  EnergyAngularMocap: 0
+  EnergyAngularRagDoll: 0
+  EnergyDifferenceAngular: 0
+  EnergyPositionalMocap: 0
+  EnergyPositionalRagDoll: 0
+  EnergyDifferencePositional: 0
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
   targetedRootName: articulation:mixamorig:Hips
