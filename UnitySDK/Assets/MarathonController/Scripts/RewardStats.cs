@@ -171,7 +171,7 @@ public class RewardStats : MonoBehaviour
             }
             CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
             CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
-            transform.position = newCOM;
+            transform.position = _root.transform.position;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
         }
         else
@@ -181,7 +181,7 @@ public class RewardStats : MonoBehaviour
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            transform.position = newCOM;
+            transform.position = _root.transform.position;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
             var velocity = transform.position - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
