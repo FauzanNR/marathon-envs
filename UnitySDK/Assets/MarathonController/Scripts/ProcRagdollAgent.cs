@@ -95,6 +95,7 @@ public class ProcRagdollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
+        _dReConRewards.OnStep(timeDelta);
 
         if (ReproduceDReCon)
         {
@@ -208,10 +209,10 @@ public class ProcRagdollAgent : Agent
     {
         Assert.IsTrue(_hasLazyInitialized);
 
-        float timeDelta = Time.fixedDeltaTime;
-        if (!_decisionRequester.TakeActionsBetweenDecisions)
-            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
-        _dReConRewards.OnStep(timeDelta);
+        // float timeDelta = Time.fixedDeltaTime;
+        // if (!_decisionRequester.TakeActionsBetweenDecisions)
+        //     timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        // _dReConRewards.OnStep(timeDelta);
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -447,20 +448,23 @@ public class ProcRagdollAgent : Agent
         _smoothedActions = null;
         debugCopyMocap = false;
 
-        _mocapAnimatorController.OnReset();
         Vector3 resetVelocity = Vector3.zero;
         if (_inputController != null)
         {
+            // _inputController.OnReset();
+            _mocapAnimatorController.OnReset();
             // resets to source anim
-            _inputController.OnReset();
-            var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);
-            var rotation = Quaternion.Euler(0f, angle, 0f);
+            // var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);
+            // var rotation = Quaternion.Euler(0f, angle, 0f);
+            var rotation = _mocapControllerArtanim.transform.rotation;
             _mocapControllerArtanim.OnReset(rotation);
-            resetVelocity = Vector3.zero;
             _mocapControllerArtanim.CopyStatesTo(this.gameObject);
+            resetVelocity = _mocapAnimatorController.GetDesiredVelocity();
+            _mocapControllerArtanim.CopyVelocityTo(this.gameObject, resetVelocity);
         }
         else
         {
+            _mocapAnimatorController.OnReset();
             // source anim is continious
             var rotation = _mocapControllerArtanim.transform.rotation;
             _mocapControllerArtanim.OnReset(rotation);

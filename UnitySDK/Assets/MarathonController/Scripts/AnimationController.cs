@@ -130,6 +130,9 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
     public void OnReset()
     {
+    }
+    void OldOnReset()
+    {
         _isGrounded = true;
         _previouslyGrounded = true;
         _inCombo = false;
