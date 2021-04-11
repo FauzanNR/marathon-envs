@@ -16,6 +16,8 @@ public class RewardStats : MonoBehaviour
     [Header("Stats")]
     public Vector3 CenterOfMassVelocity;
     public float CenterOfMassVelocityMagnitude;
+    public Vector3 CenterOfMassVelocityInRootSpace;
+    public float CenterOfMassVelocityMagnitudeInRootSpace;
 
     [HideInInspector]
     public Vector3 LastCenterOfMassInWorldSpace;
@@ -136,22 +138,9 @@ public class RewardStats : MonoBehaviour
     }
     public void ResetStatus()
     {
-        CenterOfMassVelocity = Vector3.zero;
-        CenterOfMassVelocityMagnitude = 0f;
-        LastCenterOfMassInWorldSpace = transform.position;
-        GetAllPoints(Points);
-        Array.Copy(Points, 0, _lastPoints, 0, Points.Length);
-        for (int i = 0; i < Points.Length; i++)
-        {
-            PointVelocity[i] = Vector3.zero;
-        }
-        for (int i = 0; i < _trackRotations.Count; i++)
-        {
-            Quaternion localRotation = _trackRotations[i].transform.localRotation;
-            if (_trackRotations[i].gameObject == _root)
-                localRotation = Quaternion.Inverse(transform.rotation) * _trackRotations[i].transform.rotation;
-            Rotations[i] = localRotation;
-        }
+        LastIsSet = false;
+        var timeDelta = float.MinValue;
+        SetStatusForStep(timeDelta);
     }
 
     public void SetStatusForStep(float timeDelta)
@@ -164,15 +153,24 @@ public class RewardStats : MonoBehaviour
         // if Moocap, then get from anim2Ragdoll
         if (_mapAnim2Ragdoll != null)
         {
-            newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            // newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            newCOM = _mapAnim2Ragdoll.GetCenterOfMass();
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
-            CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
             transform.position = _root.transform.position;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
+            // CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
+            // CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
+            // CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
+            // CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+            var velocity = newCOM - LastCenterOfMassInWorldSpace;
+            velocity /= timeDelta;
+            CenterOfMassVelocity = velocity;
+            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+            CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
+            CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
         }
         else
         {
@@ -183,10 +181,12 @@ public class RewardStats : MonoBehaviour
             }
             transform.position = _root.transform.position;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
-            var velocity = transform.position - LastCenterOfMassInWorldSpace;
+            var velocity = newCOM - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
-            CenterOfMassVelocity = transform.InverseTransformVector(velocity);
-            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;            
+            CenterOfMassVelocity = velocity;
+            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+            CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
+            CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
         }
         LastCenterOfMassInWorldSpace = newCOM;
 
@@ -320,7 +320,7 @@ public class RewardStats : MonoBehaviour
             point4 = collider.transform.TransformPoint(point4);
             point5 = collider.transform.TransformPoint(point5);
             point6 = collider.transform.TransformPoint(point6);
-            // transform from world space, into local space for COM 
+            // transform from world space, into local space
             point1 = this.transform.InverseTransformPoint(point1);
             point2 = this.transform.InverseTransformPoint(point2);
             point3 = this.transform.InverseTransformPoint(point3);

@@ -95,7 +95,7 @@ public class ProcRagdollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);
+        // _dReConRewards.OnStep(timeDelta);
 
         if (ReproduceDReCon)
         {
@@ -209,10 +209,10 @@ public class ProcRagdollAgent : Agent
     {
         Assert.IsTrue(_hasLazyInitialized);
 
-        // float timeDelta = Time.fixedDeltaTime;
-        // if (!_decisionRequester.TakeActionsBetweenDecisions)
-        //     timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
-        // _dReConRewards.OnStep(timeDelta);
+        float timeDelta = Time.fixedDeltaTime;
+        if (!_decisionRequester.TakeActionsBetweenDecisions)
+            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        _dReConRewards.OnStep(timeDelta);
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -473,11 +473,11 @@ public class ProcRagdollAgent : Agent
             _mocapControllerArtanim.CopyVelocityTo(this.gameObject, resetVelocity);
         }
 
-        float timeDelta = float.Epsilon;
         _dReConObservations.OnReset();
         _dReConRewards.OnReset();
-        _dReConObservations.OnStep(timeDelta);
-        _dReConRewards.OnStep(timeDelta);
+        // float timeDelta = float.Epsilon;
+        // _dReConObservations.OnStep(timeDelta);
+        // _dReConRewards.OnStep(timeDelta);
 #if UNITY_EDITOR		
 		if (DebugPauseOnReset)
 		{

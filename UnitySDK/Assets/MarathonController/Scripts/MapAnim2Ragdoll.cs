@@ -40,8 +40,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	[Space(20)]
 	[Header("Stats")]
-    public Vector3 CenterOfMassVelocity;
-    public float CenterOfMassVelocityMagnitude;
+    // public Vector3 CenterOfMassVelocity;
+    // public float CenterOfMassVelocityMagnitude;
+    // public Vector3 CenterOfMassVelocityInRootSpace;
+    // public float CenterOfMassVelocityMagnitudeInRootSpace;
     public Vector3 LastCenterOfMassInWorldSpace;
 	public List<Vector3> LastPosition;
 	public List<Quaternion> LastRotation;
@@ -294,13 +296,13 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		LastCenterOfMassInWorldSpace = newCOM;
 		if (_lastPositionTime != Time.time)
 		{
-			float timeDelta = Time.time-_lastPositionTime;
-			if (timeDelta > 1f)
-				timeDelta = Time.fixedDeltaTime;
+			float timeDelta = Time.fixedDeltaTime;
 			var velocity = newCOM - lastCOM;
 			velocity /= timeDelta;
-			CenterOfMassVelocity = transform.InverseTransformVector(velocity);
-			CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+			// CenterOfMassVelocity = velocity;
+			// CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+			// CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
+			// CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
 
 			LastPosition = lastPosition;
 			LastRotation = lastRotation;
@@ -366,7 +368,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         return angularVelocity;
     }
 	
-    Vector3 GetCenterOfMass()
+    public Vector3 GetCenterOfMass()
     {
         var centerOfMass = Vector3.zero;
         float totalMass = 0f;
@@ -403,8 +405,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		}
 		MimicAnimation();
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
-		CenterOfMassVelocity = Vector3.zero;
-		CenterOfMassVelocityMagnitude = 0f;
+		// CenterOfMassVelocity = Vector3.zero;
+		// CenterOfMassVelocityMagnitude = 0f;
+		// CenterOfMassVelocityInRootSpace = Vector3.zero;
+		// CenterOfMassVelocityMagnitudeInRootSpace = 0f;
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
