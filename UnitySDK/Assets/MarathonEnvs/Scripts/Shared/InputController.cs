@@ -87,7 +87,7 @@ public class InputController : MonoBehaviour
         MovementVector = Vector2.MoveTowards(MovementVector, TargetMovementVector, acceleration * deltaTime);
 
         // Handle deadzone
-        if (TargetMovementVector.magnitude < .1f)
+        if (TargetMovementVector.magnitude < .1f && MovementVector.magnitude < .1f)
         {
             TargetMovementVector = Vector2.zero;
             MovementVector = Vector2.zero;

@@ -156,16 +156,22 @@ public class Rewards2Learn : MonoBehaviour
         // const float com_w = 0.2f; // * 2
         // const float energy_w = 0.2f;
 
-        // UniCon
-        const float pose_w = 0.4f;
-        const float vel_w = 0.1f;
-        const float position_w = 0.1f;
-        // const float com_direction_w = 0.1f; 
+        // // UniCon
+        // const float pose_w = 0.4f;
+        // const float vel_w = 0.1f;
+        // const float position_w = 0.1f;
+        // // const float com_direction_w = 0.1f; 
+        // const float com_direction_w = 0.2f; 
+        // const float com_velocity_w = 0.1f; 
+        // const float energy_w = 0.2f;
+
+        // MarCon
+        const float pose_w = 0.2f;
+        const float position_w = 0.2f;
         const float com_direction_w = 0.2f; 
-        const float com_velocity_w = 0.1f; 
+        const float com_velocity_w = 0.2f; 
         const float energy_w = 0.2f;
 
-        // position reward
         // position reward
         List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
         PositionReward = -0.3f;
