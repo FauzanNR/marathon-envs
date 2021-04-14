@@ -40,10 +40,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	[Space(20)]
 	[Header("Stats")]
-    // public Vector3 CenterOfMassVelocity;
-    // public float CenterOfMassVelocityMagnitude;
-    // public Vector3 CenterOfMassVelocityInRootSpace;
-    // public float CenterOfMassVelocityMagnitudeInRootSpace;
+    public Vector3 CenterOfMassVelocity;
+    public float CenterOfMassVelocityMagnitude;
+    public Vector3 CenterOfMassVelocityInRootSpace;
+    public float CenterOfMassVelocityMagnitudeInRootSpace;
     public Vector3 LastCenterOfMassInWorldSpace;
 	public List<Vector3> LastPosition;
 	public List<Quaternion> LastRotation;
@@ -298,11 +298,12 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			float timeDelta = Time.fixedDeltaTime;
 			var velocity = newCOM - lastCOM;
+			velocity -= _snapOffset;
 			velocity /= timeDelta;
-			// CenterOfMassVelocity = velocity;
-			// CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
-			// CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
-			// CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+			CenterOfMassVelocity = velocity;
+			CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+			CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
+			CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
 
 			LastPosition = lastPosition;
 			LastRotation = lastRotation;

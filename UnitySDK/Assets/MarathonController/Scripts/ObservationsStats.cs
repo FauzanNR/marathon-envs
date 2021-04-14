@@ -182,22 +182,15 @@ public class ObservationStats : MonoBehaviour
         // if Moocap, then get from anim2Ragdoll
         if (_mapAnim2Ragdoll != null)
         {
-            // newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
-            newCOM = _mapAnim2Ragdoll.GetCenterOfMass();
+            newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
             transform.position = _root.transform.position;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
-            // CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
-            // CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
-            // CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
-            // CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
-            var velocity = newCOM - LastCenterOfMassInWorldSpace;
-            velocity /= timeDelta;
-            CenterOfMassVelocity = velocity;
-            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+            CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
+            CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
             CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
         }
