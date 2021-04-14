@@ -167,9 +167,9 @@ public class Rewards2Learn : MonoBehaviour
 
         // MarCon
         const float pose_w = 0.2f;
-        const float position_w = 0.2f;
-        const float com_direction_w = 0.2f; 
-        const float com_velocity_w = 0.2f; 
+        const float position_w = 0.1f;
+        const float com_direction_w = 0.1f; 
+        const float com_velocity_w = 0.4f; 
         const float energy_w = 0.2f;
 
         // position reward
