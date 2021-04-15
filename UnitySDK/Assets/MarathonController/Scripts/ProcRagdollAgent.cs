@@ -94,6 +94,7 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        _mocapControllerArtanim.OnStep(timeDelta);
         _dReConObservations.OnStep(timeDelta);
         // _dReConRewards.OnStep(timeDelta);
 
@@ -200,18 +201,15 @@ public class ProcRagdollAgent : Agent
         return size;
     }
 
-
-
-
-
-
-    public override void OnActionReceived(float[] vectorAction)
+    public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         Assert.IsTrue(_hasLazyInitialized);
+        float[] vectorAction = actionBuffers.ContinuousActions.Select(x=>x).ToArray();
 
         float timeDelta = Time.fixedDeltaTime;
         if (!_decisionRequester.TakeActionsBetweenDecisions)
             timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
+        _mocapControllerArtanim.OnStep(timeDelta);
         _dReConRewards.OnStep(timeDelta);
 
         bool shouldDebug = _debugController != null;

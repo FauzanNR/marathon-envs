@@ -256,18 +256,21 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    void FixedUpdate()
-	// void OnAnimatorMove()
-    {
-		LazyInitialize();
-        if (doFixedUpdate)
-            OnFixedUpdate();
-	
-    }
+    // void FixedUpdate()
+	// // void OnAnimatorMove()
+    // {
+	// 	LazyInitialize();
+    //     if (doFixedUpdate)
+    //         OnFixedUpdate();
+
+    // }
 
 
-    void OnFixedUpdate() {
+    public void OnStep(float timeDelta) {
 		LazyInitialize();
+
+		if (_lastPositionTime == Time.time)
+			return;
 
         //if (!_usesMotionMatching)
         {
@@ -283,45 +286,35 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             // if (NormalizedTime <= endTime) {
             // }       
         }
-		var lastPosition = _ragDollRigidbody
-			.Select(x=>x.position)
-			.ToList();
-		var lastRotation = _ragDollRigidbody
-			.Select(x=>x.rotation)
-			.ToList();
 		MimicAnimation();
         // get Center Of Mass velocity in f space
 		var newCOM = GetCenterOfMass();
 		var lastCOM = LastCenterOfMassInWorldSpace;
 		LastCenterOfMassInWorldSpace = newCOM;
-		if (_lastPositionTime != Time.time)
-		{
-			float timeDelta = Time.fixedDeltaTime;
-			var velocity = newCOM - lastCOM;
-			velocity -= _snapOffset;
-			velocity /= timeDelta;
-			CenterOfMassVelocity = velocity;
-			CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
-			CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
-			CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+		var velocity = newCOM - lastCOM;
+		velocity -= _snapOffset;
+		velocity /= timeDelta;
+		CenterOfMassVelocity = velocity;
+		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
+		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
 
-			LastPosition = lastPosition;
-			LastRotation = lastRotation;
-
-			var newPosition = _ragDollRigidbody
-				.Select(x=>x.position)
-				.ToList();
-			var newRotation = _ragDollRigidbody
-				.Select(x=>x.rotation)
-				.ToList();
-			Velocities = LastPosition
-				.Zip(newPosition, (last, cur)=> (cur-last-_snapOffset)/timeDelta)
-				.ToList();
-			AngularVelocities = LastRotation
-				.Zip(newRotation, (last, cur)=> GetAngularVelocity(cur, last, timeDelta))
-				.ToList();
-			_snapOffset = Vector3.zero;
-		}
+		var newPosition = _ragDollRigidbody
+			.Select(x=>x.position)
+			.ToList();
+		var newRotation = _ragDollRigidbody
+			.Select(x=>x.rotation)
+			.ToList();
+		Velocities = LastPosition
+			// .Zip(newPosition, (last, cur)=> (cur-last)/timeDelta)
+			.Zip(newPosition, (last, cur)=> (cur-last-_snapOffset)/timeDelta)
+			.ToList();
+		AngularVelocities = LastRotation
+			.Zip(newRotation, (last, cur)=> GetAngularVelocity(cur, last, timeDelta))
+			.ToList();
+		LastPosition = newPosition;
+		LastRotation = newRotation;
+		_snapOffset = Vector3.zero;
 		_lastPositionTime = Time.time;		
     }
 
@@ -406,6 +399,12 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		}
 		MimicAnimation();
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
+		LastPosition = _ragDollRigidbody
+			.Select(x=>x.position)
+			.ToList();
+		LastRotation = _ragDollRigidbody
+			.Select(x=>x.rotation)
+			.ToList();
 		// CenterOfMassVelocity = Vector3.zero;
 		// CenterOfMassVelocityMagnitude = 0f;
 		// CenterOfMassVelocityInRootSpace = Vector3.zero;
@@ -595,7 +594,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			var target = targets.First(x=>x.name == source.name);
 			var vel = Velocities[i];
 			// var vel = velocity;
-			vel += velocity;
+			// vel += velocity;
 			var angVel = AngularVelocities[i];
 			// angVel = Vector3.zero;
             foreach (var childAb in target.GetComponentsInChildren<ArticulationBody>())

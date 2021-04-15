@@ -194,18 +194,18 @@ public class AnimationController : MonoBehaviour, IAnimationController
                 movement = _anim.deltaPosition;
                 materialUnderFoot = null;
             }
-            _lastGroundForwardVelocity = movement / Time.deltaTime;
+            _lastGroundForwardVelocity = movement / Time.fixedDeltaTime;
         }
         else
         {
-            movement = _lastGroundForwardVelocity * Time.deltaTime;
+            movement = _lastGroundForwardVelocity * Time.fixedDeltaTime;
         }
         // Rotate the transform of the character controller by the animation's root rotation.
         _characterController.transform.rotation *= _anim.deltaRotation;
         // print ($"delta:{_anim.deltaPosition.magnitude} movement:{movement.magnitude} delta:{_anim.deltaPosition} movement:{movement}");
 
         // Add to the movement with the calculated vertical speed.
-        movement += verticalVelocity * Vector3.up * Time.deltaTime;
+        movement += verticalVelocity * Vector3.up * Time.fixedDeltaTime;
 
         // Move the character controller.
         _characterController.Move(movement);
