@@ -125,8 +125,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
         SetupSensors();
 
-		//if (_usingMocapAnimatorController && !_isGeneratedProcedurally)
-
 		if (RequestCamera && CameraTarget != null)
 		{
 			var instances = FindObjectsOfType<MapAnim2Ragdoll>().ToList();
@@ -163,9 +161,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			anim.Update(0f);
 		}
-
     }
-
 
 	public void DynamicallyCreateRagdollForMocap()
 	{
@@ -256,16 +252,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    // void FixedUpdate()
-	// // void OnAnimatorMove()
-    // {
-	// 	LazyInitialize();
-    //     if (doFixedUpdate)
-    //         OnFixedUpdate();
-
-    // }
-
-
     public void OnStep(float timeDelta) {
 		LazyInitialize();
 
@@ -279,12 +265,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             Lenght = stateInfo.length;
             NormalizedTime = stateInfo.normalizedTime;
             IsLoopingAnimation = stateInfo.loop;
-            var timeStep = stateInfo.length * stateInfo.normalizedTime;
-            //var endTime = 1f;
-            //if (IsLoopingAnimation)
-            //    endTime = 3f;
-            // if (NormalizedTime <= endTime) {
-            // }       
+            var timeStep = stateInfo.length * stateInfo.normalizedTime;    
         }
 		MimicAnimation();
         // get Center Of Mass velocity in f space
@@ -303,7 +284,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			.Select(x=>x.position)
 			.ToList();
 		var newRotation = _ragDollRigidbody
-			.Select(x=>x.rotation)
+			.Select(x=>x.transform.localRotation)
 			.ToList();
 		Velocities = LastPosition
 			// .Zip(newPosition, (last, cur)=> (cur-last)/timeDelta)
@@ -355,12 +336,24 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     }
 
     // Find angular velocity. The delta rotation is converted to radians within [-pi, +pi].
-    Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
-    {
-        var rotationVelocity = FromToRotation(from, to);
-        var angularVelocity = NormalizedEulerAngles(rotationVelocity.eulerAngles) / timeDelta;
-        return angularVelocity;
-    }
+    // Vector3 OldGetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+    // {
+    //     var rotationVelocity = FromToRotation(from, to);
+    //     var angularVelocityInDeg = NormalizedEulerAngles(rotationVelocity.eulerAngles) / timeDelta;
+    //     var angularVelocity = angularVelocityInDeg * Mathf.Deg2Rad;
+    //     return angularVelocity;
+    // }
+	Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+	{
+		Vector3 fromInDeg = DecomposeQuanterium(from);
+		Vector3 fromInRad = fromInDeg * Mathf.Deg2Rad;
+		Vector3 toInDeg = DecomposeQuanterium(to);
+		Vector3 toInRad = toInDeg * Mathf.Deg2Rad;
+		Vector3 diff = fromInRad-toInRad;
+		Vector3 angularVelocity = diff / timeDelta;
+		return angularVelocity;
+	}
+
 	
     public Vector3 GetCenterOfMass()
     {
@@ -403,12 +396,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			.Select(x=>x.position)
 			.ToList();
 		LastRotation = _ragDollRigidbody
-			.Select(x=>x.rotation)
+			.Select(x=>x.transform.localRotation)
 			.ToList();
-		// CenterOfMassVelocity = Vector3.zero;
-		// CenterOfMassVelocityMagnitude = 0f;
-		// CenterOfMassVelocityInRootSpace = Vector3.zero;
-		// CenterOfMassVelocityMagnitudeInRootSpace = 0f;
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
@@ -437,7 +426,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			var idx = _sensors.IndexOf(sensor);
 			SensorIsInTouch[idx] = 0f;
 		}
-	}   
+	}
     public void CopyStatesTo(GameObject target)
     {
 		LazyInitialize();
@@ -528,24 +517,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         }
 		foreach (var childAb in root.GetComponentsInChildren<ArticulationBody>())
 		{
-			// // childAb.transform.localPosition = Vector3.zero;
-			// // childAb.transform.localEulerAngles = Vector3.zero;
 			childAb.angularVelocity = Vector3.zero;
 			childAb.velocity = Vector3.zero;
 		}
-		// var curJointPositions = new List<float>();
-		// root.GetJointPositions(curJointPositions);
-		// var dofCount = curJointPositions.Count();
-		// // root.SetDriveTargets(localRotationsRad);
-		// root.SetDriveTargetVelocities(Enumerable.Range(0,dofCount)
-        //             .Select(x=>0f).ToList());
-		// root.SetJointAccelerations(Enumerable.Range(0,dofCount)
-        //             .Select(x=>0f).ToList());
-		// root.SetJointForces(Enumerable.Range(0,dofCount)
-        //             .Select(x=>0f).ToList());
-		// // root.SetJointPositions(localRotationsRad);
-		// root.SetJointVelocities(Enumerable.Range(0,dofCount)
-        //             .Select(x=>0f).ToList());
     }
 	Vector3 DecomposeQuanterium(Quaternion localRotation)
 	{
@@ -580,12 +554,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		if (Velocities == null || Velocities.Count == 0)
 			return;
 
-		// basic
-		// foreach (var target in targets)
-		// {
-		// 	target.velocity = velocity;
-		// }
-
 		Vector3 aveVelocity = Vector3.zero;
 		Vector3 aveAngularVelocity = Vector3.zero;
 		for (int i = 0; i < _ragDollRigidbody.Count; i++)
@@ -593,10 +561,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			var source = _ragDollRigidbody[i];
 			var target = targets.First(x=>x.name == source.name);
 			var vel = Velocities[i];
-			// var vel = velocity;
-			// vel += velocity;
 			var angVel = AngularVelocities[i];
-			// angVel = Vector3.zero;
             foreach (var childAb in target.GetComponentsInChildren<ArticulationBody>())
             {
                 if (childAb == target)
@@ -606,8 +571,45 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
                 childAb.angularVelocity = Vector3.zero;
                 childAb.velocity = Vector3.zero;
             }
+			if (target.jointType == ArticulationJointType.SphericalJoint && !target.isRoot)
+			{
+				int j=0;
+				List<float> thisJointVelocity = Enumerable.Range(0, target.dofCount).Select(x=>0f).ToList(); 
+				
+				if (target.twistLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.x;
+				}
+				if (target.swingYLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.y;
+				}
+				if (target.swingZLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.z;
+				}
+				switch (target.dofCount)
+				{
+					case 1:
+						target.jointVelocity = new ArticulationReducedSpace(thisJointVelocity[0]);
+						break;
+					case 2:
+						target.jointVelocity = new ArticulationReducedSpace(
+							thisJointVelocity[0],
+							thisJointVelocity[1]);
+						break;
+					case 3:
+						target.jointVelocity = new ArticulationReducedSpace(
+							thisJointVelocity[0],
+							thisJointVelocity[1],
+							thisJointVelocity[2]);
+						break;
+					default:
+						break;
+				}
+
+			}
             target.velocity = vel;
-            target.angularVelocity = angVel;
 			aveVelocity += Velocities[i];
 			aveAngularVelocity += AngularVelocities[i];
         }
