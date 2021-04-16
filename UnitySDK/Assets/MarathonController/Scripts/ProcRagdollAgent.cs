@@ -277,7 +277,7 @@ public class ProcRagdollAgent : Agent
             bool terminate = false;
             terminate = terminate || _dReConRewards.PositionReward < 1E-10f;
             if (StepCount > 4)  // HACK
-                terminate = terminate || _dReConRewards.ComVelocityReward < 1E-10f;
+                terminate = terminate || _dReConRewards.ComVelocityReward < 1E-50f;
             // terminate = terminate || _dReConRewards.ComDirectionReward < .01f;
             if (_dReConRewards.VelDifferenceReward > 0f && StepCount > 4) // HACK
                 terminate = terminate || _dReConRewards.VelDifferenceReward < 1E-10f;
