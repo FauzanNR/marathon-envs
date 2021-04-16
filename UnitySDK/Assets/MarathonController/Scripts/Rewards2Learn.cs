@@ -298,7 +298,7 @@ public class Rewards2Learn : MonoBehaviour
                     (VelDifferenceReward * energy_w);
 
 
-        Reward = Reward + EnergyMinimReward;
+        // Reward = Reward + EnergyMinimReward;
 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
