@@ -49,9 +49,14 @@ public class Rewards2Learn : MonoBehaviour
     // [Header("Direction Factor")]
     // public float DirectionDistance;
     // public float DirectionFactor;
-    [Header("Energy Reward")]
+    [Header("Velocity Difference Reward")]
     public float VelDifferenceError;
     public float VelDifferenceReward;
+
+    [Header("Minimize Energy Reward")]
+    public float KineticEnergyMetric;
+    public float EnergyMinimReward;
+
 
 
     [Header("Misc")]
@@ -257,7 +262,7 @@ public class Rewards2Learn : MonoBehaviour
         // comVelocityFactor = 1.01f - comVelocityFactor;
         // comVelocityFactor = Mathf.Clamp(comVelocityFactor, 0f, 1f);
 
-        // Calc Energy Error
+        // Calc Velocity difference Error
         VelDifferenceError = _ragDollBodyStats.PointVelocity
             .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
             .Average();
@@ -265,8 +270,18 @@ public class Rewards2Learn : MonoBehaviour
         VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
         VelDifferenceReward = Mathf.Clamp(VelDifferenceReward, 0f, 1f);
 
-        // misc
-        HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
+
+        // calculate energy:
+
+        //we obviate the masses, we want this to be important all across
+        List<float> es = _ragDollBodyStats.PointVelocity.Select(x => x.magnitude * x.magnitude).ToList<float>();
+        KineticEnergyMetric = es.Sum() / es.Count;
+        //a quick run  suggests the input values range between 0 and 10, with most values near 0, so a simple way to get a reward value between 0 and 1 seems:
+        EnergyMinimReward = Mathf.Exp(-KineticEnergyMetric);
+
+
+    // misc
+    HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
@@ -279,7 +294,11 @@ public class Rewards2Learn : MonoBehaviour
                     (PositionReward * position_w) +
                     (LocalPoseReward * pose_w) +
                     // (PointsVelocityReward * vel_w) +
-                    (VelDifferenceReward * energy_w); 
+                    (VelDifferenceReward * energy_w);
+
+
+        Reward = Reward + EnergyMinimReward;
+
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
         // Reward *= (sqrtComVelocityReward*sqrtComDirectionReward);      
