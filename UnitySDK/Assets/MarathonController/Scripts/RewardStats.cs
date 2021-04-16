@@ -145,20 +145,18 @@ public class RewardStats : MonoBehaviour
 
     public void SetStatusForStep(float timeDelta)
     {
-        // generate Horizontal Direction
-        var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
-
         // get Center Of Mass velocity in f space
         Vector3 newCOM;
         // if Moocap, then get from anim2Ragdoll
         if (_mapAnim2Ragdoll != null)
         {
             newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            var newHorizontalDirection = _mapAnim2Ragdoll.HorizontalDirection;
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            transform.position = _root.transform.position;
+            transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
             CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
             CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
@@ -168,11 +166,12 @@ public class RewardStats : MonoBehaviour
         else
         {
             newCOM = GetCenterOfMass();
+            var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            transform.position = _root.transform.position;
+            transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
             var velocity = newCOM - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
@@ -200,7 +199,6 @@ public class RewardStats : MonoBehaviour
             if (_trackRotations[i].gameObject == _root)
                 localRotation = Quaternion.Inverse(transform.rotation) * _trackRotations[i].transform.rotation;
             Rotations[i] = localRotation;
-
         }
 
         LastIsSet = true;

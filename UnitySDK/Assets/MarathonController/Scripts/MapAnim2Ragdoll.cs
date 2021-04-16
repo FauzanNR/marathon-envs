@@ -45,6 +45,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     public Vector3 CenterOfMassVelocityInRootSpace;
     public float CenterOfMassVelocityMagnitudeInRootSpace;
     public Vector3 LastCenterOfMassInWorldSpace;
+    public Vector3 LastRootPositionInWorldSpace;
+    public Vector3 LastHeadPositionInWorldSpace;
+	public Vector3 HorizontalDirection;
+
 	public List<Vector3> LastPosition;
 	public List<Quaternion> LastRotation;
 	public List<Vector3> Velocities;
@@ -68,6 +72,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	bool _hasLazyInitialized;
 
 	bool _hackyNavAgentMode;
+
+	Collider _root;
+	Collider _head;
 
 	public void OnAgentInitialize()
 	{
@@ -161,6 +168,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			anim.Update(0f);
 		}
+        var colliders = GetComponentsInChildren<Collider>().ToList();
+		_root = colliders.FirstOrDefault();
+		_head = colliders.FirstOrDefault(x=>x.name.ToLower().Contains("head"));
+		if (_head == null)
+		{
+			Debug.LogWarning($"{nameof(MapAnim2Ragdoll)}.{nameof(LazyInitialize)}() can not find the head. ");
+		}
+
     }
 
 	public void DynamicallyCreateRagdollForMocap()
@@ -279,6 +294,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
 		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
 		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+		HorizontalDirection = new Vector3(0f, transform.eulerAngles.y, 0f);
+		LastRootPositionInWorldSpace = _root.transform.position;
+		LastHeadPositionInWorldSpace = _head.transform.position;
 
 		var newPosition = _ragDollRigidbody
 			.Select(x=>x.position)
