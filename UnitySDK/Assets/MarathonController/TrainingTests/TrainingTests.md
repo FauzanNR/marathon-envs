@@ -51,8 +51,6 @@ TrainingTests/MarConHumanoid-v0-20210413-v2/MarCon-v0.onnx
 
 
 
-**TODO**
-
 
 
 C.  MotionMatching with DReCon 
@@ -80,7 +78,9 @@ mlagents-learn config\marathon_envs_config.yaml --env="envs\20210415-marcon-moti
 
 The commit that corresponds to the build is: 7f20a59a10b8a581e4670bc23e1a5ea77064d52f
 
+The outcome of the training is at:
 
+\TrainingTests\MotionMarCon-v0-20210415-v1MotionMarCon-v0.onnx
 
 
 
