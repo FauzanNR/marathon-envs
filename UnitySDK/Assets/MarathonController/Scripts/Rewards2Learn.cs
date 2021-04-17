@@ -199,8 +199,9 @@ public class Rewards2Learn : MonoBehaviour
         COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
         // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
         // ComVelocityReward = Mathf.Exp(ComVelocityReward);
-        // ComVelocityReward = Mathf.Pow(COMVelocityDifference,2);
-        ComVelocityReward = COMVelocityDifference;
+        // make ~between 0f & 1f by dividing by 5f (hardcoded)
+        ComVelocityReward = COMVelocityDifference / 5f;
+        ComVelocityReward = Mathf.Pow(ComVelocityReward,2);
         ComVelocityReward = Mathf.Exp(-com_scale*ComVelocityReward);
 
         // points velocity

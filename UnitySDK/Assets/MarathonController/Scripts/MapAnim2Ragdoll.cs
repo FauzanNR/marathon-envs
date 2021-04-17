@@ -409,6 +409,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			transform.rotation = resetRotation;
 		}
 		MimicAnimation();
+		_snapOffset = Vector3.zero;
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
 		LastPosition = _ragDollRigidbody
 			.Select(x=>x.position)
