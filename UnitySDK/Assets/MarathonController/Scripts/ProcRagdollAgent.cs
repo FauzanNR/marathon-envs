@@ -567,7 +567,57 @@ public class ProcRagdollAgent : Agent
             Debug.Log("there is no muscle for joint " + joint.name);
 
         }
+        LegacyUpdateMotor(joint, targetNormalizedRotation, power);
+        // NewUpdateMotor(joint, targetNormalizedRotation, power);
+    }
+    void LegacyUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
+    {
+        power *= _ragDollSettings.Stiffness;
+        float damping = _ragDollSettings.Damping;
+        float forceLimit = _ragDollSettings.ForceLimit;
+        
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.xDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.x * scale);
+            drive.target = target;
+            drive.stiffness = power.x;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            joint.xDrive = drive;
+        }
 
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.yDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.y * scale);
+            drive.target = target;
+            drive.stiffness = power.y;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            joint.yDrive = drive;
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.zDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.z * scale);
+            drive.target = target;
+            drive.stiffness = power.z;
+            drive.damping = damping;
+            drive.forceLimit = forceLimit;
+            joint.zDrive = drive;
+        }        
+    }
+
+    void NewUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
+    {
         // For a physically realistic simulation - ,  
         var m = joint.mass;
         var d = _ragDollSettings.DampingRatio; // d should be 0..1.
