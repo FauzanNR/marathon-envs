@@ -411,6 +411,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		MimicAnimation();
 		_snapOffset = Vector3.zero;
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
+		LastRootPositionInWorldSpace = _root.transform.position;
+		LastHeadPositionInWorldSpace = _head.transform.position;
 		LastPosition = _ragDollRigidbody
 			.Select(x=>x.position)
 			.ToList();

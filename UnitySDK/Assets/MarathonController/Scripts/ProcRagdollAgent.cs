@@ -257,7 +257,7 @@ public class ProcRagdollAgent : Agent
         if (ReproduceDReCon)
         {
             // DReCon Logic
-            if (_rewards2Learn.HeadHeightDistance > 0.5f || _rewards2Learn.Reward <= 0f)
+            if (_rewards2Learn.HeadHeightDistance > 1f || _rewards2Learn.Reward <= 0f)
             {
                 if (!dontResetOnZeroReward)
                     EndEpisode();
