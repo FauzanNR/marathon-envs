@@ -14,7 +14,7 @@ public class ProcRagdollAgent : Agent
 {
     [Header("Settings")]
     public float FixedDeltaTime = 1f / 60f;
-    public float SmoothBeta = 0.2f;
+    public float ActionSmoothingBeta = 0.2f;
     public bool ReproduceDReCon;
 
     [Header("Camera")]
@@ -350,7 +350,7 @@ public class ProcRagdollAgent : Agent
     {
         // yt =β at +(1−β)yt−1
         var smoothedActions = vectorAction
-            .Zip(_observations2Learn.PreviousActions, (a, y) => SmoothBeta * a + (1f - SmoothBeta) * y)
+            .Zip(_observations2Learn.PreviousActions, (a, y) => ActionSmoothingBeta * a + (1f - ActionSmoothingBeta) * y)
             .ToArray();
         return smoothedActions;
     }
