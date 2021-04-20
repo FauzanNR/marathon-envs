@@ -19,10 +19,10 @@ public class RewardStats : MonoBehaviour
     public Vector3 CenterOfMassVelocityInRootSpace;
     public float CenterOfMassVelocityMagnitudeInRootSpace;
 
-    [HideInInspector]
-    public Vector3 LastCenterOfMassInWorldSpace;
-    [HideInInspector]
-    public bool LastIsSet;
+    [HideInInspector] public Vector3 LastCenterOfMassInWorldSpace;
+    [HideInInspector] public Vector3 HeadPositionInWorldSpace;
+    [HideInInspector] public Vector3 RootPositionInWorldSpace;
+    [HideInInspector] public bool LastIsSet;
 
     SpawnableEnv _spawnableEnv;
     List<Collider> _colliders;
@@ -30,6 +30,7 @@ public class RewardStats : MonoBehaviour
     List<ArticulationBody> _articulationBodyParts;
     List<GameObject> _bodyParts;
     GameObject _root;
+    GameObject _head;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
     List<GameObject> _trackRotations;
     public List<Quaternion> Rotations;
@@ -45,11 +46,15 @@ public class RewardStats : MonoBehaviour
 
 
     string rootName = "articulation:Hips";
+    string headName = "";
 
     public void setRootName(string s)
     {
         rootName = s;
-
+    }
+    public void setHeadName(string s)
+    {
+        headName = s;
     }
 
 
@@ -114,12 +119,13 @@ public class RewardStats : MonoBehaviour
         Rotations = Enumerable.Range(0, _trackRotations.Count)
             .Select(x => Quaternion.identity)
             .ToList();
-        if (_root == null)
-        {
-            _root = _bodyParts.First(x => x.name == rootName);
-        }
+        _root = _bodyParts.First(x => x.name == rootName);
+        _head = _bodyParts.First(x => x.name == headName);
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
+        LastCenterOfMassInWorldSpace = transform.position;
+        HeadPositionInWorldSpace = _head.transform.position;
+        RootPositionInWorldSpace = _root.transform.position;
         ColliderNames = _colliders
             .Select(x => x.name)
             .ToList();
@@ -145,34 +151,35 @@ public class RewardStats : MonoBehaviour
 
     public void SetStatusForStep(float timeDelta)
     {
-        // generate Horizontal Direction
-        var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
-
         // get Center Of Mass velocity in f space
         Vector3 newCOM;
         // if Moocap, then get from anim2Ragdoll
         if (_mapAnim2Ragdoll != null)
         {
             newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            var newHorizontalDirection = _mapAnim2Ragdoll.HorizontalDirection;
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            transform.position = _root.transform.position;
+            transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
             CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
             CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
             CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+            HeadPositionInWorldSpace = _mapAnim2Ragdoll.LastHeadPositionInWorldSpace;
+            RootPositionInWorldSpace = _mapAnim2Ragdoll.LastRootPositionInWorldSpace;
         }
         else
         {
             newCOM = GetCenterOfMass();
+            var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            transform.position = _root.transform.position;
+            transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
             var velocity = newCOM - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
@@ -180,6 +187,8 @@ public class RewardStats : MonoBehaviour
             CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
             CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+            HeadPositionInWorldSpace = _head.transform.position;
+            RootPositionInWorldSpace = _root.transform.position;
         }
         LastCenterOfMassInWorldSpace = newCOM;
 
@@ -200,7 +209,6 @@ public class RewardStats : MonoBehaviour
             if (_trackRotations[i].gameObject == _root)
                 localRotation = Quaternion.Inverse(transform.rotation) * _trackRotations[i].transform.rotation;
             Rotations[i] = localRotation;
-
         }
 
         LastIsSet = true;

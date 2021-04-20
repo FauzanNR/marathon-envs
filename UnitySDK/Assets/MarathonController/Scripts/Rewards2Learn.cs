@@ -114,6 +114,7 @@ public class Rewards2Learn : MonoBehaviour
             .First(x => x.name == headname);
         _mocapBodyStats = new GameObject("MocapDReConRewardStats").AddComponent<RewardStats>();
         _mocapBodyStats.setRootName(targetedRootName);
+        _mocapBodyStats.setHeadName(headname);
 
         _mocapBodyStats.ObjectToTrack = _mocap;
 
@@ -122,6 +123,7 @@ public class Rewards2Learn : MonoBehaviour
 
         _ragDollBodyStats = new GameObject("RagDollDReConRewardStats").AddComponent<RewardStats>();
         _ragDollBodyStats.setRootName(targetedRootName);
+        _ragDollBodyStats.setHeadName(headname);
 
 
         _ragDollBodyStats.ObjectToTrack = this;
@@ -199,8 +201,9 @@ public class Rewards2Learn : MonoBehaviour
         COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
         // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
         // ComVelocityReward = Mathf.Exp(ComVelocityReward);
-        // ComVelocityReward = Mathf.Pow(COMVelocityDifference,2);
-        ComVelocityReward = COMVelocityDifference;
+        // make ~between 0f & 1f by dividing by 5f (hardcoded)
+        ComVelocityReward = COMVelocityDifference / 5f;
+        ComVelocityReward = Mathf.Pow(ComVelocityReward,2);
         ComVelocityReward = Mathf.Exp(-com_scale*ComVelocityReward);
 
         // points velocity
@@ -239,7 +242,7 @@ public class Rewards2Learn : MonoBehaviour
         LocalPoseReward = Mathf.Exp(-pose_scale * SumOfRotationSqrDifferences);
 
         // distance factor
-        ComDistance = (_mocapBodyStats.transform.position - _ragDollBodyStats.transform.position).magnitude;
+        ComDistance = (_mocapBodyStats.LastCenterOfMassInWorldSpace - _ragDollBodyStats.LastCenterOfMassInWorldSpace).magnitude;
         DistanceFactor = Mathf.Pow(ComDistance,2);
         DistanceFactor = 1.4f*DistanceFactor;
         DistanceFactor = 1.01f-DistanceFactor;
@@ -298,7 +301,7 @@ public class Rewards2Learn : MonoBehaviour
                     (VelDifferenceReward * energy_w);
 
 
-        Reward = Reward + EnergyMinimReward;
+        // Reward = Reward + EnergyMinimReward;
 
         // var sqrtComVelocityReward = Mathf.Sqrt(ComVelocityReward);
         // var sqrtComDirectionReward = Mathf.Sqrt(ComDirectionReward);
@@ -352,10 +355,13 @@ public class Rewards2Learn : MonoBehaviour
         LocalPoseReward = Mathf.Exp(LocalPoseReward);
 
         // distance factor
-        ComDistance = (_mocapBodyStats.transform.position - _ragDollBodyStats.transform.position).magnitude;
-        DistanceFactor = Mathf.Pow(ComDistance, 2);
+        ComDistance = (_mocapBodyStats.LastCenterOfMassInWorldSpace - _ragDollBodyStats.LastCenterOfMassInWorldSpace).magnitude;
+        HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
+        HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
+        var headDistance = (_mocapBodyStats.HeadPositionInWorldSpace - _ragDollBodyStats.HeadPositionInWorldSpace).magnitude;
+        DistanceFactor = Mathf.Pow(headDistance, 2);
         DistanceFactor = 1.4f * DistanceFactor;
-        DistanceFactor = 1.01f - DistanceFactor;
+        DistanceFactor = 1.3f - DistanceFactor;
         DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
 
         // // direction factor
@@ -368,8 +374,6 @@ public class Rewards2Learn : MonoBehaviour
         // DirectionFactor = Mathf.Clamp(DirectionFactor, 0f, 1f);
 
         // misc
-        HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
-        HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
         SumOfSubRewards = PositionReward + ComReward + PointsVelocityReward + LocalPoseReward;
@@ -382,8 +386,6 @@ public class Rewards2Learn : MonoBehaviour
 
         _mocapBodyStats.OnReset();
         _ragDollBodyStats.OnReset();
-        _ragDollBodyStats.transform.position = _mocapBodyStats.transform.position;
-        _ragDollBodyStats.transform.rotation = _mocapBodyStats.transform.rotation;
     }
     void OnDrawGizmos()
     {

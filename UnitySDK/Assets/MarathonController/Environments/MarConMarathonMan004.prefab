@@ -299,7 +299,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 203713806055896729}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -1496,7 +1496,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1388970784182032499}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -1880,7 +1880,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1730308165399850428}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -2110,7 +2110,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960951838785520570}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -2495,7 +2495,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2224861606479669337}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -3795,7 +3795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 249
+    VectorObservationSize: 141
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 50
@@ -3829,7 +3829,7 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  SmoothBeta: 0.3
+  ActionSmoothingBeta: 0.2
   ReproduceDReCon: 0
   RequestCamera: 1
   CameraFollowMe: 0
@@ -3891,6 +3891,8 @@ MonoBehaviour:
   ComPositionReward: 0
   VelDifferenceError: 0
   VelDifferenceReward: 0
+  KineticEnergyMetric: 0
+  EnergyMinimReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -4646,7 +4648,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3935631521243145903}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -4747,7 +4749,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3995466660754725607}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -5440,6 +5442,7 @@ MonoBehaviour:
   NoJumpsInMockMode: 1
   TargetMovementVector: {x: 0, y: 0}
   MovementVector: {x: 0, y: 0}
+  MovementMagnatude: 0
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
@@ -5494,7 +5497,12 @@ MonoBehaviour:
   CameraTarget: {fileID: 0}
   CenterOfMassVelocity: {x: 0, y: 0, z: 0}
   CenterOfMassVelocityMagnitude: 0
+  CenterOfMassVelocityInRootSpace: {x: 0, y: 0, z: 0}
+  CenterOfMassVelocityMagnitudeInRootSpace: 0
   LastCenterOfMassInWorldSpace: {x: 0, y: 0, z: 0}
+  LastRootPositionInWorldSpace: {x: 0, y: 0, z: 0}
+  LastHeadPositionInWorldSpace: {x: 0, y: 0, z: 0}
+  HorizontalDirection: {x: 0, y: 0, z: 0}
   LastPosition: []
   LastRotation: []
   Velocities: []
@@ -6794,7 +6802,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6733452228855708387}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -6939,7 +6947,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6866393360960853235}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -7263,7 +7271,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7361535085136109187}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 
@@ -7962,7 +7970,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7955681939403806567}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eebc76d5f8d6545e2a99489d15e426be, type: 3}
   m_Name: 

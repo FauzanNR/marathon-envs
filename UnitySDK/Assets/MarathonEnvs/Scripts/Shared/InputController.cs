@@ -13,6 +13,7 @@ public class InputController : MonoBehaviour
 
     [Header("User or Mock input states")]
     public Vector2 TargetMovementVector; // User-input desired horizontal center of mass velocity.
+    public float TargetMovementMagnatude;
     public Vector2 MovementVector; // smoothed version of TargetMovementVector.
     public float MovementMagnatude;
     public Vector2 CameraRotation; // User-input desired rotation for camera.
@@ -90,6 +91,7 @@ public class InputController : MonoBehaviour
         if (TargetMovementVector.magnitude < .1f && MovementVector.magnitude < .1f)
         {
             TargetMovementVector = Vector2.zero;
+            TargetMovementMagnatude = TargetMovementVector.magnitude;
             MovementVector = Vector2.zero;
         }
         MovementMagnatude = MovementVector.magnitude;
@@ -118,6 +120,7 @@ public class InputController : MonoBehaviour
         if (!Mathf.Approximately(newMovementVector.sqrMagnitude, 0f))
         {
             TargetMovementVector = newMovementVector;
+            TargetMovementMagnatude = TargetMovementVector.magnitude;
             resetTimeUntilDemo = true;
         }
         else if (DemoMockIfNoInput && _timeUnillDemo <= 0)
@@ -153,6 +156,9 @@ public class InputController : MonoBehaviour
         Jump = false;
         float direction = UnityEngine.Random.Range(0f, 360f);
         float power = UnityEngine.Random.value;
+        // 1 in 5 times we are going to stand still (4 in 5 still has 10% chance)
+        if (UnityEngine.Random.value < .2f)
+            power = 0.001f;
         // float direction = UnityEngine.Random.Range(-Mathf.PI/8, Mathf.PI/8);
         // float power = UnityEngine.Random.Range(1f, 1f);
         if (ClipInput > 0f)
@@ -161,6 +167,7 @@ public class InputController : MonoBehaviour
         }
         TargetMovementVector = new Vector2(Mathf.Cos(direction), Mathf.Sin(direction));
         TargetMovementVector *= power;
+        TargetMovementMagnatude = TargetMovementVector.magnitude;
         Jump = ChooseJump();
         _delayUntilNextAction = 1f + (UnityEngine.Random.value * 5f);
     }
@@ -185,6 +192,7 @@ public class InputController : MonoBehaviour
         HorizontalDirection = new Vector3(movementVector.normalized.x, 0f, movementVector.normalized.y);
         movementVector /= float.MinValue;
         TargetMovementVector = new Vector2(movementVector.x, movementVector.y);
+        TargetMovementMagnatude = TargetMovementVector.magnitude;
     }
 
 }
