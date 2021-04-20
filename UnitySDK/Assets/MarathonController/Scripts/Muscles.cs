@@ -15,9 +15,9 @@ public class Muscles : MonoBehaviour
 
     public List<MusclePower> MusclePowers;
 
-   // public float MotorScale = 1f;
-   // public float Stiffness = 50f;
-   // public float Damping = 100f;
+    public float MotorScale = 1f;
+    public float Stiffness = 50f;
+    public float Damping = 100f;
     public float ForceLimit = float.MaxValue;
     public float DampingRatio = 0.9f;
     public float NaturalFrequency = 20f;
