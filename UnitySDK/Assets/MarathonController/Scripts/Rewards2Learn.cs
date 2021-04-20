@@ -174,22 +174,18 @@ public class Rewards2Learn : MonoBehaviour
 
         // MarCon
         const float pose_w = 0.2f;
-        const float position_w = 0.1f;
+        const float position_w = 0.2f;
         const float com_direction_w = 0.1f; 
-        const float com_velocity_w = 0.4f; 
+        const float com_velocity_w = 0.3f; 
         const float energy_w = 0.2f;
 
         // position reward
         List<float> distances = _mocapBodyStats.GetPointDistancesFrom(_ragDollBodyStats);
-        PositionReward = -0.3f;
         List<float> sqrDistances = distances.Select(x=> x*x).ToList();
         SumOfDistances = distances.Sum();
-        SumOfSqrDistances = sqrDistances
-            // .Select(x=> Mathf.Clamp(x,0f,1f))
-            .Sum();
-        // PositionReward *= SumOfSqrDistances;
-        // PositionReward = Mathf.Exp(PositionReward);
-        PositionReward = Mathf.Exp(-position_scale * (SumOfSqrDistances / 6f));
+        SumOfSqrDistances = sqrDistances.Sum();
+        var deepMimicScaledDistance = SumOfSqrDistances / (num_points / 4);
+        PositionReward = Mathf.Exp(-position_scale * (deepMimicScaledDistance));
         if (PositionReward == 0f)
         {
             PositionReward = 0f;
@@ -199,21 +195,15 @@ public class Rewards2Learn : MonoBehaviour
         MocapCOMVelocity = _mocapBodyStats.CenterOfMassVelocity;
         RagDollCOMVelocity = _ragDollBodyStats.CenterOfMassVelocity;
         COMVelocityDifference = (MocapCOMVelocity-RagDollCOMVelocity).magnitude;
-        // ComVelocityReward = -Mathf.Pow(COMVelocityDifference,2);
-        // ComVelocityReward = Mathf.Exp(ComVelocityReward);
-        // make ~between 0f & 1f by dividing by 5f (hardcoded)
-        ComVelocityReward = COMVelocityDifference / 5f;
-        ComVelocityReward = Mathf.Pow(ComVelocityReward,2);
+        ComVelocityReward = Mathf.Pow(COMVelocityDifference,2);
         ComVelocityReward = Mathf.Exp(-com_scale*ComVelocityReward);
 
         // points velocity
         List<float> velocityDistances = _mocapBodyStats.GetPointVelocityDistancesFrom(_ragDollBodyStats);
         List<float> sqrVelocityDistances = velocityDistances.Select(x=> x*x).ToList();
-        PointsVelocityDifferenceSquared = sqrVelocityDistances
-            // .Select(x=> Mathf.Clamp(x,0f,1f))
-            .Sum();
-        // PointsVelocityReward = (-1f/_mocapBodyStats.PointVelocity.Length) * PointsVelocityDifferenceSquared;
-        PointsVelocityReward = Mathf.Exp(-vel_scale * (PointsVelocityDifferenceSquared / 6f));
+        PointsVelocityDifferenceSquared = sqrVelocityDistances.Sum();
+        var deepMimicScaledVelocityDistanceSquared = PointsVelocityDifferenceSquared / (num_points / 4);
+        PointsVelocityReward = Mathf.Exp(-vel_scale * deepMimicScaledVelocityDistanceSquared);
 
         // local pose reward
         if (RotationDifferences == null || RotationDifferences.Count < _mocapBodyStats.Rotations.Count)
@@ -234,21 +224,7 @@ public class Rewards2Learn : MonoBehaviour
             SumOfRotationDifferences += angle;
             SumOfRotationSqrDifferences += sqrAngle;
         }
-        // LocalPoseReward = -6.5f/RotationDifferences.Count;
-        // LocalPoseReward *= SumOfRotationSqrDifferences;
-        // LocalPoseReward = Mathf.Exp(LocalPoseReward);
-        // var aveRotationSqrDifferences = SumOfRotationSqrDifferences / _mocapBodyStats.Rotations.Count;
-        // LocalPoseReward = Mathf.Exp(-pose_scale * aveRotationSqrDifferences);
         LocalPoseReward = Mathf.Exp(-pose_scale * SumOfRotationSqrDifferences);
-
-        // distance factor
-        ComDistance = (_mocapBodyStats.LastCenterOfMassInWorldSpace - _ragDollBodyStats.LastCenterOfMassInWorldSpace).magnitude;
-        DistanceFactor = Mathf.Pow(ComDistance,2);
-        DistanceFactor = 1.4f*DistanceFactor;
-        DistanceFactor = 1.01f-DistanceFactor;
-        DistanceFactor = Mathf.Clamp(DistanceFactor, 0f, 1f);
-        // ComPositionReward = Mathf.Exp(-3f * (1f-DistanceFactor));
-        ComPositionReward = Mathf.Exp(-com_scale * (1f-DistanceFactor));
 
         // center of mass direction reward (from 0f to 1f)
         ComDirectionDistance = Vector3.Dot( 
@@ -256,9 +232,7 @@ public class Rewards2Learn : MonoBehaviour
             _ragDollBodyStats.transform.forward);
         ComDirectionDistance = 1f-((ComDirectionDistance + 1f)/2f);
         ComDirectionReward = ComDirectionDistance;
-        // ComDirectionReward = Mathf.Exp(-4f * ComDirectionReward);
         ComDirectionReward = Mathf.Exp(-com_scale*ComDirectionReward);
-
 
         // // COM velocity factor
         // var comVelocityFactor = COMVelocityDifference;
@@ -276,7 +250,6 @@ public class Rewards2Learn : MonoBehaviour
 
 
         // calculate energy:
-
         //we obviate the masses, we want this to be important all across
         List<float> es = _ragDollBodyStats.PointVelocity.Select(x => x.magnitude * x.magnitude).ToList<float>();
         KineticEnergyMetric = es.Sum() / es.Count;
@@ -284,15 +257,14 @@ public class Rewards2Learn : MonoBehaviour
         EnergyMinimReward = Mathf.Exp(-KineticEnergyMetric);
 
 
-    // misc
-    HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
+        // misc
+        HeadHeightDistance = (_mocapHead.position.y - _ragDollHead.position.y);
         HeadHeightDistance = Mathf.Abs(HeadHeightDistance);
 
         // reward
         // SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+PointsVelocityReward+VelDifferenceReward;
-        SumOfSubRewards = ComPositionReward+ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+VelDifferenceReward;
+        SumOfSubRewards = ComVelocityReward+ComDirectionReward+PositionReward+LocalPoseReward+VelDifferenceReward;
         Reward = 0f +
-                    // (ComPositionReward * 0.1f) +
                     (ComVelocityReward * com_velocity_w) + // com_w) +
                     (ComDirectionReward * com_direction_w) + // com_w) +
                     (PositionReward * position_w) +
