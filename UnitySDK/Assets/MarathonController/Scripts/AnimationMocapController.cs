@@ -30,9 +30,9 @@ public class AnimationMocapController : MonoBehaviour, IAnimationController
     public void OnReset()
     {
         _targetDirection = Quaternion.Euler(0, 90, 0);
-        MovementVelocity = Vector3.zero;
-        _anim.Rebind();
-        _anim.Update(0f);
+        // MovementVelocity = Vector3.zero;
+        // _anim.Rebind();
+        // _anim.Update(0f);
     }
     void OnAnimatorMove()
     {

@@ -27,7 +27,7 @@ public class SensorObservations : MonoBehaviour, IOnSensorCollision
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
 	{
 		//if (string.Compare(other.name, "Terrain", true) !=0)
-		if (other.GetComponent<Terrain>() == null)
+		if (other.layer != LayerMask.NameToLayer("Ground"))
 			return;
 		var sensor = _sensors
 			.FirstOrDefault(x=>x == sensorCollider.gameObject);
@@ -39,7 +39,7 @@ public class SensorObservations : MonoBehaviour, IOnSensorCollision
 	public void OnSensorCollisionExit(Collider sensorCollider, GameObject other)
 	{
 		//if (string.Compare(other.gameObject.name, "Terrain", true) !=0)
-		if (other.GetComponent<Terrain>() == null)
+		if (other.layer != LayerMask.NameToLayer("Ground"))
 			return;
 		var sensor = _sensors
 			.FirstOrDefault(x=>x == sensorCollider.gameObject);

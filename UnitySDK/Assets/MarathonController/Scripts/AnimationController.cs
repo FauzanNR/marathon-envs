@@ -57,13 +57,6 @@ public class AnimationController : MonoBehaviour, IAnimationController
         get { return !Mathf.Approximately(_inputController.MovementVector.sqrMagnitude, 0f); }
     }
 
-
-
-    [SerializeField]
-    bool _isGeneratedProcedurally = false;
-
-
-
     public void OnEnable()
     {
 
@@ -110,13 +103,8 @@ public class AnimationController : MonoBehaviour, IAnimationController
         return desiredVelocity;
     }
 
-    void Update()
-    {
-    }
-
     void FixedUpdate()
     {
-
         OnFixedUpdate();
     }
 
@@ -142,12 +130,9 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
     public void OnReset()
     {
-
-        if (_isGeneratedProcedurally)
-            doFixedUpdate = false;
-
-
-
+    }
+    void OldOnReset()
+    {
         _isGrounded = true;
         _previouslyGrounded = true;
         _inCombo = false;
@@ -160,8 +145,6 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
         if (!doFixedUpdate)
             return;
-
-
 
         _anim.SetBool("onGround", _isGrounded);
         // _anim.SetFloat("verticalVelocity", _verticalVelocity);
@@ -178,10 +161,6 @@ public class AnimationController : MonoBehaviour, IAnimationController
 
         OnFixedUpdate();
         _anim.Update(0f);
-
-
-
-
     }
 
 
@@ -215,18 +194,18 @@ public class AnimationController : MonoBehaviour, IAnimationController
                 movement = _anim.deltaPosition;
                 materialUnderFoot = null;
             }
-            _lastGroundForwardVelocity = movement / Time.deltaTime;
+            _lastGroundForwardVelocity = movement / Time.fixedDeltaTime;
         }
         else
         {
-            movement = _lastGroundForwardVelocity * Time.deltaTime;
+            movement = _lastGroundForwardVelocity * Time.fixedDeltaTime;
         }
         // Rotate the transform of the character controller by the animation's root rotation.
         _characterController.transform.rotation *= _anim.deltaRotation;
         // print ($"delta:{_anim.deltaPosition.magnitude} movement:{movement.magnitude} delta:{_anim.deltaPosition} movement:{movement}");
 
         // Add to the movement with the calculated vertical speed.
-        movement += verticalVelocity * Vector3.up * Time.deltaTime;
+        movement += verticalVelocity * Vector3.up * Time.fixedDeltaTime;
 
         // Move the character controller.
         _characterController.Move(movement);
@@ -237,15 +216,11 @@ public class AnimationController : MonoBehaviour, IAnimationController
         // If Ellen is not on the ground then send the vertical speed to the animator.
         // This is so the vertical speed is kept when landing so the correct landing animation is played.
 
+        if (!_isGrounded)
+            _anim.SetFloat("verticalVelocity", verticalVelocity);
 
-        if (!_isGeneratedProcedurally)
-        {
-            if (!_isGrounded)
-                _anim.SetFloat("verticalVelocity", verticalVelocity);
-
-            // Send whether or not Ellen is on the ground to the animator.
-            _anim.SetBool("onGround", _isGrounded);
-        }
+        // Send whether or not Ellen is on the ground to the animator.
+        _anim.SetBool("onGround", _isGrounded);
     }
 
     void RotateTarget(float deltaTime)

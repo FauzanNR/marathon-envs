@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.MLAgents;
 using UnityEngine;
 using UnityEngine.Assertions;
-
+using UnityEngine.AI;
 using System.Linq.Expressions;
 
 public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision 
@@ -42,7 +42,17 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	[Header("Stats")]
     public Vector3 CenterOfMassVelocity;
     public float CenterOfMassVelocityMagnitude;
+    public Vector3 CenterOfMassVelocityInRootSpace;
+    public float CenterOfMassVelocityMagnitudeInRootSpace;
     public Vector3 LastCenterOfMassInWorldSpace;
+    public Vector3 LastRootPositionInWorldSpace;
+    public Vector3 LastHeadPositionInWorldSpace;
+	public Vector3 HorizontalDirection;
+
+	public List<Vector3> LastPosition;
+	public List<Quaternion> LastRotation;
+	public List<Vector3> Velocities;
+	public List<Vector3> AngularVelocities;
 
 
 	//TODO: find a way to remove this dependency (otherwise, not fully procedural)
@@ -60,6 +70,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
     public bool doFixedUpdate = true;
 
 	bool _hasLazyInitialized;
+
+	bool _hackyNavAgentMode;
+
+	Collider _root;
+	Collider _head;
 
 	public void OnAgentInitialize()
 	{
@@ -117,9 +132,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
         SetupSensors();
 
-		//if (_usingMocapAnimatorController && !_isGeneratedProcedurally)
-
-			if (RequestCamera && CameraTarget != null)
+		if (RequestCamera && CameraTarget != null)
 		{
 			var instances = FindObjectsOfType<MapAnim2Ragdoll>().ToList();
 			if (instances.Count(x=>x.CameraFollowMe) < 1)
@@ -130,6 +143,20 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             var follow = camera.GetComponent<SmoothFollow>();
             follow.target = CameraTarget;
         }
+		var navAgent = GetComponent<NavMeshAgent>();
+		if (navAgent)
+		{
+			var radius = 16f;
+            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * radius;
+            NavMeshHit hit;
+            Vector3 finalPosition = Vector3.zero;
+            if (NavMesh.SamplePosition(randomDirection, out hit, radius, 1))
+            {
+                finalPosition = hit.position;
+            }
+			transform.position = finalPosition;
+			_hackyNavAgentMode = true;
+		}
 		_resetPosition = transform.position;
 		_resetRotation = transform.rotation;
 
@@ -141,9 +168,15 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			anim.Update(0f);
 		}
+        var colliders = GetComponentsInChildren<Collider>().ToList();
+		_root = colliders.FirstOrDefault();
+		_head = colliders.FirstOrDefault(x=>x.name.ToLower().Contains("head"));
+		if (_head == null)
+		{
+			Debug.LogWarning($"{nameof(MapAnim2Ragdoll)}.{nameof(LazyInitialize)}() can not find the head. ");
+		}
 
     }
-
 
 	public void DynamicallyCreateRagdollForMocap()
 	{
@@ -234,18 +267,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		SensorIsInTouch = Enumerable.Range(0,_sensors.Count).Select(x=>0f).ToList();
 	}
 
-    // void FixedUpdate()
-	void OnAnimatorMove()
-    {
+    public void OnStep(float timeDelta) {
 		LazyInitialize();
-        if (doFixedUpdate)
-            OnFixedUpdate();
-	
-    }
 
-
-    void OnFixedUpdate() {
-		LazyInitialize();
+		if (_lastPositionTime == Time.time)
+			return;
 
         //if (!_usesMotionMatching)
         {
@@ -254,16 +280,45 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
             Lenght = stateInfo.length;
             NormalizedTime = stateInfo.normalizedTime;
             IsLoopingAnimation = stateInfo.loop;
-            var timeStep = stateInfo.length * stateInfo.normalizedTime;
-            //var endTime = 1f;
-            //if (IsLoopingAnimation)
-            //    endTime = 3f;
-            // if (NormalizedTime <= endTime) {
-            // }       
+            var timeStep = stateInfo.length * stateInfo.normalizedTime;    
         }
 		MimicAnimation();
+        // get Center Of Mass velocity in f space
+		var newCOM = GetCenterOfMass();
+		var lastCOM = LastCenterOfMassInWorldSpace;
+		LastCenterOfMassInWorldSpace = newCOM;
+		var velocity = newCOM - lastCOM;
+		velocity -= _snapOffset;
+		velocity /= timeDelta;
+		CenterOfMassVelocity = velocity;
+		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
+		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
+		HorizontalDirection = new Vector3(0f, transform.eulerAngles.y, 0f);
+		LastRootPositionInWorldSpace = _root.transform.position;
+		LastHeadPositionInWorldSpace = _head.transform.position;
+
+		var newPosition = _ragDollRigidbody
+			.Select(x=>x.position)
+			.ToList();
+		var newRotation = _ragDollRigidbody
+			.Select(x=>x.transform.localRotation)
+			.ToList();
+		Velocities = LastPosition
+			// .Zip(newPosition, (last, cur)=> (cur-last)/timeDelta)
+			.Zip(newPosition, (last, cur)=> (cur-last-_snapOffset)/timeDelta)
+			.ToList();
+		AngularVelocities = LastRotation
+			.Zip(newRotation, (last, cur)=> GetAngularVelocity(cur, last, timeDelta))
+			.ToList();
+		LastPosition = newPosition;
+		LastRotation = newRotation;
+		_snapOffset = Vector3.zero;
+		_lastPositionTime = Time.time;		
     }
 
+	float _lastPositionTime = float.MinValue;
+	Vector3 _snapOffset = Vector3.zero;
 	void MimicAnimation() {
 		if (!anim.enabled)
 			return;
@@ -274,17 +329,51 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		{
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
 		}
-        // get Center Of Mass velocity in f space
-        float timeDelta = Time.fixedDeltaTime;
-		var newCOM = GetCenterOfMass();
-        var velocity = newCOM - LastCenterOfMassInWorldSpace;
-        velocity /= timeDelta;
-        CenterOfMassVelocity = transform.InverseTransformVector(velocity);
-        CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
-		LastCenterOfMassInWorldSpace = newCOM;
 	}
+	Quaternion FromToRotation(Quaternion from, Quaternion to)
+    {
+        if (to == from) return Quaternion.identity;
+
+        return to * Quaternion.Inverse(from);
+    }
+	// Adjust the value of an angle to lie within [-pi, +pi].
+    float NormalizedAngle(float angle)
+    {
+        if (angle < 180)
+        {
+            return angle * Mathf.Deg2Rad;
+        }
+        return (angle - 360) * Mathf.Deg2Rad;
+    }
+	Vector3 NormalizedEulerAngles(Vector3 eulerAngles)
+    {
+        var x = NormalizedAngle(eulerAngles.x);
+        var y = NormalizedAngle(eulerAngles.y);
+        var z = NormalizedAngle(eulerAngles.z);
+        return new Vector3(x, y, z);
+    }
+
+    // Find angular velocity. The delta rotation is converted to radians within [-pi, +pi].
+    // Vector3 OldGetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+    // {
+    //     var rotationVelocity = FromToRotation(from, to);
+    //     var angularVelocityInDeg = NormalizedEulerAngles(rotationVelocity.eulerAngles) / timeDelta;
+    //     var angularVelocity = angularVelocityInDeg * Mathf.Deg2Rad;
+    //     return angularVelocity;
+    // }
+	Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+	{
+		Vector3 fromInDeg = DecomposeQuanterium(from);
+		Vector3 fromInRad = fromInDeg * Mathf.Deg2Rad;
+		Vector3 toInDeg = DecomposeQuanterium(to);
+		Vector3 toInRad = toInDeg * Mathf.Deg2Rad;
+		Vector3 diff = fromInRad-toInRad;
+		Vector3 angularVelocity = diff / timeDelta;
+		return angularVelocity;
+	}
+
 	
-    Vector3 GetCenterOfMass()
+    public Vector3 GetCenterOfMass()
     {
         var centerOfMass = Vector3.zero;
         float totalMass = 0f;
@@ -306,31 +395,30 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         if (!doFixedUpdate)
             return;
 
-            if (_usingMocapAnimatorController)
+		if (!_hackyNavAgentMode)
 		{
-			_mocapAnimController.OnReset();
-			//TODO. we should find a more general way to define those relations wiht MocapAnimatorController004, to decouple the different pieces of code
-
+			transform.position = _resetPosition;
+			// handle character controller skin width
+			var characterController = GetComponent<CharacterController>();
+			if (characterController != null)
+			{
+				var pos = transform.position;
+				pos.y += characterController.skinWidth;
+				transform.position = pos;
+			}
+			transform.rotation = resetRotation;
 		}
-		else
-		{
-			Debug.Log("I am resetting the reference animation with MxMAnimator (no _mocapController)");
-		}
-		transform.position = _resetPosition;
-		// handle character controller skin width
-		var characterController = GetComponent<CharacterController>();
-		if (characterController != null)
-		{
-			var pos = transform.position;
-			pos.y += characterController.skinWidth;
-			transform.position = pos;
-		}
-		transform.rotation = resetRotation;
-		
 		MimicAnimation();
+		_snapOffset = Vector3.zero;
 		LastCenterOfMassInWorldSpace = GetCenterOfMass();
-		CenterOfMassVelocity = Vector3.zero;
-		CenterOfMassVelocityMagnitude = 0f;
+		LastRootPositionInWorldSpace = _root.transform.position;
+		LastHeadPositionInWorldSpace = _head.transform.position;
+		LastPosition = _ragDollRigidbody
+			.Select(x=>x.position)
+			.ToList();
+		LastRotation = _ragDollRigidbody
+			.Select(x=>x.transform.localRotation)
+			.ToList();
 	}
 
     public void OnSensorCollisionEnter(Collider sensorCollider, GameObject other)
@@ -359,57 +447,204 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			var idx = _sensors.IndexOf(sensor);
 			SensorIsInTouch[idx] = 0f;
 		}
-	}   
+	}
     public void CopyStatesTo(GameObject target)
     {
 		LazyInitialize();
+
 
         var targets = target.GetComponentsInChildren<ArticulationBody>().ToList();
 		if (targets?.Count == 0)
 			return;
         var root = targets.First(x=>x.isRoot);
-		root.gameObject.SetActive(false);
-        foreach (var targetRb in targets)
+		// root.gameObject.SetActive(false);
+		var rstat = _ragDollRigidbody.First(x=>x.name == root.name);
+		root.TeleportRoot(rstat.position, rstat.rotation);
+		root.transform.position = rstat.position;
+		root.transform.rotation = rstat.rotation;
+		// root.gameObject.SetActive(true);
+		foreach (var targetRb in targets)
         {
-			var stat = GetComponentsInChildren<Rigidbody>().First(x=>x.name == targetRb.name);
-            targetRb.transform.position = stat.position;
-            targetRb.transform.rotation = stat.rotation;
-            if (targetRb.isRoot)
-            {
-                targetRb.TeleportRoot(stat.position, stat.rotation);
-            }
-			float stiffness = 0f;
-			float damping = 10000f;
-			if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
+			var stat = _ragDollRigidbody.First(x=>x.name == targetRb.name);
+			if (targetRb.isRoot)
+				continue;
+			// bool shouldDebug = targetRb.name == "articulation:mixamorig:RightArm";
+			// bool didDebug = false;
+
+			if (targetRb.jointType == ArticulationJointType.SphericalJoint)
 			{
-				var drive = targetRb.xDrive;
-				drive.stiffness = stiffness;
-				drive.damping = damping;
-				targetRb.xDrive = drive;
-			}			
-            if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
-			{
-				var drive = targetRb.yDrive;
-				drive.stiffness = stiffness;
-				drive.damping = damping;
-				targetRb.yDrive = drive;
-			}
-            if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
-			{
-				var drive = targetRb.zDrive;
-				drive.stiffness = stiffness;
-				drive.damping = damping;
-				targetRb.zDrive = drive;
+				float stiffness = 0f;
+				float damping = float.MaxValue;
+				float forceLimit = 0f;
+				// if (shouldDebug)
+				// 	didDebug = true;
+				Vector3 decomposedRotation = DecomposeQuanterium(stat.transform.localRotation);
+				int j=0;
+				List<float> thisJointPosition = Enumerable.Range(0,targetRb.dofCount).Select(x=>0f).ToList(); 
+				
+				if (targetRb.twistLock == ArticulationDofLock.LimitedMotion)
+				{
+					var drive = targetRb.xDrive;
+					var deg = decomposedRotation.x;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.xDrive = drive;
+				}
+				if (targetRb.swingYLock == ArticulationDofLock.LimitedMotion)
+				{
+					var drive = targetRb.yDrive;
+					var deg = decomposedRotation.y;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.yDrive = drive;
+				}
+				if (targetRb.swingZLock == ArticulationDofLock.LimitedMotion)
+				{
+					var drive = targetRb.zDrive;
+					var deg = decomposedRotation.z;
+					thisJointPosition[j++] = deg * Mathf.Deg2Rad;
+					drive.stiffness = stiffness;
+					drive.damping = damping;
+					drive.forceLimit = forceLimit;
+					drive.target = deg;
+					targetRb.zDrive = drive;
+				}
+				switch (targetRb.dofCount)
+				{
+					case 1:
+						targetRb.jointPosition = new ArticulationReducedSpace(thisJointPosition[0]);
+						break;
+					case 2:
+						targetRb.jointPosition = new ArticulationReducedSpace(
+							thisJointPosition[0],
+							thisJointPosition[1]);
+						break;
+					case 3:
+						targetRb.jointPosition = new ArticulationReducedSpace(
+							thisJointPosition[0],
+							thisJointPosition[1],
+							thisJointPosition[2]);
+						break;
+					default:
+						break;
+				}
 			}
         }
-		root.gameObject.SetActive(true);
-    }	   
+		foreach (var childAb in root.GetComponentsInChildren<ArticulationBody>())
+		{
+			childAb.angularVelocity = Vector3.zero;
+			childAb.velocity = Vector3.zero;
+		}
+    }
+	Vector3 DecomposeQuanterium(Quaternion localRotation)
+	{
+		//the decomposition in swing-twist, typically works like this:
+		Quaternion swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
+		// Quaternion swing = new Quaternion(localRotation.x, localRotation.y, localRotation.z, localRotation.w);
+		swing = swing.normalized;
+
+		Quaternion twist = Quaternion.Inverse(swing) * localRotation;
+
+		Vector3 decomposition = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
+
+		//we make sure we keep the values nearest to 0 (with a modulus)
+		if (Mathf.Abs(decomposition.x - 360) < Mathf.Abs(decomposition.x))
+			decomposition.x = (decomposition.x - 360);
+		if (Mathf.Abs(decomposition.y - 360) < Mathf.Abs(decomposition.y))
+			decomposition.y = (decomposition.y - 360);
+		if (Mathf.Abs(decomposition.z - 360) < Mathf.Abs(decomposition.z))
+			decomposition.z = (decomposition.z - 360);
+		return decomposition;
+	}
+
+	public void CopyVelocityTo(GameObject targetGameObject, Vector3 velocity)
+    {
+		LazyInitialize();
+
+        var targets = targetGameObject.GetComponentsInChildren<ArticulationBody>().ToList();
+		if (targets?.Count == 0)
+			return;
+        var root = targets.First(x=>x.isRoot);
+		
+		if (Velocities == null || Velocities.Count == 0)
+			return;
+
+		Vector3 aveVelocity = Vector3.zero;
+		Vector3 aveAngularVelocity = Vector3.zero;
+		for (int i = 0; i < _ragDollRigidbody.Count; i++)
+		{
+			var source = _ragDollRigidbody[i];
+			var target = targets.First(x=>x.name == source.name);
+			var vel = Velocities[i];
+			var angVel = AngularVelocities[i];
+            foreach (var childAb in target.GetComponentsInChildren<ArticulationBody>())
+            {
+                if (childAb == target)
+                    continue;
+                childAb.transform.localPosition = Vector3.zero;
+                childAb.transform.localEulerAngles = Vector3.zero;
+                childAb.angularVelocity = Vector3.zero;
+                childAb.velocity = Vector3.zero;
+            }
+			if (target.jointType == ArticulationJointType.SphericalJoint && !target.isRoot)
+			{
+				int j=0;
+				List<float> thisJointVelocity = Enumerable.Range(0, target.dofCount).Select(x=>0f).ToList(); 
+				
+				if (target.twistLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.x;
+				}
+				if (target.swingYLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.y;
+				}
+				if (target.swingZLock == ArticulationDofLock.LimitedMotion)
+				{
+					thisJointVelocity[j++] = angVel.z;
+				}
+				switch (target.dofCount)
+				{
+					case 1:
+						target.jointVelocity = new ArticulationReducedSpace(thisJointVelocity[0]);
+						break;
+					case 2:
+						target.jointVelocity = new ArticulationReducedSpace(
+							thisJointVelocity[0],
+							thisJointVelocity[1]);
+						break;
+					case 3:
+						target.jointVelocity = new ArticulationReducedSpace(
+							thisJointVelocity[0],
+							thisJointVelocity[1],
+							thisJointVelocity[2]);
+						break;
+					default:
+						break;
+				}
+
+			}
+            target.velocity = vel;
+			aveVelocity += Velocities[i];
+			aveAngularVelocity += AngularVelocities[i];
+        }
+		var c = (float)_ragDollRigidbody.Count;
+		aveVelocity = aveVelocity / c;
+		aveAngularVelocity = aveAngularVelocity / c;
+		c = c;
+	}
 	public Vector3 SnapTo(Vector3 snapPosition)
 	{
 		snapPosition.y = transform.position.y;
 		var snapDistance = snapPosition-transform.position;
 		transform.position = snapPosition;
-		LastCenterOfMassInWorldSpace = GetCenterOfMass();
+		_snapOffset += snapDistance;
 		return snapDistance;
 	}
 	public List<Rigidbody> GetRigidBodies()

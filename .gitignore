@@ -14,6 +14,11 @@
 UnitySDK/Assets/MotionMatching
 UnitySDK/Assets/MotionMatching.meta
 
+#tests in general
+UnitySDK/Assets/Tests
+UnitySDK/Assets/Tests.meta
+
+
 
 
 # Tensorflow Model Info
