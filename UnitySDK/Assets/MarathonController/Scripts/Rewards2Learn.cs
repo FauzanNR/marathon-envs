@@ -153,7 +153,7 @@ public class Rewards2Learn : MonoBehaviour
         // note is 10 in code, but 40 in paper. 
         const float position_scale = 10f; // was end_eff_scale
         // const float root_scale = 5f;
-        const float com_scale = 10f;
+        const float com_scale = 5f;
 
         // DeepMimic
         // const float pose_w = 0.5f;
