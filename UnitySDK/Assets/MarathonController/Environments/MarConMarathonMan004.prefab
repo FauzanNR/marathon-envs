@@ -3779,7 +3779,7 @@ MonoBehaviour:
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 20
+  NaturalFrequency: 60
   ForceScale: 0.3
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
@@ -5441,6 +5441,7 @@ MonoBehaviour:
   ClipInput: 0
   NoJumpsInMockMode: 1
   TargetMovementVector: {x: 0, y: 0}
+  TargetMovementMagnatude: 0
   MovementVector: {x: 0, y: 0}
   MovementMagnatude: 0
   CameraRotation: {x: 0, y: 0}

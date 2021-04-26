@@ -567,12 +567,16 @@ public class ProcRagdollAgent : Agent
             Debug.Log("there is no muscle for joint " + joint.name);
 
         }
-        LegacyUpdateMotor(joint, targetNormalizedRotation, power);
-        // NewUpdateMotor(joint, targetNormalizedRotation, power);
+        // LegacyUpdateMotor(joint, targetNormalizedRotation, power);
+        NewUpdateMotor(joint, targetNormalizedRotation, power);
     }
     void LegacyUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
     {
         power *= _ragDollSettings.Stiffness;
+        // power = new Vector3(
+        //     _ragDollSettings.Stiffness, 
+        //     _ragDollSettings.Stiffness, 
+        //     _ragDollSettings.Stiffness);
         float damping = _ragDollSettings.Damping;
         float forceLimit = _ragDollSettings.ForceLimit;
         
