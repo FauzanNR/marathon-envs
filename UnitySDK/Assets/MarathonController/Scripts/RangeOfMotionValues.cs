@@ -22,6 +22,17 @@ public class RangeOfMotionValue
     }}
 }
 
+
+public class OscillationParameters
+{
+    public string name;
+
+    public float dampingRatio;
+    public float natFreq;
+
+
+}
+
 [CreateAssetMenu(fileName = "RangeOfMotion", menuName = "Parser/CreateRangeOfMotionFile")]
 public class RangeOfMotionValues : ScriptableObject
 {
@@ -32,12 +43,22 @@ public class RangeOfMotionValues : ScriptableObject
     [SerializeField]
     List<RangeOfMotionValue> _values;
 
+    List<OscillationParameters> _osc;
+
+
     public void addJoint(Transform joint)
     {
         RangeOfMotionValue r = new RangeOfMotionValue();
         r.name = joint.name;
 
         _values.Add(r);
+
+
+        OscillationParameters o = new OscillationParameters();
+        o.name = joint.name;
+        _osc.Add(o);
+
+
     }
 
     //public

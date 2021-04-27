@@ -205,6 +205,30 @@ public class ROMparserSwingTwist : MonoBehaviour
             body.angularVelocity = (new Vector3(0.1f, 20f, 3f));
         }
     }
+
+    public static void GetSwingTwist(Quaternion localRotation, out Quaternion swing, out Quaternion twist) {
+
+        //the decomposition in swing-twist, typically works like this:
+
+        swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
+        swing = swing.normalized;
+
+        //Twist: assuming   q_localRotation = q_swing * q_twist 
+
+        twist = Quaternion.Inverse(swing) * localRotation;
+
+
+        //double check:
+        Quaternion temp = swing * twist;
+
+        bool isTheSame = (Mathf.Abs(Quaternion.Angle(temp, localRotation)) < 0.001f);
+
+
+        if (!isTheSame)
+            Debug.LogError("I have: " + temp + "which does not match: " + localRotation + "because their angle is: " + Quaternion.Angle(temp, localRotation));
+
+    }
+
     void Update()
     {
         for (int i = 0; i < joints.Length; i++)
@@ -213,6 +237,8 @@ public class ROMparserSwingTwist : MonoBehaviour
 
             Quaternion localRotation = joints[i].localRotation;
 
+
+            /*
             //the decomposition in swing-twist, typically works like this:
             Quaternion swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
             swing = swing.normalized;
@@ -232,9 +258,13 @@ public class ROMparserSwingTwist : MonoBehaviour
 
             if (!isTheSame)
                 Debug.LogError("In joint " + gameObject.name + "I have: " + temp + "which does not match: " + localRotation + "because their angle is: " + Quaternion.Angle(temp, localRotation));
+            */
 
 
-            Vector3 candidates4storage = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
+            GetSwingTwist(localRotation, out Quaternion swing, out Quaternion twist);
+
+            Vector3 candidates4storage = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);            //this is consistent with how the values are stored in ArticulationBody:
+
 
             //we make sure we keep the values nearest to 0 (with a modulus)
             if (Mathf.Abs(candidates4storage.x - 360) < Mathf.Abs(candidates4storage.x))
@@ -243,22 +273,6 @@ public class ROMparserSwingTwist : MonoBehaviour
                 candidates4storage.y = (candidates4storage.y - 360);
             if (Mathf.Abs(candidates4storage.z - 360) < Mathf.Abs(candidates4storage.z))
                 candidates4storage.z = (candidates4storage.z - 360);
-            /*
-            if (info2store.maxRotations[i].x < candidates4storage.x)
-                info2store.maxRotations[i].x = candidates4storage.x;
-            if (info2store.maxRotations[i].y < candidates4storage.y)
-                info2store.maxRotations[i].y = candidates4storage.y;
-            if (info2store.maxRotations[i].z < candidates4storage.z)
-                info2store.maxRotations[i].z = candidates4storage.z;
-
-
-            if (info2store.minRotations[i].x > candidates4storage.x)
-                info2store.minRotations[i].x = candidates4storage.x;
-            if (info2store.minRotations[i].y > candidates4storage.y)
-                info2store.minRotations[i].y = candidates4storage.y;
-            if (info2store.minRotations[i].z > candidates4storage.z)
-                info2store.minRotations[i].z = candidates4storage.z;
-            */
 
 
             if (info2store.Values[i].upper.x < candidates4storage.x)
@@ -287,6 +301,11 @@ public class ROMparserSwingTwist : MonoBehaviour
         }
 
         CalcPreview();//this only stores the ROM value?
+
+
+        CalculateOscillatorParameters();
+
+
     }
     // void FixedUpdate()
     void OnRenderObject()
@@ -448,6 +467,16 @@ public class ROMparserSwingTwist : MonoBehaviour
     //    }
     //    Debug.Log("applied constraints to: " + targetJoints.Length + " articulationBodies in ragdoll object: " + targetRagdollRoot.name);
     //}
+
+
+    public void CalculateOscillatorParameters() { 
+    
+    
+    
+    
+    }
+
+
 
     //we assume the constraints have been well applied (see the previous function, Apply ROMAsConstraints)
     //This function is called from an Editor Script

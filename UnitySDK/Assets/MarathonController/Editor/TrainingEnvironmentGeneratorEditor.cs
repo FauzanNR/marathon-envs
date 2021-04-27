@@ -15,10 +15,6 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         serializedObject.Update();
 
 
-        GUILayout.Label("");
-
-        base.OnInspectorGUI();
-
         
 
 
@@ -68,6 +64,10 @@ public class TrainingEnvironmentGeneratorEditor : Editor
         }
         //GUILayout.Label("After (3), activate the Ragdoll game object within the hierarchy of the training environment generated.");
 
+
+        GUILayout.Label("");
+
+        base.OnInspectorGUI();
 
 
 

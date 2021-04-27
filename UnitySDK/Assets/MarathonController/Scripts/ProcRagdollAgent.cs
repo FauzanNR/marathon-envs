@@ -56,6 +56,9 @@ public class ProcRagdollAgent : Agent
     bool _hasAwake = false;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
+
+    private int _decisionPeriod = 1;
+
     void Awake()
     {
         if (RequestCamera && CameraTarget != null)
@@ -69,6 +72,9 @@ public class ProcRagdollAgent : Agent
                     follow.target = CameraTarget;
             }
         }
+
+        _decisionPeriod = GetComponent<DecisionRequester>().DecisionPeriod;
+
         _hasAwake = true;
     }
     void Update()
@@ -631,6 +637,16 @@ public class ProcRagdollAgent : Agent
         var stiffness = k;
         var damping = c;
 
+        //why do you never set up the targetVelocity?
+        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
+
+
+        Quaternion localRotation = joint.transform.localRotation;
+        ROMparserSwingTwist.GetSwingTwist(localRotation, out Quaternion swing, out Quaternion twist);
+
+        Vector3 currentRotationValues = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
+
+
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.xDrive;
@@ -638,6 +654,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
+
+            drive.targetVelocity = (target - currentRotationValues.x) / (_decisionPeriod * Time.fixedDeltaTime);
+
             drive.stiffness = stiffness;
             drive.damping = damping;
             drive.forceLimit = power.x * _ragDollSettings.ForceScale;
@@ -651,6 +670,8 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
+            drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
+
             drive.stiffness = stiffness;
             drive.damping = damping;
             drive.forceLimit = power.y * _ragDollSettings.ForceScale;
@@ -663,7 +684,10 @@ public class ProcRagdollAgent : Agent
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.z * scale);
+
             drive.target = target;
+            drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
+
             drive.stiffness = stiffness;
             drive.damping = damping;
             drive.forceLimit = power.z * _ragDollSettings.ForceScale;
