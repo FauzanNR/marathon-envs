@@ -45,6 +45,7 @@ public class ProcRagdollAgent : Agent
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
     IAnimationController _controllerToMimic;
+    Frequencies2Learn _frequencies2Learn;
 
 
     bool _hasLazyInitialized;
@@ -96,6 +97,7 @@ public class ProcRagdollAgent : Agent
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _mapAnim2Ragdoll.OnStep(timeDelta);
         _observations2Learn.OnStep(timeDelta);
+        _frequencies2Learn.OnStep(timeDelta);
         // _dReConRewards.OnStep(timeDelta);
 
         if (ReproduceDReCon)
@@ -427,17 +429,19 @@ public class ProcRagdollAgent : Agent
             .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
-        var individualMotors = new List<float>();
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
 
         _controllerToMimic = _mapAnim2Ragdoll.GetComponent<IAnimationController>();
-
-
 
         _mapAnim2Ragdoll.OnAgentInitialize();
         _observations2Learn.OnAgentInitialize();
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
+
+        _frequencies2Learn = GetComponent<Frequencies2Learn>();
+        if (_frequencies2Learn == null)
+            _frequencies2Learn = gameObject.AddComponent<Frequencies2Learn>();
+        _frequencies2Learn.OnAgentInitialize(this.gameObject, _mapAnim2Ragdoll.gameObject, _motors.ToArray());
 
         _hasLazyInitialized = true;
     }
