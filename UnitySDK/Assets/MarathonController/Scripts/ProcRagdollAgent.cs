@@ -34,6 +34,16 @@ public class ProcRagdollAgent : Agent
 
 
 
+    [Header("Read Only")]
+    
+    [SerializeField]
+    Vector3[] targetVelocity;
+    [SerializeField]
+    Vector3[] jointVelocityInReducedSpace;
+
+
+
+
     List<Rigidbody> _mocapBodyParts;
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
@@ -235,7 +245,11 @@ public class ProcRagdollAgent : Agent
 
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
-        int i = 0;
+
+
+        int i = 0;//keeps track of hte number of actions
+
+        int j = 0;//keeps track of the number of motoros
         foreach (var m in _motors)
         {
             if (m.isRoot)
@@ -255,7 +269,33 @@ public class ProcRagdollAgent : Agent
             {
                 UpdateMotor(m, targetNormalizedRotation);
             }
+            //DEBUG: to keep track of the values, and see if they seem reasonable
+            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation);
+
+
+            Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
+
+
+
+            jointVelocityInReducedSpace[j] = temp;
+            j++;
+         
         }
+
+        //these are scalar, not vectorial:
+        //GetComponent<Observations2Learn>().RagDollJointVelocities
+
+       // ArticulationReducedSpace
+      
+
+
+
+        //ArticulationReducedSpace(vels[0]);
+
+
+
+        //  differenceWithActualVelocity = 
+
         _observations2Learn.PreviousActions = vectorAction;
 
         AddReward(_rewards2Learn.Reward);
@@ -433,7 +473,15 @@ public class ProcRagdollAgent : Agent
             .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
-        var individualMotors = new List<float>();
+        //var individualMotors = new List<float>();
+
+        //for debug purposes:
+        targetVelocity = new Vector3[_motors.Count];
+        jointVelocityInReducedSpace  = new Vector3[_motors.Count];
+
+
+
+
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
 
         _controllerToMimic = _mapAnim2Ragdoll.GetComponent<IAnimationController>();
@@ -496,6 +544,7 @@ public class ProcRagdollAgent : Agent
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
     }
 
+    /*
     float[] GetMocapTargets()
     {
         if (_mocapTargets == null)
@@ -558,7 +607,7 @@ public class ProcRagdollAgent : Agent
             }
         }
         return _mocapTargets;
-    }
+    }*/
 
     void UpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation)
     {
@@ -626,6 +675,68 @@ public class ProcRagdollAgent : Agent
         }        
     }
 
+
+
+
+    private Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation) {
+
+        Vector3 targetVelocity = new Vector3(0, 0, 0);
+
+
+        Quaternion localRotation = joint.transform.localRotation;
+        Utils.GetSwingTwist(localRotation, out Quaternion swing, out Quaternion twist);
+
+        Vector3 currentRotationValues = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
+
+
+
+        //why do you never set up the targetVelocity?
+        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
+
+
+
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.xDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.x * scale);
+            
+           targetVelocity.x = (target - currentRotationValues.x);
+      }
+
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.yDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.y * scale);
+            targetVelocity.y = (target - currentRotationValues.y);
+
+          
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.zDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.z * scale);
+
+            targetVelocity.z = (target - currentRotationValues.z);
+
+        }
+
+
+
+
+        return targetVelocity;
+
+
+
+    }
+
+
     void NewUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
     {
         // For a physically realistic simulation - ,  
@@ -641,11 +752,6 @@ public class ProcRagdollAgent : Agent
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
 
-        Quaternion localRotation = joint.transform.localRotation;
-        ROMparserSwingTwist.GetSwingTwist(localRotation, out Quaternion swing, out Quaternion twist);
-
-        Vector3 currentRotationValues = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
-
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
@@ -655,7 +761,9 @@ public class ProcRagdollAgent : Agent
             var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
 
-            drive.targetVelocity = (target - currentRotationValues.x) / (_decisionPeriod * Time.fixedDeltaTime);
+           // drive.targetVelocity = (target - currentRotationValues.x) / (_decisionPeriod * Time.fixedDeltaTime);
+           
+
 
             drive.stiffness = stiffness;
             drive.damping = damping;
@@ -670,7 +778,7 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
-            drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
+           // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
 
             drive.stiffness = stiffness;
             drive.damping = damping;
@@ -686,7 +794,7 @@ public class ProcRagdollAgent : Agent
             var target = midpoint + (targetNormalizedRotation.z * scale);
 
             drive.target = target;
-            drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
+            //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
 
             drive.stiffness = stiffness;
             drive.damping = damping;

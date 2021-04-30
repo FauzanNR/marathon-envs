@@ -43,6 +43,8 @@ public class RangeOfMotionValues : ScriptableObject
     [SerializeField]
     List<RangeOfMotionValue> _values;
 
+
+    //WEIRD!
     List<OscillationParameters> _osc;
 
 

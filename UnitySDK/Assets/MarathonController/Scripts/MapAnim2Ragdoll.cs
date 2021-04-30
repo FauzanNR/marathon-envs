@@ -309,7 +309,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			.Zip(newPosition, (last, cur)=> (cur-last-_snapOffset)/timeDelta)
 			.ToList();
 		AngularVelocities = LastRotation
-			.Zip(newRotation, (last, cur)=> GetAngularVelocity(cur, last, timeDelta))
+			.Zip(newRotation, (last, cur)=> Utils.GetAngularVelocity(cur, last, timeDelta))
 			.ToList();
 		LastPosition = newPosition;
 		LastRotation = newRotation;
@@ -352,25 +352,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         var z = NormalizedAngle(eulerAngles.z);
         return new Vector3(x, y, z);
     }
-
-    // Find angular velocity. The delta rotation is converted to radians within [-pi, +pi].
-    // Vector3 OldGetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
-    // {
-    //     var rotationVelocity = FromToRotation(from, to);
-    //     var angularVelocityInDeg = NormalizedEulerAngles(rotationVelocity.eulerAngles) / timeDelta;
-    //     var angularVelocity = angularVelocityInDeg * Mathf.Deg2Rad;
-    //     return angularVelocity;
-    // }
-	Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
-	{
-		Vector3 fromInDeg = DecomposeQuanterium(from);
-		Vector3 fromInRad = fromInDeg * Mathf.Deg2Rad;
-		Vector3 toInDeg = DecomposeQuanterium(to);
-		Vector3 toInRad = toInDeg * Mathf.Deg2Rad;
-		Vector3 diff = fromInRad-toInRad;
-		Vector3 angularVelocity = diff / timeDelta;
-		return angularVelocity;
-	}
 
 	
     public Vector3 GetCenterOfMass()
@@ -478,7 +459,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 				float forceLimit = 0f;
 				// if (shouldDebug)
 				// 	didDebug = true;
-				Vector3 decomposedRotation = DecomposeQuanterium(stat.transform.localRotation);
+				Vector3 decomposedRotation = Utils.GetSwingTwist(stat.transform.localRotation);
 				int j=0;
 				List<float> thisJointPosition = Enumerable.Range(0,targetRb.dofCount).Select(x=>0f).ToList(); 
 				
@@ -542,27 +523,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			childAb.velocity = Vector3.zero;
 		}
     }
-	Vector3 DecomposeQuanterium(Quaternion localRotation)
-	{
-		//the decomposition in swing-twist, typically works like this:
-		Quaternion swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
-		// Quaternion swing = new Quaternion(localRotation.x, localRotation.y, localRotation.z, localRotation.w);
-		swing = swing.normalized;
-
-		Quaternion twist = Quaternion.Inverse(swing) * localRotation;
-
-		Vector3 decomposition = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
-
-		//we make sure we keep the values nearest to 0 (with a modulus)
-		if (Mathf.Abs(decomposition.x - 360) < Mathf.Abs(decomposition.x))
-			decomposition.x = (decomposition.x - 360);
-		if (Mathf.Abs(decomposition.y - 360) < Mathf.Abs(decomposition.y))
-			decomposition.y = (decomposition.y - 360);
-		if (Mathf.Abs(decomposition.z - 360) < Mathf.Abs(decomposition.z))
-			decomposition.z = (decomposition.z - 360);
-		return decomposition;
-	}
-
 	public void CopyVelocityTo(GameObject targetGameObject, Vector3 velocity)
     {
 		LazyInitialize();
