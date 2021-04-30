@@ -36,12 +36,14 @@ public class Observations2Learn : MonoBehaviour
     [Tooltip("Smoothed actions produced in the previous step of the policy are collected in t −1")]
     public float[] PreviousActions;
 
-    [Tooltip("RagDoll ArticulationBody joint positions in reduced space")]
-    public float[] RagDollJointPositions;
-    [Tooltip("RagDoll ArticulationBody joint velocity in reduced space")]
-    public float[] RagDollJointVelocities;
-    [Tooltip("RagDoll ArticulationBody joint accelerations in reduced space")]
-    public float[] RagDollJointAccelerations;
+    //[Tooltip("RagDoll ArticulationBody joint positions in reduced space")]
+    //public float[] RagDollJointPositions;
+//    [Tooltip("RagDoll ArticulationBody joint velocity in reduced space")]
+//    public float[] RagDollJointVelocities;
+
+
+  //  [Tooltip("RagDoll ArticulationBody joint accelerations in reduced space")]
+  //  public float[] RagDollJointAccelerations;
     [Tooltip("RagDoll ArticulationBody joint forces in reduced space")]
     public float[] RagDollJointForces;
 
@@ -122,9 +124,9 @@ public class Observations2Learn : MonoBehaviour
                 numJoints++;
         }
         PreviousActions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        RagDollJointPositions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        RagDollJointVelocities = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        RagDollJointAccelerations = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+        //RagDollJointPositions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+       // RagDollJointVelocities = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+       // RagDollJointAccelerations = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
         RagDollJointForces = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
     }
 
@@ -205,7 +207,7 @@ public class Observations2Learn : MonoBehaviour
 
             differenceStats.Position = mocapStats.Position - ragDollStats.Position;
             differenceStats.Velocity = mocapStats.Velocity - ragDollStats.Velocity;
-            differenceStats.AngualrVelocity = mocapStats.AngualrVelocity - ragDollStats.AngualrVelocity;
+            differenceStats.AngualrVelocity = mocapStats.AngularVelocity - ragDollStats.AngularVelocity;
             differenceStats.Rotation = ObservationStats.GetAngularVelocity(mocapStats.Rotation, ragDollStats.Rotation, timeDelta);
         }
         int i = 0;
@@ -214,34 +216,34 @@ public class Observations2Learn : MonoBehaviour
             int j = 0;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
             {
-                RagDollJointPositions[i] = m.jointPosition[j];
-                RagDollJointVelocities[i] = m.jointVelocity[j];
-                RagDollJointAccelerations[i] = m.jointAcceleration[j];
+                //RagDollJointPositions[i] = m.jointPosition[j];
+              //  RagDollJointVelocities[i] = m.jointVelocity[j];
+              //  RagDollJointAccelerations[i] = m.jointAcceleration[j];
                 RagDollJointForces[i++] = m.jointForce[j++];
             }
             if (m.swingYLock == ArticulationDofLock.LimitedMotion)
             {
-                RagDollJointPositions[i] = m.jointPosition[j];
-                RagDollJointVelocities[i] = m.jointVelocity[j];
-                RagDollJointAccelerations[i] = m.jointAcceleration[j];
+              //  RagDollJointPositions[i] = m.jointPosition[j];
+             //   RagDollJointVelocities[i] = m.jointVelocity[j];
+             //   RagDollJointAccelerations[i] = m.jointAcceleration[j];
                 RagDollJointForces[i++] = m.jointForce[j++];
             }
             if (m.swingZLock == ArticulationDofLock.LimitedMotion)
             {
-                RagDollJointPositions[i] = m.jointPosition[j];
-                RagDollJointVelocities[i] = m.jointVelocity[j];
-                RagDollJointAccelerations[i] = m.jointAcceleration[j];
+              //  RagDollJointPositions[i] = m.jointPosition[j];
+              //  RagDollJointVelocities[i] = m.jointVelocity[j];
+              //  RagDollJointAccelerations[i] = m.jointAcceleration[j];
                 RagDollJointForces[i++] = m.jointForce[j++];
             }
         }
         EnergyAngularMocap = MocapBodyStats
-            .Select(x=>x.AngualrVelocity.magnitude)
+            .Select(x=>x.AngularVelocity.magnitude)
             .Average();
         EnergyAngularRagDoll = RagDollBodyStats
-            .Select(x=>x.AngualrVelocity.magnitude)
+            .Select(x=>x.AngularVelocity.magnitude)
             .Average();
         EnergyDifferenceAngular = RagDollBodyStats
-            .Zip(MocapBodyStats, (x,y) => x.AngualrVelocity.magnitude-y.AngualrVelocity.magnitude)
+            .Zip(MocapBodyStats, (x,y) => x.AngularVelocity.magnitude-y.AngularVelocity.magnitude)
             .Average();
         EnergyPositionalMocap = MocapBodyStats
             .Select(x=>x.Velocity.magnitude)

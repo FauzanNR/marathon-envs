@@ -15,7 +15,7 @@ public class ObservationStats : MonoBehaviour
         public Vector3 Position;
         public Quaternion Rotation;
         public Vector3 Velocity;
-        public Vector3 AngualrVelocity;
+        public Vector3 AngularVelocity;
         [HideInInspector]
         public Vector3 LastLocalPosition;
         [HideInInspector]
@@ -260,7 +260,7 @@ public class ObservationStats : MonoBehaviour
             bodyPartStat.Position = localPosition;
             bodyPartStat.Rotation = localRotation;
             bodyPartStat.Velocity = (localPosition - bodyPartStat.LastLocalPosition) / timeDelta;
-            bodyPartStat.AngualrVelocity = GetAngularVelocity(bodyPartStat.LastLocalRotation, localRotation, timeDelta);
+            bodyPartStat.AngularVelocity = GetAngularVelocity(bodyPartStat.LastLocalRotation, localRotation, timeDelta);
             bodyPartStat.LastLocalPosition = localPosition;
             bodyPartStat.LastLocalRotation = localRotation;
             bodyPartStat.LastIsSet = true;
