@@ -67,8 +67,7 @@ public class ProcRagdollAgent : Agent
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
 
-    private int _decisionPeriod = 1;
-
+    float timeDelta;
     void Awake()
     {
         if (RequestCamera && CameraTarget != null)
@@ -83,7 +82,6 @@ public class ProcRagdollAgent : Agent
             }
         }
 
-        _decisionPeriod = GetComponent<DecisionRequester>().DecisionPeriod;
 
         _hasAwake = true;
     }
@@ -109,7 +107,7 @@ public class ProcRagdollAgent : Agent
     {
         Assert.IsTrue(_hasLazyInitialized);
 
-        float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _mapAnim2Ragdoll.OnStep(timeDelta);
         _observations2Learn.OnStep(timeDelta);
         // _dReConRewards.OnStep(timeDelta);
@@ -270,7 +268,9 @@ public class ProcRagdollAgent : Agent
                 UpdateMotor(m, targetNormalizedRotation);
             }
             //DEBUG: to keep track of the values, and see if they seem reasonable
-            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation);
+            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation,timeDelta);
+
+
 
 
             Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
@@ -678,15 +678,12 @@ public class ProcRagdollAgent : Agent
 
 
 
-    private Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation) {
+    private static Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float timeDelta) {
 
         Vector3 targetVelocity = new Vector3(0, 0, 0);
 
+        Vector3 currentRotationValues = Utils.GetSwingTwist(joint.transform.localRotation);
 
-        Quaternion localRotation = joint.transform.localRotation;
-        Utils.GetSwingTwist(localRotation, out Quaternion swing, out Quaternion twist);
-
-        Vector3 currentRotationValues = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
 
 
 
@@ -694,15 +691,14 @@ public class ProcRagdollAgent : Agent
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
 
-
+        Vector3 target = new Vector3();
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.xDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
+            target.x = midpoint + (targetNormalizedRotation.x * scale);
             
-           targetVelocity.x = (target - currentRotationValues.x);
       }
 
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -710,9 +706,8 @@ public class ProcRagdollAgent : Agent
             var drive = joint.yDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            targetVelocity.y = (target - currentRotationValues.y);
-
+            target.y = midpoint + (targetNormalizedRotation.y * scale);
+            
           
         }
 
@@ -721,11 +716,18 @@ public class ProcRagdollAgent : Agent
             var drive = joint.zDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
-
-            targetVelocity.z = (target - currentRotationValues.z);
+            target.z = midpoint + (targetNormalizedRotation.z * scale);
 
         }
+
+        //this is how you calculate the angular velocity in MapAnim2Ragdoll
+        //Utils.GetAngularVelocity(cur, last, timeDelta)
+
+        //Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity)
+
+
+
+        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
 
 
 

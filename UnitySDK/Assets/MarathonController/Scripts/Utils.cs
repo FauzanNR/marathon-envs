@@ -15,15 +15,23 @@ public static class Utils
     //     var angularVelocity = angularVelocityInDeg * Mathf.Deg2Rad;
     //     return angularVelocity;
     // }
+
+
     public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
     {
         Vector3 fromInDeg = Utils.GetSwingTwist(from);
-        Vector3 fromInRad = fromInDeg * Mathf.Deg2Rad;
         Vector3 toInDeg = Utils.GetSwingTwist(to);
-        Vector3 toInRad = toInDeg * Mathf.Deg2Rad;
-        Vector3 diff = fromInRad - toInRad;
+
+        return AngularVelocityInReducedCoordinates(fromInDeg, toInDeg, timeDelta);
+    }
+
+    public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta)
+    {
+        Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
         Vector3 angularVelocity = diff / timeDelta;
         return angularVelocity;
+
+
     }
 
 
@@ -86,7 +94,6 @@ public static class Utils
     }
 
 
-
     public static Vector3 GetArticulationReducedSpaceInVector3(ArticulationReducedSpace ars)
     {
         Vector3 result = new Vector3();
@@ -96,12 +103,9 @@ public static class Utils
         if (ars.dofCount > 1)
             result.y = ars[1];
         if (ars.dofCount > 2)
-            result.y = ars[2];
-
+            result.z = ars[2];
 
         return result;
-
-
     }
 
 
