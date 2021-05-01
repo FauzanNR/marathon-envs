@@ -117,7 +117,7 @@ public class FrequencyStats : MonoBehaviour
         {
             var joint = _jointsToTrack[j];
             var reference = _articulationBodyJoints[j];
-            Vector3 decomposedRotation = DecomposeQuanterium(joint.transform.localRotation);
+            Vector3 decomposedRotation = Utils.GetSwingTwist(joint.transform.localRotation);
             if (reference.twistLock == ArticulationDofLock.LimitedMotion)
             {
                 var drive = reference.xDrive;
@@ -168,27 +168,6 @@ public class FrequencyStats : MonoBehaviour
     public float head = 0f;
     public float floor = -60f;
 
-
-    Vector3 DecomposeQuanterium(Quaternion localRotation)
-	{
-		//the decomposition in swing-twist, typically works like this:
-		Quaternion swing = new Quaternion(0.0f, localRotation.y, localRotation.z, localRotation.w);
-		// Quaternion swing = new Quaternion(localRotation.x, localRotation.y, localRotation.z, localRotation.w);
-		swing = swing.normalized;
-
-		Quaternion twist = Quaternion.Inverse(swing) * localRotation;
-
-		Vector3 decomposition = new Vector3(twist.eulerAngles.x, swing.eulerAngles.y, swing.eulerAngles.z);
-
-		//we make sure we keep the values nearest to 0 (with a modulus)
-		if (Mathf.Abs(decomposition.x - 360) < Mathf.Abs(decomposition.x))
-			decomposition.x = (decomposition.x - 360);
-		if (Mathf.Abs(decomposition.y - 360) < Mathf.Abs(decomposition.y))
-			decomposition.y = (decomposition.y - 360);
-		if (Mathf.Abs(decomposition.z - 360) < Mathf.Abs(decomposition.z))
-			decomposition.z = (decomposition.z - 360);
-		return decomposition;
-	}
     void OnDisable()
     {
         foreach (var r in _rows)
