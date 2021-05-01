@@ -5,17 +5,18 @@ using Unity.MLAgents;
 using UnityEngine;
 using ManyWorlds;
 using UnityEngine.Assertions;
+using Unity.Collections;
 
 public class Frequencies2Learn : MonoBehaviour
 {
+    public bool RenderAsBitmap;
     public bool GraphInput;
     [Range(-1,49)]
-    public int JointIndex;
+    public int JointIndex = -1;
     public string JointName;
     public bool ShowRagdoll = true;
     public bool ShowMocap = true;
     public bool UseLogScaler = true;
-    public bool UseBurstFft = true;
     public float StepsPerSecond;
 
     public string[] JointNames;
@@ -39,17 +40,12 @@ public class Frequencies2Learn : MonoBehaviour
         _joints = joints;
         _mocapStats = mocap.AddComponent<FrequencyStats>();
         _RagdollStats = ragdoll.AddComponent<FrequencyStats>();
-        _mocapStats.OnAgentInitialize(_joints);
-        _RagdollStats.OnAgentInitialize(_joints);
+        var dof = 50; // HACK - do this properly
+        _mocapStats.OnAgentInitialize(_joints, dof);
+        _RagdollStats.OnAgentInitialize(_joints, dof);
         
-        _mocapStats.SetJointIndex(JointIndex);
-        _RagdollStats.SetJointIndex(JointIndex);
         _lastJointIndex = JointIndex;
         SetJointName();
-
-        _mocapStats.SetFftType(UseBurstFft);
-        _RagdollStats.SetFftType(UseBurstFft);
-        _lastUseBurstFft = UseBurstFft;
 
         _mocapStats.SetUseLogScaler(UseLogScaler);
         _RagdollStats.SetUseLogScaler(UseLogScaler);
@@ -62,16 +58,8 @@ public class Frequencies2Learn : MonoBehaviour
     {
         if (_lastJointIndex != JointIndex)
         {
-            _mocapStats.SetJointIndex(JointIndex);
-            _RagdollStats.SetJointIndex(JointIndex);
             _lastJointIndex = JointIndex;
             SetJointName();
-        }
-        if (_lastUseBurstFft != UseBurstFft)
-        {
-            _mocapStats.SetFftType(UseBurstFft);
-            _RagdollStats.SetFftType(UseBurstFft);
-            _lastUseBurstFft = UseBurstFft;
         }
         if (_lastUseLogScaler != UseLogScaler)
         {
@@ -158,60 +146,148 @@ public class Frequencies2Learn : MonoBehaviour
     {
         // Make Window Draggable
         GUI.DragWindow(new Rect(0, 0, 10000, 10000));
+        GL.PushMatrix();
 
         // Draw the graph in the repaint cycle
         if (Event.current.type == EventType.Repaint)
         {
-            GL.PushMatrix();
+            Draw2();
+        }
+        GL.End();
+        GL.PopMatrix();        
+    }
+    void Draw2()
+    {
+        GL.Clear(true, false, Color.black);
+        mat.SetPass(0);
 
-            GL.Clear(true, false, Color.black);
-            mat.SetPass(0);
+        // Draw a black back ground Quad 
+        GL.Begin(GL.QUADS);
+        GL.Color(Color.black);
+        GL.Vertex3(4, 4, 0);
+        GL.Vertex3(windowRect.width - 4, 4, 0);
+        GL.Vertex3(windowRect.width - 4, windowRect.height - 4, 0);
+        GL.Vertex3(4, windowRect.height - 4, 0);
+        GL.End();
 
-            // Draw a black back ground Quad 
-            GL.Begin(GL.QUADS);
-            GL.Color(Color.black);
-            GL.Vertex3(4, 4, 0);
-            GL.Vertex3(windowRect.width - 4, 4, 0);
-            GL.Vertex3(windowRect.width - 4, windowRect.height - 4, 0);
-            GL.Vertex3(4, windowRect.height - 4, 0);
-            GL.End();
+        // Draw the lines of the graph
+        GL.Begin(GL.LINES);
 
-            // Draw the lines of the graph
-            GL.Begin(GL.LINES);
-            GL.Color(Color.green);
+        float yHeight = (float) windowRect.height - 6;
+        float yPos = 2;
+        if (ShowMocap)
+        {
+            yPos = Plot(_mocapStats, yPos);
+        }
+        if (ShowRagdoll)
+        {
+            yPos = Plot(_RagdollStats, yPos);
+        }
+    }
+    float Plot(FrequencyStats stats, float yPos)
+    {
+        if (RenderAsBitmap)
+        {
+            yPos = PlotStatsAsBitmap(stats, yPos);
+        }
+        else
+        {
+            yPos = PlotStatsAsGraph(stats, yPos);
+        }
+        return yPos;
+    }
+    float PlotStatsAsGraph(FrequencyStats stats, float yPos)
+    {
+        var rows = StatsToRows(stats);
 
-            bool center = !UseLogScaler || GraphInput;
-            float yHeight = (float) windowRect.height - 4;
-            float yOffset = center ? yHeight / 2 : 0f;
-            float yMultiply = center ? yHeight / 2: yHeight;
-            float xScale = ((float) windowRect.width - 4) / (float) drawValuesA.Length;
-            if (ShowMocap)
+        bool center = !UseLogScaler || GraphInput;
+        float yHeight = (float) (windowRect.height - 4) / 2;
+        float yOffset = center ? yHeight / 2 : 0f;
+        // yOffset += yPos;
+        float yMultiply = center ? yHeight / 2: yHeight;
+        float colorIdx = 0f;
+        yPos += yHeight;
+        foreach (var row in rows)
+        {
+            bool skip = false;
+            if (JointIndex >= 0)
             {
+                skip = rows.IndexOf(row) != JointIndex;
+            }
+            if (!skip)
+            {
+                float xScale = ((float) windowRect.width - 6) / (float) row.Length;
+                GL.Color(FloatToColor(colorIdx));
                 for (int i = 1; i < drawValuesA.Length; i++)
                 {
-                    float y1 = drawValuesA[i - 1] * yMultiply + yOffset;
-                    float y2 = drawValuesA[i] * yMultiply + yOffset;
-                    GL.Vertex3((i*xScale) + 2, yHeight - y2, 0);
-                    GL.Vertex3(((i-1)*xScale) + 2, yHeight - y1, 0);
+                    float y1 = row[i - 1] * yMultiply + yOffset;
+                    float y2 = row[i] * yMultiply + yOffset;
+                    GL.Vertex3((i*xScale) + 2, yPos - y2, 0);
+                    GL.Vertex3(((i-1)*xScale) + 2, yPos - y1, 0);
                 }
             }
-            // Draw 2nd
-            GL.Color(Color.yellow);
-            yHeight = (float) windowRect.height - 4;
-            xScale = ((float) windowRect.width - 4) / (float) drawValuesB.Length;
-            if (ShowRagdoll)
-            {
-                for (int i = 1; i < drawValuesB.Length; i++)
-                {
-                    float y1 = drawValuesB[i - 1] * yMultiply + yOffset;
-                    float y2 = drawValuesB[i] * yMultiply + yOffset;
-                    GL.Vertex3((i*xScale) + 2, yHeight - y2, 0);
-                    GL.Vertex3(((i-1)*xScale) + 2, yHeight - y1, 0);
-                }
-            }
-            GL.End();
-
-            GL.PopMatrix();
+            colorIdx += 1f / (float)rows.Count;
         }
-    }    
+        return yPos;
+    }
+    Color FloatToColor(float f)
+    {
+        Color col;
+        if (f> 0f)
+        {
+            col = new Color(1f, f, 0f);
+            return col;
+        }
+        else
+        {
+            f = 1f+-f;
+            col = new Color(f, 0f, 0f);
+        }
+        return col;
+    }
+    float PlotStatsAsBitmap(FrequencyStats stats, float yPos)
+    {
+        var rows = StatsToRows(stats);
+        foreach (var row in rows)
+        {
+            bool skip = false;
+            if (JointIndex >= 0)
+            {
+                skip = rows.IndexOf(row) != JointIndex;
+            }
+            if (!skip)
+            {
+                float xScale = ((float) windowRect.width - 6) / (float) row.Length;
+                for (int i = 0; i < row.Length; i++)
+                {
+                    float y1 = yPos;
+                    float y2 = yPos;
+                    var value = row[i];
+                    GL.Color(FloatToColor(value));
+                    GL.Vertex3(((i+1)*xScale) + 2, y2, 0);
+                    GL.Vertex3(((i)*xScale) + 2, y1, 0);
+                }   
+            }
+            yPos+=1;
+        }
+        yPos+=3;
+        return yPos;
+    }
+    List<NativeArray<float>> StatsToRows(FrequencyStats stats)
+    {
+        List<NativeArray<float>> rows = null;
+        if (this.GraphInput)
+            rows = stats._rows
+                .Select(x=>x.Input)
+                .ToList();
+        else if (this.UseLogScaler)
+            rows = stats._logScalerRows
+                .Select(x=>x.Buffer)
+                .ToList();
+        else
+            rows = stats._rows
+                .Select(x=>x.Spectrum)
+                .ToList();
+        return rows;
+    }
 }

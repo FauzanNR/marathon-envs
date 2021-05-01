@@ -14,6 +14,7 @@ namespace Lasp
 
         public int Width => _N;
         public NativeArray<float> Spectrum => _O;
+        public NativeArray<float> Input => _I;
 
         #endregion
 

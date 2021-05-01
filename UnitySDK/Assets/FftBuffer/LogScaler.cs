@@ -7,9 +7,16 @@ namespace Lasp
     //
     // X-axis log-scale resampler for spectrum analysis
     //
-    sealed class LogScaler : System.IDisposable
+    public class LogScaler : System.IDisposable
     {
         public NativeArray<float> Resample(NativeArray<float> source)
+        {
+            ResampleAndStore(source);
+
+            // Return the output buffer as a float array.
+            return _floatBuffer;
+        }
+        public void ResampleAndStore(NativeArray<float> source)
         {
             var length_4 = source.Length / 4;
 
@@ -26,10 +33,9 @@ namespace Lasp
               { Input = source, Output = _buffer,
                 Log2Ni = math.log2(source.Length), DivNo = 1.0f / length_4 }
               .Run(length_4);
-
-            // Return the output buffer as a float array.
-            return _buffer.Reinterpret<float>(sizeof(float) * 4);
+            _floatBuffer = _buffer.Reinterpret<float>(sizeof(float) * 4);
         }
+        public NativeArray<float> Buffer => _floatBuffer;
 
         public void Dispose()
         {
@@ -37,6 +43,7 @@ namespace Lasp
         }
 
         NativeArray<float4> _buffer;
+        NativeArray<float> _floatBuffer;
 
         [Unity.Burst.BurstCompile(CompileSynchronously = true)]
         struct ResamplingJob : IJobFor

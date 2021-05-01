@@ -15,12 +15,18 @@ public class FrequencyStats : MonoBehaviour
     public bool ScrollWindow = true;
     public float[] _input;
     public float[] _output;
+    public List<NativeArray<float>> _inputs;
+    public List<NativeArray<float>> _outputs;
+    public List<FftBuffer> _rows;
+    public List<LogScaler> _logScalerRows;
     public float _denoise = 0f;
     int _winSize = 64;
     int _dataIndex = 0;
     int _jointIndex = 0;
     bool _useBurstFft;
     bool _useLogScaler;
+
+    int _dof;
 
     ArticulationBody[] _articulationBodyJoints;
     Rigidbody[] _rigidBodyJoints;
@@ -30,6 +36,28 @@ public class FrequencyStats : MonoBehaviour
     }
     void InitData(int size)
     {
+        var numJoints = _articulationBodyJoints.Length;
+        if (_rows != null)
+        {
+            foreach (var r in _rows)
+            {
+                r.Dispose();
+            }
+        }
+        if (_logScalerRows != null)
+        {
+            foreach (var l in _logScalerRows)
+            {
+                l.Dispose();
+            }
+        }
+        _rows = new List<FftBuffer>();
+        _logScalerRows = new List<LogScaler>();
+        for (int i = 0; i < _dof; i++)
+        {
+            _rows.Add(new FftBuffer(size*2));
+            _logScalerRows.Add(new LogScaler());
+        }
         _input = Enumerable.Range(0, size)
             .Select(x=>0f)
             .ToArray();
@@ -39,8 +67,9 @@ public class FrequencyStats : MonoBehaviour
         _dataIndex = 0;
     }
 
-    public void OnAgentInitialize(ArticulationBody[] articulationBodyJoints)
+    public void OnAgentInitialize(ArticulationBody[] articulationBodyJoints, int dof)
     {
+        _dof = dof;
         // strip names
         var jointNames = articulationBodyJoints
             .Select(x=>x.name)
@@ -89,7 +118,68 @@ public class FrequencyStats : MonoBehaviour
     {
         if (_articulationBodyJoints == null || _articulationBodyJoints.Length == 0)
             return;
+        OrginalOnStep(timeDelta);
 
+        int rowIdx = 0;
+        for (int j = 0; j < _jointsToTrack.Length; j++)
+        {
+            var joint = _jointsToTrack[j];
+            var reference = _articulationBodyJoints[j];
+            Vector3 decomposedRotation = DecomposeQuanterium(joint.transform.localRotation);
+            if (reference.twistLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.xDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.x;
+                var pos = (deg - midpoint) / scale;
+                NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
+                NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
+                _rows[rowIdx++].Push(slice);
+            }
+            if (reference.swingYLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.yDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.y;
+                var pos = (deg - midpoint) / scale;
+                NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
+                NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
+                _rows[rowIdx++].Push(slice);
+            }
+            if (reference.swingZLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.zDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.z;
+                var pos = (deg - midpoint) / scale;
+                NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
+                NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
+                _rows[rowIdx++].Push(slice);
+            }            
+        }
+        foreach (var row in _rows)
+        {
+            row.Analyze(floor, head);
+            
+            if (_useLogScaler)
+            {
+
+            }
+            var output = _useLogScaler ? _logScaler.Resample(row.Spectrum) : row.Spectrum;
+        }
+        if (_useLogScaler)
+        {
+            for (int i = 0; i < _rows.Count ; i++)
+            {
+                _logScalerRows[i].ResampleAndStore(_rows[i].Spectrum);
+            }
+        }
+    }
+    public void OrginalOnStep(float timeDelta)
+    {
         // rotate window
         if (ScrollWindow)
         {
@@ -183,6 +273,7 @@ public class FrequencyStats : MonoBehaviour
                 .ToArray();
         return result;
     }
+
 
     float[] ApplyFFT(float[] samples)
     {
@@ -290,5 +381,16 @@ public class FrequencyStats : MonoBehaviour
 
         _logScaler?.Dispose();
         _logScaler = null;
+
+        foreach (var r in _rows)
+        {
+            r.Dispose();
+        }
+        foreach (var l in _logScalerRows)
+        {
+            l.Dispose();
+        }
+        _rows = new List<FftBuffer>();
+        _logScalerRows = new List<LogScaler>();
     }
 }
