@@ -115,10 +115,6 @@ public class Frequencies2Learn : MonoBehaviour
     Material mat;
     private Rect windowRect = new Rect(20, 20, 512, 256);
 
-    // The list the drawing function uses...
-    private float[] drawValuesA;
-    private float[] drawValuesB;
-
     // List of Windows
     private bool showWindow0 = true;    
 
@@ -133,9 +129,6 @@ public class Frequencies2Learn : MonoBehaviour
 
         if (showWindow0)
         {
-            // Set out drawValue list equal to the values list 
-            drawValuesA = GraphInput ? _mocapStats._input : _mocapStats._output;
-            drawValuesB = GraphInput ? _RagdollStats._input : _RagdollStats._output;
             windowRect = GUI.Window(0, windowRect, DrawGraph, "");
         }
 
@@ -218,7 +211,7 @@ public class Frequencies2Learn : MonoBehaviour
             {
                 float xScale = ((float) windowRect.width - 6) / (float) row.Length;
                 GL.Color(FloatToColor(colorIdx));
-                for (int i = 1; i < drawValuesA.Length; i++)
+                for (int i = 1; i < row.Length; i++)
                 {
                     float y1 = row[i - 1] * yMultiply + yOffset;
                     float y2 = row[i] * yMultiply + yOffset;

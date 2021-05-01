@@ -9,9 +9,6 @@ using UnityEngine;
 
 public class FrequencyStats : MonoBehaviour
 {
-    LomontFFT _lomontFFT;
-    FftBuffer _fftBuffer;
-    LogScaler _logScaler;
     public bool ScrollWindow = true;
     public float[] _input;
     public float[] _output;
@@ -20,7 +17,7 @@ public class FrequencyStats : MonoBehaviour
     public List<FftBuffer> _rows;
     public List<LogScaler> _logScalerRows;
     public float _denoise = 0f;
-    int _winSize = 64;
+    int _winSize = 32;
     int _dataIndex = 0;
     int _jointIndex = 0;
     bool _useBurstFft;
@@ -78,9 +75,6 @@ public class FrequencyStats : MonoBehaviour
             .ToArray();
         _articulationBodyJoints = articulationBodyJoints;
 
-        _lomontFFT = new LomontFFT();
-        _fftBuffer = new FftBuffer(_winSize*2);
-        _logScaler = new LogScaler();
         // _fft.A = -1;
         // _fft.B = 1;
         InitData(_winSize);
@@ -118,7 +112,6 @@ public class FrequencyStats : MonoBehaviour
     {
         if (_articulationBodyJoints == null || _articulationBodyJoints.Length == 0)
             return;
-        OrginalOnStep(timeDelta);
 
         int rowIdx = 0;
         for (int j = 0; j < _jointsToTrack.Length; j++)
@@ -163,12 +156,6 @@ public class FrequencyStats : MonoBehaviour
         foreach (var row in _rows)
         {
             row.Analyze(floor, head);
-            
-            if (_useLogScaler)
-            {
-
-            }
-            var output = _useLogScaler ? _logScaler.Resample(row.Spectrum) : row.Spectrum;
         }
         if (_useLogScaler)
         {
@@ -178,182 +165,11 @@ public class FrequencyStats : MonoBehaviour
             }
         }
     }
-    public void OrginalOnStep(float timeDelta)
-    {
-        // rotate window
-        if (ScrollWindow)
-        {
-            Array.Copy(_input, 1, _input, 0, _input.Length-1);
-            _dataIndex = _input.Length-1;
-        }
 
-        var value = 0f;
-        var minIndex = 0;
-        var maxIndex = _jointsToTrack.Length;
-        if (_jointIndex != -1)
-        {
-            minIndex = _jointIndex;
-            maxIndex = _jointIndex+1;
-        }
-        int idx = 0;
-        for (int j = 0; j < _jointsToTrack.Length; j++)
-        {
-            var joint = _jointsToTrack[j];
-            var reference = _articulationBodyJoints[j];
-            Vector3 decomposedRotation = DecomposeQuanterium(joint.transform.localRotation);
-            if (reference.twistLock == ArticulationDofLock.LimitedMotion)
-            {
-                if (idx>=minIndex && idx<maxIndex)
-                {
-                    var drive = reference.xDrive;
-                    var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                    var midpoint = drive.lowerLimit + scale;
-                    // var deg = joint.jointPosition[0] * Mathf.Rad2Deg;
-                    var deg = decomposedRotation.x;
-                    var pos = (deg - midpoint) / scale;
-                    value += pos;
-                }
-                idx++;
-            }
-            if (reference.swingYLock == ArticulationDofLock.LimitedMotion)
-            {
-                if (idx>=minIndex && idx<maxIndex)
-                {
-                    var drive = reference.yDrive;
-                    var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                    var midpoint = drive.lowerLimit + scale;
-                    // var deg = reference.jointPosition[0] * Mathf.Rad2Deg;
-                    var deg = decomposedRotation.y;
-                    var pos = (deg - midpoint) / scale;
-                    value += pos;
-                }
-                idx++;
-            }
-            if (reference.swingZLock == ArticulationDofLock.LimitedMotion)
-            {
-                if (idx>=minIndex && idx<maxIndex)
-                {
-                    var drive = reference.zDrive;
-                    var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                    var midpoint = drive.lowerLimit + scale;
-                    // var deg = joint.jointPosition[0] * Mathf.Rad2Deg;
-                    var deg = decomposedRotation.z;
-                    var pos = (deg - midpoint) / scale;
-                    value += pos;
-                }
-                idx++;
-            }            
-        }
-        _input[_dataIndex] = value;
-        // _input.CopyTo(_output, 0);
-        // _fft.RealFFT(_output, true);
-        // _output = SpectrumAnalysis(_input, _winSize);
-        _output = _useBurstFft ? ApplyBurstFFT(_input) : ApplyFFT(_input);
-        for (int i = 0; i < _output.Length; i++)
-        {
-            if(Math.Abs(_output[i]) < _denoise)
-            {
-                _output[i] = 0;
-            }
-        }
-        _dataIndex = (_dataIndex + 1) % (_winSize);
-    }
     public float head = 0f;
     public float floor = -60f;
-    float[] ApplyBurstFFT(float[] samples)
-    {
-        NativeArray<float> nativeArray = new NativeArray<float>(samples, Allocator.Temp);
-        NativeSlice<float> nativeSlice = new NativeSlice<float>(nativeArray);
-        _fftBuffer.Push(nativeSlice);
-        _fftBuffer.Analyze(floor, head);
-        var output = _useLogScaler ? _logScaler.Resample(_fftBuffer.Spectrum) : _fftBuffer.Spectrum;
-        var scale = 1f;
-        var result = output
-                .Select(x=>x/scale)
-                .ToArray();
-        return result;
-    }
 
 
-    float[] ApplyFFT(float[] samples)
-    {
-        var complexSignal = new double[2*samples.Length];
-        for (int j = 0; (j < samples.Length/2); j++)
-        {
-            complexSignal[2*j] = (double) samples[j];
-            complexSignal[2*j + 1] = 0;
-        }
-
-        // _fft.FFT(complexSignal, true);
-        _lomontFFT.RealFFT(complexSignal, true);
-        var n = samples.Length;
-        double lengthSqrt = Math.Sqrt(n);
-        var bands = new float[n];
-        var reals = new float[n];
-        var imgs = new float[n];
-        for (int j = 0; j < n; j++)
-        {
-            // double re = complexSignal[2*j] * lengthSqrt;
-            // double img = complexSignal[2*j + 1] * lengthSqrt;            
-            // // band[j] = (float) (Math.Sqrt(re*re + img*img) * lengthSqrt);
-            // // double re = complexSignal[2*j];
-            // reals[j] = (float) re;
-            // imgs[j] = (float) img;
-            // bands[j] = (float) (Math.Sqrt(re*re + img*img) * lengthSqrt);
-            double re = complexSignal[2*j];
-            double img = complexSignal[2*j + 1];
-            bands[j] = (float)Math.Sqrt(re*re + img*img) * 1;
-        }
-        // return reals;
-        return bands;         
-    }
-
-    float[] SpectrumAnalysis(float[] samples, int winSize)
-    {
-        int numberOfSamples = samples.Length;
-        
-        double[] windowArray = CreateWindow(winSize);
-
-        var complexSignal = new double[2*winSize];
-
-        // apply Hanning Window
-        for (int j = 0; (j < winSize) && (samples.Length > j); j++)
-        {
-            complexSignal[2*j] = (double) (windowArray[j] * samples[j]);
-            complexSignal[2*j + 1] = 0;
-        }
-        _lomontFFT.FFT(complexSignal, true);
-
-        var band = new float[winSize/2];
-        double lengthSqrt = Math.Sqrt(winSize);
-        for (int j = 0; j < winSize/2; j++)
-        {
-            // double re = complexSignal[2*j] * lengthSqrt;
-            // double img = complexSignal[2*j + 1] * lengthSqrt;
-            
-            // // do the Abs calculation and add with Math.Sqrt(audio_data.Length);
-            // // i.e. the magnitude spectrum
-            // band[j] = (float) (Math.Sqrt(re*re + img*img) * lengthSqrt);
-
-        }
-        return band;        
-    }
-    double[] CreateWindow(int winSize)
-    {
-        var array = new double[winSize];
-        for (int i = 0; i < winSize; i++) {
-            array[i] = 1;
-        }
-
-        for (int i = 0; i < winSize; ++i)
-        {
-            array[i] *= (0.5
-                - 0.5 * Math.Cos((2 * Math.PI * i) / winSize)
-                + 0.0 * Math.Cos((4 * Math.PI * i) / winSize)
-                - 0.0 * Math.Cos((6 * Math.PI * i) / winSize));
-        }
-        return array;
-    }
     Vector3 DecomposeQuanterium(Quaternion localRotation)
 	{
 		//the decomposition in swing-twist, typically works like this:
@@ -376,12 +192,6 @@ public class FrequencyStats : MonoBehaviour
 	}
     void OnDisable()
     {
-        _fftBuffer?.Dispose();
-        _fftBuffer = null;
-
-        _logScaler?.Dispose();
-        _logScaler = null;
-
         foreach (var r in _rows)
         {
             r.Dispose();
