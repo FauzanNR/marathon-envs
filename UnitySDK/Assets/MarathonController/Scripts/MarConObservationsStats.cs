@@ -200,9 +200,35 @@ public class MarConObservationsStats : MonoBehaviour
         LastRotation = transform.rotation;
 
         TrackUsingColliders(timeDelta);
-        TrackUsingJoint(timeDelta);
+        // TrackUsingJointsForTrackedColliders(timeDelta);
+        TrackUsingDof(timeDelta);
         
         LastIsSet = true;        
+    }
+
+    void TrackUsingJointsForTrackedColliders(float timeDelta)
+    {
+        // track in local space
+        for (int i = 0; i < _jointForTrackedColliders.Length; i++)
+        {
+            Transform joint = _jointForTrackedColliders[i].transform;
+            Vector3 worldPosition = joint.position;
+            Quaternion worldRotation = transform.rotation;
+            Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
+            Quaternion localRotation = Utils.FromToRotation(transform.rotation, worldRotation);
+            if (!LastIsSet)
+            {
+                LastLocalPositions[i] = localPosition;
+                LastLocalRotations[i] = localRotation;
+            }
+
+            Positions[i] = localPosition;
+            Rotations[i] = localRotation;
+            Velocities[i] = (localPosition - LastLocalPositions[i]) / timeDelta;
+            AngualrVelocities[i] = Utils.GetAngularVelocity(LastLocalRotations[i], localRotation, timeDelta);
+            LastLocalPositions[i] = localPosition;
+            LastLocalRotations[i] = localRotation;
+        }
     }
     void TrackUsingColliders(float timeDelta)
     {
@@ -262,7 +288,7 @@ public class MarConObservationsStats : MonoBehaviour
         }
     }
     
-    void TrackUsingJoint(float timeDelta)
+    void TrackUsingDof(float timeDelta)
     {
         // track in local space
         int i = 0;
