@@ -24,6 +24,11 @@ public class MarConObservationsStats : MonoBehaviour
     public Vector3 CenterOfMassVelocityDifference;
     [HideInInspector] public Vector3 LastCenterOfMassInWorldSpace;
     [HideInInspector] public Quaternion LastRotation;
+    [Header("Stats, in local joint space")]
+    public float[] DofRotationWithinRangeOfMotion;
+    public float[] DofAngularVelocity;
+    public float[] DofRotationInRad;
+    [HideInInspector] public float[] DofLastRotationInRad;    
 
     ArticulationBody[] _articulationBodyJoints;
     Rigidbody[] _rigidBodyJoints;
@@ -107,6 +112,21 @@ public class MarConObservationsStats : MonoBehaviour
         LastLocalPositions = Enumerable.Range(0, _collidersToTrack.Length).Select(x=>Vector3.zero).ToArray();
         LastLocalRotations = Enumerable.Range(0, _collidersToTrack.Length).Select(x=>Quaternion.identity).ToArray();
 
+        int dof = 0;
+        foreach (var m in _articulationBodyJoints)
+        {
+            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                dof++;
+            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+                dof++;
+            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+                dof++;
+        }
+        DofRotationWithinRangeOfMotion = Enumerable.Range(0, dof).Select(x=>0f).ToArray();
+        DofAngularVelocity = Enumerable.Range(0, dof).Select(x=>0f).ToArray();
+        DofRotationInRad = Enumerable.Range(0, dof).Select(x=>0f).ToArray();
+        DofLastRotationInRad = Enumerable.Range(0, dof).Select(x=>0f).ToArray();
+
         if (_root == null)
         {
             Debug.Log("in game object: " + name + "my rootname is: " + articulationBodyRoot.name);
@@ -179,6 +199,13 @@ public class MarConObservationsStats : MonoBehaviour
         AngualrVelocity = Utils.GetAngularVelocity(LastRotation, transform.rotation, timeDelta);
         LastRotation = transform.rotation;
 
+        TrackUsingColliders(timeDelta);
+        TrackUsingJoint(timeDelta);
+        
+        LastIsSet = true;        
+    }
+    void TrackUsingColliders(float timeDelta)
+    {
         // track in local space
         for (int i = 0; i < _collidersToTrack.Length; i++)
         {
@@ -232,10 +259,62 @@ public class MarConObservationsStats : MonoBehaviour
             AngualrVelocities[i] = Utils.GetAngularVelocity(LastLocalRotations[i], localRotation, timeDelta);
             LastLocalPositions[i] = localPosition;
             LastLocalRotations[i] = localRotation;
-            LastIsSet = true;
         }
-        LastIsSet = true;        
     }
+    
+    void TrackUsingJoint(float timeDelta)
+    {
+        // track in local space
+        int i = 0;
+        for (int j = 0; j < _jointForTrackedColliders.Length; j++)
+        {
+            var joint = _jointsToTrack[j];
+            var reference = _articulationBodyJoints[j];
+            Vector3 decomposedRotation = Utils.GetSwingTwist(joint.transform.localRotation);
+            if (reference.twistLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.xDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.x;
+                var pos = (deg - midpoint) / scale;
+                DofRotationInRad[i] = deg * Mathf.Deg2Rad;
+                DofRotationWithinRangeOfMotion[i++] = pos;
+            }
+            if (reference.swingYLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.yDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.y;
+                var pos = (deg - midpoint) / scale;
+                DofRotationInRad[i] = deg * Mathf.Deg2Rad;
+                DofRotationWithinRangeOfMotion[i++] = pos;
+            }
+            if (reference.swingZLock == ArticulationDofLock.LimitedMotion)
+            {
+                var drive = reference.zDrive;
+                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                var midpoint = drive.lowerLimit + scale;
+                var deg = decomposedRotation.z;
+                var pos = (deg - midpoint) / scale;
+                DofRotationInRad[i] = deg * Mathf.Deg2Rad;
+                DofRotationWithinRangeOfMotion[i++] = pos;
+            }
+        }
+
+        for (i = 0; i < DofRotationInRad.Length; i++)
+        {
+            if (!LastIsSet)
+            {
+                DofLastRotationInRad[i] = DofRotationInRad[i];
+            }
+            DofAngularVelocity[i] = DofRotationInRad[i] - DofLastRotationInRad[i];
+            DofAngularVelocity[i] /= timeDelta;
+            DofLastRotationInRad[i] = DofRotationInRad[i];
+        }
+    }    
+
     public void OnReset()
     {
         OnStep(float.Epsilon);

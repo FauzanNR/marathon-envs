@@ -33,6 +33,11 @@ public class MarConObservations2Learn : MonoBehaviour
     [Tooltip("Positions and velocities for subset of bodies")]
     public Vector3[] DifferenceInPositions;
     public Vector3[] DifferenceInVelocities;
+    public float[] DifferenceInDofRotationWithinRangeOfMotion;
+    public float[] DifferenceInDofAngularVelocity;
+    public float[] DifferenceInDofRotationInRad;
+
+
     [Tooltip("Smoothed actions produced in the previous step of the policy are collected in t −1")]
     public float[] PreviousActions;
     
@@ -82,11 +87,9 @@ public class MarConObservations2Learn : MonoBehaviour
         PreviousActions = Enumerable.Range(0,dof).Select(x=>0f).ToArray();
         DifferenceInPositions = Enumerable.Range(0,_mocapStats.Positions.Length).Select(x=>Vector3.zero).ToArray();
         DifferenceInVelocities = Enumerable.Range(0,_mocapStats.Positions.Length).Select(x=>Vector3.zero).ToArray();
-        // RagDollJointPositions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        // RagDollJointVelocities = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        // RagDollJointAccelerations = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-        // RagDollJointForces = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
-
+        DifferenceInDofRotationWithinRangeOfMotion = Enumerable.Range(0,dof).Select(x=>0f).ToArray();
+        DifferenceInDofAngularVelocity = Enumerable.Range(0,dof).Select(x=>0f).ToArray();
+        DifferenceInDofRotationInRad = Enumerable.Range(0,dof).Select(x=>0f).ToArray();
     }
     public void OnStep(float timeDelta)
     {
@@ -109,6 +112,15 @@ public class MarConObservations2Learn : MonoBehaviour
         {
             DifferenceInPositions[i] = _mocapStats.Positions[i] - _ragdollStats.Positions[i];
             DifferenceInVelocities[i] = _mocapStats.Velocities[i] - _ragdollStats.Velocities[i];
+        }
+        for (int i = 0; i < _mocapStats.DofRotationWithinRangeOfMotion.Length; i++)
+        {
+            DifferenceInDofRotationWithinRangeOfMotion[i] = 
+                _mocapStats.DofRotationWithinRangeOfMotion[i] - _ragdollStats.DofRotationWithinRangeOfMotion[i];
+            DifferenceInDofAngularVelocity[i] = 
+                _mocapStats.DofAngularVelocity[i] - _ragdollStats.DofAngularVelocity[i];
+            DifferenceInDofRotationInRad[i] = 
+                _mocapStats.DofRotationInRad[i] - _ragdollStats.DofRotationInRad[i];
         }
     }    
     public void OnReset()

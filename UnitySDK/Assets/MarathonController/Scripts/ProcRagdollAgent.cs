@@ -17,6 +17,7 @@ public class ProcRagdollAgent : Agent
     public float ActionSmoothingBeta = 0.2f;
     public bool ReproduceDReCon;
     public bool UseFrequencies2Learn;
+    public bool UseDofForObservation;
 
     [Header("Camera")]
 
@@ -130,12 +131,26 @@ public class ProcRagdollAgent : Agent
         sensor.AddObservation(_marConObservations2Learn.InputBackflip);
         sensor.AddObservation(_marConObservations2Learn.HorizontalVelocityDifference);
         var ragDollStats = _marConObservations2Learn.GetRagdollStats();
-        for (int i = 0; i < ragDollStats.Positions.Length; i++)
+        if (UseDofForObservation)
         {
-            sensor.AddObservation(ragDollStats.Positions[i]);
-            sensor.AddObservation(ragDollStats.Velocities[i]);
-            sensor.AddObservation(_marConObservations2Learn.DifferenceInPositions[i]);
-            sensor.AddObservation(_marConObservations2Learn.DifferenceInVelocities[i]);
+            sensor.AddObservation(ragDollStats.DofRotationWithinRangeOfMotion);
+            sensor.AddObservation(_marConObservations2Learn.DifferenceInDofRotationWithinRangeOfMotion);
+
+            // sensor.AddObservation(ragDollStats.DofRotationInRad;
+            // sensor.AddObservation(_marConObservations2Learn.DifferenceInDofRotationInRad);
+
+            sensor.AddObservation(ragDollStats.DofAngularVelocity);
+            sensor.AddObservation(_marConObservations2Learn.DifferenceInDofAngularVelocity);
+        }
+        else
+        {
+            for (int i = 0; i < ragDollStats.Positions.Length; i++)
+            {
+                sensor.AddObservation(ragDollStats.Positions[i]);
+                sensor.AddObservation(ragDollStats.Velocities[i]);
+                sensor.AddObservation(_marConObservations2Learn.DifferenceInPositions[i]);
+                sensor.AddObservation(_marConObservations2Learn.DifferenceInVelocities[i]);
+            }
         }
         sensor.AddObservation(_marConObservations2Learn.PreviousActions);
 
