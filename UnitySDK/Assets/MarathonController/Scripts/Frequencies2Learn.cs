@@ -144,6 +144,18 @@ public class Frequencies2Learn : MonoBehaviour
         // Draw the graph in the repaint cycle
         if (Event.current.type == EventType.Repaint)
         {
+            GL.Clear(true, false, Color.black);
+            mat.SetPass(0);
+
+            // Draw a black back ground Quad 
+            GL.Begin(GL.QUADS);
+            GL.Color(Color.black);
+            GL.Vertex3(4, 4, 0);
+            GL.Vertex3(windowRect.width - 4, 4, 0);
+            GL.Vertex3(windowRect.width - 4, windowRect.height - 4, 0);
+            GL.Vertex3(4, windowRect.height - 4, 0);
+            GL.End();
+
             Draw2();
         }
         GL.End();
@@ -151,18 +163,6 @@ public class Frequencies2Learn : MonoBehaviour
     }
     void Draw2()
     {
-        GL.Clear(true, false, Color.black);
-        mat.SetPass(0);
-
-        // Draw a black back ground Quad 
-        GL.Begin(GL.QUADS);
-        GL.Color(Color.black);
-        GL.Vertex3(4, 4, 0);
-        GL.Vertex3(windowRect.width - 4, 4, 0);
-        GL.Vertex3(windowRect.width - 4, windowRect.height - 4, 0);
-        GL.Vertex3(4, windowRect.height - 4, 0);
-        GL.End();
-
         // Draw the lines of the graph
         GL.Begin(GL.LINES);
 
@@ -172,11 +172,32 @@ public class Frequencies2Learn : MonoBehaviour
         {
             yPos = Plot(_mocapStats, yPos);
         }
+        else
+            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
         if (ShowRagdoll)
         {
             yPos = Plot(_RagdollStats, yPos);
         }
+        else
+            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
     }
+    void Draw3()
+    {
+        // Draw the lines of the graph
+        GL.Begin(GL.LINES);
+
+        float yHeight = (float) windowRect.height - 6;
+        float yPos = 2;
+        if (ShowMocap)
+        {
+            yPos = Plot(_RagdollStats, yPos);
+        }
+        if (ShowRagdoll)
+        {
+            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
+        }
+    }
+
     float Plot(FrequencyStats stats, float yPos)
     {
         if (RenderAsBitmap)
@@ -223,6 +244,49 @@ public class Frequencies2Learn : MonoBehaviour
         }
         return yPos;
     }
+    float PlotMultiStatsAsGraph(FrequencyStats statsA, FrequencyStats statsB, float yPos)
+    {
+        var rowsA = StatsToRows(statsA);
+        var rowsB = StatsToRows(statsB);
+        if (rowsA.Count != rowsB.Count)
+            return yPos;
+
+        bool center = !UseLogScaler || GraphInput;
+        float yHeight = (float) (windowRect.height - 4) / 2;
+        float yOffset = center ? yHeight / 2 : 0f;
+        // yOffset += yPos;
+        float yMultiply = center ? yHeight / 2: yHeight;
+        float colorIdx = 0f;
+        yPos += yHeight;
+        for (int r = 0; r < rowsA.Count; r++)
+        {
+            var rowA = rowsA[r];
+            var rowB = rowsB[r];
+            bool skip = false;
+            if (JointIndex >= 0)
+            {
+                skip = rowsA.IndexOf(rowA) != JointIndex;
+            }
+            if (!skip)
+            {
+                float xScale = ((float) windowRect.width - 6) / (float) rowA.Length;
+                GL.Color(FloatToColor(colorIdx));
+                for (int i = 1; i < rowA.Length; i++)
+                {
+                    float y1 = rowA[i - 1] - rowB[i - 1];
+                    y1 = Mathf.Abs(y1);
+                    y1 *= yMultiply + yOffset;
+                    float y2 = rowA[i] - rowB[i];
+                    y2 = Mathf.Abs(y2);
+                    y2 *= yMultiply + yOffset;
+                    GL.Vertex3((i*xScale) + 2, yPos - y2, 0);
+                    GL.Vertex3(((i-1)*xScale) + 2, yPos - y1, 0);
+                }
+            }
+            colorIdx += 1f / (float)rowsA.Count;
+        }
+        return yPos;
+    }    
     Color FloatToColor(float f)
     {
         Color col;

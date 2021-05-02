@@ -47,6 +47,7 @@ public class ProcRagdollAgent : Agent
     DecisionRequester _decisionRequester;
     IAnimationController _controllerToMimic;
     Frequencies2Learn _frequencies2Learn;
+    MarConObservations2Learn _marConObservations2Learn;
 
 
     bool _hasLazyInitialized;
@@ -97,7 +98,10 @@ public class ProcRagdollAgent : Agent
 
         float timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _mapAnim2Ragdoll.OnStep(timeDelta);
-        _observations2Learn.OnStep(timeDelta);
+        if (ReproduceDReCon)
+            _observations2Learn.OnStep(timeDelta);
+        else
+            _marConObservations2Learn.OnStep(timeDelta);
         if (UseFrequencies2Learn)
         {
             if (_frequencies2Learn == null)
@@ -118,29 +122,22 @@ public class ProcRagdollAgent : Agent
             return;
         }
 
-        sensor.AddObservation(_observations2Learn.MocapCOMVelocity);
-        sensor.AddObservation(_observations2Learn.RagDollCOMVelocity);
-        sensor.AddObservation(_observations2Learn.RagDollCOMVelocity - _observations2Learn.MocapCOMVelocity);
-        sensor.AddObservation(_observations2Learn.InputDesiredHorizontalVelocity);
-        sensor.AddObservation(_observations2Learn.InputJump);
-        sensor.AddObservation(_observations2Learn.InputBackflip);
-        sensor.AddObservation(_observations2Learn.HorizontalVelocityDifference);
-        // foreach (var stat in _dReConObservations.MocapBodyStats)
-        // {
-        //     sensor.AddObservation(stat.Position);
-        //     sensor.AddObservation(stat.Velocity);
-        // }
-        foreach (var stat in _observations2Learn.RagDollBodyStats)
+        sensor.AddObservation(_marConObservations2Learn.MocapCOMVelocity);
+        sensor.AddObservation(_marConObservations2Learn.RagDollCOMVelocity);
+        sensor.AddObservation(_marConObservations2Learn.RagDollCOMVelocity - _marConObservations2Learn.MocapCOMVelocity);
+        sensor.AddObservation(_marConObservations2Learn.InputDesiredHorizontalVelocity);
+        sensor.AddObservation(_marConObservations2Learn.InputJump);
+        sensor.AddObservation(_marConObservations2Learn.InputBackflip);
+        sensor.AddObservation(_marConObservations2Learn.HorizontalVelocityDifference);
+        var ragDollStats = _marConObservations2Learn.GetRagdollStats();
+        for (int i = 0; i < ragDollStats.Positions.Length; i++)
         {
-            sensor.AddObservation(stat.Position);
-            sensor.AddObservation(stat.Velocity);
+            sensor.AddObservation(ragDollStats.Positions[i]);
+            sensor.AddObservation(ragDollStats.Velocities[i]);
+            sensor.AddObservation(_marConObservations2Learn.DifferenceInPositions[i]);
+            sensor.AddObservation(_marConObservations2Learn.DifferenceInVelocities[i]);
         }
-        foreach (var stat in _observations2Learn.BodyPartDifferenceStats)
-        {
-            sensor.AddObservation(stat.Position);
-            sensor.AddObservation(stat.Velocity);
-        }
-        sensor.AddObservation(_observations2Learn.PreviousActions);
+        sensor.AddObservation(_marConObservations2Learn.PreviousActions);
 
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
@@ -264,7 +261,10 @@ public class ProcRagdollAgent : Agent
                 UpdateMotor(m, targetNormalizedRotation);
             }
         }
-        _observations2Learn.PreviousActions = vectorAction;
+        if (ReproduceDReCon)
+            _observations2Learn.PreviousActions = vectorAction;
+        else
+            _marConObservations2Learn.PreviousActions = vectorAction;
 
         AddReward(_rewards2Learn.Reward);
 
@@ -278,7 +278,11 @@ public class ProcRagdollAgent : Agent
             }
             else if (_rewards2Learn.Reward <= 0.1f && !dontSnapMocapToRagdoll)
             {
-                Transform ragDollCom = _observations2Learn.GetRagDollCOM();
+                Transform ragDollCom;
+                if (ReproduceDReCon)
+                    ragDollCom = _observations2Learn.GetRagDollCOM();
+                else
+                    ragDollCom = _marConObservations2Learn.GetRagDollCOM();
                 Vector3 snapPosition = ragDollCom.position;
                 // snapPosition.y = 0f;
                 var snapDistance = _mapAnim2Ragdoll.SnapTo(snapPosition);
@@ -310,7 +314,11 @@ public class ProcRagdollAgent : Agent
             }
             else if (!dontSnapMocapToRagdoll)
             {
-                Transform ragDollCom = _observations2Learn.GetRagDollCOM();
+                Transform ragDollCom;
+                if (ReproduceDReCon)
+                    ragDollCom = _observations2Learn.GetRagDollCOM();
+                else
+                    ragDollCom = _marConObservations2Learn.GetRagDollCOM();
                 Vector3 snapPosition = ragDollCom.position;
                 // snapPosition.y = 0f;
                 var snapDistance = _mapAnim2Ragdoll.SnapTo(snapPosition);
@@ -362,9 +370,10 @@ public class ProcRagdollAgent : Agent
 
     float[] SmoothActions(float[] vectorAction)
     {
+        float[] previousActions = ReproduceDReCon ? _observations2Learn.PreviousActions : _marConObservations2Learn.PreviousActions;
         // yt =β at +(1−β)yt−1
         var smoothedActions = vectorAction
-            .Zip(_observations2Learn.PreviousActions, (a, y) => ActionSmoothingBeta * a + (1f - ActionSmoothingBeta) * y)
+            .Zip(previousActions, (a, y) => ActionSmoothingBeta * a + (1f - ActionSmoothingBeta) * y)
             .ToArray();
         return smoothedActions;
     }
@@ -428,7 +437,16 @@ public class ProcRagdollAgent : Agent
         _mapAnim2Ragdoll = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
         _mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
 
-        _observations2Learn = GetComponent<Observations2Learn>();
+        if (ReproduceDReCon)
+        {
+            _observations2Learn = GetComponent<Observations2Learn>();
+        }
+        else
+        {
+            _marConObservations2Learn = GetComponent<MarConObservations2Learn>();
+            if (_marConObservations2Learn == null)
+                _marConObservations2Learn = gameObject.AddComponent<MarConObservations2Learn>();
+        }
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
         _ragDollSettings = GetComponent<Muscles>();
@@ -441,12 +459,19 @@ public class ProcRagdollAgent : Agent
             .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
-        _observations2Learn.PreviousActions = GetActionsFromRagdollState();
+        if (ReproduceDReCon)
+            _observations2Learn.PreviousActions = GetActionsFromRagdollState();
+        else
+            _marConObservations2Learn.PreviousActions = GetActionsFromRagdollState();
 
         _controllerToMimic = _mapAnim2Ragdoll.GetComponent<IAnimationController>();
 
         _mapAnim2Ragdoll.OnAgentInitialize();
-        _observations2Learn.OnAgentInitialize();
+        if (ReproduceDReCon)
+            _observations2Learn.OnAgentInitialize();
+        else
+            _marConObservations2Learn.OnAgentInitialize(this.gameObject, _mapAnim2Ragdoll, _motors.ToArray());
+        
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
 
@@ -491,7 +516,10 @@ public class ProcRagdollAgent : Agent
             _mapAnim2Ragdoll.CopyVelocityTo(this.gameObject, resetVelocity);
         }
 
-        _observations2Learn.OnReset();
+        if (ReproduceDReCon)
+            _observations2Learn.OnReset();
+        else
+            _marConObservations2Learn.OnReset();
         _rewards2Learn.OnReset();
         // float timeDelta = float.Epsilon;
         // _dReConObservations.OnStep(timeDelta);
@@ -506,7 +534,10 @@ public class ProcRagdollAgent : Agent
         {
             _debugController.OnAgentEpisodeBegin();
         }
-        _observations2Learn.PreviousActions = GetActionsFromRagdollState();
+        if (ReproduceDReCon)
+            _observations2Learn.PreviousActions = GetActionsFromRagdollState();
+        else
+            _marConObservations2Learn.OnReset();
     }
 
     float[] GetMocapTargets()
