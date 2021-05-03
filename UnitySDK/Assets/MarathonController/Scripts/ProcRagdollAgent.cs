@@ -281,7 +281,22 @@ public class ProcRagdollAgent : Agent
         else
             _marConObservations2Learn.PreviousActions = vectorAction;
 
-        AddReward(_rewards2Learn.Reward);
+        if (UseFrequencies2Learn)
+        {
+            var freqReward = _frequencies2Learn.GetReward();
+            var reward = _rewards2Learn.Reward;
+            // take out old velocity rewards
+            const float energy_w = 0.2f; // HACK hard coded
+            float oldVelocityReward = _rewards2Learn.VelDifferenceReward * energy_w;
+            reward -= oldVelocityReward;
+            // add freqReward
+            reward += (freqReward *.2f);
+            AddReward(reward);
+        }
+        else
+        {
+            AddReward(_rewards2Learn.Reward);
+        }
 
         if (ReproduceDReCon)
         {
