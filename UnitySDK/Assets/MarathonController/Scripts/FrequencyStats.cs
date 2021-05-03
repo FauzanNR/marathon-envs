@@ -27,9 +27,7 @@ public class FrequencyStats : MonoBehaviour
     ArticulationBody[] _articulationBodyJoints;
     Rigidbody[] _rigidBodyJoints;
     GameObject[] _jointsToTrack;
-    void Start()
-    {
-    }
+
     void InitData(int size)
     {
         var numJoints = _articulationBodyJoints.Length;

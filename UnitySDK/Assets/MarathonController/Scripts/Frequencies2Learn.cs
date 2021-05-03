@@ -11,13 +11,20 @@ public class Frequencies2Learn : MonoBehaviour
 {
     public bool RenderAsBitmap;
     public bool GraphInput;
+    public bool UseLogScaler = true;
     [Range(-1,49)]
     public int JointIndex = -1;
     public string JointName;
-    public bool ShowRagdoll = true;
     public bool ShowMocap = true;
-    public bool UseLogScaler = true;
+    public bool ShowRagdoll = true;
+    public List<NativeArray<float>> Diffences;
+    public List<float> ErrorByRow;
+    public float Error;
+    public float ErrorSquared;
+    public float FrequencyReward;
+
     public float StepsPerSecond;
+
 
     public string[] JointNames;
 
@@ -54,6 +61,7 @@ public class Frequencies2Learn : MonoBehaviour
         _lastTime = Time.time;
     }
 
+
     public void OnStep(float timeDelta)
     {
         if (_lastJointIndex != JointIndex)
@@ -69,9 +77,67 @@ public class Frequencies2Learn : MonoBehaviour
         }
         _mocapStats.OnStep(timeDelta);
         _RagdollStats.OnStep(timeDelta);
+        UpdateDifference();
+
         float realTimeDelta = Time.time-_lastTime;
         StepsPerSecond = 1f/realTimeDelta;
         _lastTime = Time.time;
+    }
+
+    void UpdateDifference()
+    {
+        int numRows = _mocapStats._logScalerRows.Count;
+        // int rowLength = _mocapStats._logScalerRows[0].Buffer.Length;
+        int rowLength = _mocapStats._rows[0].Spectrum.Length;
+        bool recreate = Diffences==null;
+        if (Diffences!=null)
+        {
+            recreate |= numRows != Diffences.Count;
+            recreate |= rowLength != Diffences[0].Length;
+            if (recreate)
+            {
+                foreach (var row in Diffences)
+                {
+                    row.Dispose();
+                }
+            }
+        }
+        if (recreate)
+        {
+            Diffences = new List<NativeArray<float>>();
+            ErrorByRow = new List<float>();
+            for (int i = 0; i < numRows; i++)
+            {
+                Diffences.Add(new NativeArray<float>(rowLength, Allocator.Persistent));
+                ErrorByRow.Add(0f);
+            }
+        }
+        // 
+        Error = 0f;
+        for (int r = 0; r < numRows; r++)
+        {
+            var diffRow = Diffences[r];
+            var rowA = _mocapStats._rows[r].Spectrum;
+            var rowB = _RagdollStats._rows[r].Spectrum;
+            if (UseLogScaler)
+            {
+                rowA = _mocapStats._logScalerRows[r].Buffer;
+                rowB = _RagdollStats._logScalerRows[r].Buffer;
+            }
+            float rowError = 0f;
+            for (int i = 0; i < rowLength; i++)
+            {
+                var n = Mathf.Abs(rowA[i] - rowB[i]);
+                rowError += n;
+                diffRow[i] = n;
+            }
+            rowError /= (float)diffRow.Length;
+            ErrorByRow[r] = rowError;
+            Error += rowError;
+        }
+        Error /= (float)ErrorByRow.Count;
+        ErrorSquared = Mathf.Pow(Error, 2);
+        FrequencyReward = 1f - ErrorSquared;
     }
     void SetJointName()
     {
@@ -173,29 +239,13 @@ public class Frequencies2Learn : MonoBehaviour
             yPos = Plot(_mocapStats, yPos);
         }
         else
-            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
+            yPos = PlotDifferences(yPos);
         if (ShowRagdoll)
         {
             yPos = Plot(_RagdollStats, yPos);
         }
         else
-            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
-    }
-    void Draw3()
-    {
-        // Draw the lines of the graph
-        GL.Begin(GL.LINES);
-
-        float yHeight = (float) windowRect.height - 6;
-        float yPos = 2;
-        if (ShowMocap)
-        {
-            yPos = Plot(_RagdollStats, yPos);
-        }
-        if (ShowRagdoll)
-        {
-            yPos = PlotMultiStatsAsGraph(_mocapStats, _RagdollStats, yPos);
-        }
+            yPos = PlotDifferences(yPos);
     }
 
     float Plot(FrequencyStats stats, float yPos)
@@ -213,7 +263,15 @@ public class Frequencies2Learn : MonoBehaviour
     float PlotStatsAsGraph(FrequencyStats stats, float yPos)
     {
         var rows = StatsToRows(stats);
+        return PlotRowsAsGraph(rows, yPos);
+    }
+    float PlotDifferences(float yPos)
+    {
+        return PlotRowsAsGraph(Diffences, yPos);
+    }
 
+    float PlotRowsAsGraph(List<NativeArray<float>> rows, float yPos)
+    {
         bool center = !UseLogScaler || GraphInput;
         float yHeight = (float) (windowRect.height - 4) / 2;
         float yOffset = center ? yHeight / 2 : 0f;
@@ -244,49 +302,7 @@ public class Frequencies2Learn : MonoBehaviour
         }
         return yPos;
     }
-    float PlotMultiStatsAsGraph(FrequencyStats statsA, FrequencyStats statsB, float yPos)
-    {
-        var rowsA = StatsToRows(statsA);
-        var rowsB = StatsToRows(statsB);
-        if (rowsA.Count != rowsB.Count)
-            return yPos;
-
-        bool center = !UseLogScaler || GraphInput;
-        float yHeight = (float) (windowRect.height - 4) / 2;
-        float yOffset = center ? yHeight / 2 : 0f;
-        // yOffset += yPos;
-        float yMultiply = center ? yHeight / 2: yHeight;
-        float colorIdx = 0f;
-        yPos += yHeight;
-        for (int r = 0; r < rowsA.Count; r++)
-        {
-            var rowA = rowsA[r];
-            var rowB = rowsB[r];
-            bool skip = false;
-            if (JointIndex >= 0)
-            {
-                skip = rowsA.IndexOf(rowA) != JointIndex;
-            }
-            if (!skip)
-            {
-                float xScale = ((float) windowRect.width - 6) / (float) rowA.Length;
-                GL.Color(FloatToColor(colorIdx));
-                for (int i = 1; i < rowA.Length; i++)
-                {
-                    float y1 = rowA[i - 1] - rowB[i - 1];
-                    y1 = Mathf.Abs(y1);
-                    y1 *= yMultiply + yOffset;
-                    float y2 = rowA[i] - rowB[i];
-                    y2 = Mathf.Abs(y2);
-                    y2 *= yMultiply + yOffset;
-                    GL.Vertex3((i*xScale) + 2, yPos - y2, 0);
-                    GL.Vertex3(((i-1)*xScale) + 2, yPos - y1, 0);
-                }
-            }
-            colorIdx += 1f / (float)rowsA.Count;
-        }
-        return yPos;
-    }    
+   
     Color FloatToColor(float f)
     {
         Color col;
@@ -347,4 +363,15 @@ public class Frequencies2Learn : MonoBehaviour
                 .ToList();
         return rows;
     }
+    void OnDisable()
+    {
+        if (Diffences != null)
+        {
+            foreach (var row in Diffences)
+            {
+                row.Dispose();
+            }
+            Diffences = null;
+        }
+    }    
 }
