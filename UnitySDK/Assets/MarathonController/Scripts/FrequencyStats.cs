@@ -118,33 +118,36 @@ public class FrequencyStats : MonoBehaviour
             Vector3 decomposedRotation = Utils.GetSwingTwist(joint.transform.localRotation);
             if (reference.twistLock == ArticulationDofLock.LimitedMotion)
             {
-                var drive = reference.xDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
+                // var drive = reference.xDrive;
+                // var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                // var midpoint = drive.lowerLimit + scale;
                 var deg = decomposedRotation.x;
-                var pos = (deg - midpoint) / scale;
+                // var pos = (deg - midpoint) / scale;
+                var pos = deg * Mathf.Deg2Rad; // all pos within +/- Pi
                 NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
                 NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
                 _rows[rowIdx++].Push(slice);
             }
             if (reference.swingYLock == ArticulationDofLock.LimitedMotion)
             {
-                var drive = reference.yDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
+                // var drive = reference.yDrive;
+                // var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                // var midpoint = drive.lowerLimit + scale;
                 var deg = decomposedRotation.y;
-                var pos = (deg - midpoint) / scale;
+                // var pos = (deg - midpoint) / scale;
+                var pos = deg * Mathf.Deg2Rad; // all pos within +/- Pi
                 NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
                 NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
                 _rows[rowIdx++].Push(slice);
             }
             if (reference.swingZLock == ArticulationDofLock.LimitedMotion)
             {
-                var drive = reference.zDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
+                // var drive = reference.zDrive;
+                // var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                // var midpoint = drive.lowerLimit + scale;
                 var deg = decomposedRotation.z;
-                var pos = (deg - midpoint) / scale;
+                // var pos = (deg - midpoint) / scale;
+                var pos = deg * Mathf.Deg2Rad; // all pos within +/- Pi
                 NativeArray<float> nativeArray = new NativeArray<float>(new[] {pos}, Allocator.Temp);
                 NativeSlice<float> slice = new NativeSlice<float>(nativeArray);
                 _rows[rowIdx++].Push(slice);
