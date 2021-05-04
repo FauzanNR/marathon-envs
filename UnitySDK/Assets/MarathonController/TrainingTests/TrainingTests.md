@@ -41,7 +41,7 @@ mlagents-learn config\marathon_envs_config.yaml --env="envs\20210430-drecon-meca
 
 ```
 
-The commit that corresponds to this result is: 
+The commit that corresponds to this result is: 5451b2af620cbd938f609bdac722a33db1816322 (4th may)
 
 
 
