@@ -26,7 +26,28 @@ mlagents-learn config\marathon_envs_config.yaml --env="envs\20210413-marcon-meca
 
 The commit that corresponds to the build is:  5250b40ebe477ea85bed85071b395370705e3f0c
 
-**TODO** UPDATE
+
+
+
+
+2021-04-30
+
+Updated with improved velocity calculation.
+
+instruction:
+
+```shell
+mlagents-learn config\marathon_envs_config.yaml --env="envs\20210430-drecon-mecanim-with-targetedVelocity-v2\Marathon.exe" --num-envs=25 --run-id=20210430-drecon-mecanim-with-targetedVelocity-v22 --no-graphics --env-args --spawn-env=DReConHumanoid-v0 --num-spawn-envs=20
+
+```
+
+The commit that corresponds to this result is: 
+
+
+
+
+
+
 
 
 

@@ -267,11 +267,10 @@ public class ProcRagdollAgent : Agent
             {
                 UpdateMotor(m, targetNormalizedRotation);
             }
+
+
             //DEBUG: to keep track of the values, and see if they seem reasonable
             targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation,timeDelta);
-
-
-
 
             Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
 
@@ -281,20 +280,6 @@ public class ProcRagdollAgent : Agent
             j++;
          
         }
-
-        //these are scalar, not vectorial:
-        //GetComponent<Observations2Learn>().RagDollJointVelocities
-
-       // ArticulationReducedSpace
-      
-
-
-
-        //ArticulationReducedSpace(vels[0]);
-
-
-
-        //  differenceWithActualVelocity = 
 
         _observations2Learn.PreviousActions = vectorAction;
 
@@ -754,6 +739,9 @@ public class ProcRagdollAgent : Agent
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
 
+        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, timeDelta);
+
+
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
@@ -763,8 +751,7 @@ public class ProcRagdollAgent : Agent
             var target = midpoint + (targetNormalizedRotation.x * scale);
             drive.target = target;
 
-           // drive.targetVelocity = (target - currentRotationValues.x) / (_decisionPeriod * Time.fixedDeltaTime);
-           
+            drive.targetVelocity = targetVel.x;  
 
 
             drive.stiffness = stiffness;
@@ -780,7 +767,9 @@ public class ProcRagdollAgent : Agent
             var midpoint = drive.lowerLimit + scale;
             var target = midpoint + (targetNormalizedRotation.y * scale);
             drive.target = target;
-           // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
+            // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
+            drive.targetVelocity = targetVel.y;
+
 
             drive.stiffness = stiffness;
             drive.damping = damping;
@@ -797,6 +786,7 @@ public class ProcRagdollAgent : Agent
 
             drive.target = target;
             //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
+            drive.targetVelocity = targetVel.z;
 
             drive.stiffness = stiffness;
             drive.damping = damping;
