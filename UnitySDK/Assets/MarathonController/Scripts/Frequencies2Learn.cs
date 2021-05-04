@@ -6,6 +6,7 @@ using UnityEngine;
 using ManyWorlds;
 using UnityEngine.Assertions;
 using Unity.Collections;
+using Unity.MLAgents.Actuators;
 
 public class Frequencies2Learn : MonoBehaviour
 {
@@ -139,6 +140,10 @@ public class Frequencies2Learn : MonoBehaviour
         }
         AveError /= (float)ErrorByRow.Count;
         FrequencyReward = Mathf.Exp(-10*(SumSquareError/(rowLength/4)/(numRows/4)));
+    }
+    public float GetReward()
+    {
+        return FrequencyReward;
     }
     void SetJointName()
     {
