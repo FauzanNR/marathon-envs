@@ -19,8 +19,8 @@ public class Frequencies2Learn : MonoBehaviour
     public bool ShowRagdoll = true;
     public List<NativeArray<float>> Diffences;
     public List<float> ErrorByRow;
-    public float Error;
-    public float ErrorSquared;
+    public float AveError;
+    public float SumSquareError;
     public float FrequencyReward;
 
     public float StepsPerSecond;
@@ -113,7 +113,8 @@ public class Frequencies2Learn : MonoBehaviour
             }
         }
         // 
-        Error = 0f;
+        AveError = 0f;
+        SumSquareError = 0f;
         for (int r = 0; r < numRows; r++)
         {
             var diffRow = Diffences[r];
@@ -128,16 +129,16 @@ public class Frequencies2Learn : MonoBehaviour
             for (int i = 0; i < rowLength; i++)
             {
                 var n = Mathf.Abs(rowA[i] - rowB[i]);
+                SumSquareError += n*n;
                 rowError += n;
                 diffRow[i] = n;
             }
             rowError /= (float)diffRow.Length;
             ErrorByRow[r] = rowError;
-            Error += rowError;
+            AveError += rowError;
         }
-        Error /= (float)ErrorByRow.Count;
-        ErrorSquared = Mathf.Pow(Error, 2);
-        FrequencyReward = 1f - ErrorSquared;
+        AveError /= (float)ErrorByRow.Count;
+        FrequencyReward = Mathf.Exp(-10*(SumSquareError/(rowLength/4)/(numRows/4)));
     }
     void SetJointName()
     {
