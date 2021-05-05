@@ -45,6 +45,7 @@ public class ROMparserSwingTwistEditor : Editor
 
         base.OnInspectorGUI();
 
+        /*
         if (GUILayout.Button("0.Debug: Set Joints To Max ROM"))
         {
             ROMparserSwingTwist t = target as ROMparserSwingTwist;
@@ -62,52 +63,6 @@ public class ROMparserSwingTwistEditor : Editor
         }
 
 
-
-        //if (GUILayout.Button("0.Debug: Export / Overwrite RangeOfMotion004"))
-        //{
-        //    ROMparserSwingTwist t = target as ROMparserSwingTwist;
-        //    t.WriteRangeOfMotion();
-        //    AssetDatabase.SaveAssets();
-        //    // string targetFile = "Assets/MarathonEnvs/Agents/Characters/MarathonMan004/MarathonMan004RomPreview.asset";
-        //    // string sourceFile = "Assets/MarathonEnvs/ROM-extraction/RomPreview.asset";
-        //    // AssetDatabase.CopyAsset(sourceFile, targetFile);
-        //}
-
-
-        //This is done now in the script RangeOfMotion004
-        //if (GUILayout.Button("1.Apply ROM As Constraints"))
-        //{
-
-        //    ROMparserSwingTwist t = target as ROMparserSwingTwist;
-        //    Transform targetRoot = t.targetRagdollRoot;
-        //    t.ApplyROMAsConstraints();
-        //}
-
-
-        /*
-        //this is now done in script ApplyRangeOfMotion004
-        if (GUILayout.Button("2.Store Ragdoll and Env as Prefab"))
-        {
-            ROMparserSwingTwist t = target as ROMparserSwingTwist;
-            Transform targetRoot = t.targetRagdollRoot;
-
-            ManyWorlds.SpawnableEnv envPrefab = null;
-            RagDollAgent rda = null;
-
-            //this creates the needed objects and configures them
-            t.Prepare4PrefabStorage(out rda, out envPrefab);
-            
-            //this stores them 
-            storeNewPrefabWithROM(rda, envPrefab);
-
-            //once stored we can destroy them to keep the scene clean
-            DestroyImmediate(rda.gameObject);
-            if (envPrefab != null)
-                DestroyImmediate(envPrefab.gameObject);
-
-
-        }
-        */
         GUILayout.Label("Prefab Ragdoll:");
 
 
@@ -119,7 +74,7 @@ public class ROMparserSwingTwistEditor : Editor
             // " \n Step 2: click on button 1 to apply the constraints to check if the ragdoll looks reasonable" +
             // " \n Step 3: in edit mode, click on button 1, and then on button 2, to generate a new constrained ragdoll. If a template for a SpawnableEnv is provided, also a new environment for training");
             " \n Step 2: open the Ragdoll on which you want to apply the range of motion, and use the script ApplyRangeOfMotion004");
-
+        */
 
         serializedObject.ApplyModifiedProperties();
 
