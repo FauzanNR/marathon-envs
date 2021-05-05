@@ -281,10 +281,10 @@ public class ProcRagdollAgent : Agent
                 targetNormalizedRotation.z = vectorAction[i++];
             if (!ignorActions)
             {
-                UpdateMotor(m, targetNormalizedRotation, timeDelta);
+                UpdateMotor(m, targetNormalizedRotation);
             }
             //DEBUG: to keep track of the values, and see if they seem reasonable
-            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation,timeDelta);
+            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation);
 
             Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
 
@@ -655,7 +655,7 @@ public class ProcRagdollAgent : Agent
         return _mocapTargets;
     }*/
 
-    void UpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, float timeDelta)
+    void UpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation)
     {
         Vector3 power = Vector3.zero;
         try
@@ -669,7 +669,7 @@ public class ProcRagdollAgent : Agent
 
         }
         // LegacyUpdateMotor(joint, targetNormalizedRotation, power);
-        NewUpdateMotor(joint, targetNormalizedRotation, power, timeDelta);
+        NewUpdateMotor(joint, targetNormalizedRotation, power);
     }
     void LegacyUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
     {
@@ -724,7 +724,7 @@ public class ProcRagdollAgent : Agent
 
 
 
-    private static Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float timeDelta) {
+    private static Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation) {
 
         Vector3 targetVelocity = new Vector3(0, 0, 0);
 
@@ -765,13 +765,12 @@ public class ProcRagdollAgent : Agent
 
         //Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity)
 
-        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
+        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target);
 
         return targetVelocity;
     }
 
-
-    void NewUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power, float timeDelta)
+    void NewUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
     {
         // For a physically realistic simulation - ,  
         var m = joint.mass;
@@ -785,12 +784,7 @@ public class ProcRagdollAgent : Agent
         //why do you never set up the targetVelocity?
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
-
-        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, timeDelta);
-        if (targetVel.x == float.NaN || targetVel.y == float.NaN || targetVel.z == float.NaN)
-        {
-            throw new ArgumentException();
-        }
+        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation);
 
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {

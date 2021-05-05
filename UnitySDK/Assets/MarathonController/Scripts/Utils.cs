@@ -17,7 +17,7 @@ public static class Utils
     // }
 
 
-    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta = 1f)
     {
         Vector3 fromInDeg = Utils.GetSwingTwist(from);
         Vector3 toInDeg = Utils.GetSwingTwist(to);
@@ -25,13 +25,11 @@ public static class Utils
         return AngularVelocityInReducedCoordinates(fromInDeg, toInDeg, timeDelta);
     }
 
-    public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta)
+    public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta = 1f)
     {
         Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
         Vector3 angularVelocity = diff / timeDelta;
         return angularVelocity;
-
-
     }
 
 
