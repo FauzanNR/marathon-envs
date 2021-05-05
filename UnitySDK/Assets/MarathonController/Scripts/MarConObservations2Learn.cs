@@ -27,6 +27,11 @@ public class MarConObservations2Learn : MonoBehaviour
     [Tooltip("User-input requests backflip, bool")]
     public bool InputBackflip;
 
+    [Tooltip("User-input requests stand, bool")]
+    public bool InputStand;
+
+    [Tooltip("User-input requests walk or run, bool")]
+    public bool InputWalkOrRun;
     [Tooltip("Difference between RagDoll character horizontal CM velocity and user-input desired horizontal CM velocity. Vector2")]
     public Vector2 HorizontalVelocityDifference;
 
@@ -104,6 +109,8 @@ public class MarConObservations2Learn : MonoBehaviour
         {
             InputJump = _inputController.Jump;
             InputBackflip = _inputController.Backflip;
+            InputStand = _inputController.Stand;
+            InputWalkOrRun = _inputController.WalkOrRun;
         }
         HorizontalVelocityDifference = new Vector2(
             _ragdollStats.CenterOfMassVelocityDifference.x,

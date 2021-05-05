@@ -127,8 +127,11 @@ public class ProcRagdollAgent : Agent
         sensor.AddObservation(_marConObservations2Learn.RagDollCOMVelocity);
         sensor.AddObservation(_marConObservations2Learn.RagDollCOMVelocity - _marConObservations2Learn.MocapCOMVelocity);
         sensor.AddObservation(_marConObservations2Learn.InputDesiredHorizontalVelocity);
-        sensor.AddObservation(_marConObservations2Learn.InputJump);
-        sensor.AddObservation(_marConObservations2Learn.InputBackflip);
+        sensor.AddObservation(_marConObservations2Learn.InputStand);
+        sensor.AddObservation(_marConObservations2Learn.InputWalkOrRun);
+        // skip these for now as they are not used
+        // sensor.AddObservation(_marConObservations2Learn.InputJump);
+        // sensor.AddObservation(_marConObservations2Learn.InputBackflip);
         sensor.AddObservation(_marConObservations2Learn.HorizontalVelocityDifference);
         var ragDollStats = _marConObservations2Learn.GetRagdollStats();
         if (UseDofForObservation)

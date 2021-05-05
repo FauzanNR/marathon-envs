@@ -19,6 +19,8 @@ public class InputController : MonoBehaviour
     public Vector2 CameraRotation; // User-input desired rotation for camera.
     public bool Jump; // User wants to jump
     public bool Backflip; // User wants to backflip
+    public bool Stand;
+    public bool WalkOrRun;
 
     [Header("Read only (or debug)")]
     public Vector2 DesiredHorizontalVelocity; // MovementVector * Max Velovity
@@ -31,6 +33,7 @@ public class InputController : MonoBehaviour
 
     const float kGroundAcceleration = .6f/2;
     const float kGroundDeceleration = .75f/4;
+    const float kDeadzone = .1f;            // below this value is stationary
 
 
     // Start is called before the first frame update
@@ -88,11 +91,18 @@ public class InputController : MonoBehaviour
         MovementVector = Vector2.MoveTowards(MovementVector, TargetMovementVector, acceleration * deltaTime);
 
         // Handle deadzone
-        if (TargetMovementVector.magnitude < .1f && MovementVector.magnitude < .1f)
+        if (TargetMovementVector.magnitude < kDeadzone && MovementVector.magnitude < kDeadzone)
         {
             TargetMovementVector = Vector2.zero;
             TargetMovementMagnatude = TargetMovementVector.magnitude;
             MovementVector = Vector2.zero;
+            WalkOrRun = false;
+            Stand = true;
+        }
+        else
+        {
+            WalkOrRun = true;
+            Stand = false;
         }
         MovementMagnatude = MovementVector.magnitude;
 
@@ -156,8 +166,10 @@ public class InputController : MonoBehaviour
         Jump = false;
         float direction = UnityEngine.Random.Range(0f, 360f);
         float power = UnityEngine.Random.value;
-        // 1 in 5 times we are going to stand still (4 in 5 still has 10% chance)
-        if (UnityEngine.Random.value < .2f)
+        // keep power above deadzone as we handle that below
+        power = kDeadzone + (power * (1f-kDeadzone)); 
+        // 2 in 5 times we are going to stand still 
+        if (UnityEngine.Random.value < .4f)
             power = 0.001f;
         // float direction = UnityEngine.Random.Range(-Mathf.PI/8, Mathf.PI/8);
         // float power = UnityEngine.Random.Range(1f, 1f);
