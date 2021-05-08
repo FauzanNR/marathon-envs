@@ -242,7 +242,7 @@ public class Rewards2Learn : MonoBehaviour
 
         // Calc Velocity difference Error
         VelDifferenceError = _ragDollBodyStats.PointVelocity
-            .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+            .Zip(_mocapBodyStats.PointVelocity, (x,y) => (x-y).magnitude)
             .Average();
         VelDifferenceError = Mathf.Abs(VelDifferenceError);
         VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
