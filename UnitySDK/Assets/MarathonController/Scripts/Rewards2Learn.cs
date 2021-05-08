@@ -51,7 +51,14 @@ public class Rewards2Learn : MonoBehaviour
     // public float DirectionFactor;
     [Header("Velocity Difference Reward")]
     public float VelDifferenceError;
+    public float VelAvDiffTwoStepsError; 
+    public float VelAvDiffFourStepsError;
     public float VelDifferenceReward;
+    public float VelDiffTwoStepsReward; 
+    public float VelDiffFourStepsReward;
+    float [][] _velHistoryTwoSteps;
+    float [][] _velHistoryFourSteps;
+
 
     [Header("Minimize Energy Reward")]
     public float KineticEnergyMetric;
@@ -129,6 +136,29 @@ public class Rewards2Learn : MonoBehaviour
         _ragDollBodyStats.ObjectToTrack = this;
         _ragDollBodyStats.transform.SetParent(_spawnableEnv.transform);
         _ragDollBodyStats.OnAgentInitialize(transform, _mocapBodyStats);
+
+        _velHistoryTwoSteps = new float[][]{
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray(),
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray()
+            };
+        _velHistoryFourSteps = new float[][]{
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray(),
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray(),
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray(),
+            _ragDollBodyStats.PointVelocity
+                .Zip(_mocapBodyStats.PointVelocity, (x,y) => x.magnitude-y.magnitude)
+                .ToArray()
+            };
 
         _mocapBodyStats.AssertIsCompatible(_ragDollBodyStats);
     }
@@ -247,7 +277,38 @@ public class Rewards2Learn : MonoBehaviour
         VelDifferenceError = Mathf.Abs(VelDifferenceError);
         VelDifferenceReward = Mathf.Exp(-10f * VelDifferenceError);
         VelDifferenceReward = Mathf.Clamp(VelDifferenceReward, 0f, 1f);
-
+        // roll history
+        var oldestTwoSteps = _velHistoryTwoSteps[1];
+        _velHistoryTwoSteps[1] = _velHistoryTwoSteps[0];
+        _velHistoryTwoSteps[0] = oldestTwoSteps;
+        var oldestFourSteps = _velHistoryFourSteps[3];
+        _velHistoryFourSteps[3] = _velHistoryFourSteps[2];
+        _velHistoryFourSteps[2] = _velHistoryFourSteps[1];
+        _velHistoryFourSteps[1] = _velHistoryFourSteps[0];
+        _velHistoryFourSteps[0] = oldestFourSteps;
+        int velRows = _ragDollBodyStats.PointVelocity.Length;     
+        for (int i = 0; i < velRows; i++)
+        {
+            var diff = _ragDollBodyStats.PointVelocity[i]-_mocapBodyStats.PointVelocity[i];
+            var sqDiff = diff.magnitude*diff.magnitude;
+            var absDiff = Mathf.Abs(diff.magnitude);
+            oldestTwoSteps[i] = absDiff;
+            oldestFourSteps[i] = absDiff;
+            // oldestTwoSteps[i] = sqDiff;
+            // oldestFourSteps[i] = sqDiff;
+        }
+        VelAvDiffTwoStepsError = 
+            _velHistoryTwoSteps[0].Sum() +
+            _velHistoryTwoSteps[1].Sum();
+        VelAvDiffTwoStepsError /= velRows*2f;
+        VelAvDiffFourStepsError = 
+            _velHistoryFourSteps[0].Sum() +
+            _velHistoryFourSteps[1].Sum() +
+            _velHistoryFourSteps[2].Sum() +
+            _velHistoryFourSteps[3].Sum();
+        VelAvDiffFourStepsError /= velRows*4f;
+        VelDiffTwoStepsReward = Mathf.Exp(-10 * VelAvDiffTwoStepsError);
+        VelDiffFourStepsReward = Mathf.Exp(-10 * VelAvDiffFourStepsError);
 
         // calculate energy:
         //we obviate the masses, we want this to be important all across
