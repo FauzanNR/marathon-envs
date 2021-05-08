@@ -727,7 +727,7 @@ public class ProcRagdollAgent : Agent
 
 
 
-    private static Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation) {
+    private Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation) {
 
         Vector3 targetVelocity = new Vector3(0, 0, 0);
 
@@ -768,8 +768,8 @@ public class ProcRagdollAgent : Agent
 
         //Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity)
 
-        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target);
-
+        var timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
         return targetVelocity;
     }
 
