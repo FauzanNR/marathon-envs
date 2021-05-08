@@ -770,6 +770,12 @@ public class ProcRagdollAgent : Agent
 
         var timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
+        const float kMaxAngularVelocity = 25f;
+        targetVelocity = new Vector3(
+            Mathf.Clamp(targetVelocity.x, -kMaxAngularVelocity, kMaxAngularVelocity),
+            Mathf.Clamp(targetVelocity.y, -kMaxAngularVelocity, kMaxAngularVelocity),
+            Mathf.Clamp(targetVelocity.z, -kMaxAngularVelocity, kMaxAngularVelocity)
+        );
         return targetVelocity;
     }
 
