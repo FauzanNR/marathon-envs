@@ -22,13 +22,62 @@ public class RangeOfMotionValue
     }}
 }
 
-
+[System.Serializable]
 public class OscillationParameters
 {
     public string name;
 
     public float dampingRatio;
     public float natFreq;
+
+
+
+
+    //    [SerializeField]
+    //    List<float> _cumulatedRotation = new List<float>(); //we keep here the rotation acumulated through time.
+
+    // cumulRot is directly rot-> rotation axis in last frame is:  Vector3(rot.x,rot.y,rot.z).normalized
+    //List<Vector3> _rotDirection = new List<Vector3>(); 
+
+    //    Quaternion lastRot = Quaternion.identity;
+
+
+
+    [SerializeField]
+    List<Quaternion> _animRots = new List<Quaternion>();
+
+
+
+    public void AddRotationValue(Quaternion rot) {
+
+
+        //   _cumulatedRotation.Add(Quaternion.Angle(lastRot, rot)+cumulatedAngle);
+
+        //_cumulatedRotation.Add(Quaternion.Angle( rot,lastRot));
+
+        //  _rotDirection.Add(new Vector3(rot.x, rot.y, rot.z).normalized);
+
+        //lastRot = rot;
+
+
+        _animRots.Add(rot);
+
+    }
+
+
+    /*
+    public float[] CumulatedRotations {
+        get { return _cumulatedRotation.ToArray(); }
+    
+    }
+    */
+
+    public Quaternion[] AnimRotations
+    {
+        get { return _animRots.ToArray(); }
+
+    }
+
 
 
 }
@@ -44,7 +93,9 @@ public class RangeOfMotionValues : ScriptableObject
     List<RangeOfMotionValue> _values;
 
 
-    //WEIRD!
+    public OscillationParameters[] Osc { get { return _osc.ToArray(); } }
+    
+    [SerializeField]
     List<OscillationParameters> _osc;
 
 

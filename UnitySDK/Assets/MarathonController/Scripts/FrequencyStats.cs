@@ -8,7 +8,7 @@ using UnityEngine;
 
 public class FrequencyStats : MonoBehaviour
 {
-    public bool ScrollWindow = true;
+   // public bool ScrollWindow = true;
     public float[] _input;
     public float[] _output;
     public List<NativeArray<float>> _inputs;
@@ -16,7 +16,10 @@ public class FrequencyStats : MonoBehaviour
     public List<FftBuffer> _rows;
     public List<LogScaler> _logScalerRows;
     public float _denoise = 0f;
-    int _winSize = 32;
+    //int _winSize = 32;
+
+    int _winSize = 1024;
+
     int _dataIndex = 0;
     int _jointIndex = 0;
     bool _useBurstFft;
