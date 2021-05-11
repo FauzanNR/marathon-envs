@@ -2,10 +2,19 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.MLAgents;
+
+using Unity.MLAgents.Policies;
+using Unity.Barracuda;
+
+
 using UnityEngine;
 using ManyWorlds;
 using UnityEngine.Assertions;
 using Unity.Collections;
+
+
+
+
 
 public class Frequencies2Learn : MonoBehaviour
 {
@@ -40,7 +49,21 @@ public class Frequencies2Learn : MonoBehaviour
         _joints = joints;
         _mocapStats = mocap.AddComponent<FrequencyStats>();
         _RagdollStats = ragdoll.AddComponent<FrequencyStats>();
-        var dof = 50; // HACK - do this properly
+        //var dof = 50; // HACK - do this properly
+
+        BehaviorParameters bp = ragdoll.GetComponent<BehaviorParameters>();
+
+        Unity.MLAgents.Actuators.ActionSpec myActionSpec = bp.BrainParameters.ActionSpec;
+        var dof = myActionSpec.NumContinuousActions;
+
+
+
+
+
+
+
+
+
         _mocapStats.OnAgentInitialize(_joints, dof);
         _RagdollStats.OnAgentInitialize(_joints, dof);
         
@@ -238,6 +261,9 @@ public class Frequencies2Learn : MonoBehaviour
         }
         return col;
     }
+
+
+
     float PlotStatsAsBitmap(FrequencyStats stats, float yPos)
     {
         var rows = StatsToRows(stats);
