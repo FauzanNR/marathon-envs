@@ -49,7 +49,7 @@ public class Frequencies2Learn : MonoBehaviour
         _joints = joints;
         _mocapStats = mocap.AddComponent<FrequencyStats>();
         _RagdollStats = ragdoll.AddComponent<FrequencyStats>();
-        //var dof = 50; // HACK - do this properly
+        
 
         BehaviorParameters bp = ragdoll.GetComponent<BehaviorParameters>();
 
