@@ -1,10 +1,6 @@
-# Training
+# Training the marathon environments
 
-This page covers how to train using the ML-Agents toolkit
 
-### Requirements
-
-* Download the correct version of MarathonEnvs for your platform and put it in the `envs\` folder
 
 ### Note for MacOS & Linux
 

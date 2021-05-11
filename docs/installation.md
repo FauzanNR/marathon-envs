@@ -1,6 +1,6 @@
 ## Installation
 
-### 1 Installation with conda environment file
+### 1. Installation with conda environment file
 
 1. Make sure you have the latest graphics drivers updated. Restart the computer.
 2. Install anaconda. If it is already installed, make sure you have the latest version by running, with admin privileges, `conda update anaconda`. Restart the computer.
@@ -16,7 +16,7 @@ If you update from a previous ml-agents version, you can use `conda env update -
 
 
 
-### 2 Common mistakes
+### 2. Common mistakes
 
 On windows,  missing packages. If you have an error similar to:
 

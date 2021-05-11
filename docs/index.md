@@ -15,12 +15,12 @@ The Unity project has two parts. Both can be find in *UnitySDK > Assets*:
 ![MarathonEnvs](images/MarathonEnvsBanner.gif)
 
 
-- In folder *MarathonController* there are  resources to take a skinned character, with a typical controller like mecanim or motion matching, and generate from it a training environment. Further details can be found [here]()  and instructions to train [here](marathon-controller-training.md)
+- In folder *MarathonController* there are  resources to take a skinned character, with a typical controller like mecanim or motion matching, and generate from it a training environment. Further details can be found [here](marathon-controller-intro.md)  and instructions to train [here](marathon-controller-training.md)
 
 <img src="./img/trained-with-automatic-constraint-parsing.gif" alt="Example-current-status," style="zoom:50%;" />
 
 - There are also instructions to export the outcome of the training [here](export-outcome.md)
-- There is also a list of epic fails documented in [this folder](epic-fails)
+- There is also a list of epic fails documented in folder [this folder](./img/epic-fails)
 
 ### 1. Getting started
 Feel free to join our [Discord server](https://discord.gg/MPEbHPP) 
