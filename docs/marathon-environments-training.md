@@ -76,17 +76,8 @@ mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs
 ``` shell
 mlagents-learn config\marathon_envs_config.yaml --train --env="envs\MarathonEnvs\Marathon Environment.exe" --num-envs=10 --no-graphics --run-id=MarathonManBackflip-001 --env-args --spawn-env=MarathonManBackflip-v0 --num-spawn-envs=10
 ```
-----
 
-## Legacy Turotial: [Getting Started With MarathonEnvs](https://towardsdatascience.com/gettingstartedwithmarathonenvs-v0-5-0a-c1054a0b540c)
 
-This is a legacy tutorial from an older version of MarathonEnvs. The tutorial covers:
-
-* How to setup your Development Environment (Unity, MarthonEnvs + ML-Agents + TensorflowSharp)
-* How to run each agent with their pre-trained models.
-* How to retrain the hopper agent and follow training in Tensorboard.
-* How to modify the hopper reward function and train it to jump.
-* See tutorial [here](https://towardsdatascience.com/gettingstartedwithmarathonenvs-v0-5-0a-c1054a0b540c)
 ----
 
 
@@ -140,7 +131,7 @@ conditions for each animation by changing the reward threshold in the `StyleTran
   ``` 
 		if (reward < 0.5)
 			Done();
-```
+  ```
 For example, if you set threshold too high for the running animation, the agent will be reset too soon, 
 before it had a chance to accelerate. Setting the threshold too low, however, will result in the agent
 running on its knees. Check out the [video results](https://www.youtube.com/playlist?list=PLX7INEUkOHp-uXg6xhqDWuDT4ENb6sSWA) 
