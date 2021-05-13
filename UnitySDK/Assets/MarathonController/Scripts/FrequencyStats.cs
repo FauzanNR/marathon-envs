@@ -9,14 +9,14 @@ using UnityEngine;
 public class FrequencyStats : MonoBehaviour
 {
     public bool ScrollWindow = true;
-    public float[] _input;
-    public float[] _output;
     public List<NativeArray<float>> _inputs;
     public List<NativeArray<float>> _outputs;
     public List<FftBuffer> _rows;
     public List<LogScaler> _logScalerRows;
+    public List<BurstFft> _burstRows;
+
     public float _denoise = 0f;
-    int _winSize = 32;
+    int _winSize = 64;
     int _dataIndex = 0;
     int _jointIndex = 0;
     bool _useBurstFft;
@@ -38,6 +38,13 @@ public class FrequencyStats : MonoBehaviour
                 r.Dispose();
             }
         }
+        if (_burstRows != null)
+        {
+            foreach (var r in _burstRows)
+            {
+                r.Dispose();
+            }
+        }
         if (_logScalerRows != null)
         {
             foreach (var l in _logScalerRows)
@@ -47,17 +54,13 @@ public class FrequencyStats : MonoBehaviour
         }
         _rows = new List<FftBuffer>();
         _logScalerRows = new List<LogScaler>();
+        _burstRows = new List<BurstFft>();
         for (int i = 0; i < _dof; i++)
         {
             _rows.Add(new FftBuffer(size*2));
+            _burstRows.Add(new BurstFft(size*2));
             _logScalerRows.Add(new LogScaler());
         }
-        _input = Enumerable.Range(0, size)
-            .Select(x=>0f)
-            .ToArray();
-        _output = Enumerable.Range(0, size)
-            .Select(x=>0f)
-            .ToArray();
         _dataIndex = 0;
     }
 
@@ -157,11 +160,21 @@ public class FrequencyStats : MonoBehaviour
         {
             row.Analyze(floor, head);
         }
+        if (_useBurstFft)
+        {
+            for (int i = 0; i < _burstRows.Count; i++)
+            {
+                _burstRows[i].Transform(_rows[i].Input);
+            }
+        }
         if (_useLogScaler)
         {
             for (int i = 0; i < _rows.Count ; i++)
             {
-                _logScalerRows[i].ResampleAndStore(_rows[i].Spectrum);
+                if (_useBurstFft)
+                    _logScalerRows[i].ResampleAndStore(_burstRows[i].Spectrum);
+                else
+                    _logScalerRows[i].ResampleAndStore(_rows[i].Spectrum);
             }
         }
     }
@@ -175,11 +188,19 @@ public class FrequencyStats : MonoBehaviour
         {
             r.Dispose();
         }
+        if (_burstRows != null)
+        {
+            foreach (var r in _burstRows)
+            {
+                r.Dispose();
+            }
+        }
         foreach (var l in _logScalerRows)
         {
             l.Dispose();
         }
         _rows = new List<FftBuffer>();
         _logScalerRows = new List<LogScaler>();
+        _burstRows = new List<BurstFft>();
     }
 }

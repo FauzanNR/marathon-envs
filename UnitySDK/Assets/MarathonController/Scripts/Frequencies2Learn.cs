@@ -13,6 +13,7 @@ public class Frequencies2Learn : MonoBehaviour
     public bool RenderAsBitmap;
     public bool GraphInput;
     public bool UseLogScaler = true;
+    public bool UseBurstFftLib = false;
     [Range(-1,49)]
     public int JointIndex = -1;
     public string JointName;
@@ -55,6 +56,10 @@ public class Frequencies2Learn : MonoBehaviour
         _lastJointIndex = JointIndex;
         SetJointName();
 
+        _mocapStats.SetFftType(UseBurstFftLib);
+        _RagdollStats.SetFftType(UseBurstFftLib);
+        _lastUseBurstFft = UseBurstFftLib;
+
         _mocapStats.SetUseLogScaler(UseLogScaler);
         _RagdollStats.SetUseLogScaler(UseLogScaler);
         _lastUseLogScaler = UseLogScaler;
@@ -69,6 +74,12 @@ public class Frequencies2Learn : MonoBehaviour
         {
             _lastJointIndex = JointIndex;
             SetJointName();
+        }
+        if (_lastUseBurstFft != UseBurstFftLib)
+        {
+            _mocapStats.SetFftType(UseBurstFftLib);
+            _RagdollStats.SetFftType(UseBurstFftLib);
+            _lastUseBurstFft = UseBurstFftLib;
         }
         if (_lastUseLogScaler != UseLogScaler)
         {
@@ -362,6 +373,10 @@ public class Frequencies2Learn : MonoBehaviour
         else if (this.UseLogScaler)
             rows = stats._logScalerRows
                 .Select(x=>x.Buffer)
+                .ToList();
+        else if (this.UseBurstFftLib)
+            rows = stats._burstRows
+                .Select(x=>x.Spectrum)
                 .ToList();
         else
             rows = stats._rows
