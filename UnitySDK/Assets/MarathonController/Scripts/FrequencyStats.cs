@@ -30,6 +30,8 @@ public class FrequencyStats : MonoBehaviour
     ArticulationBody[] _articulationBodyJoints;
     Rigidbody[] _rigidBodyJoints;
     GameObject[] _jointsToTrack;
+
+
     void Start()
     {
     }
@@ -173,15 +175,18 @@ public class FrequencyStats : MonoBehaviour
 
     void OnDisable()
     {
-        foreach (var r in _rows)
-        {
-            r.Dispose();
+        if(_rows !=null)
+        { 
+            foreach (var r in _rows)
+            {
+                r.Dispose();
+            }
+            foreach (var l in _logScalerRows)
+            {
+                l.Dispose();
+            }
+            _rows = new List<FftBuffer>();
+            _logScalerRows = new List<LogScaler>();
         }
-        foreach (var l in _logScalerRows)
-        {
-            l.Dispose();
-        }
-        _rows = new List<FftBuffer>();
-        _logScalerRows = new List<LogScaler>();
     }
 }

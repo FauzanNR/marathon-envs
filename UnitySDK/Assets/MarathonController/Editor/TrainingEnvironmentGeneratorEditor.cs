@@ -53,8 +53,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
             //instructions below stores them, it can only be done in an editor script
 
             storeEnvAsPrefab(t.Outcome);
-            //once stored we can destroy them to keep the scene clean
-            //DestroyImmediate(t.Outcome.gameObject);
+           
 
 
             EditorUtility.SetDirty(t.info2store);

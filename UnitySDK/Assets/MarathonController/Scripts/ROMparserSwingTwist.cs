@@ -28,9 +28,11 @@ public class ROMparserSwingTwist : MonoBehaviour
     //public ROMinfoCollector info2store;
     public RangeOfMotionValues info2store;
 
-    //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
+    [Tooltip("Sampling Frequency for the animation samples ")]
+    [SerializeField]
+    float physicsFPS;
 
-    //[SerializeField]
+    [Tooltip("To generate a prefab from a bunch of articulated bodies and the constraints parsed we use:")]
     public ArticulationBody targetRagdollRoot;
 
 
@@ -56,10 +58,15 @@ public class ROMparserSwingTwist : MonoBehaviour
     Vector3 _rootStartPosition;
     Quaternion _rootStartRotation;
 
-    public bool MimicMocap;
+   // public bool MimicMocap;
+    
+    [Header("Debug Tools")]
+
     [Range(0, 359)]
     public int MaxROM = 180;
 
+
+    [Header("Muscle Parameters")]
     [Range(0, 500)]
     public int MimicSkipPhysicsSteps = 50;
     int _physicsStepsToNextMimic = 0;
@@ -67,6 +74,13 @@ public class ROMparserSwingTwist : MonoBehaviour
     public float damping = 0f;
     public float forceLimit = float.MaxValue;
 
+
+    private void OnEnable()
+    {
+
+        if(physicsFPS > 0)
+            Time.fixedDeltaTime = 1.0f / physicsFPS;
+    }
 
 
     // Start is called before the first frame update
@@ -239,7 +253,9 @@ public class ROMparserSwingTwist : MonoBehaviour
 
 
     }
-    // void FixedUpdate()
+
+
+    /*
     void OnRenderObject()
     {
         if (MimicMocap)
@@ -251,6 +267,8 @@ public class ROMparserSwingTwist : MonoBehaviour
             }
         }
     }
+    */
+
 
     // preview range of motion
 

@@ -57,13 +57,6 @@ public class Frequencies2Learn : MonoBehaviour
         var dof = myActionSpec.NumContinuousActions;
 
 
-
-
-
-
-
-
-
         _mocapStats.OnAgentInitialize(_joints, dof);
         _RagdollStats.OnAgentInitialize(_joints, dof);
         
@@ -96,6 +89,8 @@ public class Frequencies2Learn : MonoBehaviour
         StepsPerSecond = 1f/realTimeDelta;
         _lastTime = Time.time;
     }
+
+
     void SetJointName()
     {
         if (JointIndex < 0)
