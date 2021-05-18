@@ -551,9 +551,10 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
     public void GenerateRangeOfMotionParser() {
 
-        
+
         ROMparserSwingTwist rom = gameObject.GetComponentInChildren<ROMparserSwingTwist>();
-        if (rom == null) {
+        if (rom == null)
+        {
             GameObject go = new GameObject();
             go.name = "ROM-parser";
             go.transform.parent = gameObject.transform;
@@ -561,16 +562,28 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
 
+
+            rom.info2store = info2store;
+            rom.theAnimator = characterReference;
+            rom.skeletonRoot = characterReferenceRoot;
+
+            rom.targetRagdollRoot = character4synthesis.GetComponent<MapRagdoll2Anim>().ArticulationBodyRoot;
+
+            rom.trainingEnv = _outcome;
+
+
+        }
+        else
+        {
+
+            rom.info2store.emptyContent();
+
+
+
         }
 
 
-        rom.info2store = info2store;
-        rom.theAnimator = characterReference;
-        rom.skeletonRoot = characterReferenceRoot;
 
-        rom.targetRagdollRoot = character4synthesis.GetComponent<MapRagdoll2Anim>().ArticulationBodyRoot;
-
-        rom.trainingEnv = _outcome;
 
     }
 

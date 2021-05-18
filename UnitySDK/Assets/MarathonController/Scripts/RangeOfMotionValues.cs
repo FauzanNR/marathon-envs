@@ -99,6 +99,15 @@ public class RangeOfMotionValues : ScriptableObject
     List<OscillationParameters> _osc;
 
 
+    public void emptyContent() {
+        _osc = new List<OscillationParameters>();
+        _values = new List<RangeOfMotionValue>();
+
+
+
+    }
+
+
     public void addJoint(Transform joint)
     {
         RangeOfMotionValue r = new RangeOfMotionValue();
