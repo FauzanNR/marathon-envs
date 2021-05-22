@@ -11,3 +11,4 @@ ScriptedImporter:
   optimizeModel: 1
   forceArbitraryBatchSize: 1
   treatErrorsAsWarnings: 0
+  importMode: 1
