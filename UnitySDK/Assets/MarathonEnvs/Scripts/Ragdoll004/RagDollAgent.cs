@@ -120,8 +120,10 @@ public class RagDollAgent : Agent
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
     }
-	public override void OnActionReceived(float[] vectorAction)
+	public override void OnActionReceived(ActionBuffers actions)
     {
+        float[] vectorAction = actions.ContinuousActions.Select(x=>x).ToArray();
+        
         Assert.IsTrue(_hasLazyInitialized);
 
         float timeDelta = Time.fixedDeltaTime;

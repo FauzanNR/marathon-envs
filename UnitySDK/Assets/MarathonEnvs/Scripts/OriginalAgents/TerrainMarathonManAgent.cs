@@ -61,8 +61,10 @@ public class TerrainMarathonManAgent : Agent, IOnTerrainCollision
 		// _bodyManager.OnCollectObservationsHandleDebug(GetInfo());
 	}
 
-	public override void OnActionReceived(float[] vectorAction)
-	{
+	public override void OnActionReceived(ActionBuffers actions)
+    {
+        float[] vectorAction = actions.ContinuousActions.Select(x=>x).ToArray();
+
 		if (!_hasLazyInitialized)
 		{
 			return;
