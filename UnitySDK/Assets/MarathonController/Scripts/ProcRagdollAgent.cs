@@ -64,6 +64,9 @@ public class ProcRagdollAgent : Agent
     bool _hasAwake = false;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
+    EnvironmentParameters _resetParams;
+    VectorSensorComponent _goalSensor;
+
     void Awake()
     {
         if (RequestCamera && CameraTarget != null)
@@ -163,6 +166,14 @@ public class ProcRagdollAgent : Agent
 
         // add sensors (feet etc)
         sensor.AddObservation(_sensorObservations.SensorIsInTouch);
+
+        if (_goalSensor)
+        {
+            // _marConObservations2Learn.InputStand
+            // _marConObservations2Learn.InputWalkOrRun
+            int goalNum = _marConObservations2Learn.InputStand ? 0 : 1;
+            _goalSensor.GetSensor().AddOneHotObservation(goalNum, _goalSensor.ObservationSize);
+        }
     }
     void AddDReConObservations(VectorSensor sensor)
     {
@@ -535,6 +546,9 @@ public class ProcRagdollAgent : Agent
                 _frequencies2Learn = gameObject.AddComponent<Frequencies2Learn>();
             _frequencies2Learn.OnAgentInitialize(this.gameObject, _mapAnim2Ragdoll.gameObject, _motors.ToArray());
         }
+
+        _resetParams = Academy.Instance.EnvironmentParameters;
+        _goalSensor = GetComponent<VectorSensorComponent>();
 
         _hasLazyInitialized = true;
     }
