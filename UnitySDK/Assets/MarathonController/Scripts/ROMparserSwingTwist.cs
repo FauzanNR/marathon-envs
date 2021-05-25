@@ -28,6 +28,7 @@ public class ROMparserSwingTwist : MonoBehaviour
     //public ROMinfoCollector info2store;
     public RangeOfMotionValues info2store;
 
+
     //those are to generate a prefab from a bunch of articulated bodies and the constraints parsed
 
     //[SerializeField]
@@ -219,8 +220,7 @@ public class ROMparserSwingTwist : MonoBehaviour
                 info2store.Values[i].lower.z = candidates4storage.z;
 
 
-            info2store.Osc[i].AddRotationValue(localRotation);
-
+          
         }
 
         if (duration < Time.time)

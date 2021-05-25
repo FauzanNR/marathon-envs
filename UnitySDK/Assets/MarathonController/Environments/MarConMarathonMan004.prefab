@@ -632,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3983872725159538254
 Transform:
   m_ObjectHideFlags: 0
@@ -3842,6 +3842,7 @@ MonoBehaviour:
   FixedDeltaTime: 0.0125
   ActionSmoothingBeta: 0.2
   ReproduceDReCon: 0
+  UseFrequencies2Learn: 0
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
@@ -3852,6 +3853,8 @@ MonoBehaviour:
   dontSnapMocapToRagdoll: 0
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
+  targetVelocity: []
+  jointVelocityInReducedSpace: []
   _hasAwake: 0
 --- !u!114 &6127195731589601736
 MonoBehaviour:
@@ -3943,9 +3946,6 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
-  RagDollJointPositions: []
-  RagDollJointVelocities: []
-  RagDollJointAccelerations: []
   RagDollJointForces: []
   EnergyAngularMocap: 0
   EnergyAngularRagDoll: 0
