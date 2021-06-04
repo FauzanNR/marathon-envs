@@ -741,26 +741,80 @@ public class ProcRagdollAgent : Agent
         //why do you never set up the targetVelocity?
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
-
         Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, timeDelta);
 
+        // if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        // {
+        //     var drive = joint.xDrive;
+        //     var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+        //     var midpoint = drive.lowerLimit + scale;
+        //     var target = midpoint + (targetNormalizedRotation.x * scale);
+        //     // drive.target = target;
+
+        //     // drive.targetVelocity = targetVel.x;  
 
 
+        //     drive.stiffness = stiffness;
+        //     drive.damping = damping;
+        //     drive.forceLimit = power.x * _ragDollSettings.ForceScale;
+        //     joint.xDrive = drive;
+        // }
+
+        // if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        // {
+        //     var drive = joint.yDrive;
+        //     var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+        //     var midpoint = drive.lowerLimit + scale;
+        //     var target = midpoint + (targetNormalizedRotation.y * scale);
+        //     // drive.target = target;
+        //     // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
+        //     // drive.targetVelocity = targetVel.y;
+
+
+        //     drive.stiffness = stiffness;
+        //     drive.damping = damping;
+        //     drive.forceLimit = power.y * _ragDollSettings.ForceScale;
+        //     joint.yDrive = drive;
+        // }
+
+        // if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        // {
+        //     var drive = joint.zDrive;
+        //     var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+        //     var midpoint = drive.lowerLimit + scale;
+        //     var target = midpoint + (targetNormalizedRotation.z * scale);
+
+        //     // drive.target = target;
+        //     //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
+        //     // drive.targetVelocity = targetVel.z;
+
+        //     drive.stiffness = stiffness;
+        //     drive.damping = damping;
+        //     drive.forceLimit = power.z * _ragDollSettings.ForceScale;
+        //     joint.zDrive = drive;
+        // }
+        // var force = targetNormalizedRotation; // ForceMode.Force
+        // var impuse = force / Time.fixedDeltaTime; // ForceMode.Impulse
+        // var acceleration = force * joint.mass; // ForceMode.Acceleration:
+        // var velocityChange = force * joint.mass / Time.fixedDeltaTime; // ForceMode.VelocityChange:
+        // var dt = Time.fixedDeltaTime;
+        // // force = joint.mass * (force * dt)
+        // joint.AddRelativeTorque(acceleration); 
+        // var torque = StablePdController(joint, targetNormalizedRotation, n, d, timeDelta);
+        var torque = StablePdControllerMeh(joint, targetNormalizedRotation, n, d, timeDelta);
+        joint.AddTorque (torque);
+        // joint.AddRelativeTorque (torque);
+    }
+
+    Vector3 StablePdController(ArticulationBody joint, Vector3 targetNormalizedRotation, float frequency, float damping, float timeStep)
+    {
+        Vector3 targetRotation = Vector3.zero;
         if (joint.twistLock == ArticulationDofLock.LimitedMotion)
         {
             var drive = joint.xDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
-            drive.target = target;
-
-            drive.targetVelocity = targetVel.x;  
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.x * _ragDollSettings.ForceScale;
-            joint.xDrive = drive;
+            targetRotation.x = midpoint + (targetNormalizedRotation.x * scale);
         }
 
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
@@ -768,16 +822,7 @@ public class ProcRagdollAgent : Agent
             var drive = joint.yDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            drive.target = target;
-            // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.y;
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.y * _ragDollSettings.ForceScale;
-            joint.yDrive = drive;
+            targetRotation.y = midpoint + (targetNormalizedRotation.y * scale);
         }
 
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
@@ -785,17 +830,101 @@ public class ProcRagdollAgent : Agent
             var drive = joint.zDrive;
             var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
             var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
-
-            drive.target = target;
-            //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.z;
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.z * _ragDollSettings.ForceScale;
-            joint.zDrive = drive;
+            targetRotation.z = midpoint + (targetNormalizedRotation.z * scale);
         }
+        // Vector3 curRotation = Utils.GetSwingTwist(joint.transform.rotation);
+        // Vector3 angularVelocity = joint.angularVelocity; // in world space
+        // // angularVelocity = joint.transform.InverseTransformPoint(angularVelocity); // in local space
+        // targetRotation = joint.transform.TransformDirection(targetRotation); // to world space
+
+        Vector3 curRotation = Utils.GetSwingTwist(joint.transform.localRotation);
+        Vector3 angularVelocity = joint.angularVelocity; // in world space
+        angularVelocity = joint.transform.InverseTransformPoint(angularVelocity); // in local space
+
+        var kp = (6f*frequency)*(6f*frequency)* 0.25f;
+        var kd = 4.5f*frequency*damping;
+        float dt = timeStep;
+        float g = 1 / (1 + kd * dt + kp * dt * dt);
+        float ksg = kp * g;
+        float kdg = (kd + kp * dt) * g;
+
+        Vector3 xMag = (targetRotation-curRotation)*Mathf.Deg2Rad;
+        // Vector3 pidv = kp * x * xMag - kd * joint.angularVelocity;
+        Vector3 pidv = kp * xMag - kd * angularVelocity;
+        // pidv = joint.transform.TransformDirection(pidv); // to world space
+        // return pidv;
+
+        Vector3 Pt0 = curRotation;
+        Vector3 Vt0 = angularVelocity;
+        Vector3 Pdes = targetRotation;
+        Vector3 Vdes = new Vector3(
+            Pdes.x >= Pt0.x ? joint.maxAngularVelocity : -joint.maxAngularVelocity,
+            Pdes.y >= Pt0.y ? joint.maxAngularVelocity : -joint.maxAngularVelocity,
+            Pdes.z >= Pt0.z ? joint.maxAngularVelocity : -joint.maxAngularVelocity);
+        // Vector3 F = (Pdes - Pt0) * ksg + (Vdes - Vt0) * kdg;
+        Vector3 F = xMag * ksg + (Vdes - Vt0) * kdg;
+        return F;
+    }
+    Vector3 StablePdControllerMeh(ArticulationBody joint, Vector3 targetNormalizedRotation, float frequency, float damping, float timeStep)
+    {
+        Vector3 targetRotation = Vector3.zero;
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.xDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            targetRotation.x = midpoint + (targetNormalizedRotation.x * scale);
+        }
+
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.yDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            targetRotation.y = midpoint + (targetNormalizedRotation.y * scale);
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.zDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            targetRotation.z = midpoint + (targetNormalizedRotation.z * scale);
+        }
+        targetRotation = joint.transform.TransformDirection(targetRotation); // to world space
+        // Quaternion curRotation = Quaternion.Euler(Utils.GetSwingTwist(joint.transform.localRotation));
+        Quaternion curRotation = Quaternion.Euler(Utils.GetSwingTwist(joint.transform.rotation));
+        Quaternion desiredRotation = Quaternion.Euler(targetRotation.x, targetRotation.y, targetRotation.z);
+        var kp = (6f*frequency)*(6f*frequency)* 0.25f;
+        var kd = 4.5f*frequency*damping;
+        float dt = timeStep;
+        float g = 1 / (1 + kd * dt + kp * dt * dt);
+        float ksg = kp * g;
+        float kdg = (kd + kp * dt) * g;
+        Vector3 x;
+        float xMag;
+        Quaternion q = desiredRotation * Quaternion.Inverse(curRotation);
+
+        // Q can be the-long-rotation-around-the-sphere eg. 350 degrees
+        // We want the equivalant short rotation eg. -10 degrees
+        // Check if rotation is greater than 190 degees == q.w is negative
+        if (q.w < 0)
+        {
+            // Convert the quaterion to eqivalent "short way around" quaterion
+            q.x = -q.x;
+            q.y = -q.y;
+            q.z = -q.z;
+            q.w = -q.w;
+        }
+        q.ToAngleAxis (out xMag, out x);
+        x.Normalize ();
+        x *= Mathf.Deg2Rad;
+        Vector3 pidv = kp * x * xMag - kd * joint.angularVelocity;
+        Quaternion rotInertia2World = joint.inertiaTensorRotation * curRotation;
+        pidv = Quaternion.Inverse(rotInertia2World) * pidv;
+        pidv.Scale(joint.inertiaTensor);
+        pidv = rotInertia2World * pidv;
+        return(pidv);
     }
 
     void FixedUpdate()
