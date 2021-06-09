@@ -56,7 +56,7 @@ public class ProcRagdollAgent : Agent
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
     IAnimationController _controllerToMimic;
-    Frequencies2Learn _frequencies2Learn;
+ 
 
 
     bool _hasLazyInitialized;
