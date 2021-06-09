@@ -632,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3983872725159538254
 Transform:
   m_ObjectHideFlags: 0
@@ -641,7 +641,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 385853380222003329}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.000000004110158, y: -0.44370472, z: 0.0028464263}
+  m_LocalPosition: {x: 0.000000004110158, y: -0.1437047, z: 0.0028464263}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 6384180530749117632}
@@ -1847,7 +1847,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1730308165399850428}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.000000022351742, z: 0}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5502984179684563311}
@@ -3790,7 +3790,7 @@ MonoBehaviour:
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 40
+  NaturalFrequency: 20
   ForceScale: 0.3
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
@@ -3806,7 +3806,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 141
+    VectorObservationSize: 137
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 50
@@ -3815,10 +3815,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 6a0170f7809774645b6b045717f6421b, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 0e1d500cb7f867541bbce2e47d9797c1, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: MarCon-v0
+  m_BehaviorName: DReCon-v0
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -3841,8 +3841,7 @@ MonoBehaviour:
   MaxStep: 2000
   FixedDeltaTime: 0.0125
   ActionSmoothingBeta: 0.2
-  ReproduceDReCon: 0
-  UseFrequencies2Learn: 0
+  ReproduceDReCon: 1
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
@@ -3850,7 +3849,7 @@ MonoBehaviour:
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
-  dontSnapMocapToRagdoll: 0
+  dontSnapMocapToRagdoll: 1
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
   targetVelocity: []
@@ -5058,7 +5057,7 @@ GameObject:
   - component: {fileID: 884079593499418970}
   - component: {fileID: 5883856607907771046}
   m_Layer: 0
-  m_Name: MarConMarathonMan004
+  m_Name: DReConMarathonMan004-centered
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5111,7 +5110,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35bb009193589147a32f492be74a1a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderOnlyTarget: 1
+  renderOnlyTarget: 0
   movementsource: {fileID: 5033867405855703570}
   ragdollcontroller: {fileID: 3344443089607964028}
 --- !u!1 &4824340492540772428
@@ -6285,7 +6284,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6247772283257908350}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.082077816, y: -0.06751714, z: -0.015995556}
+  m_LocalPosition: {x: -0.082077816, y: -0.3751714, z: -0.015995556}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3983872725159538254}
@@ -6302,9 +6301,9 @@ ArticulationBody:
   m_GameObject: {fileID: 6247772283257908350}
   m_Enabled: 1
   m_Mass: 8.3
-  m_ParentAnchorPosition: {x: -0.082077816, y: -0.06751716, z: -0.015995556}
+  m_ParentAnchorPosition: {x: -0.082077816, y: -0.07517135, z: -0.015995556}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_AnchorPosition: {x: 0, y: 0, z: 0}
+  m_AnchorPosition: {x: 0, y: 0.3, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_ComputeParentAnchor: 1
   m_ArticulationJointType: 3

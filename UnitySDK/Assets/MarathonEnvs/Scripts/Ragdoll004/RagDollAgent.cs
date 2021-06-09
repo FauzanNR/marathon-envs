@@ -299,6 +299,7 @@ public class RagDollAgent : Agent
         _dReConRewards.OnAgentInitialize();
         _trackBodyStatesInWorldSpace.OnAgentInitialize();
         _mocapAnimatorController.OnAgentInitialize();
+        _inputController.OnReset();
 
         _hasLazyInitialized = true;
     }
@@ -307,7 +308,6 @@ public class RagDollAgent : Agent
         Assert.IsTrue(_hasAwake);
         _smoothedActions = null;
         debugCopyMocap = false;
-        _inputController.OnReset();
 
         _mocapAnimatorController.OnReset();
         var angle = Vector3.SignedAngle(Vector3.forward, _inputController.HorizontalDirection, Vector3.up);

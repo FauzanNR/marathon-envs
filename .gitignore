@@ -3,7 +3,7 @@
 /UnitySDK/[Oo]bj/
 /UnitySDK/[Bb]uild/
 /UnitySDK/[Bb]uilds/
-/UnitySDK/[Pp]ackages/
+#/UnitySDK/[Pp]ackages/
 /UnitySDK/[Uu]nity[Pp]ackage[Mm]anager/
 /UnitySDK/Assets/AssetStoreTools*
 /UnitySDK/Assets/Plugins*
@@ -13,6 +13,11 @@
 #tests with motion matching
 UnitySDK/Assets/MotionMatching
 UnitySDK/Assets/MotionMatching.meta
+
+#tests in general
+UnitySDK/Assets/Tests
+UnitySDK/Assets/Tests.meta
+
 
 
 

@@ -15,7 +15,7 @@ public class ObservationStats : MonoBehaviour
         public Vector3 Position;
         public Quaternion Rotation;
         public Vector3 Velocity;
-        public Vector3 AngualrVelocity;
+        public Vector3 AngularVelocity;
         [HideInInspector]
         public Vector3 LastLocalPosition;
         [HideInInspector]
@@ -35,6 +35,8 @@ public class ObservationStats : MonoBehaviour
     public Vector3 CenterOfMassVelocity;
     public Vector3 CenterOfMassHorizontalVelocity;
     public float CenterOfMassVelocityMagnitude;
+    public Vector3 CenterOfMassVelocityInRootSpace;
+    public float CenterOfMassVelocityMagnitudeInRootSpace;
     public float CenterOfMassHorizontalVelocityMagnitude;
     public Vector3 DesiredCenterOfMassVelocity;
     public Vector3 CenterOfMassVelocityDifference;
@@ -124,18 +126,10 @@ public class ObservationStats : MonoBehaviour
     {
         Assert.IsTrue(_hasLazyInitialized);
         ResetStatus();
-        foreach (var bodyPart in Stats)
-        {
-            bodyPart.LastIsSet = false;
-        }
         LastIsSet = false;
     }
     void ResetStatus()
     {
-        foreach (var bodyPart in Stats)
-        {
-            bodyPart.LastIsSet = false;
-        }
         LastIsSet = false;
         var timeDelta = float.MinValue;
         SetStatusForStep(timeDelta);
@@ -179,44 +173,48 @@ public class ObservationStats : MonoBehaviour
 
     public void SetStatusForStep(float timeDelta)
     {
-        // generate Horizontal Direction
-        var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
-        HorizontalDirection = newHorizontalDirection / 180f;
-
         // get Center Of Mass velocity in f space
         Vector3 newCOM;
         // if Moocap, then get from anim2Ragdoll
         if (_mapAnim2Ragdoll != null)
         {
             newCOM = _mapAnim2Ragdoll.LastCenterOfMassInWorldSpace;
+            var newHorizontalDirection = _mapAnim2Ragdoll.HorizontalDirection;
+            HorizontalDirection = newHorizontalDirection / 180f;
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
-            CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
-            CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
             transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
+            CenterOfMassVelocity = _mapAnim2Ragdoll.CenterOfMassVelocity;
+            CenterOfMassVelocityMagnitude = _mapAnim2Ragdoll.CenterOfMassVelocityMagnitude;
+            CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
+            CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
         }
         else
         {
             newCOM = GetCenterOfMass();
+            var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
+            HorizontalDirection = newHorizontalDirection / 180f;
             if (!LastIsSet)
             {
                 LastCenterOfMassInWorldSpace = newCOM;
             }
             transform.position = newCOM;
             transform.rotation = Quaternion.Euler(newHorizontalDirection);
-            var velocity = transform.position - LastCenterOfMassInWorldSpace;
+            var velocity = newCOM - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
-            CenterOfMassVelocity = transform.InverseTransformVector(velocity);
-            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;            
+            CenterOfMassVelocity = velocity;
+            CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
+            CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
+            CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
         }
         LastCenterOfMassInWorldSpace = newCOM;
 
         // get Center Of Mass horizontal velocity in f space
         var comHorizontalDirection = new Vector3(CenterOfMassVelocity.x, 0f, CenterOfMassVelocity.z);
-        CenterOfMassHorizontalVelocity = comHorizontalDirection;
+        CenterOfMassHorizontalVelocity = transform.InverseTransformVector(comHorizontalDirection);
         CenterOfMassHorizontalVelocityMagnitude = CenterOfMassHorizontalVelocity.magnitude;
 
         // get Desired Center Of Mass horizontal velocity in f space
@@ -232,7 +230,6 @@ public class ObservationStats : MonoBehaviour
         }
         AngualrVelocity = GetAngularVelocity(LastRotation, transform.rotation, timeDelta);
         LastRotation = transform.rotation;
-        LastIsSet = true;
 
         // get bodyParts stats in local space
         foreach (var bodyPart in _bodyParts)
@@ -254,7 +251,7 @@ public class ObservationStats : MonoBehaviour
             Quaternion worldRotation = bodyPart.transform.rotation;
             Vector3 localPosition = transform.InverseTransformPoint(worldPosition);
             Quaternion localRotation = FromToRotation(transform.rotation, worldRotation);
-            if (!bodyPartStat.LastIsSet)
+            if (!bodyPartStat.LastIsSet || !LastIsSet)
             {
                 bodyPartStat.LastLocalPosition = localPosition;
                 bodyPartStat.LastLocalRotation = localRotation;
@@ -263,11 +260,12 @@ public class ObservationStats : MonoBehaviour
             bodyPartStat.Position = localPosition;
             bodyPartStat.Rotation = localRotation;
             bodyPartStat.Velocity = (localPosition - bodyPartStat.LastLocalPosition) / timeDelta;
-            bodyPartStat.AngualrVelocity = GetAngularVelocity(bodyPartStat.LastLocalRotation, localRotation, timeDelta);
+            bodyPartStat.AngularVelocity = GetAngularVelocity(bodyPartStat.LastLocalRotation, localRotation, timeDelta);
             bodyPartStat.LastLocalPosition = localPosition;
             bodyPartStat.LastLocalRotation = localRotation;
             bodyPartStat.LastIsSet = true;
         }
+        LastIsSet = true;
     }
 
     Vector3 GetCenterOfMass()

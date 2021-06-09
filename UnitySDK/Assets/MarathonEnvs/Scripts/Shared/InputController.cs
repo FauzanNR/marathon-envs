@@ -13,7 +13,9 @@ public class InputController : MonoBehaviour
 
     [Header("User or Mock input states")]
     public Vector2 TargetMovementVector; // User-input desired horizontal center of mass velocity.
+    public float TargetMovementMagnatude;
     public Vector2 MovementVector; // smoothed version of TargetMovementVector.
+    public float MovementMagnatude;
     public Vector2 CameraRotation; // User-input desired rotation for camera.
     public bool Jump; // User wants to jump
     public bool Backflip; // User wants to backflip
@@ -28,7 +30,7 @@ public class InputController : MonoBehaviour
     float _timeUnillDemo;
 
     const float kGroundAcceleration = .6f/2;
-    const float kGroundDeceleration = .75f/2;
+    const float kGroundDeceleration = .75f/4;
 
 
     // Start is called before the first frame update
@@ -58,9 +60,18 @@ public class InputController : MonoBehaviour
     public void OnReset()
     {
         MovementVector = Vector3.zero;
+        MovementMagnatude = MovementVector.magnitude;
         SetRandomHorizontalDirection();
         _delayUntilNextAction = -1f;
-        DoUpdate(Time.fixedDeltaTime);
+        // DoUpdate(Time.fixedDeltaTime);
+        if (UseHumanInput)
+            GetHumanInput();
+        else
+            GetMockInput();
+        // handle direction
+        if (!Mathf.Approximately(TargetMovementVector.sqrMagnitude, 0f))
+            HorizontalDirection = new Vector3(TargetMovementVector.normalized.x, 0f, TargetMovementVector.normalized.y);
+        DesiredHorizontalVelocity = TargetMovementVector.normalized * MaxVelocity * TargetMovementVector.magnitude;
     }
     void SmoothAcceleration(float deltaTime)
     {
@@ -77,18 +88,13 @@ public class InputController : MonoBehaviour
         MovementVector = Vector2.MoveTowards(MovementVector, TargetMovementVector, acceleration * deltaTime);
 
         // Handle deadzone
-        if (MovementVector.magnitude < .1f)
+        if (TargetMovementVector.magnitude < .1f && MovementVector.magnitude < .1f)
         {
-            if (TargetMovementVector.magnitude < .1f)
-            {
-                TargetMovementVector = Vector2.zero;
-                MovementVector = Vector2.zero;
-            }
-            else
-            {
-                MovementVector = TargetMovementVector.normalized * .1f;
-            }
+            TargetMovementVector = Vector2.zero;
+            TargetMovementMagnatude = TargetMovementVector.magnitude;
+            MovementVector = Vector2.zero;
         }
+        MovementMagnatude = MovementVector.magnitude;
 
         // handle direction
         if (!Mathf.Approximately(MovementVector.sqrMagnitude, 0f))
@@ -114,6 +120,7 @@ public class InputController : MonoBehaviour
         if (!Mathf.Approximately(newMovementVector.sqrMagnitude, 0f))
         {
             TargetMovementVector = newMovementVector;
+            TargetMovementMagnatude = TargetMovementVector.magnitude;
             resetTimeUntilDemo = true;
         }
         else if (DemoMockIfNoInput && _timeUnillDemo <= 0)
@@ -149,6 +156,9 @@ public class InputController : MonoBehaviour
         Jump = false;
         float direction = UnityEngine.Random.Range(0f, 360f);
         float power = UnityEngine.Random.value;
+        // 1 in 5 times we are going to stand still (4 in 5 still has 10% chance)
+        if (UnityEngine.Random.value < .2f)
+            power = 0.001f;
         // float direction = UnityEngine.Random.Range(-Mathf.PI/8, Mathf.PI/8);
         // float power = UnityEngine.Random.Range(1f, 1f);
         if (ClipInput > 0f)
@@ -157,6 +167,7 @@ public class InputController : MonoBehaviour
         }
         TargetMovementVector = new Vector2(Mathf.Cos(direction), Mathf.Sin(direction));
         TargetMovementVector *= power;
+        TargetMovementMagnatude = TargetMovementVector.magnitude;
         Jump = ChooseJump();
         _delayUntilNextAction = 1f + (UnityEngine.Random.value * 5f);
     }
@@ -181,6 +192,7 @@ public class InputController : MonoBehaviour
         HorizontalDirection = new Vector3(movementVector.normalized.x, 0f, movementVector.normalized.y);
         movementVector /= float.MinValue;
         TargetMovementVector = new Vector2(movementVector.x, movementVector.y);
+        TargetMovementMagnatude = TargetMovementVector.magnitude;
     }
 
 }

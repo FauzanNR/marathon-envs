@@ -219,7 +219,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7827208066241305017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -389,7 +388,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2732715592970027266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -632,7 +630,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &3983872725159538254
 Transform:
   m_ObjectHideFlags: 0
@@ -699,7 +697,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &243442581026114944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1165,7 +1162,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2854627656309620980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,7 +1259,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2674076991219822234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1422,7 +1417,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &4771879105536026037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1682,7 +1676,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7397536721267974287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2653,7 +2646,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3298083620655224249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2782,7 +2774,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &686656326516962697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3110,7 +3101,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3374735579250341040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3665,7 +3655,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1889587872178942833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3790,7 +3779,7 @@ MonoBehaviour:
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 40
+  NaturalFrequency: 20
   ForceScale: 0.3
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
@@ -3806,7 +3795,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 141
+    VectorObservationSize: 137
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 50
@@ -3815,10 +3804,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 6a0170f7809774645b6b045717f6421b, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 65658400015114572bdcccf3f0dde2a0, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: MarCon-v0
+  m_BehaviorName: DReConMocap-v0
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1
@@ -3840,21 +3829,18 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  ActionSmoothingBeta: 0.2
-  ReproduceDReCon: 0
-  UseFrequencies2Learn: 0
+  SmoothBeta: 0.3
+  ReproduceDReCon: 1
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
-  SkipActionSmoothing: 0
+  SkipRewardSmoothing: 0
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
-  dontSnapMocapToRagdoll: 0
+  dontSnapMocapToRagdoll: 1
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
-  targetVelocity: []
-  jointVelocityInReducedSpace: []
   _hasAwake: 0
 --- !u!114 &6127195731589601736
 MonoBehaviour:
@@ -3903,10 +3889,8 @@ MonoBehaviour:
   ComDistance: 0
   DistanceFactor: 0
   ComPositionReward: 0
-  VelDifferenceError: 0
-  VelDifferenceReward: 0
-  KineticEnergyMetric: 0
-  EnergyMinimReward: 0
+  EnergyError: 0
+  EnergyReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -3946,7 +3930,6 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
-  RagDollJointForces: []
   EnergyAngularMocap: 0
   EnergyAngularRagDoll: 0
   EnergyDifferenceAngular: 0
@@ -4269,7 +4252,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1069845030171173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5058,7 +5040,7 @@ GameObject:
   - component: {fileID: 884079593499418970}
   - component: {fileID: 5883856607907771046}
   m_Layer: 0
-  m_Name: MarConMarathonMan004
+  m_Name: DReConMarathonMan004Mocap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5111,7 +5093,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c35bb009193589147a32f492be74a1a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderOnlyTarget: 1
+  renderOnlyTarget: 0
   movementsource: {fileID: 5033867405855703570}
   ragdollcontroller: {fileID: 3344443089607964028}
 --- !u!1 &4824340492540772428
@@ -5370,12 +5352,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8066871056482029694}
-  - component: {fileID: 4621008290023585354}
   - component: {fileID: 844602231749766760}
-  - component: {fileID: 8642357615876334887}
-  - component: {fileID: 3084809929893271638}
   - component: {fileID: 1087573813168869382}
   - component: {fileID: 2449651893934142826}
+  - component: {fileID: 7952273119200089046}
   m_Layer: 15
   m_Name: Source:Humanoid
   m_TagString: Untagged
@@ -5400,24 +5380,6 @@ Transform:
   m_Father: {fileID: 1675824069701164127}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &4621008290023585354
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5033867405855703570}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.68
-  m_Radius: 0.15
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.04
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!95 &844602231749766760
 Animator:
   serializedVersion: 3
@@ -5428,7 +5390,7 @@ Animator:
   m_GameObject: {fileID: 5033867405855703570}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f4b99d8bdc0873c4d8e812bb5baa82be, type: 3}
-  m_Controller: {fileID: 9100000, guid: 302de0a71ea44470782418460ee6b832, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5cac92e633dd36f489252560d21bdc08, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 1
   m_ApplyRootMotion: 1
@@ -5437,57 +5399,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &8642357615876334887
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5033867405855703570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b028a18f3817e4b768154fd94047e4d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxVelocity: 8
-  ClipInput: 0
-  NoJumpsInMockMode: 1
-  TargetMovementVector: {x: 0, y: 0}
-  TargetMovementMagnatude: 0
-  MovementVector: {x: 0, y: 0}
-  MovementMagnatude: 0
-  CameraRotation: {x: 0, y: 0}
-  Jump: 0
-  Backflip: 0
-  DesiredHorizontalVelocity: {x: 0, y: 0}
-  HorizontalDirection: {x: 0, y: 0, z: 0}
-  UseHumanInput: 1
-  DemoMockIfNoInput: 1
---- !u!114 &3084809929893271638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5033867405855703570}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 83f0f0517c63942fcb11f8a22d799597, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MaxForwardVelocity: 1
-  MinTurnVelocity: 400
-  MaxTurnVelocity: 1200
-  JumpSpeed: 5
-  debugForceJump: 0
-  _anim: {fileID: 0}
-  _characterController: {fileID: 0}
-  _inputController: {fileID: 0}
-  materialUnderFoot: {fileID: 0}
-  IgnoreLayers:
-    serializedVersion: 2
-    m_Bits: 49152
-  doFixedUpdate: 1
 --- !u!114 &1087573813168869382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5510,12 +5421,7 @@ MonoBehaviour:
   CameraTarget: {fileID: 0}
   CenterOfMassVelocity: {x: 0, y: 0, z: 0}
   CenterOfMassVelocityMagnitude: 0
-  CenterOfMassVelocityInRootSpace: {x: 0, y: 0, z: 0}
-  CenterOfMassVelocityMagnitudeInRootSpace: 0
   LastCenterOfMassInWorldSpace: {x: 0, y: 0, z: 0}
-  LastRootPositionInWorldSpace: {x: 0, y: 0, z: 0}
-  LastHeadPositionInWorldSpace: {x: 0, y: 0, z: 0}
-  HorizontalDirection: {x: 0, y: 0, z: 0}
   LastPosition: []
   LastRotation: []
   Velocities: []
@@ -5534,6 +5440,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stats: []
+--- !u!114 &7952273119200089046
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5033867405855703570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fda6ef4d268493b4db068ca6e63c3b45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MovementVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &5089874383654838720
 GameObject:
   m_ObjectHideFlags: 0
@@ -5804,7 +5723,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &4055032002961887042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6343,7 +6261,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3921449772896584777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7081,7 +6998,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5609788347423163724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7527,7 +7443,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1089207424673406709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7814,7 +7729,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5935338532280037239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8749,7 +8663,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5945626320986924883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9070,7 +8983,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5626104590413483879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9198,7 +9110,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7502000921670637321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9297,7 +9208,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1466592492902520389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9480,7 +9390,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5309548194812101407
 MonoBehaviour:
   m_ObjectHideFlags: 0

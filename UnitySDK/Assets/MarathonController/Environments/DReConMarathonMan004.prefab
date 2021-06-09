@@ -3778,6 +3778,9 @@ MonoBehaviour:
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
+  DampingRatio: 1
+  NaturalFrequency: 20
+  ForceScale: 0.3
   skipCollisionSetup: 0
 --- !u!114 &6208207422085220428
 MonoBehaviour:
@@ -3826,17 +3829,18 @@ MonoBehaviour:
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
   FixedDeltaTime: 0.0125
-  SmoothBeta: 0.2
+  ActionSmoothingBeta: 0.2
   ReproduceDReCon: 1
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
-  SkipRewardSmoothing: 0
+  SkipActionSmoothing: 0
   debugCopyMocap: 0
   ignorActions: 0
   dontResetOnZeroReward: 0
-  dontSnapMocapToRagdoll: 0
+  dontSnapMocapToRagdoll: 1
   DebugPauseOnReset: 0
+  dontResetWhenOutOfBounds: 0
   _hasAwake: 0
 --- !u!114 &6127195731589601736
 MonoBehaviour:
@@ -3878,9 +3882,17 @@ MonoBehaviour:
   MocapCOMVelocity: {x: 0, y: 0, z: 0}
   RagDollCOMVelocity: {x: 0, y: 0, z: 0}
   COMVelocityDifference: 0
+  ComVelocityReward: 0
   ComReward: 0
+  ComDirectionDistance: 0
+  ComDirectionReward: 0
   ComDistance: 0
   DistanceFactor: 0
+  ComPositionReward: 0
+  VelDifferenceError: 0
+  VelDifferenceReward: 0
+  KineticEnergyMetric: 0
+  EnergyMinimReward: 0
   HeadHeightDistance: 0
   ObjectForPointDistancesGizmo: 0
   headname: articulation:mixamorig:Head
@@ -3920,6 +3932,16 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
+  RagDollJointPositions: []
+  RagDollJointVelocities: []
+  RagDollJointAccelerations: []
+  RagDollJointForces: []
+  EnergyAngularMocap: 0
+  EnergyAngularRagDoll: 0
+  EnergyDifferenceAngular: 0
+  EnergyPositionalMocap: 0
+  EnergyPositionalRagDoll: 0
+  EnergyDifferencePositional: 0
   VelocityInWorldSpace: 1
   PositionInWorldSpace: 1
   targetedRootName: articulation:mixamorig:Hips
@@ -4741,7 +4763,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4323325860100505826}
-  - component: {fileID: 1045879518673034801}
   - component: {fileID: 4840040794799920610}
   - component: {fileID: 237941673018179006}
   m_Layer: 15
@@ -4768,24 +4789,6 @@ Transform:
   m_Father: {fileID: 1675824069701164127}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!143 &1045879518673034801
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4012779199770969919}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.68
-  m_Radius: 0.15
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.86, z: 0}
 --- !u!95 &4840040794799920610
 Animator:
   serializedVersion: 3
@@ -5439,6 +5442,7 @@ MonoBehaviour:
   NoJumpsInMockMode: 1
   TargetMovementVector: {x: 0, y: 0}
   MovementVector: {x: 0, y: 0}
+  MovementMagnatude: 0
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
@@ -5471,7 +5475,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 49152
   doFixedUpdate: 1
-  _isGeneratedProcedurally: 0
 --- !u!114 &1087573813168869382
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5492,6 +5495,18 @@ MonoBehaviour:
   RequestCamera: 0
   CameraFollowMe: 0
   CameraTarget: {fileID: 0}
+  CenterOfMassVelocity: {x: 0, y: 0, z: 0}
+  CenterOfMassVelocityMagnitude: 0
+  CenterOfMassVelocityInRootSpace: {x: 0, y: 0, z: 0}
+  CenterOfMassVelocityMagnitudeInRootSpace: 0
+  LastCenterOfMassInWorldSpace: {x: 0, y: 0, z: 0}
+  LastRootPositionInWorldSpace: {x: 0, y: 0, z: 0}
+  LastHeadPositionInWorldSpace: {x: 0, y: 0, z: 0}
+  HorizontalDirection: {x: 0, y: 0, z: 0}
+  LastPosition: []
+  LastRotation: []
+  Velocities: []
+  AngularVelocities: []
   doFixedUpdate: 1
 --- !u!114 &2449651893934142826
 MonoBehaviour:

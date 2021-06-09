@@ -335,31 +335,36 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
 
 
-        List<Transform> listofjoints = new List<Transform>(joints);
+
+        List<Transform> childstodelete = new List<Transform>();
+
         //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
         foreach (Transform t in characterReferenceHands) {
             string limbname = t.name;// + "(Clone)";
+            Debug.Log("checking sons of: " + limbname);
             Transform limb = joints.First<Transform>(x => x.name == limbname);
 
-
-
-
-            List<Transform> childstodelete = new List<Transform>(limb.GetComponentsInChildren<Transform>());
-            childstodelete.Remove(limb);
-            foreach (Transform t2 in childstodelete)
+            
+            Transform[] sons = limb.GetComponentsInChildren<Transform>();
+            foreach (Transform t2 in sons)
             {
-                listofjoints.Remove(t2);
-                t2.DetachChildren();//otherwise, it tries to destroy the children later, and fails.
+                childstodelete.Add(t2);
+
             }
-            foreach (Transform t2 in childstodelete)
-            {
-                DestroyImmediate(t2.gameObject);
-            }
-
-
-
 
         }
+
+        List<Transform> listofjoints = new List<Transform>(joints);
+        foreach (Transform t2 in childstodelete)
+        {
+            listofjoints.Remove(t2);
+            t2.DetachChildren();//otherwise, it tries to destroy the children later, and fails.
+            DestroyImmediate(t2.gameObject);
+        }
+
+
+
+
         joints = listofjoints.ToArray();
         articulatedJoints = new List<ArticulationBody>();
 

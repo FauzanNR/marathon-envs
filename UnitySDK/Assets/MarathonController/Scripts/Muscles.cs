@@ -19,6 +19,9 @@ public class Muscles : MonoBehaviour
     public float Stiffness = 50f;
     public float Damping = 100f;
     public float ForceLimit = float.MaxValue;
+    public float DampingRatio = 0.9f;
+    public float NaturalFrequency = 20f;
+    public float ForceScale = .3f;
 
 
     [Header("Debug Collisions")]
@@ -81,4 +84,33 @@ public class Muscles : MonoBehaviour
             foreach (var c2 in colliderTwos)
                 Physics.IgnoreCollision(c1, c2);
     }
+
+    //this is a simple way to center the masses
+    public void CenterABMasses()
+    { 
+        ArticulationBody[] abs = GetComponentsInChildren<ArticulationBody>();
+        foreach (ArticulationBody ab in abs)
+        {
+            if (!ab.isRoot)
+            { 
+                Vector3 currentCoF = ab.centerOfMass;
+
+                Vector3 newCoF = Vector3.zero;
+                //generally 1, sometimes 2:
+                foreach (Transform child in ab.transform) {
+                    newCoF += child.localPosition;
+
+                }
+                newCoF /= ab.transform.childCount;
+
+                ArticulationBody ab2 = ab.GetComponentInChildren<ArticulationBody>();
+
+                newCoF = (ab.transform.parent.localPosition + newCoF) / 2.0f;
+                ab.centerOfMass = newCoF;
+                Debug.Log("AB: " + ab.name + " old CoF: " + currentCoF + " new CoF: " + ab.centerOfMass);
+            }
+        }
+
+    }
+
 }

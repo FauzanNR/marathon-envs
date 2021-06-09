@@ -36,6 +36,33 @@ public class Observations2Learn : MonoBehaviour
     [Tooltip("Smoothed actions produced in the previous step of the policy are collected in t −1")]
     public float[] PreviousActions;
 
+    //[Tooltip("RagDoll ArticulationBody joint positions in reduced space")]
+    //public float[] RagDollJointPositions;
+//    [Tooltip("RagDoll ArticulationBody joint velocity in reduced space")]
+//    public float[] RagDollJointVelocities;
+
+
+  //  [Tooltip("RagDoll ArticulationBody joint accelerations in reduced space")]
+  //  public float[] RagDollJointAccelerations;
+    [Tooltip("RagDoll ArticulationBody joint forces in reduced space")]
+    public float[] RagDollJointForces;
+
+
+    [Tooltip("Macap: ave of joint angular velocity")]
+    public float EnergyAngularMocap;
+    [Tooltip("RagDoll: ave of joint angular velocity")]
+    public float EnergyAngularRagDoll;
+    [Tooltip("RagDoll-Macap: ave of joint angular velocity")]
+    public float EnergyDifferenceAngular;
+
+    [Tooltip("Macap: ave of joint velocity in local space")]
+    public float EnergyPositionalMocap;
+    [Tooltip("RagDoll: ave of joint velocity in local space")]
+    public float EnergyPositionalRagDoll;
+    [Tooltip("RagDoll-Macap: ave of joint velocity in local space")]
+    public float EnergyDifferencePositional;
+
+
     [Header("Gizmos")]
     public bool VelocityInWorldSpace = true;
     public bool PositionInWorldSpace = true;
@@ -50,6 +77,7 @@ public class Observations2Learn : MonoBehaviour
     ObservationStats _mocapBodyStats;
     ObservationStats _ragDollBodyStats;
     bool _hasLazyInitialized;
+    List<ArticulationBody> _motors;
 
     public void OnAgentInitialize()
     {
@@ -80,6 +108,26 @@ public class Observations2Learn : MonoBehaviour
             .Select(x => new BodyPartDifferenceStats { Name = x.Name })
             .ToList();
 
+        int numJoints = 0;
+        _motors = GetComponentsInChildren<ArticulationBody>()
+            .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+            .Where(x => !x.isRoot)
+            .Distinct()
+            .ToList();
+        foreach (var m in _motors)
+        {
+            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                numJoints++;
+            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+                numJoints++;
+            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+                numJoints++;
+        }
+        PreviousActions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+        //RagDollJointPositions = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+       // RagDollJointVelocities = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+       // RagDollJointAccelerations = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
+        RagDollJointForces = Enumerable.Range(0,numJoints).Select(x=>0f).ToArray();
     }
 
     public List<Collider> EstimateBodyPartsForObservation()
@@ -159,13 +207,64 @@ public class Observations2Learn : MonoBehaviour
 
             differenceStats.Position = mocapStats.Position - ragDollStats.Position;
             differenceStats.Velocity = mocapStats.Velocity - ragDollStats.Velocity;
-            differenceStats.AngualrVelocity = mocapStats.AngualrVelocity - ragDollStats.AngualrVelocity;
+            differenceStats.AngualrVelocity = mocapStats.AngularVelocity - ragDollStats.AngularVelocity;
             differenceStats.Rotation = ObservationStats.GetAngularVelocity(mocapStats.Rotation, ragDollStats.Rotation, timeDelta);
         }
+        int i = 0;
+        foreach (var m in _motors)
+        {
+            int j = 0;
+            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+            {
+                //RagDollJointPositions[i] = m.jointPosition[j];
+              //  RagDollJointVelocities[i] = m.jointVelocity[j];
+              //  RagDollJointAccelerations[i] = m.jointAcceleration[j];
+                RagDollJointForces[i++] = m.jointForce[j++];
+            }
+            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+            {
+              //  RagDollJointPositions[i] = m.jointPosition[j];
+             //   RagDollJointVelocities[i] = m.jointVelocity[j];
+             //   RagDollJointAccelerations[i] = m.jointAcceleration[j];
+                RagDollJointForces[i++] = m.jointForce[j++];
+            }
+            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+            {
+              //  RagDollJointPositions[i] = m.jointPosition[j];
+              //  RagDollJointVelocities[i] = m.jointVelocity[j];
+              //  RagDollJointAccelerations[i] = m.jointAcceleration[j];
+                RagDollJointForces[i++] = m.jointForce[j++];
+            }
+        }
+        EnergyAngularMocap = MocapBodyStats
+            .Select(x=>x.AngularVelocity.magnitude)
+            .Average();
+        EnergyAngularRagDoll = RagDollBodyStats
+            .Select(x=>x.AngularVelocity.magnitude)
+            .Average();
+        EnergyDifferenceAngular = RagDollBodyStats
+            .Zip(MocapBodyStats, (x,y) => x.AngularVelocity.magnitude-y.AngularVelocity.magnitude)
+            .Average();
+        EnergyPositionalMocap = MocapBodyStats
+            .Select(x=>x.Velocity.magnitude)
+            .Average();
+        EnergyPositionalRagDoll = RagDollBodyStats
+            .Select(x=>x.Velocity.magnitude)
+            .Average();
+        EnergyDifferencePositional = RagDollBodyStats
+            .Zip(MocapBodyStats, (x,y) => x.Velocity.magnitude-y.Velocity.magnitude)
+            .Average();
+        
     }
     public Transform GetRagDollCOM()
     {
         return _ragDollBodyStats.transform;
+    }
+    public Vector3 GetMocapCOMVelocityInWorldSpace()
+    {
+        var velocity = _mocapBodyStats.CenterOfMassVelocity;
+        var velocityInWorldSpace = _mocapBodyStats.transform.TransformVector(velocity);
+        return velocityInWorldSpace;
     }
     void OnDrawGizmos()
     {
