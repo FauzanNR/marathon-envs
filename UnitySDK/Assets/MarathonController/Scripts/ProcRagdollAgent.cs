@@ -69,7 +69,8 @@ public class ProcRagdollAgent : Agent
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
 
-    float timeDelta;
+    float observationTimeDelta;
+    float actionTimeDelta;
     void Awake()
     {
         if (RequestCamera && CameraTarget != null)
@@ -109,9 +110,9 @@ public class ProcRagdollAgent : Agent
     {
         Assert.IsTrue(_hasLazyInitialized);
 
-        timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-        _mapAnim2Ragdoll.OnStep(timeDelta);
-        _observations2Learn.OnStep(timeDelta);
+        observationTimeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        _mapAnim2Ragdoll.OnStep(observationTimeDelta);
+        _observations2Learn.OnStep(observationTimeDelta);
       
 
         if (ReproduceDReCon)
@@ -222,11 +223,11 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
         float[] vectorAction = actionBuffers.ContinuousActions.Select(x=>x).ToArray();
 
-        float timeDelta = Time.fixedDeltaTime;
+        actionTimeDelta = Time.fixedDeltaTime;
         if (!_decisionRequester.TakeActionsBetweenDecisions)
-            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
-        _mapAnim2Ragdoll.OnStep(timeDelta);
-        _rewards2Learn.OnStep(timeDelta);
+            actionTimeDelta = actionTimeDelta*_decisionRequester.DecisionPeriod;
+        _mapAnim2Ragdoll.OnStep(actionTimeDelta);
+        _rewards2Learn.OnStep(actionTimeDelta);
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -272,7 +273,7 @@ public class ProcRagdollAgent : Agent
 
 
             //DEBUG: to keep track of the values, and see if they seem reasonable
-            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation,timeDelta);
+            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation, actionTimeDelta);
 
             Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
 
@@ -717,7 +718,7 @@ public class ProcRagdollAgent : Agent
 
         targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
 
-
+        targetVelocity = Vector3.ClampMagnitude(targetVelocity, joint.maxAngularVelocity);
 
 
         return targetVelocity;
@@ -742,7 +743,7 @@ public class ProcRagdollAgent : Agent
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
 
-        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, timeDelta);
+        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, actionTimeDelta);
 
 
 
