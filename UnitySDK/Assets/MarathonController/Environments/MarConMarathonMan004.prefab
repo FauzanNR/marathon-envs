@@ -632,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3983872725159538254
 Transform:
   m_ObjectHideFlags: 0
@@ -3815,7 +3815,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 825af039d503a47138b2d8cb1ee21528, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 6a0170f7809774645b6b045717f6421b, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: MarCon-v0
@@ -3839,11 +3839,10 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 2000
-  FixedDeltaTime: 0.016666666
+  FixedDeltaTime: 0.0125
   ActionSmoothingBeta: 0.2
   ReproduceDReCon: 0
   UseFrequencies2Learn: 0
-  UseDofForObservation: 0
   RequestCamera: 1
   CameraFollowMe: 0
   CameraTarget: {fileID: 415026881393714649}
@@ -3905,11 +3904,7 @@ MonoBehaviour:
   DistanceFactor: 0
   ComPositionReward: 0
   VelDifferenceError: 0
-  VelAvDiffTwoStepsError: 0
-  VelAvDiffFourStepsError: 0
   VelDifferenceReward: 0
-  VelDiffTwoStepsReward: 0
-  VelDiffFourStepsReward: 0
   KineticEnergyMetric: 0
   EnergyMinimReward: 0
   HeadHeightDistance: 0
@@ -3951,9 +3946,6 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
-  RagDollJointPositions: []
-  RagDollJointVelocities: []
-  RagDollJointAccelerations: []
   RagDollJointForces: []
   EnergyAngularMocap: 0
   EnergyAngularRagDoll: 0
@@ -5467,8 +5459,6 @@ MonoBehaviour:
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
-  Stand: 0
-  WalkOrRun: 0
   DesiredHorizontalVelocity: {x: 0, y: 0}
   HorizontalDirection: {x: 0, y: 0, z: 0}
   UseHumanInput: 1
