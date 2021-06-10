@@ -20,7 +20,7 @@ public class MarathonTestBedController : MonoBehaviour
     public bool FreezeHips = false;
     public bool DontUpdateMotor = false;
 
-    public bool setTpose;
+   // public bool setTpose;
 
 
     bool _hasFrozen;
@@ -83,8 +83,8 @@ public class MarathonTestBedController : MonoBehaviour
                     //     rb.GetComponentInChildren<FixedJoint>().connectedBody = head;
                     break;
                 case "RagDoll":
-                    if (!_hasFrozen && setTpose)
-                        loadTposeanim();
+                    //if (!_hasFrozen && setTpose)
+                    //    loadTposeanim();
                     _hasFrozen = true;
                     children = agent.GetComponentsInChildren<ArticulationBody>();
                     head = children.FirstOrDefault(x=>x.name=="torso");
@@ -93,8 +93,8 @@ public class MarathonTestBedController : MonoBehaviour
                 case "Ragdoll-MarathonMan004":
                 case "MarathonMan004":
                 case "MarathonMan004Constrained":
-                    if (!_hasFrozen && setTpose)
-                        loadTposeanim();
+                   // if (!_hasFrozen && setTpose)
+                   //     loadTposeanim();
                     _hasFrozen = true;
                     children = agent.GetComponentsInChildren<ArticulationBody>();
                     head = children.FirstOrDefault(x=>x.name=="head");
@@ -126,8 +126,8 @@ public class MarathonTestBedController : MonoBehaviour
     {
         if (!_hasFrozen)
             FreezeBodyParts();
-        if (setTpose)
-            loadTposeanim();
+       // if (setTpose)
+       //     loadTposeanim();
     }
 
     // Update is called once per frame

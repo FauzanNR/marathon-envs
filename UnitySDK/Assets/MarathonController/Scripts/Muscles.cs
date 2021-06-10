@@ -8,6 +8,13 @@ using System;
 public class Muscles : MonoBehaviour
 {
 
+
+
+    [SerializeField]
+    MotorMode MotorUpdateMode;
+
+
+
     [System.Serializable]
     public class MusclePower
     {
@@ -15,7 +22,12 @@ public class Muscles : MonoBehaviour
         public Vector3 PowerVector;
     }
 
+
+
+    [Header("Parameters for Legacy and PD modes:")]
     public List<MusclePower> MusclePowers;
+
+
 
     public float MotorScale = 1f;
     public float Stiffness = 50f;
@@ -41,17 +53,16 @@ public class Muscles : MonoBehaviour
     List<ArticulationBody> _motors;
 
 
-    public enum updateMotorMode { 
+    public enum MotorMode { 
     
      //   force,
         legacy,
         PDwithVelocity,
-        stablePD
+        stablePD,
+        force
    
     }
 
-    [SerializeField]
-    updateMotorMode myMotorUpdateMode;
 
 
     public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
@@ -86,19 +97,19 @@ public class Muscles : MonoBehaviour
 
         }
 
-        switch (myMotorUpdateMode) {
+        switch (MotorUpdateMode) {
 
         //    case (updateMotorMode.Force):
 
-            case (updateMotorMode.PDwithVelocity):
+            case (MotorMode.PDwithVelocity):
                 UpdateMotor = UpdateMotorPDWithVelocity;
                 break;
 
-            case (updateMotorMode.legacy):
+            case (MotorMode.legacy):
                 UpdateMotor = LegacyUpdateMotor;
                 break;
 
-            case (updateMotorMode.stablePD):
+            case (MotorMode.stablePD):
                 UpdateMotor = StablePD;
                 break;
 
@@ -213,12 +224,6 @@ public class Muscles : MonoBehaviour
         Vector3 targetVelocity = new Vector3(0, 0, 0);
 
         Vector3 currentRotationValues = Utils.GetSwingTwist(joint.transform.localRotation);
-
-
-
-
-        //why do you never set up the targetVelocity?
-        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
 
         Vector3 target = new Vector3();
@@ -423,94 +428,77 @@ public class Muscles : MonoBehaviour
 
 
 
+    void DirectForce(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
+    {
+
+        
+        ArticulationReducedSpace ars = Utils.GetReducedSpaceFromTargetVector3(targetNormalizedRotation);
+        ars.dofCount = joint.dofCount;//to make sure we do not screw up the dimension constraints
+        
+        joint.jointForce = ars;
+        
+    }
+
+
+
+
+
+
     void StablePD(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
 
 
-        /*
-        // For a physically realistic simulation - ,  
-        var m = joint.mass;
-        var d = DampingRatio; // d should be 0..1.
-        var n = NaturalFrequency; // n should be in the range 1..20
-        var k = Mathf.Pow(n, 2) * m;
-        var c = d * (2 * Mathf.Sqrt(k * m));
-        var stiffness = k;
-        var damping = c;
 
 
-
-        Vector3 power = Vector3.zero;
-        try
-        {
-            power = MusclePowers.First(x => x.Muscle == joint.name).PowerVector;
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log("there is no muscle for joint " + joint.name);
-
-        }
-
-
-
-        //why do you never set up the targetVelocity?
+        //A PD controller uses:
         // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
 
+        //A stable PD controller, instead:
+        //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
 
-        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, actionTimeDelta);
+        //kd towards infinity
+        //kd = kp * dt
+        //Kd >= Kp * dt to ensure stability
 
-
-
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
-            drive.target = target;
-
-            drive.targetVelocity = targetVel.x;
+        //example in video: KP = 30.000,  KD 600, update 1/60
 
 
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.x * ForceScale;
-            joint.xDrive = drive;
-        }
+        float Kp = 30000;
+        float Kd = Kp * actionTimeDelta;
+
+        Vector3 currentSwingTwist = Utils.GetSwingTwist(joint.transform.localRotation);
+
+        Vector3 targetVelocity = Utils.AngularVelocityInReducedCoordinates(currentSwingTwist, targetNormalizedRotation, actionTimeDelta);
+
+        Vector3 currentVelocity = Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity);
+
+        Vector3 targetAcceleration = Utils.AngularVelocityInReducedCoordinates(currentVelocity, targetVelocity, actionTimeDelta);
+
+
+
+        ArticulationReducedSpace forceInReducedSpace = new ArticulationReducedSpace();
+        forceInReducedSpace.dofCount = joint.dofCount;
+
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion) {
+            //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+            forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+         }
 
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
         {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            drive.target = target;
-            // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.y;
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.y * ForceScale;
-            joint.yDrive = drive;
+            //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+            forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
         }
 
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
         {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
+            //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+            forceInReducedSpace[2] = -Kp * (currentSwingTwist.z + actionTimeDelta * currentVelocity.z - targetNormalizedRotation.z) - Kd * (currentVelocity.z + actionTimeDelta * targetAcceleration.z);
+        }
 
-            drive.target = target;
-            //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.z;
+        joint.jointForce = forceInReducedSpace;
 
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.z * ForceScale;
-            joint.zDrive = drive;
-        }*/
+
     }
 
 

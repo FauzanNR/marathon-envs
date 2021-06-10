@@ -25,6 +25,8 @@ public static class Utils
         return AngularVelocityInReducedCoordinates(fromInDeg, toInDeg, timeDelta);
     }
 
+
+    //you can also use this to calculate acceleration, right?
     public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta = 1f)
     {
         Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
@@ -88,6 +90,19 @@ public static class Utils
         return InReducedCoord;
 
 
+
+    }
+
+
+    public static ArticulationReducedSpace GetReducedSpaceFromTargetVector3(Vector3 target) {
+
+        ArticulationReducedSpace ars = new ArticulationReducedSpace();
+        ars.dofCount = 3;
+        ars[0] = target.x;
+        ars[1] = target.y;
+        ars[2] = target.z;
+
+        return ars;
 
     }
 

@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &285756606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -188,7 +188,7 @@ MonoBehaviour:
   RandomRange: 1
   FreezeHips: 1
   DontUpdateMotor: 0
-  setTpose: 1
+  setTpose: 0
 --- !u!4 &285756607
 Transform:
   m_ObjectHideFlags: 0

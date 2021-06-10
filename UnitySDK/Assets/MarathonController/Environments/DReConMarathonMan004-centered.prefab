@@ -3730,6 +3730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MotorUpdateMode: 2
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}
@@ -3793,6 +3794,8 @@ MonoBehaviour:
   NaturalFrequency: 20
   ForceScale: 0.3
   skipCollisionSetup: 0
+  updateDebugValues: 0
+  jointVelocityInReducedSpace: []
 --- !u!114 &6208207422085220428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3852,8 +3855,6 @@ MonoBehaviour:
   dontSnapMocapToRagdoll: 1
   DebugPauseOnReset: 0
   dontResetWhenOutOfBounds: 0
-  targetVelocity: []
-  jointVelocityInReducedSpace: []
   _hasAwake: 0
 --- !u!114 &6127195731589601736
 MonoBehaviour:
@@ -3903,7 +3904,11 @@ MonoBehaviour:
   DistanceFactor: 0
   ComPositionReward: 0
   VelDifferenceError: 0
+  VelAvDiffTwoStepsError: 0
+  VelAvDiffFourStepsError: 0
   VelDifferenceReward: 0
+  VelDiffTwoStepsReward: 0
+  VelDiffFourStepsReward: 0
   KineticEnergyMetric: 0
   EnergyMinimReward: 0
   HeadHeightDistance: 0
@@ -5458,6 +5463,8 @@ MonoBehaviour:
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
+  Stand: 0
+  WalkOrRun: 0
   DesiredHorizontalVelocity: {x: 0, y: 0}
   HorizontalDirection: {x: 0, y: 0, z: 0}
   UseHumanInput: 1
