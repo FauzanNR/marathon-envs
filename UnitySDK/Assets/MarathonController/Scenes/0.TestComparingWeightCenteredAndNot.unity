@@ -454,16 +454,10 @@ MonoBehaviour:
     - envId: DReConHumanoid-v0
       envPrefab: {fileID: 884079593499418970, guid: 32ae3dba713e54b22910e58a8722e75d,
         type: 3}
-    - envId: DReConHumanoidMocap-v0
-      envPrefab: {fileID: 884079593499418970, guid: 3636dd979152347bdaac9835ea8045e3,
-        type: 3}
-    - envId: MarConQuadruped-v0
-      envPrefab: {fileID: 4102260425739354826, guid: 167406519fb5f4510bee5dcbe78e5f68,
-        type: 3}
-    - envId: 
+    - envId: DReConHumanoid-v0-centered
       envPrefab: {fileID: 884079593499418970, guid: c619067ac79c747feabc9eb8d97c76da,
         type: 3}
-    envIdDefault: DReConHumanoidMocap-v0
+    envIdDefault: DReConHumanoid-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 0

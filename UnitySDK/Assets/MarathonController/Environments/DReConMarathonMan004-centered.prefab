@@ -658,7 +658,7 @@ ArticulationBody:
   m_GameObject: {fileID: 385853380222003329}
   m_Enabled: 1
   m_Mass: 3.8
-  m_ParentAnchorPosition: {x: 0.000000007450581, y: -0.44370475, z: 0.0028464263}
+  m_ParentAnchorPosition: {x: 0.000000007450581, y: -0.14370468, z: 0.0028464263}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -3815,7 +3815,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 0e1d500cb7f867541bbce2e47d9797c1, type: 3}
+  m_Model: {fileID: 5022602860645237092, guid: 7927c3a8d8bc02c4dbf4d90a27f697b4, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: DReCon-v0
@@ -7772,7 +7772,7 @@ ArticulationBody:
   m_GameObject: {fileID: 7832255405897995632}
   m_Enabled: 1
   m_Mass: 0.2
-  m_ParentAnchorPosition: {x: 0.000000030408557, y: -0.08728671, z: 0.1071056}
+  m_ParentAnchorPosition: {x: 0.000000030408557, y: -0.08728665, z: 0.1071056}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -9255,7 +9255,7 @@ ArticulationBody:
   m_GameObject: {fileID: 9147093172276452733}
   m_Enabled: 1
   m_Mass: 0.8
-  m_ParentAnchorPosition: {x: -0.000000004110158, y: -0.44427872, z: -0.029821906}
+  m_ParentAnchorPosition: {x: -0.000000004110158, y: -0.44427866, z: -0.029821906}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
