@@ -1,4 +1,4 @@
-# Marathon Man
+Marathon Man
 
 This repository explores the application of deep reinforcement learning for physics-based animation.  It contains a set of high-dimensional continuous control benchmarks using Unity’s native physics simulator, PhysX. The environments can be trained using Unity ML-Agents or any OpenAI Gym compatible algorithm. This project may be useful for:
 
@@ -15,16 +15,22 @@ The Unity project has two parts. Both can be find in *UnitySDK > Assets*:
 ![MarathonEnvs](images/MarathonEnvsBanner.gif)
 
 
-- In folder *MarathonController* there are  resources to take a skinned character, with a typical controller like mecanim or motion matching, and generate from it a training environment. Further details can be found [here](marathon-controller-intro.md)  and instructions to train [here](marathon-controller-training.md)
+- In folder *MarathonController* there are  resources to take a skinned character, with a typical controller like mecanim or motion matching, and generate from it a training environment. Further details can be found  [here](marathon-controller-training.md)
 
 <img src="./img/trained-with-automatic-constraint-parsing.gif" alt="Example-current-status," style="zoom:50%;" />
 
 - There are also instructions to export the outcome of the training [here](export-outcome.md)
-- There is also a list of epic fails documented in this folder](https://github.com/joanllobera/marathon-envs/tree/master/docs/img/epic-fails)
 
 ### 1. Getting started
-Feel free to join our [Discord server](https://discord.gg/MPEbHPP) 
-and check the [installation instructions](installation.md)
+-  Check the [installation instructions](installation.md)
+- Make sure you can train an existing environment.
+- If you want to adapt it to your own characters, or explore the creation of novel controllers, we recommend you to start with the instructions in the  [here](marathon-controller-training.md)
+
+ 
+
+If you have further questions, feel free to join our [Discord server](https://discord.gg/MPEbHPP) 
+
+
 
 
 ### 2. Contributors
