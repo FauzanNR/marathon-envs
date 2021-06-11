@@ -32,14 +32,6 @@ Once you are happy with the outcome of your training, there are  instructions to
 
  If you want to see how it looks with the training provided, just click on the desired environment, otherwise: 
 
-
-
-
-
-
-
-![image-20210611091039106](../../../../AppData/Roaming/Typora/typora-user-images/image-20210611091039106.png)
-
 3. You can train in editor, to check everything goes well. An example instruction would be:
 
 ```shell
@@ -52,7 +44,7 @@ mlagents-learn config/marathon_envs_config.yaml --run-id=Test4MyFirstRun --env-a
 
 ![Screenshot 2021-01-26 a les 16.35.59](./img/build-settings.png)
 
-- Store it in the envs folder
+- Store it in the envs folder (if it is the first time, you will need to create it, at the same level than the config and UnitySDK folders)
 
 5. Launch training 
 
