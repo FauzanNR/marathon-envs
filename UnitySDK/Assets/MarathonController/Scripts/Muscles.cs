@@ -24,18 +24,31 @@ public class Muscles : MonoBehaviour
 
 
 
-    [Header("Parameters for Legacy and PD modes:")]
+    [Header("Parameters for Legacy and PD:")]
     public List<MusclePower> MusclePowers;
 
-
-
-    public float MotorScale = 1f;
+  //  public float MotorScale = 1f;
     public float Stiffness = 50f;
     public float Damping = 100f;
     public float ForceLimit = float.MaxValue;
     public float DampingRatio = 0.9f;
+
+
+    [Header("Extra Parameters for PD:")]
+
     public float NaturalFrequency = 20f;
     public float ForceScale = .3f;
+
+
+
+
+    [Header("Parameters for StablePD:")]
+    public float KP_Stiffness = 50;
+    public float ForceScaleSPD = .3f;
+
+
+
+
 
 
     [Header("Debug Collisions")]
@@ -57,7 +70,7 @@ public class Muscles : MonoBehaviour
     
      //   force,
         legacy,
-        PDwithVelocity,
+        PD,
         stablePD,
         force
    
@@ -101,7 +114,7 @@ public class Muscles : MonoBehaviour
 
         //    case (updateMotorMode.Force):
 
-            case (MotorMode.PDwithVelocity):
+            case (MotorMode.PD):
                 UpdateMotor = UpdateMotorPDWithVelocity;
                 break;
 
@@ -432,7 +445,7 @@ public class Muscles : MonoBehaviour
     {
 
         
-        ArticulationReducedSpace ars = Utils.GetReducedSpaceFromTargetVector3(targetNormalizedRotation);
+        ArticulationReducedSpace ars = Utils.GetReducedSpaceFromTargetVector3(  ForceScale * targetNormalizedRotation);
         ars.dofCount = joint.dofCount;//to make sure we do not screw up the dimension constraints
         
         joint.jointForce = ars;
@@ -463,7 +476,10 @@ public class Muscles : MonoBehaviour
         //example in video: KP = 30.000,  KD 600, update 1/60
 
 
-        float Kp = 30000;
+        //float Kp = 30000;
+        float Kp = KP_Stiffness;
+
+
         float Kd = Kp * actionTimeDelta;
 
         Vector3 currentSwingTwist = Utils.GetSwingTwist(joint.transform.localRotation);
@@ -482,21 +498,26 @@ public class Muscles : MonoBehaviour
         if (joint.twistLock == ArticulationDofLock.LimitedMotion) {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
             forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+
+            forceInReducedSpace[0] *= ForceScaleSPD; 
+
          }
 
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
         {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
             forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
+            forceInReducedSpace[1] *= ForceScaleSPD;
         }
 
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
         {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
             forceInReducedSpace[2] = -Kp * (currentSwingTwist.z + actionTimeDelta * currentVelocity.z - targetNormalizedRotation.z) - Kd * (currentVelocity.z + actionTimeDelta * targetAcceleration.z);
+            forceInReducedSpace[2] *= ForceScaleSPD;
         }
 
-        joint.jointForce = forceInReducedSpace;
+        joint.jointForce =  forceInReducedSpace;
 
 
     }

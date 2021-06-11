@@ -3730,7 +3730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MotorUpdateMode: 1
+  MotorUpdateMode: 2
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}
@@ -3786,13 +3786,14 @@ MonoBehaviour:
     PowerVector: {x: 20, y: 20, z: 20}
   - Muscle: articulation:mixamorig:RightHand
     PowerVector: {x: 40, y: 40, z: 40}
-  MotorScale: 1
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
   NaturalFrequency: 40
   ForceScale: 0.3
+  KP_Stiffness: 0.6
+  ForceScaleSPD: 1
   skipCollisionSetup: 0
   updateDebugValues: 0
   jointVelocityInReducedSpace: []
