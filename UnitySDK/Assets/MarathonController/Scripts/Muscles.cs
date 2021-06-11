@@ -562,8 +562,16 @@ public class Muscles : MonoBehaviour
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
 
             //forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+            var drive = joint.xDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.x * scale);
 
-            forceInReducedSpace[0] = -Kp * (joint.jointPosition[0] + actionTimeDelta * joint.jointVelocity[0] - targetNormalizedRotation.x) - Kd * (joint.jointVelocity[0] + actionTimeDelta * acceleration[0]);
+
+
+
+
+            forceInReducedSpace[0] = -Kp * (joint.jointPosition[0] + actionTimeDelta * joint.jointVelocity[0] - target) - Kd * (joint.jointVelocity[0] + actionTimeDelta * acceleration[0]);
 
             forceInReducedSpace[0] *= ForceScaleSPD; 
 
@@ -574,7 +582,15 @@ public class Muscles : MonoBehaviour
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
             // forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
 
-            forceInReducedSpace[1] = -Kp * (joint.jointPosition[1] + actionTimeDelta * joint.jointVelocity[1] - targetNormalizedRotation.y) - Kd * (joint.jointVelocity[1] + actionTimeDelta * acceleration[1]);
+            var drive = joint.yDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.y * scale);
+
+
+
+
+            forceInReducedSpace[1] = -Kp * (joint.jointPosition[1] + actionTimeDelta * joint.jointVelocity[1] - target) - Kd * (joint.jointVelocity[1] + actionTimeDelta * acceleration[1]);
 
             forceInReducedSpace[1] *= ForceScaleSPD;
 
@@ -586,11 +602,16 @@ public class Muscles : MonoBehaviour
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
             //   forceInReducedSpace[2] = -Kp * (currentSwingTwist.z + actionTimeDelta * currentVelocity.z - targetNormalizedRotation.z) - Kd * (currentVelocity.z + actionTimeDelta * targetAcceleration.z);
 
-            forceInReducedSpace[2] = -Kp * (joint.jointPosition[2] + actionTimeDelta * joint.jointVelocity[2] - targetNormalizedRotation.z) - Kd * (joint.jointVelocity[2] + actionTimeDelta * acceleration[2]);
+            var drive = joint.zDrive;
+            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+            var midpoint = drive.lowerLimit + scale;
+            var target = midpoint + (targetNormalizedRotation.z * scale);
+
+
+            forceInReducedSpace[2] = -Kp * (joint.jointPosition[2] + actionTimeDelta * joint.jointVelocity[2] - target) - Kd * (joint.jointVelocity[2] + actionTimeDelta * acceleration[2]);
 
             forceInReducedSpace[2] *= ForceScaleSPD;
 
-            forceInReducedSpace[2] *= ForceScaleSPD;
         }
 
         joint.jointForce =  forceInReducedSpace;
