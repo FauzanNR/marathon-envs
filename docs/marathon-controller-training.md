@@ -10,13 +10,7 @@ Below we detail how to generate a training environment for your own character.
 
 3. Section 3 explains the main steps needed to create your own character
 
-Once you are happy with the outcome of your training, there are  instructions to export the outcome of the training [here](export-outcome.md)
-
-### 
-
-
-
-
+Once you are happy with the outcome of your training, there are  instructions to export the outcome of the training to your own project [here](export-outcome.md)
 
 
 
@@ -193,7 +187,30 @@ This is explained in detail in the SIGGRAPH 21 course “*New Techniques for Int
 
 
 
-In addition, when designing the physical environment, it is advisable that the developer is aware that there are debug tools available to check how the designed motor system works. In particular:
+In addition, when designing the physical environment, it is advisable to use debug tools available to check how the designed motor system works. In particular, in the training scene there is a Debug object. If you enable it, it is possible to see how the ragdoll motors behave separately from the training.
+
+The main debug options to consider are:
 
 
 
+1. **Freeze the hips**
+
+   This prevents the character from falling. It allows checking whether the default pose  for the articulations is good (see below). 
+
+
+
+![image-20210611095216866](img/image-20210611095216866.png)
+
+
+
+It also allows exploring how to customize the range of motion boundaries, and different parameters of the actuators of each motor (in Unity, these are **ArticulationBody ** elements, see below)
+
+
+
+![image-20210611095707753](img/image-20210611095707753.png)
+
+
+
+2. **Apply random actions**
+
+The general idea is that when we apply random actions the character should not move weirldy (like a controller that is unstable), and ideally do not appear to be too stiff or too lose. This should work both with T pose and without it (with the character on the floor).
