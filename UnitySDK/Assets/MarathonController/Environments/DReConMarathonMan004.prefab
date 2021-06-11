@@ -3792,7 +3792,7 @@ MonoBehaviour:
   DampingRatio: 1
   NaturalFrequency: 40
   ForceScale: 0.3
-  KP_Stiffness: 0.6
+  KP_Stiffness: 2
   ForceScaleSPD: 1
   skipCollisionSetup: 0
   updateDebugValues: 0

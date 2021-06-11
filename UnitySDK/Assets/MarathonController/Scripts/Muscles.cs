@@ -66,6 +66,18 @@ public class Muscles : MonoBehaviour
     List<ArticulationBody> _motors;
 
 
+
+    private class LastPos
+    {
+        public string name;
+        //public ArticulationReducedSpace pos;
+        public ArticulationReducedSpace vel;
+    }
+
+
+    List<LastPos> _lastPos = new List<LastPos>();
+
+
     public enum MotorMode { 
     
      //   force,
@@ -94,21 +106,42 @@ public class Muscles : MonoBehaviour
     {
         Setup();
 
+        _motors = GetComponentsInChildren<ArticulationBody>()
+                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                .Where(x => !x.isRoot)
+                .Distinct()
+                .ToList();
+
+        foreach (ArticulationBody m in _motors)
+        {
+            LastPos l = new LastPos();
+
+            l.name = m.name;
+            //l.pos = m.jointPosition;
+            l.vel = m.jointVelocity;
+
+            _lastPos.Add(l);
+        }
+
+
+
+
 
         if (updateDebugValues)
         {
 
 
-            _motors = GetComponentsInChildren<ArticulationBody>()
-            .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-            .Where(x => !x.isRoot)
-            .Distinct()
-            .ToList();
 
             jointVelocityInReducedSpace = new Vector3[_motors.Count];
 
 
         }
+
+
+
+
+
+
 
         switch (MotorUpdateMode) {
 
@@ -289,7 +322,7 @@ public class Muscles : MonoBehaviour
 
     void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
-        // For a physically realistic simulation - ,  
+        // For a physically realistic simulation - , ?
         var m = joint.mass;
         var d = DampingRatio; // d should be 0..1.
         var n = NaturalFrequency; // n should be in the range 1..20
@@ -441,6 +474,7 @@ public class Muscles : MonoBehaviour
 
 
 
+    //NOT TESTED
     void DirectForce(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
 
@@ -454,7 +488,19 @@ public class Muscles : MonoBehaviour
 
 
 
+    static ArticulationReducedSpace AccelerationInReducedSpace(ArticulationReducedSpace currentVel, ArticulationReducedSpace lastVel, float deltaTime)
+    {
+        ArticulationReducedSpace result = new ArticulationReducedSpace();
 
+
+        result.dofCount = currentVel.dofCount;
+
+        for(int i = 0; i< result.dofCount; i++)
+            result[i] =  (currentVel[i] - lastVel[i]) / deltaTime;
+
+        return result;
+
+    }
 
 
     void StablePD(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
@@ -477,27 +523,47 @@ public class Muscles : MonoBehaviour
 
 
         //float Kp = 30000;
+
+
+        LastPos lastPos = null;
+        try
+        {
+            lastPos = _lastPos.First(x => x.name.Equals(joint.name));
+        }
+
+        catch (Exception e)
+        {
+            Debug.Log("there is no lastPos for joint " + joint.name);
+
+        }
+
+
+
+
+
         float Kp = KP_Stiffness;
 
 
         float Kd = Kp * actionTimeDelta;
 
-        Vector3 currentSwingTwist = Utils.GetSwingTwist(joint.transform.localRotation);
-
-        Vector3 targetVelocity = Utils.AngularVelocityInReducedCoordinates(currentSwingTwist, targetNormalizedRotation, actionTimeDelta);
-
-        Vector3 currentVelocity = Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity);
-
-        Vector3 targetAcceleration = Utils.AngularVelocityInReducedCoordinates(currentVelocity, targetVelocity, actionTimeDelta);
+        //Vector3 currentSwingTwist = Utils.GetSwingTwist(joint.transform.localRotation);
+        //Vector3 targetVelocity = Utils.AngularVelocityInReducedCoordinates(currentSwingTwist, targetNormalizedRotation, actionTimeDelta);
+        //Vector3 currentVelocity = Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity);
+        //        Vector3 targetAcceleration = Utils.AngularVelocityInReducedCoordinates(currentVelocity, targetVelocity, actionTimeDelta);
 
 
 
         ArticulationReducedSpace forceInReducedSpace = new ArticulationReducedSpace();
         forceInReducedSpace.dofCount = joint.dofCount;
 
+        ArticulationReducedSpace acceleration = AccelerationInReducedSpace(joint.jointVelocity, lastPos.vel, actionTimeDelta);
+
         if (joint.twistLock == ArticulationDofLock.LimitedMotion) {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
-            forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+
+            //forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+
+            forceInReducedSpace[0] = -Kp * (joint.jointPosition[0] + actionTimeDelta * joint.jointVelocity[0] - targetNormalizedRotation.x) - Kd * (joint.jointVelocity[0] + actionTimeDelta * acceleration[0]);
 
             forceInReducedSpace[0] *= ForceScaleSPD; 
 
@@ -506,19 +572,32 @@ public class Muscles : MonoBehaviour
         if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
         {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
-            forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
+            // forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
+
+            forceInReducedSpace[1] = -Kp * (joint.jointPosition[1] + actionTimeDelta * joint.jointVelocity[1] - targetNormalizedRotation.y) - Kd * (joint.jointVelocity[1] + actionTimeDelta * acceleration[1]);
+
             forceInReducedSpace[1] *= ForceScaleSPD;
+
+
         }
 
         if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
         {
             //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
-            forceInReducedSpace[2] = -Kp * (currentSwingTwist.z + actionTimeDelta * currentVelocity.z - targetNormalizedRotation.z) - Kd * (currentVelocity.z + actionTimeDelta * targetAcceleration.z);
+            //   forceInReducedSpace[2] = -Kp * (currentSwingTwist.z + actionTimeDelta * currentVelocity.z - targetNormalizedRotation.z) - Kd * (currentVelocity.z + actionTimeDelta * targetAcceleration.z);
+
+            forceInReducedSpace[2] = -Kp * (joint.jointPosition[2] + actionTimeDelta * joint.jointVelocity[2] - targetNormalizedRotation.z) - Kd * (joint.jointVelocity[2] + actionTimeDelta * acceleration[2]);
+
+            forceInReducedSpace[2] *= ForceScaleSPD;
+
             forceInReducedSpace[2] *= ForceScaleSPD;
         }
 
         joint.jointForce =  forceInReducedSpace;
 
+
+        lastPos.vel = joint.jointVelocity;
+        //lastPos.pos = joint.jointPosition;
 
     }
 

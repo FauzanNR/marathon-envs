@@ -39,12 +39,15 @@ public class ProcRagdollAgent : Agent
 
 
 
-    List<Rigidbody> _mocapBodyParts;
+    //List<Rigidbody> _mocapBodyParts;
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
     Rewards2Learn _rewards2Learn;
     Muscles _ragDollSettings;
     List<ArticulationBody> _motors;
+
+ 
+
     MarathonTestBedController _debugController;
     InputController _inputController;
     SensorObservations _sensorObservations;
@@ -54,13 +57,16 @@ public class ProcRagdollAgent : Agent
 
 
     bool _hasLazyInitialized;
-    float[] _smoothedActions;
+    //float[] _smoothedActions;
     float[] _mocapTargets;
 
     [Space(16)]
     [SerializeField]
     bool _hasAwake = false;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
+
+
+
 
 
     float observationTimeDelta;
@@ -434,7 +440,7 @@ public class ProcRagdollAgent : Agent
         }
 
         _mapAnim2Ragdoll = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
-        _mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
+        //_mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
 
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
@@ -451,7 +457,7 @@ public class ProcRagdollAgent : Agent
             .ToList();
         //var individualMotors = new List<float>();
 
-     
+        
 
 
 
@@ -473,7 +479,7 @@ public class ProcRagdollAgent : Agent
     public override void OnEpisodeBegin()
     {
         Assert.IsTrue(_hasAwake);
-        _smoothedActions = null;
+        //_smoothedActions = null;
         debugCopyMocap = false;
 
         Vector3 resetVelocity = Vector3.zero;
