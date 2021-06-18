@@ -109,7 +109,7 @@ mlagents-learn config/marathon_envs_config.yaml --train --env marathon-envs/mara
 ```
 Run tensorboard and watch the training process: 
 ``` bash
-tensorboard --logdir=summaries
+tensorboard --logdir results --port 6006
 ```
 
 #### Deploy the trained model
