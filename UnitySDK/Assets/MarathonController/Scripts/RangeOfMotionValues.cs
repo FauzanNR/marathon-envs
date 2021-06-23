@@ -41,11 +41,10 @@ public class RangeOfMotionValues : ScriptableObject
 
     //[HideInInspector]
     [SerializeField]
-    List<RangeOfMotionValue> _values;
+    List<RangeOfMotionValue> _values = new List<RangeOfMotionValue>();
 
 
-    //WEIRD!
-    List<OscillationParameters> _osc;
+    List<OscillationParameters> _osc = new List<OscillationParameters>();
 
 
     public void addJoint(Transform joint)

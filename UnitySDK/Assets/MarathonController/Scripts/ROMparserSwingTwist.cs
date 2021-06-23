@@ -103,7 +103,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         _mocapControllerArtanim = theAnimator.GetComponent<MapAnim2Ragdoll>();
 
         // get root start position and rotation
-        var articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>();
+        var articulationBodies = targetRagdollRoot.GetComponentsInChildren<ArticulationBody>(true);
         if (articulationBodies.Length == 0)
             return;
         var root = articulationBodies.First(x => x.isRoot);
@@ -115,7 +115,7 @@ public class ROMparserSwingTwist : MonoBehaviour
         if (targetJoints.Length == 0)
         {
             targetJoints = targetRagdollRoot
-                .GetComponentsInChildren<ArticulationBody>()
+                .GetComponentsInChildren<ArticulationBody>(true)
                 .Where(x => x.isRoot == false)
                 .Where(x => x.name.StartsWith("articulation:"))
                 .ToArray();
