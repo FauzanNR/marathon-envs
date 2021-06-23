@@ -4,11 +4,11 @@
 
 Below we detail how to generate a training environment for your own character.
 
-1. Section 1 explains how to train an existing envrionment
+1. Section 1 explains how to train an existing environment
 
 2. Section 2 explains how to create a new training environment with your own character
 
-3. Section 3 explains the main steps needed to create your own character
+3. Section 3 explains the main steps needed to create your own character controller, including debugging tools
 
 Once you are happy with the outcome of your training, there are  instructions to export the outcome of the training to your own project [here](export-outcome.md)
 
@@ -203,6 +203,14 @@ It also allows exploring how to customize the range of motion boundaries, and di
 
 
 
-2. **Apply random actions**
+2. **Apply Specific actions**
+
+When the debug option is activated, each *ArticulationBody* has one DebugMotor script added to it procedurally. This allows applying actions to the different degrees of freedom of each joint to validate whether the forces applied make sense.
+
+![Screenshot-DEBUG-actions](D:\Users\JoanLlobera\Documents\repo-marathon-man-new\docs\img\use-DEBUG-actions.png)
+
+
+
+3. **Apply random actions**
 
 The general idea is that when we apply random actions the character should not move weirldy (like a controller that is unstable), and ideally do not appear to be too stiff or too lose. This should work both with T pose and without it (with the character on the floor).
