@@ -94,7 +94,8 @@ public class ObservationStats : MonoBehaviour
                 .Distinct()
                 .ToList();
 
-        _bodyParts = _bodyParts
+
+        _bodyParts  =   _bodyParts
             .Where(x => x.enabled)
             .Where(x => !x.isTrigger)
             .Where(x=> {
@@ -105,6 +106,8 @@ public class ObservationStats : MonoBehaviour
             .Distinct()
             .ToList();
 
+
+      
         Stats = _bodyParts
             .Select(x => new Stat { Name = x.name })
             .ToList();
