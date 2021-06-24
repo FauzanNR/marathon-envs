@@ -66,6 +66,9 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
         foreach (ArticulationBody body in articulationBodies)
         {
+            if (body.isRoot)
+                continue;
+
             string keyword1 = "articulation:";
             string keyword2 = "collider:";
             string valuename = body.name.TrimStart(keyword1.ToArray<char>());
