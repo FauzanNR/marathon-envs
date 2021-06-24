@@ -43,7 +43,7 @@ public class ProcRagdollAgent : Agent
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
     Rewards2Learn _rewards2Learn;
-    Muscles _ragDollSettings;
+    Muscles _ragDollMuscles;
     List<ArticulationBody> _motors;
 
  
@@ -269,7 +269,7 @@ public class ProcRagdollAgent : Agent
             if (!ignorActions)
             {
              
-                _ragDollSettings.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
             }
 
 
@@ -445,7 +445,11 @@ public class ProcRagdollAgent : Agent
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
-        _ragDollSettings = GetComponent<Muscles>();
+        _ragDollMuscles = GetComponent<Muscles>();
+      
+
+
+
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _sensorObservations = GetComponent<SensorObservations>();
 
@@ -469,6 +473,9 @@ public class ProcRagdollAgent : Agent
 
 
         _mapAnim2Ragdoll.OnAgentInitialize();
+        //it can only be used AFTER _mapAnim2Ragdoll is initialzed.
+        _ragDollMuscles.SetKinematicReference(_mapAnim2Ragdoll);//only used in mode PDopenloop
+
         _observations2Learn.OnAgentInitialize();
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();

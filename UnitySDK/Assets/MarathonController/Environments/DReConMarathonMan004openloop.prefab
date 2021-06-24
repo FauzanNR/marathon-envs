@@ -3730,7 +3730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MotorUpdateMode: 2
+  MotorUpdateMode: 4
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}
@@ -3797,6 +3797,7 @@ MonoBehaviour:
   skipCollisionSetup: 0
   updateDebugValues: 1
   jointVelocityInReducedSpace: []
+  _referenceTransforms: []
 --- !u!114 &6208207422085220428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5063,7 +5064,7 @@ GameObject:
   - component: {fileID: 884079593499418970}
   - component: {fileID: 5883856607907771046}
   m_Layer: 0
-  m_Name: DReConMarathonMan004
+  m_Name: DReConMarathonMan004openloop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5512,6 +5513,7 @@ MonoBehaviour:
   Lenght: 0
   IsLoopingAnimation: 0
   _rigidbodyRoot: {fileID: 0}
+  _ragdollTransforms: []
   RequestCamera: 0
   CameraFollowMe: 0
   CameraTarget: {fileID: 0}

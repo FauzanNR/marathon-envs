@@ -451,7 +451,7 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: DReConHumanoid-v0
-      envPrefab: {fileID: 884079593499418970, guid: 32ae3dba713e54b22910e58a8722e75d,
+      envPrefab: {fileID: 884079593499418970, guid: e230eb283c2ff634bbdaeeda8a6c3263,
         type: 3}
     - envId: DReConHumanoidMocap-v0
       envPrefab: {fileID: 884079593499418970, guid: 3636dd979152347bdaac9835ea8045e3,

@@ -24,7 +24,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	Rigidbody _rigidbodyRoot;
 
 	List<Transform> _animTransforms;
-	List<Transform> _ragdollTransforms;
+	
+	public List<Transform> _ragdollTransforms;
 	List<Rigidbody> _ragDollRigidbody;
 
 
