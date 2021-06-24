@@ -330,28 +330,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
 		}
 	}
-	Quaternion FromToRotation(Quaternion from, Quaternion to)
-    {
-        if (to == from) return Quaternion.identity;
-
-        return to * Quaternion.Inverse(from);
-    }
-	// Adjust the value of an angle to lie within [-pi, +pi].
-    float NormalizedAngle(float angle)
-    {
-        if (angle < 180)
-        {
-            return angle * Mathf.Deg2Rad;
-        }
-        return (angle - 360) * Mathf.Deg2Rad;
-    }
-	Vector3 NormalizedEulerAngles(Vector3 eulerAngles)
-    {
-        var x = NormalizedAngle(eulerAngles.x);
-        var y = NormalizedAngle(eulerAngles.y);
-        var z = NormalizedAngle(eulerAngles.z);
-        return new Vector3(x, y, z);
-    }
 
 	
     public Vector3 GetCenterOfMass()
