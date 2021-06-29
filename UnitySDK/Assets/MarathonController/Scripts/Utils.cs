@@ -109,7 +109,7 @@ public static class Utils
 
     public static Vector3 GetArticulationReducedSpaceInVector3(ArticulationReducedSpace ars)
     {
-        Vector3 result = new Vector3();
+        Vector3 result = Vector3.zero;// new Vector3();
 
         if (ars.dofCount > 0)
             result.x = ars[0];
