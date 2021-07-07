@@ -15,7 +15,7 @@ public class ProcRagdollAgent : Agent
     [Header("Settings")]
     public float FixedDeltaTime = 1f / 60f;
     public float ActionSmoothingBeta = 0.2f;
-    public bool ReproduceDReCon;
+    public bool ReproduceDReCon = true;
    
 
     [Header("Camera")]
@@ -29,7 +29,7 @@ public class ProcRagdollAgent : Agent
     public bool debugCopyMocap;
     public bool ignorActions;
     public bool dontResetOnZeroReward;
-    public bool dontSnapMocapToRagdoll;
+    public bool dontSnapMocapToRagdoll = true;
     public bool DebugPauseOnReset;
     public bool dontResetWhenOutOfBounds;
 
