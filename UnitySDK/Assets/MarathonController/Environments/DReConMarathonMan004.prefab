@@ -219,7 +219,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7827208066241305017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -348,7 +347,7 @@ ArticulationBody:
   m_GameObject: {fileID: 234926926043327253}
   m_Enabled: 1
   m_Mass: 3.8
-  m_ParentAnchorPosition: {x: 0, y: -0.44370532, z: 0.0028615678}
+  m_ParentAnchorPosition: {x: 0, y: -0.44370532, z: 0.002861564}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -389,7 +388,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2732715592970027266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -658,7 +656,7 @@ ArticulationBody:
   m_GameObject: {fileID: 385853380222003329}
   m_Enabled: 1
   m_Mass: 3.8
-  m_ParentAnchorPosition: {x: 0.000000007450581, y: -0.44370475, z: 0.0028464282}
+  m_ParentAnchorPosition: {x: 0.000000007450581, y: -0.44370475, z: 0.0028464263}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -699,7 +697,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &243442581026114944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1124,7 +1121,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1032200399428666652}
   m_Enabled: 1
   m_Mass: 1.3
-  m_ParentAnchorPosition: {x: 0.2784152, y: -0.00000030221418, z: 0.00000009872019}
+  m_ParentAnchorPosition: {x: 0.2784152, y: -0.00000030221418, z: 0.000000113621354}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1165,7 +1162,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2854627656309620980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1263,7 +1259,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &2674076991219822234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1381,7 +1376,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1208129807446686635}
   m_Enabled: 1
   m_Mass: 5
-  m_ParentAnchorPosition: {x: -4.0178083e-10, y: 0.096178785, z: 0.0000000037252903}
+  m_ParentAnchorPosition: {x: 6.3880456e-11, y: 0.096178785, z: 0.0000000037252903}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1422,7 +1417,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &4771879105536026037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1641,7 +1635,7 @@ ArticulationBody:
   m_GameObject: {fileID: 1680084232847853853}
   m_Enabled: 1
   m_Mass: 2
-  m_ParentAnchorPosition: {x: -4.0178083e-10, y: 0.1667167, z: -0.025161674}
+  m_ParentAnchorPosition: {x: 6.3880456e-11, y: 0.1667167, z: -0.025161674}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -1682,7 +1676,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7397536721267974287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2612,7 +2605,7 @@ ArticulationBody:
   m_GameObject: {fileID: 2324577074628939117}
   m_Enabled: 1
   m_Mass: 2.3
-  m_ParentAnchorPosition: {x: 0.105928436, y: -0.005247928, z: -0.022320976}
+  m_ParentAnchorPosition: {x: 0.105928436, y: -0.005247928, z: -0.022320984}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2653,7 +2646,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3298083620655224249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2741,7 +2733,7 @@ ArticulationBody:
   m_GameObject: {fileID: 2406934849463922233}
   m_Enabled: 1
   m_Mass: 0.2
-  m_ParentAnchorPosition: {x: 0.0000000253893, y: -0.08728659, z: 0.10710561}
+  m_ParentAnchorPosition: {x: 0.0000000253893, y: -0.08728659, z: 0.107105605}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -2782,7 +2774,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &686656326516962697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3069,7 +3060,7 @@ ArticulationBody:
   m_GameObject: {fileID: 2801057719825620887}
   m_Enabled: 1
   m_Mass: 0.8
-  m_ParentAnchorPosition: {x: -0.0000000066070234, y: -0.44427726, z: -0.029837893}
+  m_ParentAnchorPosition: {x: -0.0000000066070234, y: -0.44427726, z: -0.02983789}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -3110,7 +3101,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3374735579250341040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3665,7 +3655,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1889587872178942833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3710,7 +3699,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3344443089607964028}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -3730,7 +3719,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MotorUpdateMode: 2
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}
@@ -3786,17 +3774,14 @@ MonoBehaviour:
     PowerVector: {x: 20, y: 20, z: 20}
   - Muscle: articulation:mixamorig:RightHand
     PowerVector: {x: 40, y: 40, z: 40}
+  MotorScale: 1
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 40
+  NaturalFrequency: 20
   ForceScale: 0.3
-  KP_Stiffness: 1
-  ForceScaleSPD: 1
   skipCollisionSetup: 0
-  updateDebugValues: 1
-  jointVelocityInReducedSpace: []
 --- !u!114 &6208207422085220428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3870,7 +3855,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   DecisionPeriod: 2
-  TakeActionsBetweenDecisions: 1
+  TakeActionsBetweenDecisions: 0
 --- !u!114 &6080407595607735492
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3905,11 +3890,7 @@ MonoBehaviour:
   DistanceFactor: 0
   ComPositionReward: 0
   VelDifferenceError: 0
-  VelAvDiffTwoStepsError: 0
-  VelAvDiffFourStepsError: 0
   VelDifferenceReward: 0
-  VelDiffTwoStepsReward: 0
-  VelDiffFourStepsReward: 0
   KineticEnergyMetric: 0
   EnergyMinimReward: 0
   HeadHeightDistance: 0
@@ -3951,6 +3932,9 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
+  RagDollJointPositions: []
+  RagDollJointVelocities: []
+  RagDollJointAccelerations: []
   RagDollJointForces: []
   EnergyAngularMocap: 0
   EnergyAngularRagDoll: 0
@@ -4274,7 +4258,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1069845030171173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5076,7 +5059,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4818937704350033472}
-  m_LocalRotation: {x: -0, y: -0.28931698, z: -0, w: 0.95723337}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5086,7 +5069,7 @@ Transform:
   - {fileID: 4323325860100505826}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: -33.634, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &884079593499418970
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5458,14 +5441,11 @@ MonoBehaviour:
   ClipInput: 0
   NoJumpsInMockMode: 1
   TargetMovementVector: {x: 0, y: 0}
-  TargetMovementMagnatude: 0
   MovementVector: {x: 0, y: 0}
   MovementMagnatude: 0
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
-  Stand: 0
-  WalkOrRun: 0
   DesiredHorizontalVelocity: {x: 0, y: 0}
   HorizontalDirection: {x: 0, y: 0, z: 0}
   UseHumanInput: 1
@@ -5770,7 +5750,7 @@ ArticulationBody:
   m_GameObject: {fileID: 5283626021582839553}
   m_Enabled: 1
   m_Mass: 9.5
-  m_ParentAnchorPosition: {x: -0.00000009313226, y: 0.10181594, z: 0.00131521}
+  m_ParentAnchorPosition: {x: -0.000000092200935, y: 0.10181594, z: 0.00131521}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -5811,7 +5791,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &4055032002961887042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6309,7 +6288,7 @@ ArticulationBody:
   m_GameObject: {fileID: 6247772283257908350}
   m_Enabled: 1
   m_Mass: 8.3
-  m_ParentAnchorPosition: {x: -0.082077816, y: -0.06751716, z: -0.01599555}
+  m_ParentAnchorPosition: {x: -0.082077816, y: -0.06751716, z: -0.015995556}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -6350,7 +6329,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &3921449772896584777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7088,7 +7066,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5609788347423163724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7493,7 +7470,7 @@ ArticulationBody:
   m_GameObject: {fileID: 7707136337587637937}
   m_Enabled: 1
   m_Mass: 7
-  m_ParentAnchorPosition: {x: -0.0000000029279446, y: 0.09100012, z: -0.013734171}
+  m_ParentAnchorPosition: {x: -0.0000000033936058, y: 0.09100012, z: -0.013734171}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -7534,7 +7511,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1089207424673406709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7780,7 +7756,7 @@ ArticulationBody:
   m_GameObject: {fileID: 7832255405897995632}
   m_Enabled: 1
   m_Mass: 0.2
-  m_ParentAnchorPosition: {x: 0.000000037859138, y: -0.08728671, z: 0.1071056}
+  m_ParentAnchorPosition: {x: 0.000000030408557, y: -0.08728671, z: 0.1071056}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -7821,7 +7797,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5935338532280037239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8715,7 +8690,7 @@ ArticulationBody:
   m_GameObject: {fileID: 8712754529065121797}
   m_Enabled: 1
   m_Mass: 0.4
-  m_ParentAnchorPosition: {x: -0.28328836, y: -0.0000002437897, z: 0.00000036674368}
+  m_ParentAnchorPosition: {x: -0.28328836, y: -0.0000002437897, z: 0.00000037419426}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -8756,7 +8731,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5945626320986924883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9077,7 +9051,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5626104590413483879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9164,7 +9137,7 @@ ArticulationBody:
   m_GameObject: {fileID: 9065229051223931021}
   m_Enabled: 1
   m_Mass: 8.3
-  m_ParentAnchorPosition: {x: 0.08207796, y: -0.067516625, z: -0.015995592}
+  m_ParentAnchorPosition: {x: 0.08207796, y: -0.067516625, z: -0.015995594}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -9205,7 +9178,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &7502000921670637321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9304,7 +9276,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &1466592492902520389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9446,7 +9417,7 @@ ArticulationBody:
   m_GameObject: {fileID: 9205884062941966738}
   m_Enabled: 1
   m_Mass: 2.3
-  m_ParentAnchorPosition: {x: -0.1059237, y: -0.005245775, z: -0.022321196}
+  m_ParentAnchorPosition: {x: -0.1059237, y: -0.005245775, z: -0.022321204}
   m_ParentAnchorRotation: {x: 0, y: 0, z: 0, w: 1}
   m_AnchorPosition: {x: 0, y: 0, z: 0}
   m_AnchorRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -9487,7 +9458,6 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
-  m_CollisionDetectionMode: 0
 --- !u!114 &5309548194812101407
 MonoBehaviour:
   m_ObjectHideFlags: 0
