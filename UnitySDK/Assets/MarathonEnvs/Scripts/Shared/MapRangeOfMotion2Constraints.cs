@@ -185,9 +185,11 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
         int numsensors = GetComponentsInChildren<SensorBehavior>().Length;
         int num_miscelaneous = GetComponent<ProcRagdollAgent>().calculateDreConObservationsize();
 
-        int ObservationDimensions = DegreesOfFreedom + numsensors + num_miscelaneous;
+        //apparently the number of sensors is already acocunted for in the degrees of freedom, so:
+        //   int ObservationDimensions = DegreesOfFreedom + numsensors + num_miscelaneous;
+        int ObservationDimensions = DegreesOfFreedom +  num_miscelaneous;
         bp.BrainParameters.VectorObservationSize = ObservationDimensions;
-        Debug.Log("Space of perceptions calculated at:" + bp.BrainParameters.VectorObservationSize + " continuous dimensions, with: " + "sensors: " + numsensors + "and DreCon miscelaneous: " + num_miscelaneous);
+        Debug.Log("Space of perceptions calculated at:" + bp.BrainParameters.VectorObservationSize + " continuous dimensions, with: " + " sensors: " + numsensors + "and DreCon miscelaneous: " + num_miscelaneous);
 
 
     }
