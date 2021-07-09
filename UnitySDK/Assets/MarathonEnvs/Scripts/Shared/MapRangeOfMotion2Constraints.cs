@@ -30,7 +30,9 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
     [SerializeField]
     bool debugWithLargestROM = false;
 
-
+    [Tooltip("extra range for upper and lower angles of moving articulations ")]
+    [SerializeField]
+    float extraoffset = 10;
 
 
     public void ConfigureTrainingForRagdoll(int minROM)
@@ -64,6 +66,8 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
         int DegreesOfFreedom = 0;
 
+
+  
         foreach (ArticulationBody body in articulationBodies)
         {
             if (body.isRoot)
@@ -96,8 +100,8 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
                 isLocked = false;
                 body.twistLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.xDrive;
-                drive.lowerLimit = rom.lower.x;
-                drive.upperLimit = rom.upper.x;
+                drive.lowerLimit = rom.lower.x - extraoffset;
+                drive.upperLimit = rom.upper.x + extraoffset;
                 body.xDrive = drive;
                 if (debugWithLargestROM)
                 {
@@ -112,14 +116,14 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
                 isLocked = false;
                 body.swingYLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.yDrive;
-                drive.lowerLimit = rom.lower.y;
-                drive.upperLimit = rom.upper.y;
+                drive.lowerLimit = rom.lower.y - extraoffset;
+                drive.upperLimit = rom.upper.y + extraoffset;
                 body.yDrive = drive;
 
                 if (debugWithLargestROM)
                 {
-                    drive.lowerLimit = -170;
-                    drive.upperLimit = +170;
+                    drive.lowerLimit = -170 - extraoffset;
+                    drive.upperLimit = +170 + extraoffset;
                 }
 
 
@@ -130,8 +134,8 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
                 isLocked = false;
                 body.swingZLock = ArticulationDofLock.LimitedMotion;
                 var drive = body.zDrive;
-                drive.lowerLimit = rom.lower.z;
-                drive.upperLimit = rom.upper.z;
+                drive.lowerLimit = rom.lower.z - extraoffset;
+                drive.upperLimit = rom.upper.z + extraoffset;
                 body.zDrive = drive;
 
                 if (debugWithLargestROM)
@@ -159,10 +163,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
     void ApplyDoFOnBehaviorParameters(int DegreesOfFreedom)
     {
-        // due to an obscure function call in the setter of ActionSpec inside bp, this can only run at runtime
-        //the function is called SyncDeprecatedActionFields()
-
-
+       
         BehaviorParameters bp = GetComponent<BehaviorParameters>();
 
         Unity.MLAgents.Actuators.ActionSpec myActionSpec = bp.BrainParameters.ActionSpec;
@@ -176,14 +177,11 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
 
 
         /*
-         * To calculate the space of observations, apparently the formula is:
-        number of colliders(19) *12 +number of actions(54) + number of sensors(6) + misc addition observations(16) = 304
-        correction: it seeems to be:
-        number of actions + number of sensors + misc additional observations = 101
+         * To calculate the space of observations:
         
         */
 
-        //int numcolliders = GetComponentsInChildren<CapsuleCollider>().Length; //notice the sensors are Spherecolliders, so not included in this count
+     
         int numsensors = GetComponentsInChildren<SensorBehavior>().Length;
         int num_miscelaneous = GetComponent<ProcRagdollAgent>().calculateDreConObservationsize();
 
