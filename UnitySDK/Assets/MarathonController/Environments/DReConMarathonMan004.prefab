@@ -219,6 +219,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &7827208066241305017
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -388,6 +389,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &2732715592970027266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -697,6 +699,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &243442581026114944
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1162,6 +1165,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &2854627656309620980
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1259,6 +1263,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &2674076991219822234
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1417,6 +1422,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &4771879105536026037
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1676,6 +1682,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &7397536721267974287
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2646,6 +2653,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &3298083620655224249
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2774,6 +2782,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &686656326516962697
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3101,6 +3110,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &3374735579250341040
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3655,6 +3665,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &1889587872178942833
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3719,6 +3730,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MotorUpdateMode: 1
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}
@@ -3774,14 +3786,18 @@ MonoBehaviour:
     PowerVector: {x: 20, y: 20, z: 20}
   - Muscle: articulation:mixamorig:RightHand
     PowerVector: {x: 40, y: 40, z: 40}
-  MotorScale: 1
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
   NaturalFrequency: 20
   ForceScale: 0.3
+  KP_Stiffness: 50
+  ForceScaleSPD: 0.3
   skipCollisionSetup: 0
+  updateDebugValues: 0
+  jointVelocityInReducedSpace: []
+  _referenceTransforms: []
 --- !u!114 &6208207422085220428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3890,7 +3906,11 @@ MonoBehaviour:
   DistanceFactor: 0
   ComPositionReward: 0
   VelDifferenceError: 0
+  VelAvDiffTwoStepsError: 0
+  VelAvDiffFourStepsError: 0
   VelDifferenceReward: 0
+  VelDiffTwoStepsReward: 0
+  VelDiffFourStepsReward: 0
   KineticEnergyMetric: 0
   EnergyMinimReward: 0
   HeadHeightDistance: 0
@@ -3932,9 +3952,6 @@ MonoBehaviour:
   MocapBodyStats: []
   RagDollBodyStats: []
   PreviousActions: []
-  RagDollJointPositions: []
-  RagDollJointVelocities: []
-  RagDollJointAccelerations: []
   RagDollJointForces: []
   EnergyAngularMocap: 0
   EnergyAngularRagDoll: 0
@@ -3959,6 +3976,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   info2store: {fileID: 11400000, guid: 6acc0a5db3e0347948d904060adef2ea, type: 2}
   debugWithLargestROM: 0
+  extraoffset: 10
 --- !u!1 &3395367739535352016
 GameObject:
   m_ObjectHideFlags: 0
@@ -4258,6 +4276,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &1069845030171173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5441,11 +5460,14 @@ MonoBehaviour:
   ClipInput: 0
   NoJumpsInMockMode: 1
   TargetMovementVector: {x: 0, y: 0}
+  TargetMovementMagnatude: 0
   MovementVector: {x: 0, y: 0}
   MovementMagnatude: 0
   CameraRotation: {x: 0, y: 0}
   Jump: 0
   Backflip: 0
+  Stand: 0
+  WalkOrRun: 0
   DesiredHorizontalVelocity: {x: 0, y: 0}
   HorizontalDirection: {x: 0, y: 0, z: 0}
   UseHumanInput: 1
@@ -5492,6 +5514,7 @@ MonoBehaviour:
   Lenght: 0
   IsLoopingAnimation: 0
   _rigidbodyRoot: {fileID: 0}
+  _ragdollTransforms: []
   RequestCamera: 0
   CameraFollowMe: 0
   CameraTarget: {fileID: 0}
@@ -5791,6 +5814,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &4055032002961887042
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6329,6 +6353,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &3921449772896584777
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7066,6 +7091,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &5609788347423163724
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7511,6 +7537,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &1089207424673406709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7797,6 +7824,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &5935338532280037239
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8731,6 +8759,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &5945626320986924883
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9051,6 +9080,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &5626104590413483879
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9178,6 +9208,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &7502000921670637321
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9276,6 +9307,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &1466592492902520389
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9458,6 +9490,7 @@ ArticulationBody:
   m_JointFriction: 0.05
   m_Immovable: 0
   m_UseGravity: 1
+  m_CollisionDetectionMode: 0
 --- !u!114 &5309548194812101407
 MonoBehaviour:
   m_ObjectHideFlags: 0
