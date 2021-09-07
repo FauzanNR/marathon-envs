@@ -163,7 +163,11 @@ public class Muscles : MonoBehaviour
                 break;
 
             case (MotorMode.stablePD):
-                UpdateMotor = StablePD;
+                UpdateMotor = null;
+
+                //UpdateMotor = StablePD;
+                //NOTE: this is not yet working, the implementaiton is in progress
+
                 break;
 
             case (MotorMode.PDopenloop):
@@ -556,6 +560,7 @@ public class Muscles : MonoBehaviour
 
     void StablePD(ArticulationBody joint, Vector3 input, float actionTimeDelta)
     {
+
 
         Vector3 targetNormalizedRotation =  input;
 
