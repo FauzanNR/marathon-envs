@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+guid: bd6425be147af495d8febdfc8b435183
+=======
 guid: 61d9c095b81096d48aed14acd3e3f029
+>>>>>>> feature/integrate-stable-pd
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

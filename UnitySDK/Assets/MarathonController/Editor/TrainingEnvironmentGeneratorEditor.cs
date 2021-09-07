@@ -85,7 +85,7 @@ public class TrainingEnvironmentGeneratorEditor : Editor
 
         // Set the path,
         // and name it as the GameObject's name with the .Prefab format
-        string localPath = "Assets/MarathonController/Environments/" + env.name + ".prefab";
+        string localPath = "Assets/MarathonController/GeneratedEnvironments/" + env.name + ".prefab";
 
         // Make sure the file name is unique, in case an existing Prefab has the same name.
         string uniqueLocalPath = AssetDatabase.GenerateUniqueAssetPath(localPath);

@@ -17,7 +17,7 @@ public static class Utils
     // }
 
 
-    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)
+    public static Vector3 GetAngularVelocity(Quaternion from, Quaternion to, float timeDelta = 1f)
     {
         Vector3 fromInDeg = Utils.GetSwingTwist(from);
         Vector3 toInDeg = Utils.GetSwingTwist(to);
@@ -25,13 +25,13 @@ public static class Utils
         return AngularVelocityInReducedCoordinates(fromInDeg, toInDeg, timeDelta);
     }
 
-    public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta)
+
+    //you can also use this to calculate acceleration, right?
+    public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta = 1f)
     {
         Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
         Vector3 angularVelocity = diff / timeDelta;
         return angularVelocity;
-
-
     }
 
 
@@ -94,9 +94,22 @@ public static class Utils
     }
 
 
+    public static ArticulationReducedSpace GetReducedSpaceFromTargetVector3(Vector3 target) {
+
+        ArticulationReducedSpace ars = new ArticulationReducedSpace();
+        ars.dofCount = 3;
+        ars[0] = target.x;
+        ars[1] = target.y;
+        ars[2] = target.z;
+
+        return ars;
+
+    }
+
+
     public static Vector3 GetArticulationReducedSpaceInVector3(ArticulationReducedSpace ars)
     {
-        Vector3 result = new Vector3();
+        Vector3 result = Vector3.zero;// new Vector3();
 
         if (ars.dofCount > 0)
             result.x = ars[0];
@@ -107,7 +120,13 @@ public static class Utils
 
         return result;
     }
+    // Return rotation from one rotation to another
+    public static Quaternion FromToRotation(Quaternion from, Quaternion to)
+    {
+        if (to == from) return Quaternion.identity;
 
+        return to * Quaternion.Inverse(from);
+    }
 
 
 }

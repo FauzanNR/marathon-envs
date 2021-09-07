@@ -1,0 +1,2 @@
+This is the folder where the environments generated procedurally will be stored
+To generate an environment procedurally, see the scene Assets/MarathonController/Scenes/2.GenerateTrainingEnvFromAnimatedCharacter

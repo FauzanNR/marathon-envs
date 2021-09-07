@@ -94,7 +94,8 @@ public class ObservationStats : MonoBehaviour
                 .Distinct()
                 .ToList();
 
-        _bodyParts = _bodyParts
+
+        _bodyParts  =   _bodyParts
             .Where(x => x.enabled)
             .Where(x => !x.isTrigger)
             .Where(x=> {
@@ -105,6 +106,8 @@ public class ObservationStats : MonoBehaviour
             .Distinct()
             .ToList();
 
+
+      
         Stats = _bodyParts
             .Select(x => new Stat { Name = x.name })
             .ToList();
@@ -112,7 +115,7 @@ public class ObservationStats : MonoBehaviour
         //TODO: this is quite sketchy, we should have a better way to deal with this
         if (_root == null)
         {
-            Debug.Log("in game object: " + name + "my rootname is: " + rootName);
+           // Debug.Log("in game object: " + name + " my rootname is: " + rootName);
             if (_rigidbodyParts?.Count > 0)
                 _root = _rigidbodyParts.First(x => x.name == rootName).gameObject;
             else

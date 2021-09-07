@@ -15,7 +15,7 @@ public class ProcRagdollAgent : Agent
     [Header("Settings")]
     public float FixedDeltaTime = 1f / 60f;
     public float ActionSmoothingBeta = 0.2f;
-    public bool ReproduceDReCon;
+    public bool ReproduceDReCon = true;
    
 
     [Header("Camera")]
@@ -29,28 +29,25 @@ public class ProcRagdollAgent : Agent
     public bool debugCopyMocap;
     public bool ignorActions;
     public bool dontResetOnZeroReward;
-    public bool dontSnapMocapToRagdoll;
+    public bool dontSnapMocapToRagdoll = true;
     public bool DebugPauseOnReset;
     public bool dontResetWhenOutOfBounds;
 
 
 
-    [Header("Read Only")]
-    
-    [SerializeField]
-    Vector3[] targetVelocity;
-    [SerializeField]
-    Vector3[] jointVelocityInReducedSpace;
 
 
 
 
-    List<Rigidbody> _mocapBodyParts;
+    //List<Rigidbody> _mocapBodyParts;
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
     Rewards2Learn _rewards2Learn;
-    Muscles _ragDollSettings;
+    Muscles _ragDollMuscles;
     List<ArticulationBody> _motors;
+
+ 
+
     MarathonTestBedController _debugController;
     InputController _inputController;
     SensorObservations _sensorObservations;
@@ -60,7 +57,7 @@ public class ProcRagdollAgent : Agent
 
 
     bool _hasLazyInitialized;
-    float[] _smoothedActions;
+    //float[] _smoothedActions;
     float[] _mocapTargets;
 
     [Space(16)]
@@ -69,7 +66,11 @@ public class ProcRagdollAgent : Agent
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
 
-    float timeDelta;
+
+
+
+    float observationTimeDelta;
+    float actionTimeDelta;
     void Awake()
     {
         if (RequestCamera && CameraTarget != null)
@@ -109,9 +110,9 @@ public class ProcRagdollAgent : Agent
     {
         Assert.IsTrue(_hasLazyInitialized);
 
-        timeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-        _mapAnim2Ragdoll.OnStep(timeDelta);
-        _observations2Learn.OnStep(timeDelta);
+        observationTimeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+        _mapAnim2Ragdoll.OnStep(observationTimeDelta);
+        _observations2Learn.OnStep(observationTimeDelta);
       
 
         if (ReproduceDReCon)
@@ -222,11 +223,11 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
         float[] vectorAction = actionBuffers.ContinuousActions.Select(x=>x).ToArray();
 
-        float timeDelta = Time.fixedDeltaTime;
+        actionTimeDelta = Time.fixedDeltaTime;
         if (!_decisionRequester.TakeActionsBetweenDecisions)
-            timeDelta = timeDelta*_decisionRequester.DecisionPeriod;
-        _mapAnim2Ragdoll.OnStep(timeDelta);
-        _rewards2Learn.OnStep(timeDelta);
+            actionTimeDelta = actionTimeDelta*_decisionRequester.DecisionPeriod;
+        _mapAnim2Ragdoll.OnStep(actionTimeDelta);
+        _rewards2Learn.OnStep(actionTimeDelta);
 
         bool shouldDebug = _debugController != null;
         bool dontUpdateMotor = false;
@@ -267,18 +268,12 @@ public class ProcRagdollAgent : Agent
                 targetNormalizedRotation.z = vectorAction[i++];
             if (!ignorActions)
             {
-                UpdateMotor(m, targetNormalizedRotation);
+             
+                _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
             }
 
 
-            //DEBUG: to keep track of the values, and see if they seem reasonable
-            targetVelocity[j] = GetTargetVelocity(m, targetNormalizedRotation,timeDelta);
-
-            Vector3 temp = Utils.GetArticulationReducedSpaceInVector3(m.jointVelocity);
-
-
-
-            jointVelocityInReducedSpace[j] = temp;
+         
             j++;
          
         }
@@ -445,12 +440,16 @@ public class ProcRagdollAgent : Agent
         }
 
         _mapAnim2Ragdoll = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
-        _mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
+        //_mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
 
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
-        _ragDollSettings = GetComponent<Muscles>();
+        _ragDollMuscles = GetComponent<Muscles>();
+      
+
+
+
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _sensorObservations = GetComponent<SensorObservations>();
 
@@ -462,9 +461,7 @@ public class ProcRagdollAgent : Agent
             .ToList();
         //var individualMotors = new List<float>();
 
-        //for debug purposes:
-        targetVelocity = new Vector3[_motors.Count];
-        jointVelocityInReducedSpace  = new Vector3[_motors.Count];
+        
 
 
 
@@ -476,6 +473,9 @@ public class ProcRagdollAgent : Agent
 
 
         _mapAnim2Ragdoll.OnAgentInitialize();
+        //it can only be used AFTER _mapAnim2Ragdoll is initialzed.
+        _ragDollMuscles.SetKinematicReference(_mapAnim2Ragdoll);//only used in mode PDopenloop
+
         _observations2Learn.OnAgentInitialize();
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
@@ -486,7 +486,7 @@ public class ProcRagdollAgent : Agent
     public override void OnEpisodeBegin()
     {
         Assert.IsTrue(_hasAwake);
-        _smoothedActions = null;
+        //_smoothedActions = null;
         debugCopyMocap = false;
 
         Vector3 resetVelocity = Vector3.zero;
@@ -532,271 +532,6 @@ public class ProcRagdollAgent : Agent
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
     }
 
-    /*
-    float[] GetMocapTargets()
-    {
-        if (_mocapTargets == null)
-        {
-            _mocapTargets = _motors
-                .Where(x => !x.isRoot)
-                .SelectMany(x => {
-                    List<float> list = new List<float>();
-        			if (x.jointType != ArticulationJointType.SphericalJoint)
-                        return list.ToArray();
-                    if (x.twistLock == ArticulationDofLock.LimitedMotion)
-                        list.Add(0f);
-                    if (x.swingYLock == ArticulationDofLock.LimitedMotion)
-                        list.Add(0f);
-                    if (x.swingZLock == ArticulationDofLock.LimitedMotion)
-                        list.Add(0f);
-                    return list.ToArray();
-                })
-                .ToArray();
-        }
-        int i = 0;
-        foreach (var joint in _motors)
-        {
-            if (joint.isRoot)
-                continue;
-            Rigidbody mocapBody = _mocapBodyParts.First(x => x.name == joint.name);
-            Vector3 targetRotationInJointSpace = -(Quaternion.Inverse(joint.anchorRotation) * Quaternion.Inverse(mocapBody.transform.localRotation) * joint.parentAnchorRotation).eulerAngles;
-            targetRotationInJointSpace = new Vector3(
-                Mathf.DeltaAngle(0, targetRotationInJointSpace.x),
-                Mathf.DeltaAngle(0, targetRotationInJointSpace.y),
-                Mathf.DeltaAngle(0, targetRotationInJointSpace.z));
-			if (joint.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = joint.xDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.x - midpoint) / scale;
-                _mocapTargets[i] = target;
-                i++;
-            }
-            if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = joint.yDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.y - midpoint) / scale;
-                _mocapTargets[i] = target;
-                i++;
-            }
-            if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = joint.zDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var target = (targetRotationInJointSpace.z - midpoint) / scale;
-                _mocapTargets[i] = target;
-                i++;
-            }
-        }
-        return _mocapTargets;
-    }*/
-
-    void UpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation)
-    {
-        Vector3 power = Vector3.zero;
-        try
-        {
-            power = _ragDollSettings.MusclePowers.First(x => x.Muscle == joint.name).PowerVector;
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log("there is no muscle for joint " + joint.name);
-
-        }
-        // LegacyUpdateMotor(joint, targetNormalizedRotation, power);
-        NewUpdateMotor(joint, targetNormalizedRotation, power);
-    }
-    void LegacyUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
-    {
-        power *= _ragDollSettings.Stiffness;
-        // power = new Vector3(
-        //     _ragDollSettings.Stiffness, 
-        //     _ragDollSettings.Stiffness, 
-        //     _ragDollSettings.Stiffness);
-        float damping = _ragDollSettings.Damping;
-        float forceLimit = _ragDollSettings.ForceLimit;
-        
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
-            drive.target = target;
-            drive.stiffness = power.x;
-            drive.damping = damping;
-            drive.forceLimit = forceLimit;
-            joint.xDrive = drive;
-        }
-
-        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            drive.target = target;
-            drive.stiffness = power.y;
-            drive.damping = damping;
-            drive.forceLimit = forceLimit;
-            joint.yDrive = drive;
-        }
-
-        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
-            drive.target = target;
-            drive.stiffness = power.z;
-            drive.damping = damping;
-            drive.forceLimit = forceLimit;
-            joint.zDrive = drive;
-        }        
-    }
-
-
-
-
-    private static Vector3 GetTargetVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float timeDelta) {
-
-        Vector3 targetVelocity = new Vector3(0, 0, 0);
-
-        Vector3 currentRotationValues = Utils.GetSwingTwist(joint.transform.localRotation);
-
-
-
-
-        //why do you never set up the targetVelocity?
-        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
-
-
-        Vector3 target = new Vector3();
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            target.x = midpoint + (targetNormalizedRotation.x * scale);
-            
-      }
-
-        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            target.y = midpoint + (targetNormalizedRotation.y * scale);
-            
-          
-        }
-
-        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            target.z = midpoint + (targetNormalizedRotation.z * scale);
-
-        }
-
-        //this is how you calculate the angular velocity in MapAnim2Ragdoll
-        //Utils.GetAngularVelocity(cur, last, timeDelta)
-
-        //Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity)
-
-
-
-        targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
-
-
-
-
-        return targetVelocity;
-
-
-
-    }
-
-
-    void NewUpdateMotor(ArticulationBody joint, Vector3 targetNormalizedRotation, Vector3 power)
-    {
-        // For a physically realistic simulation - ,  
-        var m = joint.mass;
-        var d = _ragDollSettings.DampingRatio; // d should be 0..1.
-        var n = _ragDollSettings.NaturalFrequency; // n should be in the range 1..20
-        var k = Mathf.Pow(n,2) * m;
-        var c = d * (2 * Mathf.Sqrt(k * m));
-        var stiffness = k;
-        var damping = c;
-
-        //why do you never set up the targetVelocity?
-        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
-
-
-        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, timeDelta);
-
-
-
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
-            drive.target = target;
-
-            drive.targetVelocity = targetVel.x;  
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.x * _ragDollSettings.ForceScale;
-            joint.xDrive = drive;
-        }
-
-        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            drive.target = target;
-            // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.y;
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.y * _ragDollSettings.ForceScale;
-            joint.yDrive = drive;
-        }
-
-        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
-
-            drive.target = target;
-            //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.z;
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.z * _ragDollSettings.ForceScale;
-            joint.zDrive = drive;
-        }
-    }
 
     void FixedUpdate()
     {

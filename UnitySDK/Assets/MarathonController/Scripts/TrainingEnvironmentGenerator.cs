@@ -28,6 +28,10 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
     [SerializeField]
     Transform characterReferenceRoot;
 
+    [Tooltip("do not include the root nor the neck")]
+    [SerializeField]
+    Transform[] characterSpine;
+
 
     [Tooltip("fingers will be excluded from physics-learning")]
     [SerializeField]
@@ -131,10 +135,16 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
         character4training = Instantiate(characterReference.gameObject).GetComponent<Animator>();
         character4training.gameObject.SetActive(true);
 
-        //we assume those are already there (i.e., an animated character with a controller) 
-        //character4training.gameObject.AddComponent<CharacterController>();
-        //MocapAnimatorController mac = character4training.gameObject.AddComponent<MocapAnimatorController>();
-        //mac.IsGeneratedProcedurally = true;
+        //we assume there is an animated controller
+        //
+        //
+        //possibly, we will need to add  controllers):
+
+
+
+        if (character4training.GetComponent<IAnimationController>() == null)
+            character4training.gameObject.AddComponent<DefaultAnimationController>();
+
 
 
         MapAnim2Ragdoll mca =character4training.gameObject.AddComponent<MapAnim2Ragdoll>();
@@ -202,25 +212,6 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
 
 
-        /*
-        AnimationController animationcontroller = character4training.GetComponent<AnimationController>();
-
-
-        
-        if(animationcontroller != null)
-        //we make sure they are in the same layers:
-        {
-
-           int  _layerMask = 1 << ragdollMarathon.gameObject.layer;
-            _layerMask |= 1 << character4training.gameObject.layer;
-            _layerMask = ~(_layerMask);
-
-            character4training.GetComponent<AnimationController>()._layerMask = _layerMask;
-            //TODO: this will only work if the character is animated with an AnimationController. We should REMOVE this dependency
-
-        }
-        */
-
 
 
 
@@ -278,7 +269,9 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         GameObject temp = GameObject.Instantiate(target.gameObject);
         
 
-        //we remove everything we do not need:
+        //1. we remove everything we do not need:
+
+        //1.1 we remove meshes
         SkinnedMeshRenderer[] renderers = temp.GetComponentsInChildren<SkinnedMeshRenderer>();
         foreach (SkinnedMeshRenderer rend in renderers)
         {
@@ -289,7 +282,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         }
 
 
-        //we remove everything except the transform
+        //1.2 we remove everything except the transforms
         UnityEngine.Component[] list = temp.GetComponents(typeof(UnityEngine.Component));
         foreach (UnityEngine.Component c in list) {
 
@@ -303,7 +296,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         }
 
-        // remove any renderers from the ragdoll
+        //1.3 we also remove any renderers from the ragdoll
         var meshNamesToDelete = temp.GetComponentsInChildren<MeshRenderer>()
             .Select(x=>x.name)
             .ToArray();
@@ -320,39 +313,41 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
-        //it might be important to have this BEFORE we add ArticulationBody members, doing it afterwards, and having it active, makes the entire thing crash 
-        temp.transform.parent = trainingenv.transform;
-        temp.gameObject.SetActive(false);
 
+        //1.4 we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
 
-       
         Transform[] pack = temp.GetComponentsInChildren<Transform>();
-
         Transform root = pack.First<Transform>(x => x.name == characterReferenceRoot.name);
-
-
-
         Transform[] joints = root.transform.GetComponentsInChildren<Transform>();
-
-
-
         List<Transform> childstodelete = new List<Transform>();
 
-        //we drop the sons of the limbs (to avoid including fingers in the following procedural steps)
         foreach (Transform t in characterReferenceHands) {
             string limbname = t.name;// + "(Clone)";
-            Debug.Log("checking sons of: " + limbname);
+            //Debug.Log("checking sons of: " + limbname);
             Transform limb = joints.First<Transform>(x => x.name == limbname);
 
-            
             Transform[] sons = limb.GetComponentsInChildren<Transform>();
             foreach (Transform t2 in sons)
             {
-                childstodelete.Add(t2);
+                if(t2.name != limb.name)
+                    childstodelete.Add(t2);
 
             }
+        }
+
+        Transform headJoint = joints.First<Transform>(x => x.name == characterReferenceHead.name);
+        //if there are eyes or head top, we also remove them
+        foreach (Transform child in headJoint)
+        {
+                childstodelete.Add(child);
 
         }
+        
+
+
+
+
+
 
         List<Transform> listofjoints = new List<Transform>(joints);
         foreach (Transform t2 in childstodelete)
@@ -364,21 +359,26 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
 
 
+        //2. We add articulationBody and Collider components
 
+        //2.1 for each remaining joint we add an articulationBody and a collider for each bone
         joints = listofjoints.ToArray();
         articulatedJoints = new List<ArticulationBody>();
 
-        var colliders = new List<CapsuleCollider>();
+        List<Collider> colliders = new List<Collider>();
+
+        List<HandleOverlap> hos = new List<HandleOverlap>();
 
         foreach (Transform j in joints) {
+
+     
             ArticulationBody ab = j.gameObject.AddComponent<ArticulationBody>();
             ab.anchorRotation = Quaternion.identity;
             ab.mass = 0.1f;
             ab.jointType = ArticulationJointType.FixedJoint;
             articulatedJoints.Add(ab);
 
-            //note: probably not needed
-            string namebase = j.name.Replace("(Clone)", "");
+            string namebase = j.name.Replace("(Clone)", "");//probably not needed
 
             j.name = "articulation:" + namebase;
 
@@ -391,10 +391,61 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             c.height = .06f;
             c.radius = c.height;
             colliders.Add(c);
+
+
+           HandleOverlap ho= go.AddComponent<HandleOverlap>();
+            hos.Add(ho);
+
+            go.AddComponent<IgnoreColliderForObservation>();
+
         }
 
-        List<string> colliderNamesToDelete = new List<string>();
-        foreach (var c in colliders)
+
+        //2.1bis we also handle the Parents in HandleOverlap:
+        foreach (HandleOverlap ho in hos) {
+
+
+
+            //the dad is the articulationBody, the grandDad is the articulationBody's parent
+            string nameDadRef = ho.transform.parent.parent.name;
+
+            if (nameDadRef == null) {
+                //Debug.Log("my name is: " + ho.name + "and I have no granddad");
+                continue;
+            }
+
+
+            string nameColliderDadRef = "collider:" + nameDadRef.Replace("articulation:", "");
+
+
+
+            Collider colliderDad = colliders.FirstOrDefault<Collider>(c => c.name.Equals(nameColliderDadRef));
+            if (colliderDad == null)
+            {
+                //Debug.Log("my name is: " + ho.name + "  and I have no collider Dad named " + nameColliderDadRef);
+                //this should happen only with the hips collider, because the granddad is not part of the articulationBody hierarchy
+                continue;
+
+            }
+
+            ho.Parent = colliderDad.gameObject;
+            //Debug.Log("set up " + ho.name + "  with dad: " + colliderDad.name);
+
+        }
+
+
+
+
+        //CAUTION! it is important to deactivate the hierarchy BEFORE we add ArticulationBody members,
+        // Doing it afterwards, and having it active, makes the entire thing crash 
+        temp.transform.parent = trainingenv.transform;
+        temp.gameObject.SetActive(false);
+
+
+        //2.2 we configure the colliders, in general
+
+        //  List<string> colliderNamesToDelete = new List<string>();
+        foreach (CapsuleCollider c in colliders)
         {
             string namebase = c.name.Replace("collider:", "");
             Transform j = joints.First(x=>x.name=="articulation:" + namebase);
@@ -402,38 +453,243 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             var articulatedDad = j.GetComponent<ArticulationBody>();
             if (articulatedDad == null)
                 continue;
+
+
+            //this works when childCount = 1
             j = joints.FirstOrDefault(x=>x.transform.parent.name=="articulation:" + namebase);
-            if (j==null)
+            if (j==null) //these are the end points: feets and hands and head
+
             {
+                if (namebase == characterReferenceHead.name)
+                {
+                    //neck displacement, relative to spine2:
+                    Vector3 displacement = c.transform.parent.position - c.transform.parent.parent.position;
+                    c.transform.position += displacement;
+                    c.radius = 2 * c.radius;
+
+                }
+
+                //Debug.Log("no joint found associated with: " + "articulation:"  + namebase);
                 // mark to delete as is an end point
-                colliderNamesToDelete.Add(c.name);
+                //colliderNamesToDelete.Add(c.name);
                 continue;
             }
-            var ab = j.GetComponent<ArticulationBody>();
+
+            ArticulationBody ab = j.GetComponent<ArticulationBody>();
             if (ab == null || ab.transform == joints[0])
                 continue;
             Vector3 dadPosition = articulatedDad.transform.position;
-            c.height = Vector3.Distance(dadPosition, j.transform.position);
+
+            Vector3 sonPosition = j.transform.position;
+
+            if (articulatedDad.transform.childCount > 2) //2 is the next AB plus the collider
+            {
+                sonPosition = Vector3.zero;
+                int i = 0;
+                foreach (ArticulationBody tmp in articulatedDad.GetComponentsInChildren<ArticulationBody>()) {
+                    sonPosition += tmp.transform.position;
+                    i++;
+                }
+                sonPosition /= i;
+            }
+
+
+      
 
             //ugly but it seems to work.
-            Vector3 direction = (dadPosition - j.transform.position).normalized;
+            Vector3 direction = (dadPosition - sonPosition).normalized;
             float[] directionarray = new float[3] { Mathf.Abs(direction.x), Mathf.Abs(direction.y), Mathf.Abs(direction.z) };
             float maxdir = Mathf.Max(directionarray);
             List<float> directionlist = new List<float>(directionarray);
             c.direction = directionlist.IndexOf(maxdir);
 
-            c.center = (j.transform.position - dadPosition) / 2.0f;
+            if(namebase != characterReferenceRoot.name)
+                c.center = (sonPosition - dadPosition) / 2.0f;
+
+            //to calculate the weight
+            c.height = Vector3.Distance(dadPosition, sonPosition);
             c.radius = c.height / 7;
             ab = c.transform.parent.GetComponent<ArticulationBody>();
-            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,2); //we are aproximating as a cylinder, assuming it wants it in kg
+            ab.mass = massdensity *  Mathf.PI * c.radius *c.radius *c.height * Mathf.Pow(10,3); //we are aproximating as a cylinder, assuming it wants it in kg
+
+
+
+
+
         }
-        // for now, do not delete end colliders as seams to delete feet
+        // we do not delete end colliders as seams to delete feet
         // foreach (var name in colliderNamesToDelete)
         // {
         //     var toDel = colliders.First(x=>x.name == name);
         //     colliders.Remove(toDel);
         //     GameObject.DestroyImmediate(toDel);
         // }
+
+
+        //2.3 we add a special treatment for the elements in the spine to have larger colliders: 
+
+
+        //we estimate the width of the character:
+        float bodyWidth = 0;
+
+        foreach (Transform spineJoint in characterSpine) {
+
+            int childCount = spineJoint.childCount;
+      
+
+            if (childCount > 1)//so, shoulders plus neck
+            {
+                int testIndex = 0;
+
+                Vector2 range = Vector2.zero;
+                foreach (Transform child in spineJoint)
+                {
+                    
+                    if (child.localPosition.x < range[0])
+                        range[0] = child.localPosition.x;
+                    if (child.localPosition.x > range[1])
+                        range[1] = child.localPosition.x;
+
+                    testIndex++;
+                }
+
+                bodyWidth = 2.5f * (range[1] - range[0]);
+
+                Debug.Log("spineJoint " + spineJoint.name + "has " + childCount +  "childs  and iterates" +  testIndex +    "which gives a body width estimated at: " + bodyWidth);
+
+                //TODO: remove colliders in shoulders.
+
+            }
+
+
+        }
+
+
+        //we put the right orientation and size:
+        foreach (CapsuleCollider c in colliders)
+        {
+
+            string namebase = c.name.Replace("collider:", "");
+
+            Transform spineJoint = characterSpine.FirstOrDefault(x => x.name == namebase);
+            if (spineJoint == null) {
+                if (namebase == characterReferenceRoot.name)//we check if it is the root
+                    spineJoint = characterReferenceRoot;
+                else
+                    continue;
+
+            }
+
+            Transform j = joints.First(x => x.name == "articulation:" + namebase);
+            // if not ArticulationBody, skip
+            var aDad = j.GetComponent<ArticulationBody>();
+            Vector3 dadPosition = aDad.transform.position;
+
+                       
+
+            //we put it horizontal
+            c.direction = 0;// direction.x;
+
+            
+            float wide = c.height;//the height was previously calculated as a distance between successors
+            c.radius = wide / 2;
+
+
+            //c.height = 2 * wide;
+            c.height = bodyWidth;
+
+
+
+           
+            aDad.mass = massdensity * Mathf.PI * c.radius * c.radius * c.height * Mathf.Pow(10, 3); //we are aproximating as a cylinder, assuming it wants it in kg
+           
+
+        }
+
+
+
+        //we remove colliders from the shoulders, since they interfer with the collision structure
+        foreach (Transform spineJoint in characterSpine)
+        {
+
+            int childCount = spineJoint.childCount;
+
+
+            if (childCount > 1)//so, shoulders plus neck
+            {
+               
+                foreach (Transform child in spineJoint)
+                {
+
+                    //a.we find the corresponding collider
+
+                    string nameRef = child.name;
+
+
+                    string nameColliderRef = "collider:" + nameRef;
+
+                    Collider C2delete = colliders.FirstOrDefault<Collider>(x => x.name.Equals(nameColliderRef));
+
+
+                    //b.we find the collider corresponding to its child, update the Parent chain to skip the reference cllider
+                    Transform t = child.GetChild(0);
+                    Collider Cson = colliders.FirstOrDefault<Collider>(x => x.name.Equals("collider:" + t.name));
+
+                    Cson.GetComponent<HandleOverlap>().Parent = C2delete.GetComponent<HandleOverlap>().Parent;
+
+                    //c.we destruct the corresponding collider
+                    colliders.Remove(C2delete);
+                    DestroyImmediate(C2delete.gameObject);
+
+                }
+
+            }
+
+
+        }
+
+
+
+
+
+
+
+
+
+        //2.4 we add sensors in feet to detect collisions
+        addSensorsInFeet(root);
+
+        //since we replaced 2 capsulecollider by two box collideR:
+        colliders = new List<Collider>(root.GetComponentsInChildren<Collider>());
+
+
+
+        //2.5 we make sure the key elements are added in the observations:
+
+
+        foreach (Collider c in colliders)
+        {
+
+            string namebase = c.name.Replace("collider:", "");
+
+            List<Transform> stuff2observe = new List<Transform>(characterReferenceHands);
+            stuff2observe.AddRange(characterReferenceFeet);
+            stuff2observe.Add(characterReferenceHead);
+            stuff2observe.Add(characterReferenceRoot);
+            Transform observationJoint = stuff2observe.FirstOrDefault(x => x.name == namebase);
+            if (observationJoint == null)
+            {
+                 continue;
+
+            }
+
+            IgnoreColliderForObservation ig = c.GetComponent<IgnoreColliderForObservation>();
+            if (ig != null)
+                DestroyImmediate(ig);
+
+        }
+
+
 
         //I add reference to the ragdoll, the articulationBodyRoot:
         target.ArticulationBodyRoot = root.GetComponent<ArticulationBody>();
@@ -443,11 +699,6 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             var overlap = articulationBody.gameObject.AddComponent<HandleOverlap>();
             overlap.Parent = target.ArticulationBodyRoot.gameObject;
         }
-
-        addSensorsInFeet(root);
-
-
-
 
 
 
@@ -474,6 +725,19 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         _ragdoll4training.CameraTarget = root;
 
 
+        // add the muscles. WE DID EARLIER
+        //generateMuscles();
+
+
+        // center the articulationBody masses:
+
+        muscleteam.CenterABMasses();
+
+        // choose the motor update mode
+        //muscleteam.MotorUpdateMode = Muscles.MotorMode.PDopenloop;
+        muscleteam.MotorUpdateMode = Muscles.MotorMode.PD;
+
+
         return _ragdoll4training;
 
     }
@@ -485,22 +749,69 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         Transform[] pack2 = root.GetComponentsInChildren<Transform>();
         foreach (Transform t in characterReferenceFeet)
         {
+
+            Transform footDadRef = t.parent;
+            Transform footDad = pack2.First<Transform>(x => x.name == "articulation:" + footDadRef.name);
+            Collider[] footColliders = footDad.GetComponentsInChildren<Collider>();
+
+
             Transform foot = pack2.First<Transform>(x => x.name == "articulation:" + t.name);
 
-            // base the senor on the collider
-            Collider footCollider = foot.GetComponentInChildren<Collider>();
+            // the sensor is based on the collider
+            //Collider[] footColliders = foot.GetComponentsInChildren<Collider>();
+            Collider footCollider = footColliders.First<Collider>(x => x.name.Contains(t.name));
 
-            GameObject sensorGameObject = GameObject.Instantiate(footCollider.gameObject);
-            sensorGameObject.name += "_sensor";
-            Collider sensor = sensorGameObject.GetComponent<Collider>();
-            sensor.isTrigger = true;
-            sensorGameObject.AddComponent<HandleOverlap>();
-            sensorGameObject.AddComponent<SensorBehavior>();
-            sensorGameObject.transform.parent = footCollider.transform.parent;
-            sensorGameObject.transform.position = footCollider.transform.position;
-            sensorGameObject.transform.rotation = footCollider.transform.rotation;
+            BoxCollider myBox = footCollider.gameObject.AddComponent<BoxCollider>();
+            myBox.size = new Vector3(0.08f, 0.03f, 0.08f);//these is totally adjusted by hand
+
+
+            myBox.name = footCollider.name;
+            DestroyImmediate(footCollider);
+
+
+            addSensor2FootCollider(myBox);
+
+            //we update the list:
+            footColliders = footDad.GetComponentsInChildren<Collider>();
+
+            //we also add it to its father:
+            Collider footColliderDad = footColliders.First<Collider>(x => x.name.Contains(footDadRef.name));
+
+            BoxCollider myBoxDad = footColliderDad.gameObject.AddComponent<BoxCollider>();
+            myBoxDad.size = new Vector3(0.08f, 0.05f, 0.15f);//these is totally adjusted by hand
+
+
+            myBoxDad.transform.position = new Vector3(myBoxDad.transform.position.x, myBox.transform.position.y, myBoxDad.transform.position.z);
+
+            myBoxDad.name = footColliderDad.name;
+            DestroyImmediate(footColliderDad);
+
+
+            addSensor2FootCollider(myBoxDad);
+
+
+
         }
     }
+
+
+    void addSensor2FootCollider(Collider footCollider) {
+
+        GameObject sensorGameObject = GameObject.Instantiate(footCollider.gameObject);
+
+        sensorGameObject.name = sensorGameObject.name.Replace("(Clone)", "");
+        sensorGameObject.name += "_sensor";
+        Collider sensor = sensorGameObject.GetComponent<Collider>();
+        sensor.isTrigger = true;
+        // sensorGameObject.AddComponent<HandleOverlap>();
+        sensorGameObject.AddComponent<SensorBehavior>();
+        sensorGameObject.transform.parent = footCollider.transform.parent;
+        sensorGameObject.transform.position = footCollider.transform.position;
+        sensorGameObject.transform.rotation = footCollider.transform.rotation;
+
+
+    }
+
 
     //it needs to go after adding ragdollAgent or it automatically ads an Agent, which generates conflict
     void addTrainingParameters(MapRagdoll2Anim target, ProcRagdollAgent temp) {
@@ -515,7 +826,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         DecisionRequester dr =temp.gameObject.AddComponent<DecisionRequester>();
         dr.DecisionPeriod = 2;
-        dr.TakeActionsBetweenDecisions = false;
+        dr.TakeActionsBetweenDecisions = true;
 
 
 
@@ -592,6 +903,8 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
             muscleteam.MusclePowers.Add(muscle);
 
         }
+
+      
 
 
     }

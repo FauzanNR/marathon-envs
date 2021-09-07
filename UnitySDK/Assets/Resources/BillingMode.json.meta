@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+guid: 360f43b734e3a4424a32fa2d97b376dd
+=======
+<<<<<<<< HEAD:UnitySDK/Assets/Resources/BillingMode.json.meta
 guid: b816f6fe3ad855e44a8d32c4fa99bbaa
+========
+guid: db869b43c8ed540ab8cd295bcdb09269
+>>>>>>>> feature/integrate-stable-pd:UnitySDK/Assets/MarathonController/TrainingTests/TrainingTests.md.meta
+>>>>>>> feature/integrate-stable-pd
 TextScriptImporter:
   externalObjects: {}
   userData: 

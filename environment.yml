@@ -9,5 +9,5 @@ dependencies:
   # - cudatoolkit=10.2
   - numpy
   - pip:
-     - mlagents==0.24     #- corresponds to mlagents 1.8 in C#
+     - mlagents==0.26     #- corresponds to mlagents 1.8 in C#
 
