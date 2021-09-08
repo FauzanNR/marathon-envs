@@ -179,13 +179,26 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
     }
 
-	public void DynamicallyCreateRagdollForMocap()
+	void DynamicallyCreateRagdollForMocap()
 	{
 		// Find Ragdoll in parent
 		Transform parent = this.transform.parent;
 		ProcRagdollAgent[] ragdolls = parent.GetComponentsInChildren<ProcRagdollAgent>(true);
-		Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
-		ProcRagdollAgent ragDoll = ragdolls[0];
+
+		GameObject ragDoll = null;
+		if (ragdolls.Length > 0)
+		{
+			Assert.AreEqual(ragdolls.Length, 1, "code only supports one RagDollAgent");
+			//ProcRagdollAgent ragDoll = ragdolls[0];
+			ragDoll = ragdolls[0].gameObject;
+
+		}
+		else { //if there is no ragdoll, we might be trying the PD controllers. In this case:
+
+			AnimationAsTargetPose temp = parent.GetComponentInChildren<AnimationAsTargetPose>();
+			ragDoll = temp.gameObject;
+
+		}
 		var ragdollForMocap = new GameObject("RagdollForMocap");
 		ragdollForMocap.transform.SetParent(this.transform, false);
 		Assert.AreEqual(ragDoll.transform.childCount, 1, "code only supports 1 child");
@@ -321,8 +334,9 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	float _lastPositionTime = float.MinValue;
 	Vector3 _snapOffset = Vector3.zero;
 	void MimicAnimation() {
-		if (!anim.enabled)
-			return;
+		//if (!anim.enabled)
+		//	return;
+
 		// copy position for root (assume first target is root)
 		_ragdollTransforms[0].position = _animTransforms[0].position;
 		// copy rotation

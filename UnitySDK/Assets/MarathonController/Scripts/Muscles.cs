@@ -163,9 +163,9 @@ public class Muscles : MonoBehaviour
                 break;
 
             case (MotorMode.stablePD):
-                UpdateMotor = null;
+                //UpdateMotor = null;
 
-                //UpdateMotor = StablePD;
+                UpdateMotor = StablePD;
                 //NOTE: this is not yet working, the implementaiton is in progress
 
                 break;
@@ -633,6 +633,7 @@ public class Muscles : MonoBehaviour
             forceInReducedSpace[0] = -Kp * (joint.jointPosition[0] + actionTimeDelta * joint.jointVelocity[0] - target) - Kd * (joint.jointVelocity[0] + actionTimeDelta * acceleration[0]);
 
             forceInReducedSpace[0] *= ForceScaleSPD; 
+
 
          }
 
