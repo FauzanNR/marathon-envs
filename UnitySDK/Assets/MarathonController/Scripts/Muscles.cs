@@ -84,8 +84,8 @@ public class Muscles : MonoBehaviour
         PD,
         stablePD,
         force,
-        PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
-   
+        PDopenloop, //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
+        mappingTest
     }
 
     //for the PDopenloop case:
@@ -174,7 +174,9 @@ public class Muscles : MonoBehaviour
                 UpdateMotor = UpdateMotorPDopenloop;
                 break;
 
-
+            case (MotorMode.mappingTest):
+                UpdateMotor = UpdateMotorTest;
+                break;
         }
 
 
@@ -333,6 +335,74 @@ public class Muscles : MonoBehaviour
 
 
     }
+
+
+
+    void UpdateMotorTest(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
+    {
+
+
+
+        var m = joint.mass;
+        var d = DampingRatio; // d should be 0..1.
+        var n = NaturalFrequency; // n should be in the range 1..20
+        var k = Mathf.Pow(n, 2) * m;
+        var c = d * (2 * Mathf.Sqrt(k * m));
+        var stiffness = k;
+        var damping = c;
+
+        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, actionTimeDelta);
+
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.xDrive;
+         
+          
+            drive.target = targetNormalizedRotation.x;
+
+            drive.targetVelocity = targetVel.x;
+
+
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+      
+            joint.xDrive = drive;
+        }
+
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.yDrive;
+       
+  
+            drive.target = targetNormalizedRotation.y;
+   
+            drive.targetVelocity = targetVel.y;
+
+
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+      
+            joint.yDrive = drive;
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+            var drive = joint.zDrive;
+        
+            drive.target = targetNormalizedRotation.z;
+    
+            drive.targetVelocity = targetVel.z;
+
+            drive.stiffness = stiffness;
+            drive.damping = damping;
+       
+            joint.zDrive = drive;
+        }
+
+
+
+    }
+
 
 
     void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
