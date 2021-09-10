@@ -135,7 +135,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c88d3a290c56844ab3f5f0445e50f0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  blockReferenceMovement: 1
 --- !u!1 &1699845926
 GameObject:
   m_ObjectHideFlags: 0
@@ -1332,8 +1331,8 @@ MonoBehaviour:
   DampingRatio: 1
   NaturalFrequency: 20
   ForceScale: 0.3
-  KP_Stiffness: 50
-  ForceScaleSPD: 0.3
+  KP_Stiffness: 30000
+  ForceScaleSPD: 1
   skipCollisionSetup: 0
   updateDebugValues: 0
   jointVelocityInReducedSpace: []

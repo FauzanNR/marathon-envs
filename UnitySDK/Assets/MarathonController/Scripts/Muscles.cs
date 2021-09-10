@@ -628,7 +628,7 @@ public class Muscles : MonoBehaviour
     }
 
 
-    void StablePD(ArticulationBody joint, Vector3 input, float actionTimeDelta)
+    void StablePD_OLD(ArticulationBody joint, Vector3 input, float actionTimeDelta)
     {
 
 
@@ -769,5 +769,114 @@ public class Muscles : MonoBehaviour
     }
 
 
+    void StablePD(ArticulationBody joint, Vector3 input, float actionTimeDelta)
+    {
+
+
+        Vector3 targetNormalizedRotation = input;
+
+
+
+        //A stable PD controller, instead:
+        //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+
+        //kd towards infinity
+        //kd = kp * dt
+        //Kd >= Kp * dt to ensure stability
+
+        //example in video: KP = 30.000,  KD 600, update 1/60
+
+
+
+        LastPos lastPos = null;
+        try
+        {
+            lastPos = _lastPos.First(x => x.name.Equals(joint.name));
+        }
+
+        catch (Exception e)
+        {
+            Debug.Log("there is no lastPos for joint " + joint.name);
+
+        }
+
+
+
+
+
+        float Kp = KP_Stiffness;
+
+
+        float Kd = Kp * actionTimeDelta * 2.0f;
+
+
+
+
+        ArticulationReducedSpace forceInReducedSpace = new ArticulationReducedSpace();
+        forceInReducedSpace.dofCount = joint.dofCount;
+
+        ArticulationReducedSpace acceleration = AccelerationInReducedSpace(joint.jointVelocity, lastPos.vel, actionTimeDelta);
+
+
+
+
+        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+        {
+            //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+
+            //forceInReducedSpace[0] = -Kp * (currentSwingTwist.x + actionTimeDelta * currentVelocity.x - targetNormalizedRotation.x) - Kd * (currentVelocity.x + actionTimeDelta * targetAcceleration.x);
+            var drive = joint.xDrive;
+         
+            forceInReducedSpace[0] = -Kp * (joint.jointPosition[0] + actionTimeDelta * joint.jointVelocity[0] - targetNormalizedRotation.x) - Kd * (joint.jointVelocity[0] + actionTimeDelta * acceleration[0]);
+
+            forceInReducedSpace[0] *= ForceScaleSPD;
+
+
+        }
+
+        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+        {
+            //f =  - Kp (pos + dt* v -targetPos)- Kd(v + dt*a )
+            // forceInReducedSpace[1] = -Kp * (currentSwingTwist.y + actionTimeDelta * currentVelocity.y - targetNormalizedRotation.y) - Kd * (currentVelocity.y + actionTimeDelta * targetAcceleration.y);
+
+            var drive = joint.yDrive;
+          
+          
+
+                forceInReducedSpace[1] = -Kp * (Mathf.Deg2Rad * joint.jointPosition[1] + actionTimeDelta * Mathf.Deg2Rad * joint.jointVelocity[1] - targetNormalizedRotation.y) - Kd * (Mathf.Deg2Rad * joint.jointVelocity[1] + actionTimeDelta * Mathf.Deg2Rad * acceleration[1]);
+                forceInReducedSpace[1] *= ForceScaleSPD;
+          
+
+
+        }
+
+        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+        {
+         
+            var drive = joint.zDrive;
+         
+
+            forceInReducedSpace[2] = -Kp * (Mathf.Deg2Rad * joint.jointPosition[2] + actionTimeDelta * Mathf.Deg2Rad * joint.jointVelocity[2] - targetNormalizedRotation.z) - Kd * (Mathf.Deg2Rad * joint.jointVelocity[2] + actionTimeDelta * Mathf.Deg2Rad * acceleration[2]);
+
+            forceInReducedSpace[2] *= ForceScaleSPD;
+
+        }
+
+     
+        Vector3 result = KP_Stiffness * input;
+
+        if (joint.dofCount < 3)
+        {
+            result = Vector3.zero;
+        }
+
+        result = Utils.GetArticulationReducedSpaceInVector3(forceInReducedSpace);
+
+        joint.AddRelativeTorque(result);
+     
+        lastPos.vel = joint.jointVelocity;
+        //lastPos.pos = joint.jointPosition;
+
+    }
 
 }
