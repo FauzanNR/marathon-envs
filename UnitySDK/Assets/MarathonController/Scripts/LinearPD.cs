@@ -21,12 +21,12 @@ public class LinearPD : MonoBehaviour
     //f_I = I_i a_i + p_i
 
 
-    //CORIOLIS AND OTHER FORCES
+    //CORIOLIS, GRAVITY AND OTHER EXTERNAL FORCES
     Vector<double>[] Z_i;  //array of vectors  Vector<double>.Build.Dense(6);
                            //we use this variable to store 2 values:
                            //  1. isolated zero acceleration force  Z_i (Mirtich) or Bias Force p_i^A (Featherstone14)
                            //  2. spatial articulated zero-acceleration force  Z_i^A (Mirtich) or articulated Bias Force p_i^a (Featherstone14)
-                           //TO CONFIRM IT IS EQUIVALENT: when put together in a big matrix, we write C(q, q^dot) 
+                           //When put together in a big matrix, we write C(q, q^dot) 
 
 
     //Spatial Coriolis Force:
@@ -43,7 +43,14 @@ public class LinearPD : MonoBehaviour
 
 
 
-    Vector3 get_u(ArticulationBody ab)
+    static Matrix<double> spatialTranspose(Vector<double> input) 
+    {
+        double[] oarray = { input[3], input[4], input[5], input[0], input[1], input[2] };
+        Vector<double> output = Vector<double>.Build.Dense(oarray);
+        return  output.ToRowMatrix();    
+    }
+
+    static Vector3 get_u(ArticulationBody ab)
     {
         Vector3 u_i = new Vector3();
         ab.transform.rotation.ToAngleAxis(out _, out u_i);
@@ -52,18 +59,81 @@ public class LinearPD : MonoBehaviour
     }
 
 
-    Vector3 get_d(ArticulationBody ab)
+    static Vector3 get_d(ArticulationBody ab)
     {
         return (ab.centerOfMass - ab.anchorPosition);
 
     }
 
-    Vector3 get_r(ArticulationBody ab, ArticulationBody dad) 
+
+
+
+
+    static Vector3 get_r(ArticulationBody ab, ArticulationBody dad) 
     {
         return (ab.centerOfMass - dad.centerOfMass );
 
 
     }
+
+
+
+    //see Mirtich appendix A.2, page 230
+    static Matrix<double> get_rtilde(Vector3 r) {
+
+
+        //we are describing column by column:
+        double[] rtarray = {    0  , r.z,-r.y ,
+                               -r.z, 0  , r.x ,
+                                r.y,-r.x, 0    };
+
+        Matrix<double> rt = Matrix<double>.Build.Dense(3,3,rtarray);
+        return rt;
+    }
+
+    //return a 3x3 matrix rotation from a quaternion
+    //see https://en.wikipedia.org/wiki/Quaternions_and_spatial_rotation
+    static Matrix<double> get_Rot3x3(Quaternion q) {
+
+        // in this list each row represents a column in the resulting matrix:
+        // we list describing column by column, assuming the norm of the quaternion is 1
+        double[] Rarray = { 1 - 2 * (q.y * q.y + q.z * q.z),  2* (q.x * q.y + q.z * q.w )   , 2* (q.x * q.z - q.y * q.w)      ,
+                            2* (q.x * q.y - q.z * q.w )    , 1 - 2 * (q.x * q.x + q.z * q.z), 2* (q.y * q.z + q.x * q.w )     ,
+                            2* (q.x * q.z + q.y * q.w)     , 2* (q.y * q.z - q.x * q.w )    , 1 - 2 * (q.x * q.x + q.y * q.y) };
+
+        Matrix<double> R = Matrix<double>.Build.Dense(3, 3, Rarray);
+        return R;
+
+    }
+
+    //Returns the spatial transform matrix that goes from frame of reference a to frame of reference b
+    static Matrix<double> get_bXa(ArticulationBody a, ArticulationBody b) {
+
+
+        //the spatial transformation matrix, see Mirtich page 102
+
+        Matrix<double> rtild = get_rtilde(get_r(a, b));
+
+        //Matrix<double> R = get_R(ab.transform.localRotation);
+        Quaternion localRot = a.transform.rotation * Quaternion.Inverse(b.transform.rotation);//todo that when a is son of b, it is equivalent to a.transform.localRotation;
+
+        Matrix<double> R = get_Rot3x3(localRot);
+
+
+        //this builds it by rows?
+        Matrix<double>[,] x = { { R, Matrix<double>.Build.Dense(3, 3)},
+                                    { -rtild * R, R                      } };
+
+        Matrix<double> bXa = Matrix<double>.Build.DenseOfMatrixArray(x);
+        return bXa;
+
+    }
+
+
+
+    
+
+
 
 
     // Start is called before the first frame update
@@ -195,6 +265,9 @@ public class LinearPD : MonoBehaviour
             ab.velocity += qVel * Vector3.Cross(u_i, d_i);
             
 
+            
+
+            
         }
     
     
@@ -210,8 +283,8 @@ public class LinearPD : MonoBehaviour
 
 
 
-        for (int j = 0; j < Links.Length; j++) {
-            ArticulationBody ab = Links[j];
+        for (int i = 0; i < Links.Length; i++) {
+            ArticulationBody ab = Links[i];
 
             //we put the isolated zero acceleration force  Z_i (Mirtich) or Bias Force p_i^A (Featherstone14)
             double[] f_iX = {0.0, -1.0 * ab.mass * 9.81, 0.0 };
@@ -223,25 +296,25 @@ public class LinearPD : MonoBehaviour
                 
             double[] a = { 0.0, -1.0 * ab.mass * 9.81, 0.0 , tmp[0], tmp[1], tmp[2]};
 
-            Z_i[j] = Vector<double>.Build.Dense(a);
+            Z_i[i] = Vector<double>.Build.Dense(a);
 
             //B. We calculate I_i
             //this could be done only once
-            I_i[j][0, 3] = ab.mass;
-            I_i[j][1, 4] = ab.mass;
-            I_i[j][2, 5] = ab.mass;
+            I_i[i][0, 3] = ab.mass;
+            I_i[i][1, 4] = ab.mass;
+            I_i[i][2, 5] = ab.mass;
 
             //this has to be done in each frame:
-            I_i[j][4, 0] = ab.inertiaTensor.x;
-            I_i[j][5, 1] = ab.inertiaTensor.y;
-            I_i[j][6, 2] = ab.inertiaTensor.z;
+            I_i[i][4, 0] = ab.inertiaTensor.x;
+            I_i[i][5, 1] = ab.inertiaTensor.y;
+            I_i[i][6, 2] = ab.inertiaTensor.z;
 
             //We calculate c_i
             Vector3 vel_i =qVel* get_u(ab);
             ArticulationBody dad = ab.transform.parent.GetComponent<ArticulationBody>();
 
             Vector3 d_i = get_d(ab);
-            Vector3 r_i = get_r(ab, dad);
+            //Vector3 r_i = get_r(ab, dad);
 
             tmp = Vector3.Cross(dad.angularVelocity, vel_i);
             Vector3 tmp2 = Vector3.Cross(dad.angularVelocity, vel_i) 
@@ -249,26 +322,57 @@ public class LinearPD : MonoBehaviour
                             + Vector3.Cross(vel_i, Vector3.Cross(vel_i, d_i) );
 
             double[] c = { tmp[0], tmp[1], tmp[2], tmp2[0], tmp2[1], tmp[2] };
-            c_i[j] = Vector<double>.Build.Dense(c);
+            c_i[i] = Vector<double>.Build.Dense(c);
 
         }
 
 
     }
 
-    void TreeFwdDynamics() 
-    { 
-    
-        // TODO 
+
+
+
+
+    //Mirtich page 121
+    void TreeFwdDynamics()
+    {
+
         //pass 2
-        
-        
-        
+        for (int i = Links.Length; i > 1; i--)
+        {
+            ArticulationBody ab = Links[i];
+            ArticulationBody dad = ab.transform.parent.GetComponent<ArticulationBody>();
+
+            //A. we calculate I_i^A
+
+            Vector3 u=get_u(ab);
+            Vector3 uxd =Vector3.Cross(u, get_d(ab));
+
+            double[] a = { u[0], u[1], u[2], uxd[0], uxd[1], uxd[2] };
+            Vector<double>  S_i = Vector<double>.Build.Dense(a);
+            Matrix<double> S_iT = spatialTranspose(S_i);//it is a row matrix
+            Matrix<double> dadXab = get_bXa( ab, dad);
+            Matrix<double> abXdad = get_bXa(dad, ab);
+
+            //to store it in the parent's I_h^A:
+
+
+
+
+            //B. we calculate Z_i^A
+            //Quaternion Rot = ab.transform.localRotation;
+
+
+
+
+
+        }
+
         //pass 3
+
+
     }
 
-    
-    
-   
+
 
 }
