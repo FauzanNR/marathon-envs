@@ -11,6 +11,9 @@ public class AnimationAsTargetPose : MonoBehaviour
     Muscles _ragDollMuscles;
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
+
+    List<Rigidbody> targets;
+
     /*
     Vector3 debugDistance;
 
@@ -27,7 +30,9 @@ public class AnimationAsTargetPose : MonoBehaviour
 
         _mapAnim2Ragdoll.OnAgentInitialize();
 
-       // debugDistance = _mapAnim2Ragdoll.transform.position - transform.position;
+        targets = _mapAnim2Ragdoll.GetRigidBodies();
+
+        // debugDistance = _mapAnim2Ragdoll.transform.position - transform.position;
 
 
         _motors = GetComponentsInChildren<ArticulationBody>()
@@ -51,31 +56,57 @@ public class AnimationAsTargetPose : MonoBehaviour
         */
     }
 
+
+
+    void UpdateMuscles(float[] vectorAction)
+    {
+
+
+        switch (_ragDollMuscles.MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.linearPD):
+
+
+                break;
+
+            default:
+
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+
+                    Rigidbody a = targets.Find(x => x.name == m.name);
+
+                    Vector3 targetNormalizedRotation = Utils.GetSwingTwist(a.transform.localRotation);
+
+                    _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
+                   
+
+                }
+
+
+
+                break;
+        }//
+
+
+
+
+    }
+
+
+
     // Update is called once per frame
     void Update()
     {
         _mapAnim2Ragdoll.OnStep(Time.fixedDeltaTime);
 
 
-        //List<Quaternion> targetRotation = _mapAnim2Ragdoll.LastRotation;
+       
 
-
-       List<Rigidbody> targets= _mapAnim2Ragdoll.GetRigidBodies();
-
-        /*
-        if (blockReferenceMovement)
-        {
-            _mapAnim2Ragdoll.transform.position = myRoot.transform.position + debugDistance;
-            _mapAnim2Ragdoll.transform.rotation = myRoot.transform.rotation;
-        }
-        else
-        {
-            //this will make the character fall:
-            
-            myRoot.transform.position = _mapAnim2Ragdoll.transform.position + debugDistance;
-            myRoot.transform.rotation = _mapAnim2Ragdoll.transform.rotation;
-        }
-        */
+      
 
         foreach (var m in _motors)
         {
@@ -91,8 +122,7 @@ public class AnimationAsTargetPose : MonoBehaviour
 
 
             Vector3 targetNormalizedRotation = Utils.GetSwingTwist( a.transform.localRotation);
-            //Vector3 targetNormalizedRotation = Utils.GetSwingTwist(targetRotation[j]);
-
+            
 
             _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
             }

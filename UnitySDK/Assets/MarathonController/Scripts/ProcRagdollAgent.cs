@@ -218,6 +218,56 @@ public class ProcRagdollAgent : Agent
         return size;
     }
 
+    void UpdateMuscles(float[] vectorAction) {
+
+
+        switch (_ragDollMuscles.MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.linearPD):
+
+
+                break;
+
+            default:
+                int i = 0;//keeps track of hte number of actions
+
+                //int j = 0;//keeps track of the number of motors
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+              
+                    Vector3 targetNormalizedRotation = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.x = vectorAction[i++];
+                    if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.y = vectorAction[i++];
+                    if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.z = vectorAction[i++];
+                    if (!ignorActions)
+                    {
+
+                        _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                    }
+
+                    //j++;
+
+                }
+
+
+
+                break;
+        }//
+
+
+
+
+    }
+
+
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         Assert.IsTrue(_hasLazyInitialized);
@@ -248,35 +298,12 @@ public class ProcRagdollAgent : Agent
             vectorAction = SmoothActions(vectorAction);
 
 
-        int i = 0;//keeps track of hte number of actions
+      
 
-        int j = 0;//keeps track of the number of motoros
-        foreach (var m in _motors)
-        {
-            if (m.isRoot)
-                continue;
-            if (dontUpdateMotor)
-                continue;
-            Vector3 targetNormalizedRotation = Vector3.zero;
-			if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.x = vectorAction[i++];
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.y = vectorAction[i++];
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.z = vectorAction[i++];
-            if (!ignorActions)
-            {
-             
-                _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
-            }
+        if(!dontUpdateMotor)
+            UpdateMuscles(vectorAction);
 
 
-         
-            j++;
-         
-        }
 
         _observations2Learn.PreviousActions = vectorAction;
 

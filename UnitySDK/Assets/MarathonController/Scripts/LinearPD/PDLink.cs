@@ -169,8 +169,8 @@ public class PDLink
         tmp.Scale(_ab.angularVelocity);
         tmp = Vector3.Cross(_ab.angularVelocity, tmp);
            
-                //TODO: sort out if here we can put more than gravity
-                double[] a = { 0.0, -1.0 * _ab.mass * 9.81, 0.0, tmp[0], tmp[1], tmp[2] };
+       //TODO: sort out if here we can put more than gravity
+       double[] a = { 0.0, -1.0 * _ab.mass * 9.81, 0.0, tmp[0], tmp[1], tmp[2] };
 
         Z_i = Vector<double>.Build.Dense(a);
         return Z_i;

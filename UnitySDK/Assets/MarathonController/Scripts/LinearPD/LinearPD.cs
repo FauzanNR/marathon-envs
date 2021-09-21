@@ -15,8 +15,8 @@ public class LinearPD : MonoBehaviour
    // ArticulationBody[] Links;
 
 
-    [SerializeField]
-    ArticulationBody theRoot;
+  //  [SerializeField]
+  //  ArticulationBody theRoot;
 
 
     PDLink[] PDLinks;
@@ -27,18 +27,18 @@ public class LinearPD : MonoBehaviour
 
     void Start()
     {
-        Init(); 
+       // Init(); 
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        ABAalgo();
+      //  ABAalgo();
 
     }
 
 
-    void Init()
+    public void Init(ArticulationBody theRoot)
     {
         if (theRoot == null | !theRoot.isRoot)
         {
@@ -54,7 +54,7 @@ public class LinearPD : MonoBehaviour
 
 
 
-
+    //NOT USED HERE
     void ABAalgo() {
 
         //PASS 1 in Featherstone
