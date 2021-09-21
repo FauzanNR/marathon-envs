@@ -262,10 +262,12 @@ public class DReConRewardStats : MonoBehaviour
             Vector3 c = Vector3.zero;
             Bounds b = new Bounds(c,c);
 
+            /*
             if (collider.name=="head")
             {
                 c = c;
             }
+            */
 
             if (capsule != null)
             {

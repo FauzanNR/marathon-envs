@@ -427,7 +427,7 @@ public class Muscles : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("there is no muscle for joint " + joint.name);
+            Debug.Log("there is no muscle for joint " + joint.name + "    " + e);
 
         }
 
@@ -542,6 +542,7 @@ public class Muscles : MonoBehaviour
 
 
 
+
         Vector3 power = Vector3.zero;
         try
         {
@@ -550,7 +551,7 @@ public class Muscles : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("there is no muscle for joint " + joint.name);
+            Debug.Log("there is no muscle for joint " + joint.name + "   " + e);
 
         }
 
@@ -660,7 +661,7 @@ public class Muscles : MonoBehaviour
 
         catch (Exception e)
         {
-            Debug.Log("there is no lastPos for joint " + joint.name);
+            Debug.Log("there is no lastPos for joint " + joint.name + "   " + e );
 
         }
 
@@ -797,7 +798,7 @@ public class Muscles : MonoBehaviour
 
         catch (Exception e)
         {
-            Debug.Log("there is no lastPos for joint " + joint.name);
+            Debug.Log("there is no lastPos for joint " + joint.name + "   " + e);
 
         }
 

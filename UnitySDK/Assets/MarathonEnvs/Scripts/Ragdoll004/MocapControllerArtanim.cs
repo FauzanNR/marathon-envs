@@ -174,7 +174,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		catch (Exception e)
 		{
 
-			Debug.LogError("no rigidbody with name " + rbname);
+			Debug.LogError("no rigidbody with name " + rbname + "   " + e);
 
 		}
 
@@ -189,7 +189,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		}
 		catch (Exception e)
 		{
-			Debug.LogError("no bone transform with name in input pose " + tname);
+			Debug.LogError("no bone transform with name in input pose " + tname + "  " + e);
 
 		}
 
@@ -253,7 +253,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		}
 		catch(Exception e) {
 			_usingMocapAnimatorController = false;
-			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController");
+			Debug.LogWarning("Mocap Controller is working WITHOUT MocapAnimatorController  " + e);
 		}
 
 
@@ -469,7 +469,7 @@ public class MocapControllerArtanim : MonoBehaviour, IOnSensorCollision
 		}
 		catch (Exception e)
 		{
-			Debug.Log("not calibrated yet...");
+			Debug.Log("not calibrated yet..."  + e);
 
 		}
 

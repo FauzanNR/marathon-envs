@@ -57,7 +57,9 @@ public class TerrainGenerator : MonoBehaviour
 			terrain.terrainData.baseMapResolution = sharedTerrainData.baseMapResolution;
 			terrain.terrainData.SetDetailResolution(sharedTerrainData.detailResolution, sharedTerrainData.detailResolutionPerPatch);
 			terrain.terrainData.size = sharedTerrainData.size;
-			terrain.terrainData.thickness = sharedTerrainData.thickness;
+			//terrain.terrainData.thickness = sharedTerrainData.thickness;
+
+
 			// terrain.terrainData.splatPrototypes = sharedTerrainData.splatPrototypes;
 			terrain.terrainData.terrainLayers = sharedTerrainData.terrainLayers;
 			var collider = terrain.GetComponent<TerrainCollider>();

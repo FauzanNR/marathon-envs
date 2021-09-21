@@ -64,7 +64,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 	// [SerializeField]
 	// float _debugDistance = 0.0f;
 
-	private List<MappingOffset> _offsetsSource2RB = null;
+	//private List<MappingOffset> _offsetsSource2RB = null;
 
     //for debugging, we disable this when setTpose in MarathonTestBedController is on
     [HideInInspector]
@@ -590,7 +590,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		var c = (float)_ragDollRigidbody.Count;
 		aveVelocity = aveVelocity / c;
 		aveAngularVelocity = aveAngularVelocity / c;
-		c = c;
+		//c = c;
 	}
 	public Vector3 SnapTo(Vector3 snapPosition)
 	{

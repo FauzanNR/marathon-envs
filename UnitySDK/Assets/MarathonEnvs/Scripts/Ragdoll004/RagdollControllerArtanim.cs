@@ -24,7 +24,7 @@ public class RagdollControllerArtanim : MonoBehaviour
     private List<MappingOffset> _offsetsRB2targetPoseTransforms = null;
 
 
-	private List<MappingOffset> _offsetsSource2RB = null;
+	//private List<MappingOffset> _offsetsSource2RB = null;
 
 
 	[Space(20)]
@@ -179,7 +179,7 @@ public class RagdollControllerArtanim : MonoBehaviour
             }
             catch (Exception e) {
 
-                Debug.LogError("problem with finding rigidbody with a name like: " + rbname);
+                Debug.LogError("problem with finding rigidbody with a name like: " + rbname + "   " + e);
 
             }
 
@@ -198,7 +198,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogError("no bone transform with name in target pose" + tname);
+			Debug.LogError("no bone transform with name in target pose" + tname + "   " + e);
 
 		}
 
@@ -211,7 +211,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.LogError("no bone transform with name in input pose " + tname);
+			Debug.LogError("no bone transform with name in input pose " + tname + "   " + e);
 
 		}
 
@@ -261,7 +261,7 @@ public class RagdollControllerArtanim : MonoBehaviour
 		}
 		catch (Exception e)
 		{
-			Debug.Log("not calibrated yet...");
+			Debug.Log("not calibrated yet...     " + e);
 
 		}
 

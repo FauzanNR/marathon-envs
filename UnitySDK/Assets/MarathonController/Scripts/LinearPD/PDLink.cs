@@ -41,7 +41,7 @@ public class PDLink
 
     PDLink dad;
 
-    //Inertia inverse, kept here just to not calculate it twice (in passes 2 and 3):
+    //Inertia inverse, kept here  to not calculate it twice (in passes 2 and 3), In Featherstone it is D.
     Matrix<double> SISInverted;
 
     PDLink()
@@ -91,7 +91,11 @@ public class PDLink
 
     }
 
-    public ArticulationBody ArticulationBody { get => _ab; }
+   
+
+
+
+
 
     public static PDLink[] SortLinks(ArticulationBody root)
     {
@@ -137,7 +141,7 @@ public class PDLink
 
     //Mirtich pge 116
     public void updateVelocities(float qVel) {
-        ArticulationBody ab = this.ArticulationBody;
+        ArticulationBody ab = this._ab;
         Quaternion Rot = ab.transform.localRotation;
 
         ArticulationBody dad = ab.transform.parent.GetComponent<ArticulationBody>();
@@ -195,12 +199,11 @@ public class PDLink
     //C. We calculate c_i
     public Vector<double> updateCoriolis(float qVel) {
 
-        ArticulationBody ab = this.ArticulationBody;
-        Vector3 vel_i = qVel * get_u(ab);
-        ArticulationBody dad = ab.transform.parent.GetComponent<ArticulationBody>();
+        Vector3 vel_i = qVel * get_u(_ab);
+        ArticulationBody dad = _ab.transform.parent.GetComponent<ArticulationBody>();
 
-        Vector3 d_i = get_d(ab);
-        //Vector3 r_i = get_r(ab, dad);
+        Vector3 d_i = get_d(_ab);
+        
 
         Vector3 tmp = Vector3.Cross(dad.angularVelocity, vel_i);
         Vector3 tmp2 = Vector3.Cross(dad.angularVelocity, vel_i)
@@ -227,7 +230,7 @@ public class PDLink
 
          //A. we calculate I_h^A
         ArticulationBody ab = this._ab;
-        ArticulationBody abdad = this.dad.ArticulationBody;
+        ArticulationBody abdad = this.dad._ab;
 
         Vector3 u = get_u(ab);
         Vector3 uxd = Vector3.Cross(u, get_d(ab));
@@ -274,7 +277,7 @@ public class PDLink
             Matrix<double> S_iT = spatialTranspose(S_i);//it is a row matrix
                                                         //Matrix<double> dadXab = get_bXa(_ab, abdad);
 
-            ArticulationBody abdad = this.dad.ArticulationBody;
+            ArticulationBody abdad = this.dad._ab;
             Matrix<double> abXdad = get_bXa(abdad, this._ab);
 
             //TODO: check how we deal with a(0) = 0;

@@ -95,7 +95,7 @@ public class ROMparserSwingTwist : MonoBehaviour
 
         }
         catch (Exception e) {
-            Debug.Log("the character does not seem to have an animator. Make sure it is moving in some way to extract the Range of Motion");
+            Debug.Log("the character does not seem to have an animator. Make sure it is moving in some way to extract the Range of Motion  " + e);
 
         }
 

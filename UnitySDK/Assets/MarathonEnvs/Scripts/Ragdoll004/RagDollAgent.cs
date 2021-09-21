@@ -407,9 +407,11 @@ public class RagDollAgent : Agent
         }
         catch (Exception e)
         {
-            Debug.Log("there is no muscle for joint " + joint.name);
+            Debug.Log("there is no muscle for joint " + joint.name + "   " + e);
 
         }
+
+
 
 
         power *= _ragDollSettings.Stiffness;
