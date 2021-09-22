@@ -24,7 +24,7 @@ public class RagdollControllerArtanim : MonoBehaviour
     private List<MappingOffset> _offsetsRB2targetPoseTransforms = null;
 
 
-	//private List<MappingOffset> _offsetsSource2RB = null;
+
 
 
 	[Space(20)]

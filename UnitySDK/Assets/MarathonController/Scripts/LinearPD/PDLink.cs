@@ -40,6 +40,7 @@ public class PDLink
     Vector<double> acceleration;
 
     PDLink dad;
+    //int index;
 
     //Inertia inverse, kept here  to not calculate it twice (in passes 2 and 3), In Featherstone it is D.
     Matrix<double> SISInverted;
@@ -49,24 +50,24 @@ public class PDLink
     }
 
 
-    PDLink(ArticulationBody a, List<PDLink> SortedPDLinks)
+    PDLink(ArticulationBody a, List<PDLink> LinksCreated)
     {
 
-        PDLink me = SortedPDLinks.FirstOrDefault(x => x._ab.Equals(a));
+        PDLink me = LinksCreated.FirstOrDefault(x =>  x._ab.Equals(a));
         if (me == null)
         {
-            PDLink pdl = new PDLink();
-            pdl._ab = a;
-
+            me = new PDLink();
+            me._ab = a;
+            
 
             PDLink dad = null;
             ArticulationBody abdad = a.transform.parent.GetComponent<ArticulationBody>();
             if (abdad != null)
             {
-                dad = SortedPDLinks.FirstOrDefault(x => x._ab.Equals(abdad));
+                dad = LinksCreated.FirstOrDefault(x => x._ab.Equals(abdad));
 
             }
-            else
+            else if (!me._ab.isRoot)
             {
                 Debug.Log(a.name + " does not seem to have an articulationBody as parent");
 
@@ -74,20 +75,26 @@ public class PDLink
 
             if (dad != null)
             {
-                pdl.dad = dad;
+                me.dad = dad;
 
             }
-            else
+            else 
             {
-                Debug.LogError(a.name + "'s dad does not seem to be in the list of sorted links, this should not happen in a sorted list");
+                    if (!me._ab.isRoot) {
+                        Debug.Log(a.name + "'s dad does not seem to be in the list of sorted links, (this should not happen in a sorted list?)");
+                        dad = new PDLink();
+                        dad._ab = abdad;
+                        LinksCreated.Add(dad);
+                    }
 
+
+                }
+
+            me.acceleration = Vector<double>.Build.Dense(6);
+            LinksCreated.Add(me);
 
             }
-
-            pdl.acceleration = Vector<double>.Build.Dense(6);
-
-
-        }
+            //me.index = idx;
 
     }
 
@@ -102,25 +109,23 @@ public class PDLink
 
         ArticulationBody[] ts = root.GetComponentsInChildren<ArticulationBody>();
 
+       List<PDLink> LinksCreated = new List<PDLink>();
 
 
-        PDLink[] sortedLinks = new PDLink[ts.Length];
+            //  recursive function that returns a sorted list from the tree of nodes
+            NumberLinks(root, 1);
 
 
+            
+            return LinksCreated.ToArray();
 
-
-        NumberLinks(root, 1);
-
-
-        return sortedLinks;
-
-
-        int NumberLinks(ArticulationBody node, int idx)
+            int NumberLinks(ArticulationBody node, int idx)
         {
 
-            PDLink PDnode = new PDLink(node, sortedLinks.ToList<PDLink>());
+           
+            PDLink PDnode = new PDLink(node, LinksCreated);
 
-            sortedLinks[idx - 1] = PDnode;
+            
             idx += 1;
             //notice this is recursive
             foreach (Transform child in node.transform)

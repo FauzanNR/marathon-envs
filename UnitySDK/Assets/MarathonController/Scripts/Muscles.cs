@@ -81,13 +81,13 @@ public class Muscles : MonoBehaviour
 
     public enum MotorMode { 
     
-        legacy,
-        PD,
+        legacy,     //works OK
+        PD,         //best option so far 
         stablePD, //not working
-        force,
+        force,     //not tested
         PDopenloop, //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
-        mappingTest,
-        linearPD
+        mappingTest, //a direct mapping of an animation, for debug purposes
+        linearPD //still very much in progress, based on Yin & Yin (2020) Linear Time Stable PD Controllers for Physics-based Character Animation
     }
 
     //for the PDopenloop case:
@@ -179,7 +179,7 @@ public class Muscles : MonoBehaviour
 
 
 
-    public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
+    delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
 
     MotorDelegate UpdateMotor;
 
