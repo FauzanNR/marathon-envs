@@ -32,9 +32,7 @@ public class AnimationAsTargetPose : MonoBehaviour
 
         targets = _mapAnim2Ragdoll.GetRigidBodies();
 
-        // debugDistance = _mapAnim2Ragdoll.transform.position - transform.position;
-
-
+     
         _motors = GetComponentsInChildren<ArticulationBody>()
             .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
             .Where(x => !x.isRoot)
@@ -58,44 +56,6 @@ public class AnimationAsTargetPose : MonoBehaviour
 
 
 
-    void UpdateMuscles(float[] vectorAction)
-    {
-
-
-        switch (_ragDollMuscles.MotorUpdateMode)
-        {
-
-            case (Muscles.MotorMode.linearPD):
-
-
-                break;
-
-            default:
-
-                foreach (var m in _motors)
-                {
-                    if (m.isRoot)
-                        continue;
-
-                    Rigidbody a = targets.Find(x => x.name == m.name);
-
-                    Vector3 targetNormalizedRotation = Utils.GetSwingTwist(a.transform.localRotation);
-
-                    _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
-                   
-
-                }
-
-
-
-                break;
-        }//
-
-
-
-
-    }
-
 
 
     // Update is called once per frame
@@ -104,34 +64,12 @@ public class AnimationAsTargetPose : MonoBehaviour
         _mapAnim2Ragdoll.OnStep(Time.fixedDeltaTime);
 
 
-       
+        _ragDollMuscles.MimicRigidBodies(targets);
 
-      
-
-        foreach (var m in _motors)
-        {
-           
-
-            Rigidbody a = targets.Find(x => x.name == m.name);
-
-            if (m.isRoot)
-            {
-                continue; //neveer happens because excluded from list
-            }
-            else { 
-
-
-            Vector3 targetNormalizedRotation = Utils.GetSwingTwist( a.transform.localRotation);
-            
-
-            _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
-            }
-
-
-
-        }
-
-
+     
 
     }
+
+
+
 }

@@ -28,24 +28,24 @@ public class Muscles : MonoBehaviour
     [Header("Parameters for Legacy and PD:")]
     public List<MusclePower> MusclePowers;
 
-  //  public float MotorScale = 1f;
-    public float Stiffness = 50f;
-    public float Damping = 100f;
-    public float ForceLimit = float.MaxValue;
-    public float DampingRatio = 1.0f;
+ 
+     float Stiffness = 50f;
+     float Damping = 100f;
+     float ForceLimit = float.MaxValue;
+     float DampingRatio = 1.0f;
 
 
     [Header("Extra Parameters for PD:")]
 
-    public float NaturalFrequency = 40f;
-    public float ForceScale = .3f;
+     float NaturalFrequency = 40f;
+     float ForceScale = .3f;
 
 
 
 
     [Header("Parameters for StablePD:")]
-    public float KP_Stiffness = 50;
-    public float ForceScaleSPD = .3f;
+     float KP_Stiffness = 50;
+     float ForceScaleSPD = .3f;
 
 
 
@@ -59,7 +59,7 @@ public class Muscles : MonoBehaviour
 
 
     [Header("Debug Values, Read Only")]
-    public bool updateDebugValues;
+    bool updateDebugValues;
 
 
     [SerializeField]
@@ -91,12 +91,99 @@ public class Muscles : MonoBehaviour
     }
 
     //for the PDopenloop case:
-    public List<Transform> _referenceTransforms;
+    List<Transform> _referenceTransforms;
+
+
+
+    //This function is to debug the motor update modes, mimicking a reference animation.
+    /// To be used only with the root frozen, "hand of god" mode, it will not work on a 
+    /// proper physics character
+
+    public void MimicRigidBodies(List<Rigidbody> targets)
+    {
+
+
+
+        foreach (var m in _motors)
+        {
+
+
+            Rigidbody a = targets.Find(x => x.name == m.name);
+
+            if (m.isRoot)
+            {
+                continue; //neveer happens because excluded from list
+            }
+            else
+            {
+
+                Vector3 targetNormalizedRotation = Utils.GetSwingTwist(a.transform.localRotation);
+                UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
+            }
+
+
+
+        }
+
+
+
+    }
+
+    public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
+    {
+
+
+        switch (MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.linearPD):
+
+
+                break;
+
+            default:
+                int i = 0;//keeps track of hte number of action
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+
+                    Vector3 targetNormalizedRotation = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.x = vectorAction[i++];
+                    if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.y = vectorAction[i++];
+                    if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+                        targetNormalizedRotation.z = vectorAction[i++];
+                
+                    {
+
+                       UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                    }
+
+                }
+
+
+
+                break;
+        }//
+
+
+
+
+    }
+
+
+
 
 
     public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
 
-    public MotorDelegate UpdateMotor;
+    MotorDelegate UpdateMotor;
+
+
 
     //only used in PDopenloop
     public void SetKinematicReference(MapAnim2Ragdoll kinematicRoot) 
@@ -215,7 +302,6 @@ public class Muscles : MonoBehaviour
 
 
         }
-
 
     }
 
@@ -351,7 +437,7 @@ public class Muscles : MonoBehaviour
 
 
 
-
+    #region update-motor-modes
     void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
 
@@ -639,10 +725,8 @@ public class Muscles : MonoBehaviour
 
             var drive = joint.yDrive;
           
-          
-
-                forceInReducedSpace[1] = -Kp * (Mathf.Deg2Rad * joint.jointPosition[1] + actionTimeDelta * Mathf.Deg2Rad * joint.jointVelocity[1] - targetNormalizedRotation.y) - Kd * (Mathf.Deg2Rad * joint.jointVelocity[1] + actionTimeDelta * Mathf.Deg2Rad * acceleration[1]);
-                forceInReducedSpace[1] *= ForceScaleSPD;
+            forceInReducedSpace[1] = -Kp * (Mathf.Deg2Rad * joint.jointPosition[1] + actionTimeDelta * Mathf.Deg2Rad * joint.jointVelocity[1] - targetNormalizedRotation.y) - Kd * (Mathf.Deg2Rad * joint.jointVelocity[1] + actionTimeDelta * Mathf.Deg2Rad * acceleration[1]);
+            forceInReducedSpace[1] *= ForceScaleSPD;
           
 
 
@@ -748,7 +832,7 @@ public class Muscles : MonoBehaviour
     
     
     }
-
+    #endregion
 
     ArticulationBody FindArticulationBodyRoot() {
 
