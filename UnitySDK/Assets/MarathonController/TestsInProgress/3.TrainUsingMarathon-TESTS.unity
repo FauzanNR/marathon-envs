@@ -454,6 +454,8 @@ MonoBehaviour:
       envPrefab: {fileID: 1161001900, guid: 167b8cd4470c48947984e91f26c45fbf, type: 3}
     - envId: MarConAutomatic-v3
       envPrefab: {fileID: 1905304576, guid: d5f7738690f1e944a82b79f9d84346b1, type: 3}
+    - envId: MarConAutomatic-v4
+      envPrefab: {fileID: 2049929213, guid: c5c688f16b3ad0144b23a4efff1303c9, type: 3}
     envIdDefault: SambaCon-v1
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1

@@ -662,4 +662,12 @@ mlagents-learn config\marathon_envs_config_DReCon.yaml --env="envs\20210722-PDcl
 
 
 
-NOT WORKING!
+
+22.09.2021
+Upgraded to latest Unity, trying if training on procedural characters still works.
+
+```
+
+mlagents-learn config/MarConHumanoid.yaml              --env="envs\20210922-PDstable-sambacon-v4\Marathon.exe"  --num-envs=25 --run-id=TestMarConUnityUpgrade2021-v3 --no-graphics   --env-args --spawn-env=MarConAutomatic-v4 --num-spawn-envs=35
+
+```
