@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &285756606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -451,15 +451,17 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: DReConHumanoid-v0
-      envPrefab: {fileID: 884079593499418970, guid: 32ae3dba713e54b22910e58a8722e75d,
+      envPrefab: {fileID: 884079593499418970, guid: b82d8d26679d4eb45a89e67306145710,
         type: 3}
     - envId: DReConHumanoidMocap-v0
-      envPrefab: {fileID: 884079593499418970, guid: 3636dd979152347bdaac9835ea8045e3,
+      envPrefab: {fileID: 884079593499418970, guid: 4979b1c05a70d2d478554efcfb3f31fb,
         type: 3}
     - envId: MarConQuadruped-v0
-      envPrefab: {fileID: 4102260425739354826, guid: 167406519fb5f4510bee5dcbe78e5f68,
+      envPrefab: {fileID: 4102260425739354826, guid: 76b7b05e289fb9744ac6a5ff079f742e,
         type: 3}
-    envIdDefault: DReConHumanoid-v0
+    - envId: test-after-upgrade
+      envPrefab: {fileID: 2049929213, guid: c5c688f16b3ad0144b23a4efff1303c9, type: 3}
+    envIdDefault: DReConHumanoidMocap-v0
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 1
