@@ -35,6 +35,23 @@ public static class Utils
     }
 
 
+    public static Vector3 Scale(Vector3 u, ArticulationReducedSpace q)
+    {
+
+        Vector3 res = new Vector3();
+
+
+        //we only have twist, or twist and swing in 2 axis?
+        if (q.dofCount > 0)
+            res.x = u.x * q[0];
+        if(q.dofCount == 3) { 
+            res.y = u.y * q[1];
+            res.z = u.z * q[2];
+        }
+
+        return res;
+
+    }
 
     public static Vector3 GetSwingTwist(Quaternion localRotation) 
     {

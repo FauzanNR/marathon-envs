@@ -12,7 +12,7 @@ public class AnimationAsTargetPose : MonoBehaviour
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
 
-    List<Rigidbody> targets;
+    public List<Rigidbody> targets;
 
     /*
     Vector3 debugDistance;
@@ -30,7 +30,9 @@ public class AnimationAsTargetPose : MonoBehaviour
 
         _mapAnim2Ragdoll.OnAgentInitialize();
 
-        targets = _mapAnim2Ragdoll.GetRigidBodies();
+       
+        //it is set up from the Muscles script to make sure we have the same order than the others.
+        //targets = _mapAnim2Ragdoll.GetRigidBodies();
 
      
         _motors = GetComponentsInChildren<ArticulationBody>()
@@ -38,6 +40,7 @@ public class AnimationAsTargetPose : MonoBehaviour
             .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
+        
         
         _ragDollMuscles = GetComponent<Muscles>();
 
@@ -59,7 +62,7 @@ public class AnimationAsTargetPose : MonoBehaviour
 
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         _mapAnim2Ragdoll.OnStep(Time.fixedDeltaTime);
 

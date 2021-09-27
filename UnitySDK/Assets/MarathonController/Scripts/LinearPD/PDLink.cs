@@ -7,79 +7,81 @@ using MathNet.Numerics.LinearAlgebra;
 //using MathNet.Numerics.LinearAlgebra.Double;
 
 
-namespace LinearPDController { 
+namespace LinearPDController {
 
-public class PDLink
-{
+    public class PDLink
+    {
 
 
 
-    ArticulationBody _ab;
+        ArticulationBody _ab;
 
-    //equation is:
-    //f_I = I_i a_i + p_i
+        //equation is:
+        //f_I = I_i a_i + p_i
 
-    //CORIOLIS, GRAVITY AND OTHER EXTERNAL FORCES
-    Vector<double> Z_i; // Vector<double>.Build.Dense(6);
+        //CORIOLIS, GRAVITY AND OTHER EXTERNAL FORCES
+        Vector<double> Z_i; // Vector<double>.Build.Dense(6);
                             // we use this variable to store 2 values:
                             //  1. isolated zero acceleration force  Z_i (Mirtich) or Bias Force p_i^A (Featherstone14)
                             //  2. spatial articulated zero-acceleration force  Z_i^A (Mirtich) or articulated Bias Force p_i^a (Featherstone14)
                             //When put together in a big matrix, we write C(q, q^dot) 
 
-    Vector<double> c_i;  //Vector<double>.Build.Dense(6);
-                            //Spatial Coriolis Force
+        Vector<double> c_i;  //Vector<double>.Build.Dense(6);
+                             //Spatial Coriolis Force
 
-    //INERTIA or generalized Mass
-    Matrix<double> I_i;  //Matrix<double>.Build.Dense(6, 6);
-                                //we use this variable to store 2 values:
-                                //  1. spatial isolated inertia I_i (Mirtich) or rigid-body inertia I_i (Featherstone14)
-                                //  2. spatial articulated inertia I_i^A (Mirtich) or rigid-body apparent  inertia I_i^a  (Featherstone14)
-                                //When put together in a big matrix, we often write M(q), sometimes also H
-
-
-    Vector<double> acceleration;
-
-    PDLink dad;
-    //int index;
-
-    //Inertia inverse, kept here  to not calculate it twice (in passes 2 and 3), In Featherstone it is D.
-    Matrix<double> SISInverted;
-
-    PDLink()
-    {
-    }
+        //INERTIA or generalized Mass
+        Matrix<double> I_i;  //Matrix<double>.Build.Dense(6, 6);
+                             //we use this variable to store 2 values:
+                             //  1. spatial isolated inertia I_i (Mirtich) or rigid-body inertia I_i (Featherstone14)
+                             //  2. spatial articulated inertia I_i^A (Mirtich) or rigid-body apparent  inertia I_i^a  (Featherstone14)
+                             //When put together in a big matrix, we often write M(q), sometimes also H
 
 
-    PDLink(ArticulationBody a, List<PDLink> LinksCreated)
-    {
+        Vector<double> acceleration;
 
-        PDLink me = LinksCreated.FirstOrDefault(x =>  x._ab.Equals(a));
-        if (me == null)
+        PDLink dad;
+      //  int index;
+
+        //Inertia inverse, kept here  to not calculate it twice (in passes 2 and 3), In Featherstone it is D.
+        Matrix<double> SISInverted;
+
+        public ArticulationBody articulationBody { get => _ab;  }
+
+        PDLink()
         {
-            me = new PDLink();
-            me._ab = a;
-            
+        }
 
-            PDLink dad = null;
-            ArticulationBody abdad = a.transform.parent.GetComponent<ArticulationBody>();
-            if (abdad != null)
+
+        PDLink(ArticulationBody a, List<PDLink> LinksCreated)
+        {
+
+            PDLink me = LinksCreated.FirstOrDefault(x => x._ab.Equals(a));
+            if (me == null)
             {
-                dad = LinksCreated.FirstOrDefault(x => x._ab.Equals(abdad));
+                me = new PDLink();
+                me._ab = a;
 
-            }
-            else if (!me._ab.isRoot)
-            {
-                Debug.Log(a.name + " does not seem to have an articulationBody as parent");
 
-            }
+                PDLink dad = null;
+                ArticulationBody abdad = a.transform.parent.GetComponent<ArticulationBody>();
+                if (abdad != null)
+                {
+                    dad = LinksCreated.FirstOrDefault(x => x._ab.Equals(abdad));
 
-            if (dad != null)
-            {
-                me.dad = dad;
+                }
+                else if (!me._ab.isRoot)
+                {
+                    Debug.Log(a.name + " does not seem to have an articulationBody as parent");
 
-            }
-            else 
-            {
+                }
+
+                if (dad != null)
+                {
+                    me.dad = dad;
+
+                }
+                else
+                {
                     if (!me._ab.isRoot) {
                         Debug.Log(a.name + "'s dad does not seem to be in the list of sorted links, (this should not happen in a sorted list?)");
                         dad = new PDLink();
@@ -90,17 +92,16 @@ public class PDLink
 
                 }
 
-            me.acceleration = Vector<double>.Build.Dense(6);
-            LinksCreated.Add(me);
+                me.acceleration = Vector<double>.Build.Dense(6);
+                LinksCreated.Add(me);
 
             }
-            //me.index = idx;
+           // me.index = idx;
 
-    }
-
-   
+        }
 
 
+        //public bool isRoot{ get { return _ab.isRoot; } }
 
 
 
@@ -122,7 +123,8 @@ public class PDLink
             int NumberLinks(ArticulationBody node, int idx)
         {
 
-           
+            //Debug.Log(" linking node " + node.name + " to index " + idx);
+
             PDLink PDnode = new PDLink(node, LinksCreated);
 
             
@@ -142,11 +144,48 @@ public class PDLink
 
     }
 
-    #region pass1
+        #region pass1
 
-    //Mirtich pge 116
-    public void updateVelocities(float qVel) {
+        //auxiliary function just to get the ucrrent velocity of the rigidBody
+        public ArticulationReducedSpace currentVel() {
+
+            ArticulationReducedSpace res = new ArticulationReducedSpace();
+            res.dofCount = 3;
+
+            if (_ab.jointType != ArticulationJointType.SphericalJoint)
+                return res;
+           
+            if(_ab.dofCount > 0) { 
+                if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
+                    res[0] = _ab.jointVelocity[0];
+                else
+                    res[0] = 0.0f;
+
+                if (_ab.swingYLock== ArticulationDofLock.LimitedMotion)
+                    res[1] = _ab.jointVelocity[1];
+                else
+                    res[1] = 0.0f;
+
+                if (_ab.swingZLock == ArticulationDofLock.LimitedMotion)
+                    res[2] = _ab.jointVelocity[2];
+                else
+                    res[2] = 0.0f;
+            }
+            return res;
+
+        
+        }
+
+
+        //Mirtich pge 116
+        //public void updateVelocities(Vector3 qVel) {
+        public void updateVelocities(ArticulationReducedSpace qVel)
+        {
+
         ArticulationBody ab = this._ab;
+            if (ab.isRoot)
+                return;
+
         Quaternion Rot = ab.transform.localRotation;
 
         ArticulationBody dad = ab.transform.parent.GetComponent<ArticulationBody>();
@@ -161,12 +200,20 @@ public class PDLink
 
 
         Vector3 d_i = get_d(ab);
+
         Vector3 u_i = get_u(ab);
 
-        ab.angularVelocity += qVel * u_i;
-        ab.velocity += qVel * Vector3.Cross(u_i, d_i);
 
-    }
+
+        ab.angularVelocity += Utils.Scale(u_i, qVel);
+
+
+         
+
+        Vector3 temp2 = Vector3.Cross(u_i, d_i);
+        ab.velocity += Utils.Scale(temp2, qVel);
+
+        }
 
     public Vector<double> calculateZ_i() { 
     //A. we calculate Z_i
@@ -191,9 +238,9 @@ public class PDLink
         I_i[2, 5] = _ab.mass;
 
         //this has to be done in each frame:
-        I_i[4, 0] = _ab.inertiaTensor.x;
-        I_i[5, 1] = _ab.inertiaTensor.y;
-        I_i[6, 2] = _ab.inertiaTensor.z;
+        I_i[3, 0] = _ab.inertiaTensor.x;
+        I_i[4, 1] = _ab.inertiaTensor.y;
+        I_i[5, 2] = _ab.inertiaTensor.z;
 
         this.I_i = I_i;
 
@@ -202,9 +249,20 @@ public class PDLink
     }
 
     //C. We calculate c_i
-    public Vector<double> updateCoriolis(float qVel) {
+    public Vector<double> updateCoriolis() {
 
-        Vector3 vel_i = qVel * get_u(_ab);
+
+
+
+            if (_ab.isRoot)
+            {
+                double[] noC = {  0, 0, 0, 0, 0, 0  };
+                this.c_i = Vector<double>.Build.Dense(noC);
+                return this.c_i;
+
+            }
+
+        Vector3 vel_i = Utils.Scale( get_u(_ab), _ab.jointVelocity);
         ArticulationBody dad = _ab.transform.parent.GetComponent<ArticulationBody>();
 
         Vector3 d_i = get_d(_ab);
@@ -233,8 +291,12 @@ public class PDLink
     public void updateIZ_dad(Vector3 forces, Vector3 torques)
     {
 
+
          //A. we calculate I_h^A
         ArticulationBody ab = this._ab;
+        if (ab.isRoot)
+            return;
+        
         ArticulationBody abdad = this.dad._ab;
 
         Vector3 u = get_u(ab);
@@ -245,20 +307,24 @@ public class PDLink
         Matrix<double> dadXab = get_bXa(ab, abdad);
         Matrix<double> abXdad = get_bXa(abdad, ab);
 
-
         //update I_dad
         Matrix<double> tmp = I_i * S_i.ToColumnMatrix() * S_iT * I_i;
-         SISInverted = (S_iT * I_i * S_i.ToColumnMatrix()).Inverse();
-        dad.I_i += dadXab * (I_i - SISInverted * tmp) * abXdad;
 
-
+        SISInverted = (S_iT * I_i * S_i.ToColumnMatrix()).Inverse(); //this is a scalar??? TO FIX
+            dad.I_i += dadXab * (I_i - SISInverted[0,0] * tmp) * abXdad;
 
         //B. we calculate Z_h^A
        //update Z_dad
         double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
         Vector<double> Q = Vector<double>.Build.Dense(q);
 
-        Vector<double> tmp3 = I_i * S_i.ToColumnMatrix() * (Q - S_iT * (Z_i + I_i * c_i));
+
+        var test1 = I_i * S_i.ToColumnMatrix();
+        var test2 = I_i * c_i;
+        var test3 = S_iT * (Z_i + test2);
+
+
+        Vector<double> tmp3 = test1 * (Q - test3);
         dad.Z_i += dadXab * (Z_i + I_i * c_i + (SISInverted * tmp3));
 
 
@@ -374,7 +440,7 @@ public class PDLink
         Matrix<double> rtild = get_rtilde(get_r(a, b));
 
         //Matrix<double> R = get_R(ab.transform.localRotation);
-        Quaternion localRot = a.transform.rotation * Quaternion.Inverse(b.transform.rotation);//todo that when a is son of b, it is equivalent to a.transform.localRotation;
+        Quaternion localRot = a.transform.rotation * Quaternion.Inverse(b.transform.rotation);//todo check  that when a is son of b, it is equivalent to a.transform.localRotation;
 
         Matrix<double> R = get_Rot3x3(localRot);
 

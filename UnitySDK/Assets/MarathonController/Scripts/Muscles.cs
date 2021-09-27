@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEngine;
 
 using System;
-
+using ManyWorlds;
 
 public class Muscles : MonoBehaviour
 {
@@ -95,34 +95,77 @@ public class Muscles : MonoBehaviour
 
 
 
+
+
+
+    delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
+
+    MotorDelegate UpdateMotor;
+
+
+
+    //only used for LinearPD:
+    private LinearPD _lpd;
+    Vector3[] targetRotations;
+
+
+
+
+    //only used in PDopenloop
+    public void SetKinematicReference(MapAnim2Ragdoll kinematicRoot)
+    {
+
+        _referenceTransforms = kinematicRoot._ragdollTransforms;
+
+
+    }
+
+
     //This function is to debug the motor update modes, mimicking a reference animation.
     /// To be used only with the root frozen, "hand of god" mode, it will not work on a 
     /// proper physics character
 
     public void MimicRigidBodies(List<Rigidbody> targets)
     {
-
-
-
-        foreach (var m in _motors)
+        int im = 0;
+        switch (MotorUpdateMode)
         {
 
+            case (Muscles.MotorMode.linearPD):
+                
+                foreach (var a in targets) {
+                    targetRotations[im] = Utils.GetSwingTwist(a.transform.localRotation);
+                    im++;
+                }
 
-            Rigidbody a = targets.Find(x => x.name == m.name);
+                _lpd.updateTargets(targetRotations, Time.fixedDeltaTime);
+                _lpd.ABAalgo();
+                break;
 
-            if (m.isRoot)
-            {
-                continue; //neveer happens because excluded from list
-            }
-            else
-            {
+            default:
 
-                Vector3 targetNormalizedRotation = Utils.GetSwingTwist(a.transform.localRotation);
-                UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
-            }
+               
+                 foreach (var m in _motors)
+                {
 
 
+                    //Rigidbody a = targets.Find(x => x.name == m.name);
+                    Rigidbody a = targets[im];
+                    if (m.isRoot)
+                    {
+                        continue; //neveer happens because excluded from list
+                    }
+                    else
+                    {
 
+                        Vector3 targetNormalizedRotation = Utils.GetSwingTwist(a.transform.localRotation);
+                        UpdateMotor(m, targetNormalizedRotation, Time.fixedDeltaTime);
+                    }
+
+                    im++;
+
+                }
+                break;
         }
 
 
@@ -132,17 +175,39 @@ public class Muscles : MonoBehaviour
     public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
     {
 
-
+        int i = 0;//keeps track of the number of action
         switch (MotorUpdateMode)
         {
-
+              
             case (Muscles.MotorMode.linearPD):
 
+             
+                int im = 0; //keeps track of the number of motor
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
 
-                break;
+                    targetRotations[im] = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock == ArticulationDofLock.LimitedMotion)
+                        targetRotations[im].x = vectorAction[i++];
+                    if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+                        targetRotations[im].y = vectorAction[i++];
+                    if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+                        targetRotations[im].z = vectorAction[i++];
+
+                    im++;
+
+                }
+
+                _lpd.updateTargets(targetRotations, actionTimeDelta);
+                _lpd.ABAalgo();
+            break;
 
             default:
-                int i = 0;//keeps track of hte number of action
+               
                 foreach (var m in _motors)
                 {
                     if (m.isRoot)
@@ -157,45 +222,23 @@ public class Muscles : MonoBehaviour
                         targetNormalizedRotation.y = vectorAction[i++];
                     if (m.swingZLock == ArticulationDofLock.LimitedMotion)
                         targetNormalizedRotation.z = vectorAction[i++];
-                
-                    {
 
-                       UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
-                    }
+                   
+
+                   UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                   
 
                 }
 
 
 
-                break;
-        }//
-
-
-
+            break;
+        }
 
     }
 
 
 
-
-
-    delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
-
-    MotorDelegate UpdateMotor;
-
-
-
-    //only used in PDopenloop
-    public void SetKinematicReference(MapAnim2Ragdoll kinematicRoot) 
-    {
-
-        _referenceTransforms = kinematicRoot._ragdollTransforms;    
-    
-    
-    }
-
-    //only used for LinearPD
-    private LinearPD _lpd;
 
 
     // Use this for initialization
@@ -209,16 +252,6 @@ public class Muscles : MonoBehaviour
                 .Distinct()
                 .ToList();
 
-        foreach (ArticulationBody m in _motors)
-        {
-            LastPos l = new LastPos();
-
-            l.name = m.name;
-            //l.pos = m.jointPosition;
-            l.vel = m.jointVelocity;
-
-            _lastPos.Add(l);
-        }
 
 
 
@@ -240,7 +273,8 @@ public class Muscles : MonoBehaviour
 
 
 
-        switch (MotorUpdateMode) {
+        switch (MotorUpdateMode)
+        {
 
             case (MotorMode.force):
                 UpdateMotor = DirectForce;
@@ -255,9 +289,20 @@ public class Muscles : MonoBehaviour
                 break;
 
             case (MotorMode.stablePD):
-                
+
                 UpdateMotor = StablePD;
                 //NOTE: this is not yet working, the implementaiton is in progress
+
+                foreach (ArticulationBody m in _motors)
+                {
+                    LastPos lp = new LastPos();
+
+                    lp.name = m.name;
+                    //l.pos = m.jointPosition;
+                    lp.vel = m.jointVelocity;
+
+                    _lastPos.Add(lp);
+                }
 
                 break;
 
@@ -273,14 +318,44 @@ public class Muscles : MonoBehaviour
                 UpdateMotor = UpdateLinearPD;
                 _lpd = gameObject.AddComponent<LinearPD>();
 
+
                 ArticulationBody root = FindArticulationBodyRoot();
-                _lpd.Init(root);
+
+                //this ensures the order in which we parse them follows the convention needed for the ABA algo.
+                _motors = _lpd.Init(root);
+
+                int l = _motors.Count;
+                targetRotations = new Vector3[l];
+
                 break;
         }
 
 
-         
 
+        //this checks if we have this object and if it is the case
+        //it will find the target rotations that correspond to the motors.
+        //This is useful to make sure targets correspond one to one and in the same order  to _motors
+
+        AnimationAsTargetPose atp = GetComponent<AnimationAsTargetPose>();
+        if (atp != null)
+        {
+
+            List<Rigidbody> rbs = new List<Rigidbody>();
+            SpawnableEnv _spawnableEnv = GetComponentInParent<SpawnableEnv>();
+
+            List<Rigidbody> rblistraw = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>().GetRigidBodies();
+
+            foreach (var m in _motors)
+            {
+
+                Rigidbody a = rblistraw.Find(x => x.name == m.name);
+                rbs.Add(a);
+
+            }
+            atp.targets = rbs;
+
+
+        }
     }
 
     // Update is called once per frame
@@ -330,14 +405,15 @@ public class Muscles : MonoBehaviour
         foreach (var joint in joints)
             joint.enablePreprocessing = false;
     }
+
     void IgnoreCollision(string first, string[] seconds)
     {
         foreach (var second in seconds)
         {
-            IgnoreCollision(first, second);
+            Ignore1Collision(first, second);
         }
     }
-    void IgnoreCollision(string first, string second)
+    void Ignore1Collision(string first, string second)
     {
         var rigidbodies = GetComponentsInChildren<Rigidbody>().ToList();
         var colliderOnes = rigidbodies.FirstOrDefault(x => x.name.Contains(first))?.GetComponents<Collider>();
@@ -828,15 +904,19 @@ public class Muscles : MonoBehaviour
 
     void UpdateLinearPD(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta) {
 
+        _lpd.ABAalgo();
 
-    
-    
+
+
+
     }
     #endregion
 
     ArticulationBody FindArticulationBodyRoot() {
 
         ArticulationBody[] abs= GetComponentsInChildren<ArticulationBody>();
+
+
         foreach (ArticulationBody ab in abs) {
             if (ab.isRoot)
                 return ab;
