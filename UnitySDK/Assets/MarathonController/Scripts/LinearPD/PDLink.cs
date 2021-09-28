@@ -4,7 +4,6 @@ using UnityEngine;
 
 using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
-//using MathNet.Numerics.LinearAlgebra.Double;
 
 
 namespace LinearPDController {
@@ -12,7 +11,7 @@ namespace LinearPDController {
     public class PDLink
     {
 
-
+        public static bool isLinearStable = true;
 
         ArticulationBody _ab;
 
@@ -44,6 +43,12 @@ namespace LinearPDController {
 
         //Inertia inverse, kept here  to not calculate it twice (in passes 2 and 3), In Featherstone it is D.
         Matrix<double> SISInverted;
+
+        Vector3 Qtorque;
+
+        [Header("Parameters for LinearPD:")]
+        public static float KP = 50;
+        
 
         public ArticulationBody articulationBody { get => _ab;  }
 
@@ -280,15 +285,44 @@ namespace LinearPDController {
 
 
 
-    #endregion
+        #endregion
 
 
 
 
-    #region pass2
+        #region pass2
+
+        public void updateQtorque(Vector3 targetCoord, float actionTimeDelta)
+        {
+
+
+
+
+            if (isLinearStable) { 
+
+            float KD = KP * actionTimeDelta * 1.5f;
+
+            Qtorque = -KP * (Utils.GetArticulationReducedSpaceInVector3(_ab.jointPosition) + actionTimeDelta * Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity) - (targetCoord))
+                       - KD * Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity);
+        }else{
+
+                Debug.LogError("only implemented linear stable case");
+        
+        }
+
+        }
 
     //treeFwdDynamics Mirtich page 121
-    public void updateIZ_dad(Vector3 forces, Vector3 torques)
+
+
+    public void updateIZ_dad() {
+           updateIZ_dad(Vector3.zero, Qtorque);
+
+    }
+
+
+
+    void updateIZ_dad(Vector3 forces, Vector3 torques)
     {
 
 
@@ -313,6 +347,7 @@ namespace LinearPDController {
         SISInverted = (S_iT * I_i * S_i.ToColumnMatrix()).Inverse(); //this is a scalar??? TO FIX
             dad.I_i += dadXab * (I_i - SISInverted[0,0] * tmp) * abXdad;
 
+
         //B. we calculate Z_h^A
        //update Z_dad
         double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
@@ -321,21 +356,27 @@ namespace LinearPDController {
 
         var test1 = I_i * S_i.ToColumnMatrix();
         var test2 = I_i * c_i;
-        var test3 = S_iT * (Z_i + test2);
+        var test3 = S_iT * (Z_i + test2);//AAAAAAAAAARG JL 
 
-
-        Vector<double> tmp3 = test1 * (Q - test3);
-        dad.Z_i += dadXab * (Z_i + I_i * c_i + (SISInverted * tmp3));
+            var resTest3 = test3[0];
+            var tmp4 = (Q - resTest3);
+        Vector<double> tmp3 = test1 * tmp4;
+        dad.Z_i += dadXab * (Z_i + I_i * c_i + SISInverted * tmp3);
 
 
     }
 
         #endregion
 
-    #region pass3
+        #region pass3
 
-        public Vector<double> updateAcceleration(Vector3 forces, Vector3 torques) 
-        {
+    public Vector<double> updateAcceleration() {
+            return updateAcceleration(Vector3.zero, Qtorque);
+
+        }
+
+    Vector<double> updateAcceleration(Vector3 forces, Vector3 torques) 
+    {
 
             double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
             Vector<double> Q = Vector<double>.Build.Dense(q);
@@ -371,6 +412,9 @@ namespace LinearPDController {
         Vector<double> output = Vector<double>.Build.Dense(oarray);
         return output.ToRowMatrix();
     }
+
+
+    //WRONG THIS WOULD ONLY WORK FOR 1 DOF, not for 3.
 
     static Vector3 get_u(ArticulationBody ab)
     {

@@ -42,6 +42,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -520,6 +521,7 @@ Terrain:
   m_DrawHeightmap: 1
   m_DrawInstanced: 0
   m_DrawTreesAndFoliage: 0
+  m_StaticShadowCaster: 0
   m_ReflectionProbeUsage: 1
   m_MaterialTemplate: {fileID: 10652, guid: 0000000000000000f000000000000000, type: 0}
   m_BakeLightProbesForTrees: 0
@@ -2838,6 +2840,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -3786,18 +3789,8 @@ MonoBehaviour:
     PowerVector: {x: 20, y: 20, z: 20}
   - Muscle: articulation:mixamorig:RightHand
     PowerVector: {x: 40, y: 40, z: 40}
-  Stiffness: 50
-  Damping: 100
-  ForceLimit: 3.4028235e+38
-  DampingRatio: 1
-  NaturalFrequency: 20
-  ForceScale: 0.3
-  KP_Stiffness: 50
-  ForceScaleSPD: 0.3
   skipCollisionSetup: 0
-  updateDebugValues: 0
   jointVelocityInReducedSpace: []
-  _referenceTransforms: []
 --- !u!114 &6208207422085220428
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6501,6 +6494,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -8552,6 +8546,7 @@ SkinnedMeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1

@@ -5,7 +5,8 @@ using UnityEngine;
 using System.Linq;
 using LinearPDController;
 
-public class LinearPD : MonoBehaviour
+public class LinearPD : MonoBehaviour 
+//TODO: we only define it as a MonoBehavior to show debug values, it could easily be a pure class
 {
 
 
@@ -14,18 +15,6 @@ public class LinearPD : MonoBehaviour
    
 
 
-
-    void Start()
-    {
-       // Init(); 
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-      //  ABAalgo();
-
-    }
 
 
     public List<ArticulationBody> Init(ArticulationBody theRoot)
@@ -49,16 +38,21 @@ public class LinearPD : MonoBehaviour
 
 
     public void updateTargets(Vector3[] targetRots, float actionTimeDelta)
-    { 
-                
+    {
+        for (int i = 0; i < PDLinks.Length; i++)
+        {
 
-    
-    
+
+            PDLinks[i].updateQtorque(targetRots[i], actionTimeDelta);
+
+
+        }
+
+
     }
 
 
 
-    //NOT USED HERE
     public void ABAalgo() {
 
         //PASS 1 in Featherstone
@@ -86,7 +80,6 @@ public class LinearPD : MonoBehaviour
         foreach (PDLink pdl in PDLinks)
         {           
            
-
                    pdl.updateVelocities(pdl.currentVel());
 
             
@@ -136,13 +129,13 @@ public class LinearPD : MonoBehaviour
         //pass 2
         for (int i = PDLinks.Length-1; i > 0; i--)
         {
-            //TODO: update and find the target forces to apply            
-            Vector3 Qforces = Vector3.zero;
-            Vector3 Qtorques = Vector3.zero;
+          
 
-            Debug.Log(" linking node "   + " to index " + i);
 
-            PDLinks[i].updateIZ_dad(Qforces,Qtorques);
+            //Debug.Log(" linking node "   + " to index " + i);
+            
+
+            PDLinks[i].updateIZ_dad();
 
 
         }
@@ -150,11 +143,7 @@ public class LinearPD : MonoBehaviour
         //pass 3
         for (int i = 0; i < PDLinks.Length; i++) 
         {
-
-            Vector3 Qforces = Vector3.zero;
-            Vector3 Qtorques = Vector3.zero;
-            PDLinks[i].updateAcceleration(Qforces, Qtorques);
-        
+            PDLinks[i].updateAcceleration();
         
         }
 
