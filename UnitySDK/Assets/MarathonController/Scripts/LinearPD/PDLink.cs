@@ -6,6 +6,7 @@ using System.Linq;
 using MathNet.Numerics.LinearAlgebra;
 
 
+
 namespace LinearPDController {
 
     public class PDLink
@@ -159,8 +160,19 @@ namespace LinearPDController {
 
             if (_ab.jointType != ArticulationJointType.SphericalJoint)
                 return res;
-           
-            if(_ab.dofCount > 0) { 
+
+            if (_ab.dofCount == 1)
+            {
+                if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
+                    res[0] = _ab.jointVelocity[0];
+                else if (_ab.swingYLock == ArticulationDofLock.LimitedMotion)
+                    res[1] = _ab.jointVelocity[0];
+                else if (_ab.swingZLock == ArticulationDofLock.LimitedMotion)
+                    res[2] = _ab.jointVelocity[0];
+                
+                
+            } //Unity does not support 2 DOF
+            else  if (_ab.dofCount ==3 ) { 
                 if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
                     res[0] = _ab.jointVelocity[0];
                 else
@@ -311,18 +323,20 @@ namespace LinearPDController {
         }
 
         }
+        #endregion
 
-    //treeFwdDynamics Mirtich page 121
+        //treeFwdDynamics Mirtich page 121
 
 
-    public void updateIZ_dad() {
+        public void updateIZ_dad() {
            updateIZ_dad(Vector3.zero, Qtorque);
 
     }
 
+    #region pass3
 
 
-    void updateIZ_dad(Vector3 forces, Vector3 torques)
+        void updateIZ_dad(Vector3 forces, Vector3 torques)
     {
 
 
@@ -344,31 +358,55 @@ namespace LinearPDController {
         //update I_dad
         Matrix<double> tmp = I_i * S_i.ToColumnMatrix() * S_iT * I_i;
 
-        SISInverted = (S_iT * I_i * S_i.ToColumnMatrix()).Inverse(); //this is a scalar??? TO FIX
-            dad.I_i += dadXab * (I_i - SISInverted[0,0] * tmp) * abXdad;
+        SISInverted = (S_iT * I_i * S_i.ToColumnMatrix()).Inverse();
+
+        if (_ab.dofCount == 1)
+            dad.I_i += dadXab * (I_i - SISInverted[0, 0] * tmp) * abXdad;
+        else if (_ab.dofCount > 1)
+            Debug.LogError("spherical joints with more than 1 DOF not yet supported");
 
 
-        //B. we calculate Z_h^A
-       //update Z_dad
-        double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
-        Vector<double> Q = Vector<double>.Build.Dense(q);
+
+            if (_ab.dofCount == 1)
+            {
+                // double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
+                double[] q = { 0.0 };
+
+                if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
+                    q[0] = torques.x;
+                else if (_ab.swingYLock == ArticulationDofLock.LimitedMotion)
+                    q[0] = torques.y;
+                else if (_ab.swingZLock == ArticulationDofLock.LimitedMotion)
+                    q[0] = torques.z;
 
 
-        var test1 = I_i * S_i.ToColumnMatrix();
-        var test2 = I_i * c_i;
-        var test3 = S_iT * (Z_i + test2);//AAAAAAAAAARG JL 
+                Vector<double> Q = Vector<double>.Build.Dense(q);
+                //B. we calculate Z_h^A
+                //update Z_dad
 
-            var resTest3 = test3[0];
-            var tmp4 = (Q - resTest3);
-        Vector<double> tmp3 = test1 * tmp4;
-        dad.Z_i += dadXab * (Z_i + I_i * c_i + SISInverted * tmp3);
+
+
+                var tmp1 = I_i * c_i;
+                
+                var tmp2 = (Q - S_iT * (Z_i + tmp1));//this should only be calculated once?
+                var tmp3 = I_i * S_i.ToColumnMatrix() * tmp2;
+
+
+                dad.Z_i += dadXab * (Z_i + I_i * c_i + SISInverted[0,0] * tmp3);
+            }
+            else if (_ab.dofCount > 1) {
+                Debug.LogError("Z update only supported for 1 DOF");
+            
+            }
+
+
+
+          
 
 
     }
 
-        #endregion
 
-        #region pass3
 
     public Vector<double> updateAcceleration() {
             return updateAcceleration(Vector3.zero, Qtorque);
@@ -377,11 +415,7 @@ namespace LinearPDController {
 
     Vector<double> updateAcceleration(Vector3 forces, Vector3 torques) 
     {
-
-            double[] q = { forces.x, forces.y, forces.z, torques.x, torques.y, torques.z };
-            Vector<double> Q = Vector<double>.Build.Dense(q);
-
-
+       
             Vector3 u = get_u(_ab);
             Vector3 uxd = Vector3.Cross(u, get_d(_ab));
             double[] a = { u[0], u[1], u[2], uxd[0], uxd[1], uxd[2] };
@@ -389,16 +423,65 @@ namespace LinearPDController {
             Matrix<double> S_iT = spatialTranspose(S_i);//it is a row matrix
                                                         //Matrix<double> dadXab = get_bXa(_ab, abdad);
 
-            ArticulationBody abdad = this.dad._ab;
-            Matrix<double> abXdad = get_bXa(abdad, this._ab);
+            PDLink dadLink = this.dad;
 
-            //TODO: check how we deal with a(0) = 0;
+            double[] qA = { 0, 0, 0, 0, 0, 0 };
+            Vector<double> qAccel = Vector<double>.Build.Dense(qA);
 
-            Vector<double> qAccel = SISInverted * (Q - S_iT * abXdad * dad.acceleration - S_iT * (Z_i + I_i * c_i));
+            if (dadLink != null)
+            {
+                ArticulationBody abdad = this.dad._ab;
 
-            acceleration = abXdad * dad.acceleration + c_i + qAccel * S_i;
 
-            return qAccel;
+                Matrix<double> abXdad = get_bXa(abdad, this._ab);
+
+                //TODO: check how we deal with a(0) = 0;
+                if (_ab.dofCount == 1)
+                {
+                    double[] q = { 0.0 };
+
+                    if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
+                        q[0] = torques.x;
+                    else if (_ab.swingYLock == ArticulationDofLock.LimitedMotion)
+                        q[0] = torques.y;
+                    else if (_ab.swingZLock == ArticulationDofLock.LimitedMotion)
+                        q[0] = torques.z;
+
+
+                    Vector<double> Q = Vector<double>.Build.Dense(q);
+
+
+                    var tmp1 = (Z_i + I_i * c_i);
+
+                    var tmp2 = S_iT * abXdad * dad.acceleration;
+
+                   var tmp3 = SISInverted * (Q - tmp2  - S_iT * tmp1);
+
+                    if (_ab.twistLock == ArticulationDofLock.LimitedMotion)
+                        qAccel[3] = tmp3[0];
+                    else if (_ab.swingYLock == ArticulationDofLock.LimitedMotion)
+                        qAccel[4] = tmp3[0];
+                    else if (_ab.swingZLock == ArticulationDofLock.LimitedMotion)
+                        qAccel[5] = tmp3[0];
+
+
+                }
+                else if (_ab.dofCount > 1)
+                {
+                    Debug.LogError("Z update only supported for 1 DOF");
+
+                }
+
+
+                acceleration = abXdad * dad.acceleration + c_i + qAccel * S_i;
+
+
+            }
+
+               
+                return qAccel;
+           
+          
         }
 
 

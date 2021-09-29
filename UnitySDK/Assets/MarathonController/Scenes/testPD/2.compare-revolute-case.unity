@@ -1270,7 +1270,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 652394cd365ee4cd0b8f8318777d8161, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MotorUpdateMode: 5
+  MotorUpdateMode: 6
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
     PowerVector: {x: 40, y: 40, z: 40}

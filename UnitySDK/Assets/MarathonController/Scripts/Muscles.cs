@@ -386,7 +386,10 @@ public class Muscles : MonoBehaviour
             {
 
                 Rigidbody a = rblistraw.Find(x => x.name == m.name);
-                rbs.Add(a);
+                if (a == null)
+                    Debug.Log("No rigidbody found for " + m.gameObject.name);
+                else
+                   rbs.Add(a);
 
             }
             atp.targets = rbs;
