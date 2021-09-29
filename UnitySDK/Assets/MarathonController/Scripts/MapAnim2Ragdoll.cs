@@ -310,7 +310,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
 		HorizontalDirection = new Vector3(0f, transform.eulerAngles.y, 0f);
 		LastRootPositionInWorldSpace = _root.transform.position;
-		LastHeadPositionInWorldSpace = _head.transform.position;
+		if(_head!= null)
+			LastHeadPositionInWorldSpace = _head.transform.position;
 
 		var newPosition = _ragDollRigidbody
 			.Select(x=>x.position)

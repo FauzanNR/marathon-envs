@@ -12,8 +12,13 @@ public class LinearPD : MonoBehaviour
 
     PDLink[] PDLinks;
 
-   
 
+    /*
+    public enum Mode { 
+        spherical,
+        revolute
+    }
+    */
 
 
 

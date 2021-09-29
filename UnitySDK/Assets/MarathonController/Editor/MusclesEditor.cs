@@ -33,12 +33,12 @@ public class MusclesEditor : Editor
 
         base.OnInspectorGUI();
 
-        /*
-        if (GUILayout.Button("Recalculate Center of Masses"))
+        
+        if (GUILayout.Button("Setup4-1D-Debug"))
         {
             Muscles t = target as Muscles;
-            t.CenterABMasses();
-        }*/
+            t.Set1DRotations4Debug();
+        }
 
 
 

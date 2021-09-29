@@ -95,7 +95,44 @@ public class Muscles : MonoBehaviour
 
 
 
+    public void Set1DRotations4Debug() {
 
+        ArticulationBody[] abs= GetComponentsInChildren<ArticulationBody>();
+
+        foreach (ArticulationBody ab in abs) {
+
+            ab.swingYLock = ArticulationDofLock.LockedMotion;
+            /*
+            ab.swingZLock = ArticulationDofLock.LockedMotion;
+            ab.twistLock = ArticulationDofLock.LimitedMotion;
+
+            
+            ArticulationDrive temp = ab.xDrive;
+
+            //twist only deals with 180 degrees
+            temp.lowerLimit = -89;
+            temp.upperLimit = +89;
+            ab.xDrive = temp;
+            */
+
+            ab.twistLock = ArticulationDofLock.LockedMotion;
+
+
+            ab.swingZLock = ArticulationDofLock.LimitedMotion;
+
+
+            ArticulationDrive temp = ab.zDrive;
+
+            //twist only deals with 180 degrees
+            temp.lowerLimit = -175;
+            temp.upperLimit = +175;
+            ab.zDrive = temp;
+
+
+
+        }
+
+    }
 
 
     delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
