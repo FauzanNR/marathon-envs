@@ -9,8 +9,9 @@ using ManyWorlds;
 using UnityEngine.Assertions;
 
 using System;
+using DReCon;
 
-public class ProcRagdollAgent : Agent
+public class ProcRagdollAgent : Agent, IRememberPreviousActions
 {
     [Header("Settings")]
     public float FixedDeltaTime = 1f / 60f;
@@ -34,7 +35,8 @@ public class ProcRagdollAgent : Agent
     public bool dontResetWhenOutOfBounds;
 
 
-
+    [SerializeField]
+    KinematicRig rig;
 
 
 
@@ -53,7 +55,9 @@ public class ProcRagdollAgent : Agent
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
     IAnimationController _controllerToMimic;
- 
+
+    float[] previousActions;
+    public float[] PreviousActions { get => previousActions; set => previousActions = value; }
 
 
     bool _hasLazyInitialized;
@@ -66,8 +70,16 @@ public class ProcRagdollAgent : Agent
     MapAnim2Ragdoll _mapAnim2Ragdoll;
 
 
+    public float ObservationTimeDelta
+    {
+        get => Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+    }
 
-
+    public float ActionTimeDelta
+    {
+        get => _decisionRequester.TakeActionsBetweenDecisions? Time.fixedDeltaTime :  Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+    }
+    
 
     float observationTimeDelta;
     float actionTimeDelta;
@@ -226,7 +238,8 @@ public class ProcRagdollAgent : Agent
         actionTimeDelta = Time.fixedDeltaTime;
         if (!_decisionRequester.TakeActionsBetweenDecisions)
             actionTimeDelta = actionTimeDelta*_decisionRequester.DecisionPeriod;
-        _mapAnim2Ragdoll.OnStep(actionTimeDelta);
+        //_mapAnim2Ragdoll.OnStep(actionTimeDelta);
+        rig.TrackKinematics();
         _rewards2Learn.OnStep(actionTimeDelta);
 
         bool shouldDebug = _debugController != null;
@@ -250,7 +263,7 @@ public class ProcRagdollAgent : Agent
 
         int i = 0;//keeps track of hte number of actions
 
-        int j = 0;//keeps track of the number of motoros
+        int j = 0;//keeps track of the number of motors
         foreach (var m in _motors)
         {
             if (m.isRoot)
@@ -278,6 +291,7 @@ public class ProcRagdollAgent : Agent
          
         }
 
+        previousActions = vectorAction;
         _observations2Learn.PreviousActions = vectorAction;
 
         AddReward(_rewards2Learn.Reward);
@@ -467,6 +481,7 @@ public class ProcRagdollAgent : Agent
 
 
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
+        previousActions = GetActionsFromRagdollState();
 
         _controllerToMimic = _mapAnim2Ragdoll.GetComponent<IAnimationController>();
 
@@ -564,3 +579,4 @@ public class ProcRagdollAgent : Agent
         }
     }
 }
+

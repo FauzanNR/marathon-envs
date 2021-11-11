@@ -97,10 +97,10 @@ public class Muscles : MonoBehaviour
     public MotorDelegate UpdateMotor;
 
     //only used in PDopenloop
-    public void SetKinematicReference(MapAnim2Ragdoll kinematicRoot) 
+    public void SetKinematicReference(IKinematicReference kinematicRoot) 
     {
 
-        _referenceTransforms = kinematicRoot._ragdollTransforms;    
+        _referenceTransforms = kinematicRoot.RagdollTransforms;    
     
     
     }

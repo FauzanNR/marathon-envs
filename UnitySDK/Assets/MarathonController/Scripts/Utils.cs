@@ -128,5 +128,19 @@ public static class Utils
         return to * Quaternion.Inverse(from);
     }
 
+    public static Vector2 Horizontal(this Vector3 vector3)
+    {
+        return new Vector2(vector3.x, vector3.z);
+    }
+
+    public static Vector3 Sum(this IEnumerable<Vector3> vectors)
+    {
+        Vector3 sum = Vector3.zero;
+        foreach(Vector3 vector in vectors)
+        {
+            sum += vector;
+        }
+        return sum;
+    }
 
 }

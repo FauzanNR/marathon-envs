@@ -8,7 +8,7 @@ using UnityEngine.Assertions;
 using UnityEngine.AI;
 using System.Linq.Expressions;
 
-public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision 
+public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicReference
 {//previously Mocap Controller Artanim
 	public List<float> SensorIsInTouch;
 	List<GameObject> _sensors;
@@ -292,6 +292,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		velocity -= _snapOffset;
 		velocity /= timeDelta;
 		CenterOfMassVelocity = velocity;
+
+		// Mucked about
+		CenterOfMassVelocity = GetCenterOfMassVelocity();
+		//Debug.Log(CenterOfMassVelocity);
+
 		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
 		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
 		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
@@ -320,7 +325,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	float _lastPositionTime = float.MinValue;
 	Vector3 _snapOffset = Vector3.zero;
-	void MimicAnimation() {
+
+    public List<Transform> RagdollTransforms => _ragdollTransforms;
+
+    void MimicAnimation() {
 		if (!anim.enabled)
 			return;
 		// copy position for root (assume first target is root)
@@ -331,6 +339,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
 		}
 	}
+
+	
 
 	
     public Vector3 GetCenterOfMass()
@@ -347,6 +357,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         return centerOfMass;
     }
 
+	public Vector3 GetCenterOfMassVelocity()
+	{
+		return _ragDollRigidbody.Select(rb => rb.velocity * rb.mass).Sum() / _ragDollRigidbody.Select(rb => rb.mass).Sum();
+	}
 
 	public void OnReset(Quaternion resetRotation)
 	{

@@ -119,8 +119,8 @@ public class RewardStats : MonoBehaviour
         Rotations = Enumerable.Range(0, _trackRotations.Count)
             .Select(x => Quaternion.identity)
             .ToList();
-        _root = _bodyParts.First(x => x.name == rootName);
-        _head = _bodyParts.First(x => x.name == headName);
+        _root = _bodyParts.First(x => x.name.Equals(rootName));
+        _head = _bodyParts.First(x => x.name.Equals(headName));
         transform.position = defaultTransform.position;
         transform.rotation = defaultTransform.rotation;
         LastCenterOfMassInWorldSpace = transform.position;
