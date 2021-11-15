@@ -42,17 +42,7 @@ public class DReConObservationSource : ObservationSource
     private GameObject agentObject;
     IRememberPreviousActions agent;
 
-    public override int Size => 85 + agentObject.GetComponent<IRememberPreviousActions>().PreviousActions.Length;
-
-    private void Start()
-    {
-        OnAgentInitialize();
-    }
-
-    private void Update()
-    {
-        //FeedStatesToSensor(new VectorSensor(Size));
-    }
+    public override int Size => 87 + agentObject.GetComponent<DReConAgent>().ActionSpaceSize;
 
     public override void OnAgentInitialize()
     {
@@ -73,8 +63,6 @@ public class DReConObservationSource : ObservationSource
         Vector3 kinCOMV = fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity);
         Vector3 simCOMV = fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity);
 
-        Debug.Log(kinChain.Velocities.First());
-        return;
         Vector3 inputDesiredVelocity = fKin.WorldToCharacter(userInputs.GetDesiredVelocity());
         Vector2 inputDesiredHorizontalVelocity = inputDesiredVelocity.Horizontal();
 
@@ -91,6 +79,10 @@ public class DReConObservationSource : ObservationSource
         sensor.AddObservation(inputJump);
         sensor.AddObservation(inputBackflip);
         sensor.AddObservation(horizontalVelocityDifference);
+
+        Debug.Log(kinCOMV);
+        Debug.Log(simCOMV);
+
 
         foreach (var ((pSim, vSim), (pKin, vKin) ) in GetZippedStats(simSubsetBodies).Zip(GetZippedStats(kinSubsetBodies), Tuple.Create))
         {

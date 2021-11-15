@@ -9,7 +9,7 @@ public class EarlyTerminationHandler : TrainingEventHandler
     [SerializeField]
     Agent agent;
 
-    public override EventHandler Handler => throw new NotImplementedException();
+    public override EventHandler Handler => Terminate;
 
     private void Terminate(object sender, EventArgs args)
     {

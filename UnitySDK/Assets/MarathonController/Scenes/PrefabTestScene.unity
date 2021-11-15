@@ -605,12 +605,6 @@ CapsuleCollider:
   m_Height: 0.52
   m_Direction: 1
   m_Center: {x: -0.0000000037252903, y: -0.22213864, z: -0.014918946}
---- !u!1 &150956786 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1208129807446686635, guid: deb75c8e0aba0064883bb394903f4b09,
-    type: 3}
-  m_PrefabInstance: {fileID: 648232043}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &156886329
 GameObject:
   m_ObjectHideFlags: 0
@@ -2636,7 +2630,7 @@ PrefabInstance:
     - target: {fileID: 3197648005232081335, guid: deb75c8e0aba0064883bb394903f4b09,
         type: 3}
       propertyPath: dontSnapMocapToRagdoll
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4818937704350033472, guid: deb75c8e0aba0064883bb394903f4b09,
         type: 3}
@@ -4990,8 +4984,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   kinematicTransform: {fileID: 782031252}
   simulationTransform: {fileID: 648232045}
-  kinHeadTransform: {fileID: 0}
-  simHeadTransform: {fileID: 150956786}
+  kinematicHead: {fileID: 0}
+  simulationHead: {fileID: 0}
 --- !u!114 &1424216087
 MonoBehaviour:
   m_ObjectHideFlags: 0

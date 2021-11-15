@@ -65,6 +65,8 @@ namespace Kinematic
         public Vector3 CenterOfMass { get; }
 
         public Matrix4x4 TransformMatrix { get; }
+
+        public Vector3 GetPointVelocity(Vector3 worldPoint);
         public string Name { get; }
     }
 
@@ -88,6 +90,11 @@ namespace Kinematic
         public string Name => rigidbody.name;
 
         public Matrix4x4 TransformMatrix => rigidbody.transform.localToWorldMatrix;
+
+        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        {
+            return rigidbody.GetPointVelocity(worldPoint);
+        }
     }
 
     public class ArticulationBodyAdapter : IKinematic
@@ -110,6 +117,11 @@ namespace Kinematic
         public string Name => articulationBody.name;
 
         public Matrix4x4 TransformMatrix => articulationBody.transform.localToWorldMatrix;
+
+        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        {
+            return articulationBody.GetPointVelocity(worldPoint);
+        }
 
     }
     #endregion

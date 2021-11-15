@@ -9,6 +9,7 @@ using ManyWorlds;
 using UnityEngine.Assertions;
 
 using System;
+using Unity.MLAgents.Policies;
 
 namespace DReCon
 {
@@ -38,25 +39,31 @@ namespace DReCon
         List<ArticulationBody> motors;
 
         DecisionRequester decisionRequester;
+        BehaviorParameters behaviorParameters;
 
         float[] previousActions;
         public float[] PreviousActions { get => previousActions;}
 
 
+
         bool hasLazyInitialized;
 
         public event EventHandler<AgentEventArgs> onActionHandler;
+        public event EventHandler<AgentEventArgs> onBeginHandler;
 
 
-        public float ObservationTimeDelta
-        {
-            get => Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
-        }
+        public float ObservationTimeDelta => Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
 
-        public float ActionTimeDelta
-        {
-            get => decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
-        }
+        public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
+
+
+        public int ActionSpaceSize => GetActionsFromRagdollState(motorsRoot.GetComponentsInChildren<ArticulationBody>()
+            .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+            .Where(x => !x.isRoot)
+            .Distinct()
+            .ToList()).Length;
+
+        public int ObservationSpaceSize => observationSignal.Size;
 
         public override void Initialize()
         {
@@ -73,21 +80,22 @@ namespace DReCon
                 .Distinct()
                 .ToList();
 
-            previousActions = GetActionsFromRagdollState();
+            previousActions = GetActionsFromRagdollState(motors);
 
-            ragDollMuscles.SetKinematicReference(kinematicRig);
+            
 
             rewardSignal.OnAgentInitialize();
             observationSignal.OnAgentInitialize();
+            kinematicRig.Initialize();
 
-            hasLazyInitialized = true;
+            ragDollMuscles.SetKinematicReference(kinematicRig);
         }
 
         override public void CollectObservations(VectorSensor sensor)
         {
             Assert.IsTrue(hasLazyInitialized);
 
-            kinematicRig.TrackKinematics();
+            //kinematicRig.TrackKinematics();
             observationSignal.PopulateObservations(sensor);
         }
         public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -96,7 +104,9 @@ namespace DReCon
             float[] vectorAction = actionBuffers.ContinuousActions.ToArray();
             vectorAction = SmoothActions(vectorAction);
 
-            kinematicRig.TrackKinematics();
+            // TODO: Investigate whether calling kinematicRig.TrackKinematics on both collect observations and onactionreceived impacts accuracy or is necessary.
+            // Consider performing the tracking entirely on the KinematicRig itself.
+            //kinematicRig.TrackKinematics();
 
             int i = 0;
             foreach (var m in motors)
@@ -123,18 +133,16 @@ namespace DReCon
         }
         public override void OnEpisodeBegin()
         {
+            previousActions = GetActionsFromRagdollState(motors);
 
-            Vector3 resetVelocity = Vector3.zero;
-
-            throw new NotImplementedException(); // Might need a separate class to handle setting up and resetting environment (i.e., the character)
-
-            previousActions = GetActionsFromRagdollState();
+            onBeginHandler?.Invoke(this, AgentEventArgs.Empty);
         }
 
-        float[] GetActionsFromRagdollState()
+
+        static float[] GetActionsFromRagdollState(IEnumerable<ArticulationBody> motorsIn)
         {
             var vectorActions = new List<float>();
-            foreach (var m in motors)
+            foreach (var m in motorsIn)
             {
                 if (m.isRoot)
                     continue;
@@ -189,6 +197,7 @@ namespace DReCon
     public interface IEventsAgent
     {
         public event EventHandler<AgentEventArgs> onActionHandler;
+        public event EventHandler<AgentEventArgs> onBeginHandler;
     }
 
     public class AgentEventArgs: EventArgs
@@ -201,6 +210,9 @@ namespace DReCon
             this.actions = actions;
             this.reward = reward;
         }
+
+        new public static AgentEventArgs Empty => new AgentEventArgs(new float[0], 0f);
+        
     }
 
 }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Teleportable;
 using UnityEngine;
 
 public class SnapToHandler : TrainingEventHandler
@@ -35,15 +36,23 @@ public class SnapToHandler : TrainingEventHandler
 
     public override EventHandler Handler => SnapHandle;
 
-    private interface ITeleportable
+    
+
+
+    
+
+}
+
+namespace Teleportable
+{
+    interface ITeleportable
     {
         public Vector3 Position { get; set; }
         public Quaternion Rotation { get; set; }
     }
 
-
     //Only transform and Rigidbody supported, ArticulationBody doesn't play nice with snapping
-    private class TransformAdapter: ITeleportable
+    class TransformAdapter : ITeleportable
     {
         private Transform transform;
 
@@ -56,7 +65,7 @@ public class SnapToHandler : TrainingEventHandler
         public Quaternion Rotation { get => transform.rotation; set => transform.rotation = value; }
     }
 
-    private class RigidbodyAdaptor : ITeleportable
+    class RigidbodyAdaptor : ITeleportable
     {
         private Rigidbody rigidbody;
 
@@ -68,5 +77,4 @@ public class SnapToHandler : TrainingEventHandler
         public Vector3 Position { get => rigidbody.position; set => rigidbody.position = value; }
         public Quaternion Rotation { get => rigidbody.rotation; set => rigidbody.rotation = value; }
     }
-
 }

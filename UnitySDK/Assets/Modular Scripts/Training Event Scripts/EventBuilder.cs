@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class EnvironmentManager : MonoBehaviour
+public class EventBuilder : MonoBehaviour
 {
     [SerializeField]
     List<HandledEvent> handledEvents;
@@ -13,7 +13,7 @@ public class EnvironmentManager : MonoBehaviour
     {
         foreach (HandledEvent handledEvent in handledEvents)
         {
-            //handledEvent.Activate();
+            handledEvent.Activate();
         }
     }
 
@@ -26,17 +26,17 @@ public class HandledEvent
     TrainingEvent trainingEvent;
 
     [SerializeField]
-    TrainingEventHandler trainingEventHandler;
-/*
+    TrainingEventHandler effect;
+
     public void Activate()
     {
-        trainingEvent.SubscribeHandler(trainingEventHandler.Handler);
+        trainingEvent.SubscribeHandler(effect.Handler);
     }
 
     public void Deactivate()
     {
-        trainingEvent.UnsubscribeHandler(trainingEventHandler.Handler);
-    }*/
+        trainingEvent.UnsubscribeHandler(effect.Handler);
+    }
 
 
 }

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public static class Utils 
 {
@@ -141,6 +142,42 @@ public static class Utils
             sum += vector;
         }
         return sum;
+    }
+
+    public static IReadOnlyList<ArticulationDrive> GetDrives(this ArticulationBody ab)
+    {
+        return new List<ArticulationDrive> { ab.xDrive, ab.yDrive, ab.zDrive }.AsReadOnly();
+    }
+
+    /// <summary>
+    /// IEnumerable of twist, swingY and swingZ.
+    /// </summary>
+    public static IReadOnlyList<ArticulationDofLock> GetLocks(this ArticulationBody ab)
+    {
+        return new List<ArticulationDofLock> { ab.twistLock, ab.swingYLock, ab.swingZLock}.AsReadOnly();
+    }
+
+    public static IReadOnlyList<float> GetComponents(this Vector3 vector3)
+    {
+        return new List<float> { vector3.x, vector3.y, vector3.z }.AsReadOnly();
+    }
+
+    public static void SetDriveAtIndex(this ArticulationBody ab, int i, ArticulationDrive drive)
+    {
+        switch(i)
+        {
+            case 0:
+                ab.xDrive = drive;
+                break;
+            case 1:
+                ab.yDrive = drive;
+                break;
+            case 2:
+                ab.zDrive = drive;
+                break;
+            default:
+                throw new IndexOutOfRangeException("Only x, y and z drives are supported with indices 0, 1, 2");
+        }
     }
 
 }

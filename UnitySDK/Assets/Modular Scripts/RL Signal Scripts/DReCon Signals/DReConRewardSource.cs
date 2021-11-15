@@ -15,10 +15,10 @@ public class DReConRewardSource : RewardSource
     private Transform simulationTransform;
 
     [SerializeField]
-    private GameObject kinHeadTransform;
+    private GameObject kinematicHead;
 
     [SerializeField]
-    private GameObject simHeadTransform;
+    private GameObject simulationHead;
 
     private IKinematic kinHead;
     private IKinematic simHead;
@@ -35,11 +35,11 @@ public class DReConRewardSource : RewardSource
         kinChain = new BoundingBoxChain(kinematicTransform);
         simChain = new BoundingBoxChain(simulationTransform);
 
-        kinHead = kinHeadTransform.GetComponent<ArticulationBody>() ? 
-            (IKinematic) new ArticulationBodyAdapter(kinHeadTransform.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(kinHeadTransform.GetComponent<Rigidbody>());
+        kinHead = kinematicHead.GetComponent<ArticulationBody>() ? 
+            (IKinematic) new ArticulationBodyAdapter(kinematicHead.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(kinematicHead.GetComponent<Rigidbody>());
         
-        simHead = simHeadTransform.GetComponent<ArticulationBody>() ? 
-            (IKinematic) new ArticulationBodyAdapter(simHeadTransform.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(simHeadTransform.GetComponent<Rigidbody>());
+        simHead = simulationHead.GetComponent<ArticulationBody>() ? 
+            (IKinematic) new ArticulationBodyAdapter(simulationHead.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(simulationHead.GetComponent<Rigidbody>());
 
         nBodies = kinChain.Count;
     }
@@ -61,6 +61,13 @@ public class DReConRewardSource : RewardSource
                         + Mathf.Exp(-comVDiff));
     }
 
+    private void OnDrawGizmos()
+    {
+        return;
+        kinChain.Draw();
+        simChain.Draw();
+    }
+
 
     /// <summary>
     /// Keeps track of Collider components, their local bounding boxes, and the global points of the bounding box face centers for comparison with other chains.
@@ -72,7 +79,7 @@ public class DReConRewardSource : RewardSource
         private IReadOnlyList<IKinematic> chain;
 
         private IEnumerable<BoundingPoints> Points { get => chain.Zip(bounds, 
-            (bod, bound) => new BoundingPoints(bound, bod.TransformMatrix, bod.Velocity, bod.AngularVelocity)); }
+            (bod, bound) => new BoundingPoints(bound, bod)); }
 
         private IEnumerable<Quaternion> Rotations { get => colliders.Select(col => col.transform.rotation); }
 
@@ -142,14 +149,24 @@ public class DReConRewardSource : RewardSource
         }
         #endregion
 
-        // Produce the 6 face center points for the g
+        public void Draw()
+        {
+            foreach (var bps in Points)
+            {
+                bps.Draw();
+            }
+        }
+
+        // Produce the 6 face center points
         private struct BoundingPoints
         {
             private Vector3[] points;
             private Vector3 center;
-            private Matrix4x4 localToWorldMatrix;
-            private Vector3 worldAngularVelocity;
-            private Vector3 worldLinearVelocity;
+
+            private IKinematic body;
+            private Matrix4x4 LocalToWorldMatrix => body.TransformMatrix;
+            private Vector3 WorldAngularVelocity => body.AngularVelocity;
+            private Vector3 WorldLinearVelocity => body.Velocity;
 
             private IEnumerable<Vector3> WorldPoints // Note: can't access instance variables of struct in Linq anonymous functions
             { 
@@ -157,7 +174,7 @@ public class DReConRewardSource : RewardSource
                 {
                     foreach(Vector3 p in points)
                     {
-                        yield return localToWorldMatrix.MultiplyPoint3x4(p);
+                        yield return LocalToWorldMatrix.MultiplyPoint3x4(p);
                     }
                 }
             }
@@ -168,16 +185,20 @@ public class DReConRewardSource : RewardSource
                 {
                     foreach (Vector3 p in WorldPoints)
                     {
+                        /*
+                        //Potential way to do it by hand
                         Vector3 a = localToWorldMatrix.MultiplyPoint3x4(center); // World point on rotational axis (COM)
                         Vector3 n = worldAngularVelocity; // Vector along axis, magnitude scaled with velocity
 
                         yield return Vector3.Cross((p-a), n) + worldLinearVelocity;
+                        */
+                        yield return body.GetPointVelocity(p);
                     }
                 }
             }
 
 
-            public BoundingPoints(Bounds bounds, Matrix4x4 localToWorldMatrix, Vector3 worldLinearVelocity, Vector3 worldAngularVelocity)
+            public BoundingPoints(Bounds bounds, IKinematic body)
             {
                 points = new Vector3[6];
                 Vector3 c = bounds.center;
@@ -190,9 +211,7 @@ public class DReConRewardSource : RewardSource
                 points[4] = new Vector3(c.x, c.y, bounds.max.z);
                 points[5] = new Vector3(c.x, c.y, bounds.min.z);
 
-                this.localToWorldMatrix = localToWorldMatrix;
-                this.worldAngularVelocity = worldAngularVelocity;
-                this.worldLinearVelocity = worldLinearVelocity;
+                this.body = body;
                 this.center = c;
             }
 
@@ -204,6 +223,15 @@ public class DReConRewardSource : RewardSource
             public static float VelocityDifference(BoundingPoints pointsA, BoundingPoints pointsB)
             {
                 return pointsA.WorldVelocity.Zip(pointsB.WorldVelocity, (a, b) => (a - b).magnitude).Sum();
+            }
+
+            public void Draw()
+            {
+                Gizmos.color = Color.white;
+                foreach(var p in WorldPoints)
+                {
+                    Gizmos.DrawSphere(p, 0.01f);
+                }
             }
         }
 

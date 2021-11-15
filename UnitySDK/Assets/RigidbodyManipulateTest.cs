@@ -8,6 +8,8 @@ public class RigidbodyManipulateTest : MonoBehaviour
 
     [SerializeField]
     Transform trackTransform;
+    [SerializeField]
+    Vector3 startVelocity;
 
     [SerializeField]
     Rigidbody curRigidbody;
@@ -18,14 +20,26 @@ public class RigidbodyManipulateTest : MonoBehaviour
     [SerializeField]
     bool useRigidbody;
 
+    [SerializeField]
+    bool useVelocity;
+
     void Start()
     {
-        
+        curRigidbody.velocity = startVelocity;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
+
+
+        if (useVelocity)
+        {
+            //curRigidbody.velocity = startVelocity;
+            return;
+        }
+
         if(useRigidbody)
         {
             curRigidbody.MovePosition(trackTransform.position + offset);
@@ -38,9 +52,8 @@ public class RigidbodyManipulateTest : MonoBehaviour
 
             curRigidbody.rotation = trackTransform.rotation;
         }
-
         Debug.Log(curRigidbody.velocity);
-        Debug.Log(curRigidbody.angularVelocity);
+        Debug.Log(curRigidbody.transform.InverseTransformDirection(curRigidbody.angularVelocity));
 
     }
 }

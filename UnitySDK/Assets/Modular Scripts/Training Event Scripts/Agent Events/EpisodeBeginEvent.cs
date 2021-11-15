@@ -1,18 +1,14 @@
+using DReCon;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.MLAgents;
 using UnityEngine;
-using DReCon;
 
-public class RewardBelowThresholdEvent : TrainingEvent
+public class EpisodeBeginEvent : TrainingEvent
 {
     [SerializeField]
     Agent trackedAgent;
-
-    [SerializeField]
-    float rewardThreshold;
-
     private void Awake()
     {
         IEventsAgent eventsAgent = trackedAgent as IEventsAgent;
@@ -21,15 +17,11 @@ public class RewardBelowThresholdEvent : TrainingEvent
             throw new InvalidCastException("Agent should implement IEventsAgent");
         }
 
-        eventsAgent.onActionHandler += ThresholdWrapper;
+        eventsAgent.onBeginHandler += BeginWrapper;
     }
 
-    private void ThresholdWrapper(object sender, AgentEventArgs eventArgs)
+    private void BeginWrapper(object sender, AgentEventArgs eventArgs)
     {
-        Debug.Log($"The current reward is: {eventArgs.reward}");
-        if (eventArgs.reward >= rewardThreshold) return;
-
         OnTrainingEvent(eventArgs);
     }
-
 }

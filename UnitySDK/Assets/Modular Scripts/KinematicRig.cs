@@ -26,6 +26,7 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 
     public List<Transform> RagdollTransforms => riggedRigidbodies.Select(rb => rb.transform).ToList();
 
+    public IEnumerable<Rigidbody> Rigidbodies => riggedRigidbodies;
     private void Start()
     {
         Initialize();
@@ -42,9 +43,6 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         riggedRigidbodies = kinematicRagdollRoot.GetComponentsInChildren<Rigidbody>();
         trackedTransforms = trackedTransformRoot.GetComponentsInChildren<Transform>();
         (riggedRigidbodies, trackedTransforms) = MarathonControllerMapping(riggedRigidbodies, trackedTransforms);
-
-        Debug.Log(string.Join(", ", riggedRigidbodies.Select(rb => rb.name.Split(':').Last())));
-        Debug.Log(string.Join(", ", trackedTransforms.Select(t => t.name.Split(':').Last())));
     }
 
     public void TrackKinematics()
@@ -54,6 +52,12 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
             rb.MoveRotation(tr.rotation);
             rb.MovePosition(tr.position + offset);
         }
+    }
+
+    public void TeleportRoot(Vector3 position, Quaternion rotation)
+    {
+        riggedRigidbodies[0].position = position;
+        riggedRigidbodies[0].rotation = rotation;
     }
 
     private (IReadOnlyList<Rigidbody>, IReadOnlyList<Transform>) MarathonControllerMapping(IReadOnlyList<Rigidbody> rigidbodies, IReadOnlyList<Transform> transforms)
