@@ -12,7 +12,7 @@ namespace Kinematic
     /// </summary>
     public class BodyChain
     {
-        private IReadOnlyList<IKinematic> chain;
+        protected IReadOnlyList<IKinematic> chain;
 
         public float Mass {get => chain.Select(k => k.Mass).Sum();}
         public Vector3 CenterOfMass {get => chain.Select(k => k.Mass * k.CenterOfMass).Sum() / Mass;}

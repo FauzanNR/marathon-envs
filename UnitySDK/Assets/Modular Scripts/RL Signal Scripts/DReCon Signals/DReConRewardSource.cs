@@ -76,7 +76,6 @@ public class DReConRewardSource : RewardSource
     {
         private IReadOnlyList<Collider> colliders;
         private IReadOnlyList<Bounds> bounds;
-        private IReadOnlyList<IKinematic> chain;
 
         private IEnumerable<BoundingPoints> Points { get => chain.Zip(bounds, 
             (bod, bound) => new BoundingPoints(bound, bod)); }
