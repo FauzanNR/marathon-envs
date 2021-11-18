@@ -26,7 +26,6 @@ public class RewardBelowThresholdEvent : TrainingEvent
 
     private void ThresholdWrapper(object sender, AgentEventArgs eventArgs)
     {
-        Debug.Log($"The current reward is: {eventArgs.reward}");
         if (eventArgs.reward >= rewardThreshold) return;
 
         OnTrainingEvent(eventArgs);

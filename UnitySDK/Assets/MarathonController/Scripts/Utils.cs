@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public static class Utils 
 {
@@ -178,6 +179,11 @@ public static class Utils
             default:
                 throw new IndexOutOfRangeException("Only x, y and z drives are supported with indices 0, 1, 2");
         }
+    }
+
+    public static string SegmentName(string query)
+    {
+        return query.Split(':').Last();
     }
 
 }

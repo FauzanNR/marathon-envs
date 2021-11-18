@@ -239,7 +239,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         if (!_decisionRequester.TakeActionsBetweenDecisions)
             actionTimeDelta = actionTimeDelta*_decisionRequester.DecisionPeriod;
         //_mapAnim2Ragdoll.OnStep(actionTimeDelta);
-        rig.TrackKinematics();
+        //rig.TrackKinematics();
         _rewards2Learn.OnStep(actionTimeDelta);
 
         bool shouldDebug = _debugController != null;

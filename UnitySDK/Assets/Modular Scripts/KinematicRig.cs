@@ -33,7 +33,7 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         TrackKinematics();
     }
@@ -45,7 +45,7 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         (riggedRigidbodies, trackedTransforms) = MarathonControllerMapping(riggedRigidbodies, trackedTransforms);
     }
 
-    public void TrackKinematics()
+    private void TrackKinematics()
     {
         foreach((var rb, var tr) in riggedRigidbodies.Zip(trackedTransforms, Tuple.Create))
         {
@@ -56,8 +56,30 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 
     public void TeleportRoot(Vector3 position, Quaternion rotation)
     {
-        riggedRigidbodies[0].position = position;
-        riggedRigidbodies[0].rotation = rotation;
+        Vector3 positionalOffset = position - riggedRigidbodies[0].position;
+        Quaternion rotationalOffset = Quaternion.Inverse(riggedRigidbodies[0].rotation) * rotation;
+
+        IEnumerable<KinematicState> kinematicStates = riggedRigidbodies.Select(rb => new KinematicState(rb.angularVelocity, rb.velocity, rb.position, rb.rotation));
+        foreach((Rigidbody rb, KinematicState kinState) in riggedRigidbodies.Zip(kinematicStates, Tuple.Create))
+        {
+            rb.position = kinState.position + positionalOffset;
+            rb.rotation = kinState.rotation * rotationalOffset;
+            rb.velocity = kinState.linearVelocity;
+            rb.angularVelocity = kinState.angularVelocity;
+        }
+    }
+
+    public void TeleportRoot(Vector3 position)
+    {
+        Vector3 positionalOffset = position - riggedRigidbodies[0].position;
+
+        IEnumerable<KinematicState> kinematicStates = riggedRigidbodies.Select(rb => new KinematicState(rb.angularVelocity, rb.velocity, rb.position, rb.rotation));
+        foreach ((Rigidbody rb, KinematicState kinState) in riggedRigidbodies.Zip(kinematicStates, Tuple.Create))
+        {
+            rb.position = kinState.position + positionalOffset;
+            rb.velocity = kinState.linearVelocity;
+            rb.angularVelocity = kinState.angularVelocity;
+        }
     }
 
     private (IReadOnlyList<Rigidbody>, IReadOnlyList<Transform>) MarathonControllerMapping(IReadOnlyList<Rigidbody> rigidbodies, IReadOnlyList<Transform> transforms)
@@ -66,6 +88,22 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         transforms = transforms.Where(t => rigidbodyNames.Contains(t.name.Split(':').Last())).ToList();
 
         return (rigidbodies, transforms);
+    }
+
+    private struct KinematicState
+    {
+        public readonly Vector3 angularVelocity;
+        public readonly Vector3 linearVelocity;
+        public readonly Vector3 position;
+        public readonly Quaternion rotation;
+
+        public KinematicState(Vector3 angularVelocity, Vector3 linearVelocity, Vector3 position, Quaternion rotation)
+        {
+            this.angularVelocity = angularVelocity;
+            this.linearVelocity = linearVelocity;
+            this.position = position;
+            this.rotation = rotation;
+        }
     }
 }
 

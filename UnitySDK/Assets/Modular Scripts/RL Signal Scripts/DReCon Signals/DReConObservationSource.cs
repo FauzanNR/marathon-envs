@@ -7,121 +7,140 @@ using System.Linq;
 using Unity.MLAgents.Sensors;
 using UnityEngine;
 
-/// <summary>
-/// State vector construction, as described by Bergamin et al.
-/// </summary>
-public class DReConObservationSource : ObservationSource
-{
-    
-    [SerializeField]
-    private Transform kinematicTransform;
-
-    [SerializeField]
-    private Transform simulationTransform;
-    
-    [SerializeField]
-    [Tooltip("Order of transforms should be the same in both source and ragdoll")]
-    private List<Transform> kinematicSubset;
-
-    [SerializeField]
-    [Tooltip("Order of transforms should be the same in both source and ragdoll")]
-    private List<Transform> simulationSubset;
-
-
-    private BodyChain kinChain;
-    private BodyChain simChain;
-    private BodyChain kinSubsetBodies;
-    private BodyChain simSubsetBodies;
-
-    //Editor friendly GameObject that contains an otherwise hard to reference interface on a component
-    [SerializeField]
-    private GameObject inputObject;
-    private IAnimationController userInputs;
-
-    [SerializeField]
-    private GameObject agentObject;
-    IRememberPreviousActions agent;
-
-    public override int Size => 87 + agentObject.GetComponent<DReConAgent>().ActionSpaceSize;
-
-    public override void OnAgentInitialize()
-    {
-        userInputs = inputObject.GetComponent<IAnimationController>();
-        agent = agentObject.GetComponent<IRememberPreviousActions>();
-
-        kinChain = new BodyChain(kinematicTransform);
-        simChain = new BodyChain(simulationTransform);
-        kinSubsetBodies = new BodyChain(kinematicSubset);
-        simSubsetBodies = new BodyChain(simulationSubset);
-    }
-
-    public override void FeedObservationsToSensor(VectorSensor sensor)
-    {
-        ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
-        ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass); // Same orientation, different origin
-
-        Vector3 kinCOMV = fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity);
-        Vector3 simCOMV = fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity);
-
-        Vector3 inputDesiredVelocity = fKin.WorldToCharacter(userInputs.GetDesiredVelocity());
-        Vector2 inputDesiredHorizontalVelocity = inputDesiredVelocity.Horizontal();
-
-        // TODO: Specific actions, not implemented. Could also replaced by one-hot encoding.
-        bool inputJump = false;
-        bool inputBackflip = false;
-
-        Vector2 horizontalVelocityDifference = inputDesiredHorizontalVelocity - simCOMV.Horizontal();
-
-        sensor.AddObservation(kinCOMV);
-        sensor.AddObservation(simCOMV);
-        sensor.AddObservation(kinCOMV-simCOMV);
-        sensor.AddObservation(inputDesiredHorizontalVelocity);
-        sensor.AddObservation(inputJump);
-        sensor.AddObservation(inputBackflip);
-        sensor.AddObservation(horizontalVelocityDifference);
-
-        Debug.Log(kinCOMV);
-        Debug.Log(simCOMV);
-
-
-        foreach (var ((pSim, vSim), (pKin, vKin) ) in GetZippedStats(simSubsetBodies).Zip(GetZippedStats(kinSubsetBodies), Tuple.Create))
-        {
-            sensor.AddObservation(fSim.WorldToCharacter(pSim));
-            sensor.AddObservation(fSim.WorldToCharacter(vSim));
-
-            // For consistency with previous Marathon Controller Implementation, although original DReCon uses -1 times this
-            sensor.AddObservation(fSim.WorldDirectionToCharacter(pKin - pSim));
-            sensor.AddObservation(fSim.WorldDirectionToCharacter(vKin - vSim));
-        }
-        sensor.AddObservation(agent.PreviousActions);
-    }
-
-    IEnumerable<Tuple<Vector3, Vector3>> GetZippedStats(BodyChain ch)
-    {
-        return ch.CentersOfMass.Zip(simSubsetBodies.Velocities, Tuple.Create);
-    }
-
-    private void OnDrawGizmos()
-    {
-        return;
-        if (!Application.isPlaying) return;
-        
-        ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
-        ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass);
-
-        fKin.Draw();
-        fSim.Draw();
-    }
-}
-
 namespace DReCon
 {
+    /// <summary>
+    /// State vector construction, as described by Bergamin et al.
+    /// </summary>
+    public class DReConObservationSource : ObservationSource
+    {
+    
+        [SerializeField]
+        private Transform kinematicTransform;
+
+        [SerializeField]
+        private Transform simulationTransform;
+    
+        [SerializeField]
+        [Tooltip("Order of transforms should be the same in both source and ragdoll")]
+        private List<Transform> kinematicSubset;
+
+        [SerializeField]
+        [Tooltip("Order of transforms should be the same in both source and ragdoll")]
+        private List<Transform> simulationSubset;
+
+
+        private BodyChain kinChain;
+        private BodyChain simChain;
+        private BodyChain kinSubsetBodies;
+        private BodyChain simSubsetBodies;
+
+        //Editor friendly GameObject that contains an otherwise hard to reference interface on a component
+        [SerializeField]
+        private GameObject inputObject;
+        private IAnimationController userInputs;
+
+        [SerializeField]
+        private GameObject agentObject;
+        IRememberPreviousActions agent;
+
+        /*    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 1, autoScale: true)]
+            public float debugVelocitySim;
+
+            [DebugGUIGraph(min: -1, max: 1, r: 1, g: 1, b: 0, autoScale: true)]
+            public float debugVelocityKin;*/
+
+
+        public override int Size => 85 + agentObject.GetComponent<DReConAgent>().ActionSpaceSize;
+
+        public override void OnAgentInitialize()
+        {
+            userInputs = inputObject.GetComponent<IAnimationController>();
+            agent = agentObject.GetComponent<IRememberPreviousActions>();
+
+            kinChain = new BodyChain(kinematicTransform);
+            simChain = new BodyChain(simulationTransform);
+            kinSubsetBodies = new BodyChain(kinematicSubset);
+            simSubsetBodies = new BodyChain(simulationSubset);
+        }
+
+        public override void FeedObservationsToSensor(VectorSensor sensor)
+        {
+            ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
+            ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass); // Same orientation, different origin
+
+            Vector3 kinCOMV = fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity);
+            Vector3 simCOMV = fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity);
+
+            Vector3 inputDesiredVelocity = fKin.WorldDirectionToCharacter(userInputs.GetDesiredVelocity());
+            Vector2 inputDesiredHorizontalVelocity = inputDesiredVelocity.Horizontal();
+
+            Vector2 horizontalVelocityDifference = inputDesiredHorizontalVelocity - simCOMV.Horizontal();
+
+            sensor.AddObservation(kinCOMV);
+            sensor.AddObservation(simCOMV);
+            sensor.AddObservation(kinCOMV-simCOMV);
+            sensor.AddObservation(inputDesiredHorizontalVelocity);
+            sensor.AddObservation(horizontalVelocityDifference);
+
+            foreach (var ((pSim, vSim), (pKin, vKin) ) in GetZippedStats(simSubsetBodies).Zip(GetZippedStats(kinSubsetBodies), Tuple.Create))
+            {
+                var pChSim = fSim.WorldToCharacter(pSim);
+                var vChSim = fSim.WorldDirectionToCharacter(vSim);
+
+                var pChKin = fKin.WorldToCharacter(pKin);
+                var vChKin = fKin.WorldDirectionToCharacter(vKin);
+
+                sensor.AddObservation(pChSim);
+                sensor.AddObservation(vChSim);
+
+                sensor.AddObservation(pChSim - pChKin);
+                sensor.AddObservation(vChSim - vChKin);
+            }
+            sensor.AddObservation(agent.PreviousActions);
+        }
+
+        IEnumerable<Tuple<Vector3, Vector3>> GetZippedStats(BodyChain ch)
+        {
+            return ch.CentersOfMass.Zip(simSubsetBodies.Velocities, Tuple.Create);
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!Application.isPlaying) return;
+            ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
+            ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass);
+
+            fKin.Draw();
+            fSim.Draw();
+            Gizmos.color = Color.magenta;
+            DrawBodyPositonDifferences(fKin, fSim);
+        }
+
+        private void DrawBodyPositonDifferences(ReferenceFrame fKin, ReferenceFrame fSim)
+        {
+            foreach (var ((pSim, vSim), (pKin, vKin)) in GetZippedStats(simSubsetBodies).Zip(GetZippedStats(kinSubsetBodies), Tuple.Create))
+            {
+
+                var pChSim = fSim.WorldToCharacter(pSim);
+                var pChKin = fKin.WorldToCharacter(pKin);
+                var diff = pChSim-pChKin;
+                var start = fSim.CharacterToWorld(pChSim); //Testing invertibility
+                var d = fSim.CharacterDirectionToWorld(diff);
+
+                Gizmos.DrawLine(start, start+d);
+            }
+        }
+    }
+
+
     struct ReferenceFrame
     {
         Matrix4x4 space;
         Matrix4x4 inverseSpace;
 
         public Matrix4x4 Matrix { get => space; }
+        public Matrix4x4 InverseMatrix { get => inverseSpace; }
 
         public ReferenceFrame(Vector3 heading, Vector3 centerOfMass)
         {

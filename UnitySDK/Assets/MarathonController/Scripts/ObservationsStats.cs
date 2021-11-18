@@ -211,7 +211,7 @@ public class ObservationStats : MonoBehaviour
             CenterOfMassVelocity = velocity;
 
             // Mucked about
-            CenterOfMassVelocity = GetCenterOfMassVelocity();
+           // CenterOfMassVelocity = GetCenterOfMassVelocity();
             //Debug.Log(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
             CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);

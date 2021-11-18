@@ -1003,7 +1003,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5112153924772064333}
   - component: {fileID: 6770981998011502920}
-  - component: {fileID: 5653264126395060}
+  - component: {fileID: 5887257994262809726}
   m_Layer: 0
   m_Name: ModularTestEnvironment
   m_TagString: Untagged
@@ -1049,7 +1049,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
---- !u!114 &5653264126395060
+--- !u!114 &5887257994262809726
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1058,12 +1058,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1392724695903311442}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c35bb009193589147a32f492be74a1a1, type: 3}
+  m_Script: {fileID: 11500000, guid: e82c49ecc2a12864da15d32941a3657c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderOnlyTarget: 0
-  movementsource: {fileID: 1470528942267724288}
-  ragdollcontroller: {fileID: 9212786700054005102}
+  renderersToHide:
+  - {fileID: 9212786700054005102}
+  - {fileID: 1470528942267724288}
+  - {fileID: 5887257994187665995}
+  - {fileID: 7350996780451034925}
 --- !u!1 &1470528942267724288
 GameObject:
   m_ObjectHideFlags: 0
@@ -1076,7 +1078,7 @@ GameObject:
   - component: {fileID: 1266254191526119000}
   - component: {fileID: 6488311252682301050}
   - component: {fileID: 8092217148387132792}
-  - component: {fileID: 2267173649329642707}
+  - component: {fileID: 1117915459}
   m_Layer: 15
   m_Name: Source:Humanoid
   m_TagString: Untagged
@@ -1151,7 +1153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Stats: []
---- !u!114 &2267173649329642707
+--- !u!114 &1117915459
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -1160,10 +1162,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1470528942267724288}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fda6ef4d268493b4db068ca6e63c3b45, type: 3}
+  m_Script: {fileID: 11500000, guid: a1f044f9c9c5110438158f155d006b2b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MovementVelocity: {x: 0, y: 0, z: 0}
 --- !u!1 &1509106380124780849
 GameObject:
   m_ObjectHideFlags: 0
@@ -6853,14 +6854,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   handledEvents:
-  - trainingEvent: {fileID: 5887257994307478801}
-    effect: {fileID: 5887257994638379032}
   - trainingEvent: {fileID: 5887257995130104561}
     effect: {fileID: 5887257994638379032}
   - trainingEvent: {fileID: 5887257995008177066}
     effect: {fileID: 5887257994638379032}
   - trainingEvent: {fileID: 5887257993875566302}
     effect: {fileID: 5887257994490284452}
+  - trainingEvent: {fileID: 5887257994307478801}
+    effect: {fileID: 5887257994638379032}
 --- !u!1 &5887257994223714754
 GameObject:
   m_ObjectHideFlags: 0
@@ -7630,7 +7631,7 @@ MonoBehaviour:
   referenceAnimationRoot: {fileID: 6523207451879564667}
   kineticRagdollRoot: {fileID: 6084861501259896267}
   kinematicRig: {fileID: 5887257994187665997}
-  ResetOrigin: {x: 0, y: 0, z: 0}
+  resetOrigin: {x: 0, y: 0, z: 0}
 --- !u!1 &5887257994527472230
 GameObject:
   m_ObjectHideFlags: 0
@@ -13102,7 +13103,7 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  fixedDeltaTime: 0.016666668
+  fixedDeltaTime: 0.0125
   actionSmoothingBeta: 0.2
   kinematicRig: {fileID: 5887257994187665997}
   observationSignal: {fileID: 5887257995672630664}
@@ -13122,7 +13123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 137
+    VectorObservationSize: 135
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 50

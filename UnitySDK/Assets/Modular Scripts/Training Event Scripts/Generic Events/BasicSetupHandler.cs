@@ -23,7 +23,7 @@ public class BasicSetupHandler : TrainingEventHandler
 	KinematicRig kinematicRig;
 
 	[SerializeField]
-	Vector3 ResetOrigin;
+	Vector3 resetOrigin;
 
 	IResettable kineticChainToReset;
 
@@ -32,12 +32,13 @@ public class BasicSetupHandler : TrainingEventHandler
     private void Awake()
     {
 		kineticChainToReset = new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>());
+		resetOrigin = referenceAnimationParent.position;
     }
 
     public void HandleSetup(object sender, EventArgs eventArgs)
     {
 		//First we move the animation back to the start (orientation remains the same)
-		referenceAnimationParent.position = ResetOrigin;
+		referenceAnimationParent.position = resetOrigin;
 
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
@@ -45,8 +46,8 @@ public class BasicSetupHandler : TrainingEventHandler
 		//We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
 		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
 
-		//We teleport the kinematic reference as well, so velocities are not tracked in the move.
-		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+		//We teleport the kinematic reference as well, so velocities are not tracked in the move. Since we don't need to change rotation we use to position only version.
+		kinematicRig.TeleportRoot(referenceAnimationRoot.position);
     }
 
 	//As I can see this handler to be extended to chains other then Articulationbody ones, here's a WIP interface
@@ -140,14 +141,6 @@ public class BasicSetupHandler : TrainingEventHandler
 
 		private static void SetArticulationBodyVelocity(ArticulationBody ab, Vector3 targetLocalVelocity, Vector3 targetLocalAngularVelocity)
         {
-			// TODO: Review this method, is this really necessary?
-/*			foreach (var childAb in ab.GetComponentsInChildren<ArticulationBody>().Skip(1))
-			{
-				childAb.transform.localPosition = Vector3.zero;
-				childAb.transform.localEulerAngles = Vector3.zero;
-				childAb.angularVelocity = Vector3.zero;
-				childAb.velocity = Vector3.zero;
-			}*/
 
 			if (ab.jointType == ArticulationJointType.SphericalJoint)
 			{

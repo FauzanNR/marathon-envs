@@ -28,10 +28,13 @@ public class DReConRewardSource : RewardSource
 
     int nBodies;
 
+    /*[DebugGUIGraph(min: -1, max: 1, r: 1, g: 1, b: 0, group: 1, autoScale: true)]
+    public float efalldebug;*/
     public override float Reward { get => CalculateReward(); }
 
     public override void OnAgentInitialize()
     {
+
         kinChain = new BoundingBoxChain(kinematicTransform);
         simChain = new BoundingBoxChain(simulationTransform);
 
@@ -50,22 +53,48 @@ public class DReConRewardSource : RewardSource
         ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
         ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass); // Same orientation, different origin
 
-        (float positionDiff, float velocityDiff, float localposeDiff) = BoundingBoxChain.CalulateDifferences(kinChain, simChain);
+        (float positionDiff, float velocityDiff, float localposeDiff) = BoundingBoxChain.CalulateSquareDifferences(kinChain, fKin, simChain, fSim);
         float comVDiff = (fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity) - fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity)).magnitude;
+        comVDiff *= comVDiff; //in old implementation
 
+        //float eFall = Mathf.Clamp01(1.3f - 2.4f * (fSim.WorldToCharacter(simHead.CenterOfMass) - fKin.WorldToCharacter(kinHead.CenterOfMass)).magnitude);
         float eFall = Mathf.Clamp01(1.3f - 1.4f * (simHead.CenterOfMass - kinHead.CenterOfMass).magnitude);
+        //efalldebug = eFall;
 
-        return eFall * (Mathf.Exp(-10 / nBodies * positionDiff)
-                        + Mathf.Exp(-1 / nBodies * velocityDiff)
-                        + Mathf.Exp(-10 / nBodies * localposeDiff)
+        return eFall * (Mathf.Exp(-7.37f / nBodies * positionDiff)      //7.37 in old implementation
+                        + Mathf.Exp(-1f / nBodies * velocityDiff)       //1 in old implementation
+                        + Mathf.Exp(-6.5f / nBodies * localposeDiff)    //-6.5 in old implementation
                         + Mathf.Exp(-comVDiff));
     }
 
     private void OnDrawGizmos()
     {
-        return;
+        if (!Application.isPlaying) return;
+        ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
+        ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass);
+
+        fKin.Draw();
+        fSim.Draw();
+
         kinChain.Draw();
         simChain.Draw();
+
+        
+
+        foreach (int idx in Enumerable.Range(0, kinChain.Count).Where((x, i) => i % 1 == 0))
+        {
+            Gizmos.color = Color.yellow;
+
+            //kinChain.DrawVelocities(fKin, idx);
+
+            //simChain.DrawVelocities(fSim, idx);
+
+            Gizmos.color = Color.cyan;
+
+            BoundingBoxChain.DrawPositionalDifferences(kinChain, fKin, simChain, fSim, idx);
+        }
+
+        
     }
 
 
@@ -77,16 +106,17 @@ public class DReConRewardSource : RewardSource
         private IReadOnlyList<Collider> colliders;
         private IReadOnlyList<Bounds> bounds;
 
-        private IEnumerable<BoundingPoints> Points { get => chain.Zip(bounds, 
-            (bod, bound) => new BoundingPoints(bound, bod)); }
+        private IReadOnlyList<BoundingPoints> points;
 
-        private IEnumerable<Quaternion> Rotations { get => colliders.Select(col => col.transform.rotation); }
+        private IEnumerable<Quaternion> LocalRotations { get => colliders.Select(col => col.transform.parent.localRotation); }
 
         public int Count { get => colliders.Count; }
 
         public BoundingBoxChain(Transform chainRoot)
         {
-            SetupFromColliders(chainRoot.GetComponentsInChildren<Collider>().ToList().AsReadOnly());
+            SetupFromColliders(InNameOrder(chainRoot.GetComponentsInChildren<Collider>(), GetKinematicChain(chainRoot)));
+            mass = chain.Select(k => k.Mass).Sum();
+            Debug.Log($"Chain {chainRoot.name}: {string.Join(", ", chain.Select(k=>Utils.SegmentName(k.Name)))}");
         }
 
         private void SetupFromColliders(IEnumerable<Collider> colliders)
@@ -96,19 +126,36 @@ public class DReConRewardSource : RewardSource
 
             chain = colliders.Select(col => col.attachedArticulationBody == null ? 
             (IKinematic)new RigidbodyAdapter(col.attachedRigidbody) : new ArticulationBodyAdapter(col.attachedArticulationBody)).ToList().AsReadOnly();
+            
+            points = chain.Zip(bounds, (bod, bound) => new BoundingPoints(bound, bod)).ToList().AsReadOnly();
 
         }
 
-        public static (float, float, float) CalulateDifferences(BoundingBoxChain chainA, BoundingBoxChain chainB)
+        public static (float, float, float) CalulateDifferences(BoundingBoxChain chainA, ReferenceFrame referenceFrameA, BoundingBoxChain chainB, ReferenceFrame referenceFrameB)
         {
-            var pointsA = chainA.Points;
-            var pointsB = chainB.Points;
-            float posDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.PositionalDifference(a, b)).Sum();
-            float velDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.VelocityDifference(a, b)).Sum();
-            var oof = Enumerable.Range(0, 10).Select(i => new Quaternion());
-            float localPoseDiff = chainA.Rotations.Zip(chainB.Rotations, (ra, rb) => Quaternion.Angle(ra, rb)*Mathf.Deg2Rad).Sum();
+            var pointsA = chainA.points;
+            var pointsB = chainB.points;
+            float posDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.PositionalDifference(a, referenceFrameA, b, referenceFrameB)).Sum();
+            float velDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.VelocityDifference(a, referenceFrameA, b, referenceFrameB)).Sum();
+
+            float localPoseDiff = chainA.LocalRotations.Zip(chainB.LocalRotations, (ra, rb) => Quaternion.Angle(ra, rb)*Mathf.Deg2Rad).Sum();
            
             return (posDiff, velDiff, localPoseDiff);
+        }
+
+        /// <summary>
+        /// Returns sum of square differences instead of the sum of differences. Not strictly according to DReCon paper, but closer to the earlier implementation
+        /// </summary>
+        public static (float, float, float) CalulateSquareDifferences(BoundingBoxChain chainA, ReferenceFrame referenceFrameA, BoundingBoxChain chainB, ReferenceFrame referenceFrameB)
+        {
+            var pointsA = chainA.points;
+            var pointsB = chainB.points;
+            float squarePosDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.SquarePositionalDifference(a, referenceFrameA, b, referenceFrameB)).Sum();
+            float squareVelDiff = pointsA.Zip(pointsB, (a, b) => BoundingPoints.SquareVelocityDifference(a, referenceFrameA, b, referenceFrameB)).Sum();
+
+            float squareLocalPoseDiff = chainA.LocalRotations.Zip(chainB.LocalRotations, (ra, rb) => Quaternion.Angle(ra, rb) * Mathf.Deg2Rad).Select(x=>x*x).Sum();
+
+            return (squarePosDiff, squareVelDiff, squareLocalPoseDiff);
         }
 
         #region Axis aligned bounding box methods
@@ -134,13 +181,13 @@ public class DReConRewardSource : RewardSource
 
         private Bounds GetBounds(SphereCollider sphere)
         {
-            float d = sphere.radius * 2;
+            float d = sphere.radius * 2f;
             return new Bounds(sphere.center, new Vector3(d, d, d));
         }
 
         private Bounds GetBounds(CapsuleCollider capsule)
         {
-            float d = capsule.radius * 2;
+            float d = capsule.radius * 2f;
             float h = capsule.height;
             Vector3 size = Vector3.one * d;
             size[capsule.direction] = h;
@@ -150,52 +197,54 @@ public class DReConRewardSource : RewardSource
 
         public void Draw()
         {
-            foreach (var bps in Points)
+            foreach (var bps in points)
             {
                 bps.Draw();
             }
         }
 
+        public void DrawVelocities(ReferenceFrame referenceFrame, int bodyIndex, float scale = 0.1f)
+        {
+            var drawPos = points[bodyIndex].GetCharacterPoints(referenceFrame).Select(p => referenceFrame.CharacterToWorld(p));
+            var drawVel = points[bodyIndex].GetCharacterVelocities(referenceFrame).Select( v => referenceFrame.CharacterDirectionToWorld(v));
+
+            foreach ((var p, var v) in drawPos.Zip(drawVel, Tuple.Create))
+            {
+                Gizmos.DrawLine(p, p + v*scale);
+            }
+        }
+
+        public static void DrawPositionalDifferences(BoundingBoxChain chainA, ReferenceFrame referenceFrameA, BoundingBoxChain chainB, ReferenceFrame referenceFrameB, int bodyIdx)
+        {
+            var pointsA = chainA.points[bodyIdx];
+            var pointsB = chainB.points[bodyIdx];
+
+            var distanceVectors = pointsA.GetCharacterPoints(referenceFrameA).Zip(pointsB.GetCharacterPoints(referenceFrameB), (a, b) => (a - b));
+
+
+            foreach((var distance, var chP) in distanceVectors.Zip(pointsB.GetCharacterPoints(referenceFrameB), Tuple.Create))
+            {
+                var p = referenceFrameB.CharacterToWorld(chP);
+                var d = referenceFrameB.CharacterDirectionToWorld(distance);
+                Gizmos.DrawLine(p, p + d);
+            }
+
+        }
+
+        // TODO: A cleaner way to do this. In general a robust way to traverse transform chains without the need for names.
+        private static IEnumerable<T> InNameOrder<T>(IEnumerable<T> toSort, IEnumerable<IKinematic> reference) where T : Component
+        {
+            return reference.Select(u => toSort.FirstOrDefault(t => Utils.SegmentName(t.name) == Utils.SegmentName(u.Name))).Where(t => t != null);
+        }
+
         // Produce the 6 face center points
-        private struct BoundingPoints
+        private class BoundingPoints
         {
             private Vector3[] points;
             private Vector3 center;
 
             private IKinematic body;
             private Matrix4x4 LocalToWorldMatrix => body.TransformMatrix;
-            private Vector3 WorldAngularVelocity => body.AngularVelocity;
-            private Vector3 WorldLinearVelocity => body.Velocity;
-
-            private IEnumerable<Vector3> WorldPoints // Note: can't access instance variables of struct in Linq anonymous functions
-            { 
-                get
-                {
-                    foreach(Vector3 p in points)
-                    {
-                        yield return LocalToWorldMatrix.MultiplyPoint3x4(p);
-                    }
-                }
-            }
-
-            private IEnumerable<Vector3> WorldVelocity
-            {
-                get
-                {
-                    foreach (Vector3 p in WorldPoints)
-                    {
-                        /*
-                        //Potential way to do it by hand
-                        Vector3 a = localToWorldMatrix.MultiplyPoint3x4(center); // World point on rotational axis (COM)
-                        Vector3 n = worldAngularVelocity; // Vector along axis, magnitude scaled with velocity
-
-                        yield return Vector3.Cross((p-a), n) + worldLinearVelocity;
-                        */
-                        yield return body.GetPointVelocity(p);
-                    }
-                }
-            }
-
 
             public BoundingPoints(Bounds bounds, IKinematic body)
             {
@@ -214,23 +263,59 @@ public class DReConRewardSource : RewardSource
                 this.center = c;
             }
 
-            public static float PositionalDifference(BoundingPoints pointsA, BoundingPoints pointsB)
+            public IEnumerable<Vector3> GetCharacterPoints(ReferenceFrame characterReferenceFrame)
             {
-                return pointsA.WorldPoints.Zip(pointsB.WorldPoints, (a, b) => (a - b).magnitude).Sum();
+
+                Matrix4x4 localToCharacterMatrix = characterReferenceFrame.InverseMatrix * LocalToWorldMatrix; //Stored so to avoid calculating it every time
+                return points.Select(p => localToCharacterMatrix.MultiplyPoint3x4(p));
+                
             }
 
-            public static float VelocityDifference(BoundingPoints pointsA, BoundingPoints pointsB)
+            public IEnumerable<Vector3> GetCharacterVelocities(ReferenceFrame characterReferenceFrame)
             {
-                return pointsA.WorldVelocity.Zip(pointsB.WorldVelocity, (a, b) => (a - b).magnitude).Sum();
+                //Take angular velocity into account, alternatively: Vector3.Cross((worldPoint-worldCOM), worldAngularVelocity) + worldLinearVelocity;
+                Matrix4x4 worldToCharacterMatrix = characterReferenceFrame.InverseMatrix;
+                return points.Select(p => worldToCharacterMatrix.MultiplyVector(body.GetRelativePointVelocity(p)));
+            }
+
+
+
+            public static float PositionalDifference(BoundingPoints pointsA, ReferenceFrame referenceFrameA, BoundingPoints pointsB, ReferenceFrame referenceFrameB)
+            {
+
+                return pointsA.GetCharacterPoints(referenceFrameA).Zip(pointsB.GetCharacterPoints(referenceFrameB), (a, b) => (a - b).magnitude).Sum();
+            }
+
+            public static float VelocityDifference(BoundingPoints pointsA, ReferenceFrame referenceFrameA, BoundingPoints pointsB, ReferenceFrame referenceFrameB)
+            {
+                return pointsA.GetCharacterVelocities(referenceFrameA).Zip(pointsB.GetCharacterVelocities(referenceFrameB), (a, b) => (a - b).magnitude).Sum();
+            }
+
+            public static float SquarePositionalDifference(BoundingPoints pointsA, ReferenceFrame referenceFrameA, BoundingPoints pointsB, ReferenceFrame referenceFrameB)
+            {
+
+                return pointsA.GetCharacterPoints(referenceFrameA).Zip(pointsB.GetCharacterPoints(referenceFrameB), (a, b) => (a - b).magnitude).Select(x=>x*x).Sum();
+            }
+
+            public static float SquareVelocityDifference(BoundingPoints pointsA, ReferenceFrame referenceFrameA, BoundingPoints pointsB, ReferenceFrame referenceFrameB)
+            {
+                return pointsA.GetCharacterVelocities(referenceFrameA).Zip(pointsB.GetCharacterVelocities(referenceFrameB), (a, b) => (a - b).magnitude).Select(x => x * x).Sum();
             }
 
             public void Draw()
             {
+                Matrix4x4 localToWorldMatrix = LocalToWorldMatrix;
+                var worldPoints = points.Select(p => localToWorldMatrix.MultiplyPoint3x4(p));
                 Gizmos.color = Color.white;
-                foreach(var p in WorldPoints)
+                foreach(var p in worldPoints)
                 {
                     Gizmos.DrawSphere(p, 0.01f);
                 }
+            }
+
+            public override string ToString()
+            {
+                return body.Name;
             }
         }
 

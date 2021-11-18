@@ -293,9 +293,6 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicRefe
 		velocity /= timeDelta;
 		CenterOfMassVelocity = velocity;
 
-		// Mucked about
-		CenterOfMassVelocity = GetCenterOfMassVelocity();
-		//Debug.Log(CenterOfMassVelocity);
 
 		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
 		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
