@@ -1025,8 +1025,8 @@ Transform:
   - {fileID: 5882479751386571562}
   - {fileID: 4009755583469664448}
   - {fileID: 4485855194764271724}
-  - {fileID: 7659554252468203760}
   - {fileID: 5887257994187665994}
+  - {fileID: 7659554252468203760}
   - {fileID: 5887257995672630665}
   - {fileID: 5887257994220249206}
   m_Father: {fileID: 0}
@@ -6789,7 +6789,7 @@ Transform:
   m_Children:
   - {fileID: 5887257994709522983}
   m_Father: {fileID: 5112153924772064333}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5887257994187665997
 MonoBehaviour:
@@ -11231,7 +11231,7 @@ Transform:
   - {fileID: 2177398216777790732}
   - {fileID: 428442228277067529}
   m_Father: {fileID: 5112153924772064333}
-  m_RootOrder: 3
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!95 &1340096323781453296
 Animator:
