@@ -5,7 +5,7 @@ Variants of observations, rewards, training events and controllable characters l
 
 To help deal with this, we are working towards a modular approach where these learning elements are kept independent, with flexible interfaces between them. The main goal is to make these components reusable, combinable and versatile.
 
-An example Unity scene using the current version of the modular components can be found in [`ModularTestScene.unity`](/../../UnitySDK/Assets/MarathonController/Scenes/ModularTestScene.unity).
+An example Unity scene using the current version of the modular components can be found in [`ModularTestScene.unity`](/../../feature/modular-states-rewards/UnitySDK/Assets/MarathonController/Scenes/ModularTestScene.unity).
 
 ## Overview
 
