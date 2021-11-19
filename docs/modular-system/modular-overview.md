@@ -9,7 +9,7 @@ An example Unity scene using the current version of the modular components can b
 
 ## Overview
 
-<p style="text-align:center;"><img src="../img/modular-system/modular_agent.png" width="70%" alt="Image illustrating the agent interfacing with the Reward Signal, which combines the rewards from various Reward Sources, and the Observation Signal which takes an empty VectorSensor from the agent and fills it with its observation sources." /></p>
+<img src="../img/modular-system/modular_agent_bg.png" width="70%" alt="Image illustrating the agent interfacing with the Reward Signal, which combines the rewards from various Reward Sources, and the Observation Signal which takes an empty VectorSensor from the agent and fills it with its observation sources." />
 
 ### `RewardSignal`
 This class has a serialized private list of `RewardSource` objects. Its public `float` property `Reward`, is a mix of the `Reward` of the individual sources. This value is accessed by the Agent. Through a public `enum` various mixing methods can be selected. 
@@ -38,7 +38,7 @@ A particularly useful interface that your Agent could implement is `IEventsAgent
 
 ### Environment Hierarchy
 
-![Graph illustrating connections and roles of modular components.](../img/modular-system/modular_graph.png)
+![Graph illustrating connections and roles of modular components.](../img/modular-system/modular_graph_bg.png)
 
 This figure illustrates an imitation learning evironment that is ready for training. The 'Source' object is a kinematic controller, with the learning objective to effectively mimic its movements with the physcially simulated 'Ragdoll' character. Finally, the dynamic character's generated movements are visualized with the 'Result' character.
 
