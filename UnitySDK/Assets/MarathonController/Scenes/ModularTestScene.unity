@@ -377,6 +377,31 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5887257995672630664, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: observationSources.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887257995672630664, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: observationSources.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887257995672630678, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: weightedRewards.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887257995672630678, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: weightedRewards.Array.data[1].source
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5887257995672630678, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: weightedRewards.Array.data[1].weight
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7350996780451034925, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
         type: 3}
       propertyPath: m_IsActive

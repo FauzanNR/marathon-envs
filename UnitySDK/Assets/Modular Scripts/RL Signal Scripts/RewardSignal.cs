@@ -29,7 +29,8 @@ public static class RewardMixing
     public enum MixType
     {
         Linear,
-        Unweighted
+        Unweighted,
+        Multiplicative
     }
 
     /// <summary>Weighted sum of a collection reward sources</summary>
@@ -44,6 +45,16 @@ public static class RewardMixing
         return rewardList.Select(x => x.Reward).Sum();
     }
 
+    public static float MultiplicativeMix(this IEnumerable<WeightedRewardSource> rewardList)
+    {
+        return rewardList.Select(x => x.Reward).Product();
+    }
+
+    public static float Product(this IEnumerable<float> nums)
+    {
+        return nums.Aggregate(1f, (acc, val) => acc * val);
+    }
+
     ///<summary>Mix rewards with method selected by enum</summary>
     public static float MixRewards(this IEnumerable<WeightedRewardSource> rewardsToMix, RewardMixing.MixType mixType)
     {
@@ -54,6 +65,9 @@ public static class RewardMixing
 
             case MixType.Unweighted:
                 return rewardsToMix.UnweightedMix();
+
+            case MixType.Multiplicative:
+                return rewardsToMix.MultiplicativeMix();
 
             default:
                 return rewardsToMix.LinearMix();

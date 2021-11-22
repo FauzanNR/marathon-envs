@@ -58,8 +58,7 @@ public class DReConRewardSource : RewardSource
         comVDiff *= comVDiff; //in old implementation
 
         //float eFall = Mathf.Clamp01(1.3f - 2.4f * (fSim.WorldToCharacter(simHead.CenterOfMass) - fKin.WorldToCharacter(kinHead.CenterOfMass)).magnitude);
-        float eFall = Mathf.Clamp01(1.3f - 1.4f * (simHead.CenterOfMass - kinHead.CenterOfMass).magnitude);
-        //efalldebug = eFall;
+        float eFall = Mathf.Clamp01(1.3f - 1.4f * Mathf.Abs(simHead.CenterOfMass.y - kinHead.CenterOfMass.y));
 
         return eFall * (Mathf.Exp(-7.37f / nBodies * positionDiff)      //7.37 in old implementation
                         + Mathf.Exp(-1f / nBodies * velocityDiff)       //1 in old implementation
@@ -116,7 +115,7 @@ public class DReConRewardSource : RewardSource
         {
             SetupFromColliders(InNameOrder(chainRoot.GetComponentsInChildren<Collider>(), GetKinematicChain(chainRoot)));
             mass = chain.Select(k => k.Mass).Sum();
-            Debug.Log($"Chain {chainRoot.name}: {string.Join(", ", chain.Select(k=>Utils.SegmentName(k.Name)))}");
+            //Debug.Log($"Chain {chainRoot.name}: {string.Join(", ", chain.Select(k=>Utils.SegmentName(k.Name)))}");
         }
 
         private void SetupFromColliders(IEnumerable<Collider> colliders)
