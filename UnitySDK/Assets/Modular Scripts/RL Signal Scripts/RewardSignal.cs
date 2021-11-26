@@ -8,20 +8,23 @@ public class RewardSignal : MonoBehaviour
 {
     [SerializeField]
     private List<WeightedRewardSource> weightedRewards;
+    private List<WeightedRewardSource> nonEmptyRewards;
 
     [SerializeField]
     [DefaultValue(RewardMixing.MixType.Linear)]
     private RewardMixing.MixType MixingMethod;
 
-    public float Reward { get => weightedRewards.MixRewards(MixingMethod); }
+    public float Reward { get => nonEmptyRewards.MixRewards(MixingMethod); }
 
     public void OnAgentInitialize()
     {
-        foreach (var wr in weightedRewards)
+        nonEmptyRewards = weightedRewards.Where(r => !r.IsEmpty()).ToList();
+        foreach (var wr in nonEmptyRewards)
         {
             wr.OnAgentInitialize();
         }
     }
+
 }
 
 public static class RewardMixing

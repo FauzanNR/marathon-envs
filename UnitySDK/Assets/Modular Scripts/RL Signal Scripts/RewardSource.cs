@@ -27,6 +27,12 @@ public class WeightedRewardSource
     {
         source.OnAgentInitialize();
     }
+
+
+    public bool IsEmpty()
+    {
+        return source == null;
+    }
 }
 
 

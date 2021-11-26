@@ -14,7 +14,7 @@ public class ObservationSignal : MonoBehaviour
     /// <summary>Each StateSource of the StateSignal adds its relevant observations to the provided sensor.</summary>
     public void PopulateObservations(VectorSensor sensor)
     {
-        foreach (ObservationSource observationSource in observationSources)
+        foreach (ObservationSource observationSource in observationSources.Where(obs => obs !=null))
         {
             observationSource.FeedObservationsToSensor(sensor);
         }
@@ -22,7 +22,7 @@ public class ObservationSignal : MonoBehaviour
 
     public void OnAgentInitialize()
     {
-        foreach (ObservationSource observationSource in observationSources)
+        foreach (ObservationSource observationSource in observationSources.Where(obs => obs != null))
         {
             observationSource.OnAgentInitialize();
         }
