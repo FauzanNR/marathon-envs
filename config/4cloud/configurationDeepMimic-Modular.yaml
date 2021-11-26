@@ -1,6 +1,6 @@
 default_settings: null
 behaviors:
-  LearnConfigV0:
+  DReCon-v0:
     trainer_type: ppo
     hyperparameters:
       batch_size: 2048
