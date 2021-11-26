@@ -1081,7 +1081,7 @@ GameObject:
   - component: {fileID: 6770981998011502920}
   - component: {fileID: 5887257994262809726}
   m_Layer: 0
-  m_Name: ModularTestEnvironment
+  m_Name: ModularDReConEnvironment
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
