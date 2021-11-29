@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.artanim.experiment-setup": {
+      "version": "file:C:/Users/JoanLlobera/Downloads/com.artanim.experiment-setup",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.joebooth.many-worlds": {
       "version": "https://github.com/sohojoe/many-worlds.git?path=/com.joebooth.many-worlds#v1.1.0",
       "depth": 0,
@@ -67,7 +73,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.9.0",
+      "version": "1.11.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -160,7 +166,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.purchasing": {
-      "version": "3.2.3",
+      "version": "4.0.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -168,7 +174,17 @@
         "com.unity.modules.unityanalytics": "1.0.0",
         "com.unity.modules.unitywebrequest": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0",
-        "com.unity.modules.androidjni": "1.0.0"
+        "com.unity.modules.androidjni": "1.0.0",
+        "com.unity.services.core": "1.0.1"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.services.core": {
+      "version": "1.0.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.unitywebrequest": "1.0.0"
       },
       "url": "https://packages.unity.com"
     },

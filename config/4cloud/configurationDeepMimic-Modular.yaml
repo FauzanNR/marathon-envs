@@ -36,7 +36,7 @@ env_settings:
   - --spawn-env=DeepMimic-Modular
   - --num-spawn-envs=32
   base_port: 5005
-  num_envs: 25 #1
+  num_envs: 1 # 25 #1
 engine_settings:
   no_graphics: true
 debug: false
