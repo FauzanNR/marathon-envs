@@ -1,11 +1,5 @@
 {
   "dependencies": {
-    "com.artanim.experiment-setup": {
-      "version": "file:C:/Users/JoanLlobera/Downloads/com.artanim.experiment-setup",
-      "depth": 0,
-      "source": "local",
-      "dependencies": {}
-    },
     "com.joebooth.many-worlds": {
       "version": "https://github.com/sohojoe/many-worlds.git?path=/com.joebooth.many-worlds#v1.1.0",
       "depth": 0,
