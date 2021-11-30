@@ -11,7 +11,4 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/MarathonController/TestsInProgress/3.TrainUsingMarathon-TESTS.unity
     guid: b7cfdd79c031b45fa8b2f255a22d5570
-  - enabled: 1
-    path: Assets/Samples/Experiment Setup/1.0.0/Experiment Setup/Scenes/3Train.unity
-    guid: f8803a07cf352a34a90cae267da33cd6
   m_configObjects: {}
