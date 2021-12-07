@@ -204,21 +204,21 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicRefe
 		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
 			var bodyGameobject = abody.gameObject;
-			var rb = bodyGameobject.AddComponent<Rigidbody>();
-			rb.mass = abody.mass;
-			rb.useGravity = abody.useGravity;
+			//var rb = bodyGameobject.AddComponent<Rigidbody>();
+
+			float mass = abody.mass;
+			bool useGravity = abody.useGravity;
+			DestroyImmediate(abody);
+			bodyGameobject.AddComponent<Rigidbody>();
+			Rigidbody rb = bodyGameobject.GetComponent<Rigidbody>();
+
+			rb.mass = mass;
+			rb.useGravity = useGravity;
 			// it makes no sense but if i do not set the layer here, then some objects dont have the correct layer
 			rb.gameObject.layer  = this.gameObject.layer;
-			bodiesNamesToDelete.Add(abody.name);
+			
 		}
-		foreach (var name in bodiesNamesToDelete)
-		{
-			var abody = clone
-				.GetComponentsInChildren<ArticulationBody>()
-				.First(x=>x.name == name);
-			DestroyImmediate(abody);
-
-		}
+		
 		// make Kinematic
 		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
 		{
