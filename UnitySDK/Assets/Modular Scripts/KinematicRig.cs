@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 /// <summary>
@@ -42,7 +43,7 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
     {
         riggedRigidbodies = kinematicRagdollRoot.GetComponentsInChildren<Rigidbody>();
         trackedTransforms = trackedTransformRoot.GetComponentsInChildren<Transform>();
-        (riggedRigidbodies, trackedTransforms) = MarathonControllerMapping(riggedRigidbodies, trackedTransforms);
+        (riggedRigidbodies, trackedTransforms) = MarathonControllerMapping(riggedRigidbodies, trackedTransforms); //Only transfroms that have corresponding RB are tracked
     }
 
     private void TrackKinematics()
@@ -84,8 +85,8 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 
     private (IReadOnlyList<Rigidbody>, IReadOnlyList<Transform>) MarathonControllerMapping(IReadOnlyList<Rigidbody> rigidbodies, IReadOnlyList<Transform> transforms)
     {
-        List<string> rigidbodyNames = riggedRigidbodies.Select(rb => rb.name.Split(':').Last()).ToList();
-        transforms = transforms.Where(t => rigidbodyNames.Contains(t.name.Split(':').Last())).ToList();
+        List<string> rigidbodyNames = riggedRigidbodies.Select(rb => Utils.SegmentName(rb.name)).ToList();
+        transforms = transforms.Where(t => rigidbodyNames.Contains(Utils.SegmentName(t.name))).ToList();
 
         return (rigidbodies, transforms);
     }

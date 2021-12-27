@@ -54,7 +54,7 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
     }
 
 
-    int ApplyRangeOfMotionToRagDoll()
+    public int ApplyRangeOfMotionToRagDoll()
     {
         if (info2store == null || info2store.Values.Length == 0)
             return -1;
@@ -83,7 +83,8 @@ public class MapRangeOfMotion2Constraints : MonoBehaviour
             if (rom == null)
             {
                 Debug.LogError("Could not find a rangoe of motionvalue for articulation: " + body.name);
-                return -1;
+                continue;
+                //return -1;
             }
 
             bool isLocked = true;

@@ -13,9 +13,6 @@ public class HideRenderers : MonoBehaviour
     IEnumerable<SkinnedMeshRenderer> SkinnedRenderers;
     IEnumerable<MeshRenderer> MeshRenderers;
 
-    bool currentRenderingState = false;
-
-    // Start is called before the first frame update
     void Start()
     {
 
