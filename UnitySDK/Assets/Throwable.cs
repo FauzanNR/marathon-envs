@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+/// <summary>
+/// Behaviour for an object to kinematically track a transform, and switch to dynamic RB simulation after a period of time. Also included are methods to track the expected range if released at a given frame.
+/// </summary>
 public class Throwable : MonoBehaviour
 {
     // Start is called before the first frame update
@@ -12,8 +15,9 @@ public class Throwable : MonoBehaviour
     [SerializeField]
     Transform trackedTransform;
 
+    //Set releaseTime to <=0 to try to find the release time automatically by repeatedly tracking the projected range
     [SerializeField]
-    float releaseTime;
+    float releaseTime; 
 
     float startTime;
 
@@ -30,33 +34,33 @@ public class Throwable : MonoBehaviour
 
     private void Start()
     {
-        throwableRigidbody.isKinematic = true;
-        startTime = 0f;
-        if (releaseTime > 0f) StartCoroutine(DelayedRelease(releaseTime));
-        //StartCoroutine(DelayedReset(5f));
+        throwableRigidbody.isKinematic = true; // Stick to the tracked transform
+        startTime = Time.time;
+        if (releaseTime > 0f) StartCoroutine(DelayedRelease(releaseTime)); //Release after given time, as long as the time has already been determined.
+        if (releaseTime == 0f) StartCoroutine(DelayedReset(5f)); //Stop tracking the projected range after 5 seconds, and update the releaseTime field based on that.
     }
 
     void FixedUpdate()
     {
-        if (!throwableRigidbody.isKinematic)
+        if (!throwableRigidbody.isKinematic) //If we have already been released
         {
             return;
         }
 
         if (releaseTime <= 0f)
         {
-            distanceTimeStamps.Add((BallisticsRange(throwableRigidbody.velocity, throwableRigidbody.position.y), Time.time - startTime));
+            distanceTimeStamps.Add((BallisticsRange(throwableRigidbody.velocity, throwableRigidbody.position.y), Time.time - startTime)); //Store tuple of (range, time when it would be released), so we can find the timestamp of the max range)
         }
 
-        throwableRigidbody.MovePosition(trackedTransform.position + posOffset);
+        throwableRigidbody.MovePosition(trackedTransform.position + posOffset); //Track transform as if it was its child (without having to actually be, since that has weird effects on the RB)
         throwableRigidbody.MoveRotation(rotOffset * trackedTransform.rotation);
     }
 
     private void Reset()
     {
-        releaseTime = distanceTimeStamps.Skip(5).OrderByDescending(i => i.Item1).First().Item2;
+        releaseTime = distanceTimeStamps.Skip(5).OrderByDescending(i => i.Item1).First().Item2; //Find the longest throw (ignoring first few frames due to transient behaviour of the RB tracking there)
         throwableRigidbody.isKinematic = true;
-        startTime = 0f;
+        startTime = Time.time;
         if(releaseTime > 0f) StartCoroutine(DelayedRelease(releaseTime));
     }
 

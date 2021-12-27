@@ -132,7 +132,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1696097542, guid: c3102493b3febbd4f9c3b144383bfd05, type: 3}
       propertyPath: releaseTime
-      value: 1.4
+      value: 1.45
       objectReference: {fileID: 0}
     - target: {fileID: 2674052888943190780, guid: c3102493b3febbd4f9c3b144383bfd05,
         type: 3}
