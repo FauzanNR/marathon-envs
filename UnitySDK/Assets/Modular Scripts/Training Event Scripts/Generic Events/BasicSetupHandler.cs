@@ -25,6 +25,11 @@ public class BasicSetupHandler : TrainingEventHandler
 	[SerializeField]
 	Vector3 resetOrigin;
 
+	[SerializeField]
+	bool shouldResetRotation;
+
+	Quaternion resetRotation;
+
 	IResettable kineticChainToReset;
 
     public override EventHandler Handler => HandleSetup;
@@ -33,12 +38,15 @@ public class BasicSetupHandler : TrainingEventHandler
     {
 		kineticChainToReset = new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>());
 		resetOrigin = referenceAnimationParent.position;
-    }
+		resetRotation = referenceAnimationParent.rotation;
+	}
 
     public void HandleSetup(object sender, EventArgs eventArgs)
     {
-		//First we move the animation back to the start (orientation remains the same)
+		//First we move the animation back to the start 
 		referenceAnimationParent.position = resetOrigin;
+
+		if (shouldResetRotation) referenceAnimationParent.rotation = resetRotation;
 
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);

@@ -65,8 +65,8 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         {
             rb.position = kinState.position + positionalOffset;
             rb.rotation = kinState.rotation * rotationalOffset;
-            rb.velocity = kinState.linearVelocity;
-            rb.angularVelocity = kinState.angularVelocity;
+            rb.velocity = rotationalOffset * kinState.linearVelocity;
+            rb.angularVelocity = rotationalOffset * kinState.angularVelocity;
         }
     }
 
