@@ -224,6 +224,11 @@ PrefabInstance:
       propertyPath: m_UpdateMode
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6441284726771453943, guid: c3102493b3febbd4f9c3b144383bfd05,
+        type: 3}
+      propertyPath: m_CullingMode
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 9047646457062923167, guid: c3102493b3febbd4f9c3b144383bfd05,
         type: 3}
       propertyPath: m_Enabled
@@ -394,7 +399,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animator: {fileID: 910366853}
   clipId: 0
-  time: 1.4
+  time: 1.5
 --- !u!114 &1004549854 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4019461127990812318, guid: c3102493b3febbd4f9c3b144383bfd05,
@@ -699,9 +704,9 @@ MonoBehaviour:
   - trainingEvent: {fileID: 1866088810}
     effect: {fileID: 1866088809}
   - trainingEvent: {fileID: 1866088810}
-    effect: {fileID: 1866088812}
-  - trainingEvent: {fileID: 1866088810}
     effect: {fileID: 1866088811}
+  - trainingEvent: {fileID: 1866088810}
+    effect: {fileID: 1866088812}
 --- !u!114 &1866088809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -719,6 +724,7 @@ MonoBehaviour:
   kineticRagdollRoot: {fileID: 1356379363}
   kinematicRig: {fileID: 1004549854}
   resetOrigin: {x: 0, y: 0, z: 0}
+  shouldResetRotation: 1
 --- !u!114 &1866088810
 MonoBehaviour:
   m_ObjectHideFlags: 0
