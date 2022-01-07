@@ -13,7 +13,6 @@ public class JumpToClipHandler : TrainingEventHandler
 
     void JumpToClip(object sender, EventArgs args)
     {
-        Debug.Log(clipName);
         animator.Play(stateName:clipName, layer: 0, normalizedTime: 0f);
     }
 }
