@@ -70,7 +70,6 @@ public class Target : TrainingEventHandler
     void MoveTarget()
     {
         if (!shouldMoveTarget) return;
-        Debug.Log("Move!");
         Vector3 relTargetPos = pivotMatrix.inverse.MultiplyPoint3x4(idealPosition);
         float meanRadius = relTargetPos.Horizontal3D().magnitude;
         float meanAngle = Mathf.Deg2Rad * Vector3.Angle(Vector3.right, relTargetPos.Horizontal3D());
@@ -84,7 +83,6 @@ public class Target : TrainingEventHandler
         float sampledAngle = UnityEngine.Random.Range(meanAngle - angleRange, meanAngle + angleRange);
         float sampledHeight = UnityEngine.Random.Range(meanHeight - heightRange, meanHeight + heightRange);
 
-        Debug.Log($"Radius: {sampledRadius}\nAngle: {sampledAngle}\nHeight: {sampledHeight}");
 
         Vector3 sampledPosition = pivotMatrix.MultiplyPoint3x4(new Vector3(Mathf.Cos(sampledAngle) * sampledRadius, sampledHeight, Mathf.Sin(sampledAngle) * sampledRadius));
 

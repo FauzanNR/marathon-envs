@@ -5,7 +5,7 @@ using UnityEngine;
 using Teleportable;
 using System.Linq;
 
-public class BasicSetupHandler : TrainingEventHandler
+public class BasicSetupHandler : DelayableEventHandler
 {
 	// The pelvis/animation root may not be the same transform. So to reset to the correct height we have to keep them separate
 	// Assuming root position not baked into animation, but applied to gameobject.
@@ -34,13 +34,6 @@ public class BasicSetupHandler : TrainingEventHandler
 
     public override EventHandler Handler => HandleSetup;
 
-    public bool IsWaiting { get => isWaiting; set => isWaiting = value; }
-
-	[SerializeField]
-    private bool isWaiting;
-	[SerializeField]
-	int framesToWait;
-
     private void Awake()
     {
 		kineticChainToReset = new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>());
@@ -59,7 +52,7 @@ public class BasicSetupHandler : TrainingEventHandler
 
 		if (framesToWait != 0)
         {
-			StartCoroutine(DelayedSetup());
+			StartCoroutine(DelayedExecution(sender, eventArgs));
 			kinematicRig.TeleportRoot(referenceAnimationRoot.position);
 			return;
 		}
@@ -74,10 +67,10 @@ public class BasicSetupHandler : TrainingEventHandler
 		kinematicRig.TeleportRoot(referenceAnimationRoot.position);
     }
 
-	IEnumerator DelayedSetup()
+	protected override IEnumerator DelayedExecution(object sender, EventArgs eventArgs)
     {
 		IsWaiting = true;
-		for (int i = 0; i < framesToWait; i++) yield return new WaitForFixedUpdate();
+		yield return WaitFrames();
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 

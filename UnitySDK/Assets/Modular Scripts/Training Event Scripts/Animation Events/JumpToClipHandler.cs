@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class JumpToClipHandler : TrainingEventHandler
+public class JumpToClipHandler : DelayableEventHandler
 {
     [SerializeField]
     Animator animator;
@@ -11,8 +11,27 @@ public class JumpToClipHandler : TrainingEventHandler
     string clipName;
     public override EventHandler Handler => JumpToClip;
 
+    [SerializeField]
+    float normalizedTimeRange;
+
     void JumpToClip(object sender, EventArgs args)
     {
-        animator.Play(stateName:clipName, layer: 0, normalizedTime: 0f);
+        
+        if (IsWaiting) return;
+        if(framesToWait!=0)
+        {
+            StartCoroutine(DelayedExecution(sender, args));
+            return;
+        }
+
+        animator.Play(stateName:clipName, layer: 0, normalizedTime: UnityEngine.Random.Range(0f, normalizedTimeRange));
+    }
+
+    protected override IEnumerator DelayedExecution(object sender, EventArgs args)
+    {
+        IsWaiting = true;
+        yield return WaitFrames();
+        animator.Play(stateName: clipName, layer: 0, normalizedTime: UnityEngine.Random.Range(0f, normalizedTimeRange));
+        IsWaiting = false;
     }
 }

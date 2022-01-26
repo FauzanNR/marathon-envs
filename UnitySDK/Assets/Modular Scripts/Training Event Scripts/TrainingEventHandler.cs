@@ -10,3 +10,21 @@ public abstract class TrainingEventHandler : MonoBehaviour
 {
     public abstract EventHandler Handler { get; }
 }
+
+public abstract class DelayableEventHandler: TrainingEventHandler
+{
+    [SerializeField]
+    protected int framesToWait;
+
+    [SerializeField]
+    private bool isWaiting;
+
+    public bool IsWaiting { get => isWaiting; set => isWaiting = value; }
+
+    protected abstract IEnumerator DelayedExecution(object sender, EventArgs args);
+
+    protected IEnumerator WaitFrames()
+    {
+        for (int i = 0; i < framesToWait; i++) yield return new WaitForFixedUpdate();
+    }
+}
