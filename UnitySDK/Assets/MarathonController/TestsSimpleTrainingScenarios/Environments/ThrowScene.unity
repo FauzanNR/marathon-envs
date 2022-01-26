@@ -831,7 +831,7 @@ MonoBehaviour:
   handledEvents:
   - trainingEvent: {fileID: 910366854}
     effect: {fileID: 1861931350}
-  - trainingEvent: {fileID: 1087588043}
+  - trainingEvent: {fileID: 1866088810}
     effect: {fileID: 739858950}
 --- !u!4 &1861931353 stripped
 Transform:
@@ -913,6 +913,8 @@ MonoBehaviour:
     effect: {fileID: 1866088811}
   - trainingEvent: {fileID: 1866088810}
     effect: {fileID: 1866088812}
+  - trainingEvent: {fileID: 1303417872}
+    effect: {fileID: 1866088807}
 --- !u!114 &1866088809
 MonoBehaviour:
   m_ObjectHideFlags: 0
