@@ -233,7 +233,7 @@ Transform:
   - {fileID: 1303417871}
   - {fileID: 2789227771014937145}
   m_Father: {fileID: 2674052888943190780}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1866088808
 MonoBehaviour:
@@ -265,6 +265,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 6782655222234288418}
+  setupper: {fileID: 0}
 --- !u!114 &1866088810
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1967,7 +1968,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2674052888943190780}
-  m_RootOrder: 8
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2960556717479381872
 MonoBehaviour:
@@ -4684,6 +4685,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b8d94b2c843464aa89c777f11cdaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  framesToWait: 0
+  isWaiting: 0
   referenceAnimationParent: {fileID: 5531094074534993884}
   referenceAnimationRoot: {fileID: 6941084575596089648}
   kineticRagdollRoot: {fileID: 7474152184182788910}
@@ -4702,6 +4705,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea40c89ed9f188745bf4160d2945058c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  framesToWait: 0
+  isWaiting: 0
   toSetKinematic: {fileID: 3265125096117123984}
 --- !u!114 &3519248607963245802
 MonoBehaviour:
@@ -4715,8 +4720,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bb8e2e7eebd744db27e2196a950460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  framesToWait: 0
+  isWaiting: 0
   animator: {fileID: 6441284726771453943}
   clipName: throw
+  normalizedTimeRange: 0
 --- !u!1 &2889608385726035479
 GameObject:
   m_ObjectHideFlags: 0
@@ -4939,10 +4947,10 @@ Transform:
   - {fileID: 5531094074534993884}
   - {fileID: 221981198979428298}
   - {fileID: 2935318057916691519}
+  - {fileID: 2686566805800610486}
   - {fileID: 7153140971512993754}
   - {fileID: 5937333352338099943}
   - {fileID: 1866088806}
-  - {fileID: 2686566805800610486}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -5221,7 +5229,7 @@ Transform:
   - {fileID: 9184339773075197928}
   - {fileID: 739858949}
   m_Father: {fileID: 2674052888943190780}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1861931350
 MonoBehaviour:
@@ -13644,7 +13652,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2674052888943190780}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &9103903685852111231
 MonoBehaviour:
