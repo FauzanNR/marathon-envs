@@ -11,8 +11,12 @@ public class EarlyTerminationHandler : TrainingEventHandler
 
     public override EventHandler Handler => Terminate;
 
+    [SerializeField]
+    public BasicSetupHandler setupper;
+
     private void Terminate(object sender, EventArgs args)
     {
+        if (setupper != null && setupper.IsWaiting) return;
         agent.EndEpisode();
     }
 }

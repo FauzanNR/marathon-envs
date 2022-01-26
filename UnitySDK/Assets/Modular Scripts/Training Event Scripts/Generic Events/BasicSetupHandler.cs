@@ -34,6 +34,13 @@ public class BasicSetupHandler : TrainingEventHandler
 
     public override EventHandler Handler => HandleSetup;
 
+    public bool IsWaiting { get => isWaiting; set => isWaiting = value; }
+
+	[SerializeField]
+    private bool isWaiting;
+	[SerializeField]
+	int framesToWait;
+
     private void Awake()
     {
 		kineticChainToReset = new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>());
@@ -43,10 +50,19 @@ public class BasicSetupHandler : TrainingEventHandler
 
     public void HandleSetup(object sender, EventArgs eventArgs)
     {
+		if (IsWaiting) return;
+
 		//First we move the animation back to the start 
 		referenceAnimationParent.position = resetOrigin;
 
 		if (shouldResetRotation) referenceAnimationParent.rotation = resetRotation;
+
+		if (framesToWait != 0)
+        {
+			StartCoroutine(DelayedSetup());
+			kinematicRig.TeleportRoot(referenceAnimationRoot.position);
+			return;
+		}
 
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
@@ -57,6 +73,18 @@ public class BasicSetupHandler : TrainingEventHandler
 		//We teleport the kinematic reference as well, so velocities are not tracked in the move. Since we don't need to change rotation we use to position only version.
 		kinematicRig.TeleportRoot(referenceAnimationRoot.position);
     }
+
+	IEnumerator DelayedSetup()
+    {
+		IsWaiting = true;
+		for (int i = 0; i < framesToWait; i++) yield return new WaitForFixedUpdate();
+		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
+		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+
+		//We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
+		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
+		IsWaiting = false;
+	}
 
 	//As I can see this handler to be extended to chains other then Articulationbody ones, here's a WIP interface
     private interface IResettable
