@@ -301,6 +301,23 @@ behaviors:
             normalize: true
         max_steps: 128e6
         time_horizon: 1000
+        
+    DReCon-Modular:
+        trainer_type: ppo
+        hyperparameters:
+            num_epoch: 3
+            beta: 9e-3
+            learning_rate: 1e-4
+            batch_size: 2048 
+            buffer_size: 20480 # 768 * 4
+        summary_freq: 100000
+        checkpoint_interval: 5000000
+        network_settings:
+            num_layers: 2
+            hidden_units: 512    
+            normalize: true
+        max_steps: 128e6
+        time_horizon: 1000
 
     SambaCon-v1:
         trainer_type: ppo

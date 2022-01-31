@@ -15,9 +15,6 @@ public class Target : TrainingEventHandler
     [SerializeField]
     float targetHeight;
 
-    [SerializeField]
-    DReConAgent agent;
-
     public bool h;
 
     Vector3 lastPosition;
@@ -35,14 +32,13 @@ public class Target : TrainingEventHandler
     [SerializeField]
     Transform currentTarget;
 
-    public override EventHandler Handler => (sender, args) => MoveTarget();
+    public override EventHandler Handler => (sender, args) => ResetTarget();
 
 
     private void Awake()
     {
         pivotMatrix = pivot.localToWorldMatrix;
         h = false;
-        agent.onBeginHandler += (sender, args) => h = false;
     }
 
 
@@ -67,8 +63,9 @@ public class Target : TrainingEventHandler
 
     }
 
-    void MoveTarget()
+    void ResetTarget()
     {
+        h = false;
         if (!shouldMoveTarget) return;
         Vector3 relTargetPos = pivotMatrix.inverse.MultiplyPoint3x4(idealPosition);
         float meanRadius = relTargetPos.Horizontal3D().magnitude;
