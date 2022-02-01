@@ -60,10 +60,11 @@ public class DReConRewardSource : RewardSource
         //float eFall = Mathf.Clamp01(1.3f - 2.4f * (fSim.WorldToCharacter(simHead.CenterOfMass) - fKin.WorldToCharacter(kinHead.CenterOfMass)).magnitude);
         float eFall = Mathf.Clamp01(1.3f - 1.4f * Mathf.Abs(simHead.CenterOfMass.y - kinHead.CenterOfMass.y));
 
-        return eFall * (Mathf.Exp(-7.37f / nBodies * positionDiff)      //7.37 in old implementation
+        var reward = eFall * (Mathf.Exp(-7.37f / nBodies * positionDiff)      //7.37 in old implementation
                         + Mathf.Exp(-1f / nBodies * velocityDiff)       //1 in old implementation
                         + Mathf.Exp(-6.5f / nBodies * localposeDiff)    //-6.5 in old implementation
                         + Mathf.Exp(-comVDiff));
+        return reward;
     }
 
     private void OnDrawGizmos()

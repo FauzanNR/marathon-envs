@@ -198,6 +198,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.7793504, z: 1.8744017}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 3
@@ -291,6 +292,7 @@ Transform:
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
@@ -415,6 +417,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 2, y: 1, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -450,20 +453,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Factory:
     spawnableEnvDefinitions:
-    - envId: DReConHumanoid-v0
-      envPrefab: {fileID: 884079593499418970, guid: b82d8d26679d4eb45a89e67306145710,
-        type: 3}
-    - envId: DReConHumanoidMocap-v0
-      envPrefab: {fileID: 884079593499418970, guid: 3636dd979152347bdaac9835ea8045e3,
-        type: 3}
-    - envId: MarConQuadruped-v0
-      envPrefab: {fileID: 4102260425739354826, guid: 167406519fb5f4510bee5dcbe78e5f68,
-        type: 3}
     - envId: DReCon-Modular
       envPrefab: {fileID: 6770981998011502920, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
-        type: 3}
-    - envId: DeepMimic-Modular
-      envPrefab: {fileID: 1346282689150837691, guid: 5ac78f8374f9c174590acdd2ce0aaf11,
         type: 3}
     envIdDefault: DReCon-Modular
     trainingNumEnvsDefault: 1
@@ -479,6 +470,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2

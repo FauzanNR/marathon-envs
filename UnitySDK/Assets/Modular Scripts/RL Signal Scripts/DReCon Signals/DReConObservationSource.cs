@@ -124,7 +124,7 @@ namespace DReCon
 
                 var pChSim = fSim.WorldToCharacter(pSim);
                 var pChKin = fKin.WorldToCharacter(pKin);
-                var diff = pChSim-pChKin;
+                var diff = pChKin-pChSim;
                 var start = fSim.CharacterToWorld(pChSim); //Testing invertibility
                 var d = fSim.CharacterDirectionToWorld(diff);
 
