@@ -25,7 +25,7 @@ The Unity project has two parts. Both can be find in *UnitySDK > Assets*:
 -  Check the [installation instructions](installation.md)
 - Make sure you can train an existing environment.
 - If you want to adapt it to your own characters, or explore the creation of novel controllers, we recommend you to start with the instructions in the  [here](marathon-controller-training.md)
-
+- You can also follow the [2021 SIGGRAPH course on physics-based character animation](https://youtu.be/ok0VH9toTfk) based on this project.
  
 
 If you have further questions, feel free to join our [Discord server](https://discord.gg/MPEbHPP) 
