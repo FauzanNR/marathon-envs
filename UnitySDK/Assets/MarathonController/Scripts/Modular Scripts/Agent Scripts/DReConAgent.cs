@@ -102,6 +102,8 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         Assert.IsTrue(hasLazyInitialized);
         float[] vectorAction = actionBuffers.ContinuousActions.ToArray();
         vectorAction = SmoothActions(vectorAction);
+
+        /*
         int i = 0;
         foreach (var m in motors)
         {
@@ -116,7 +118,10 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
                 targetNormalizedRotation.z = vectorAction[i++];
 
             ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, ActionTimeDelta);
-        }
+        }*/
+
+            ragDollMuscles.UpdateMuscles(vectorAction, ActionTimeDelta);
+
 
         previousActions = vectorAction;
 

@@ -82,7 +82,7 @@ public class Muscles : MonoBehaviour
     
         legacy,
         PD,
-        stablePD,
+        LSPD,
         force,
         PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
    
@@ -94,7 +94,17 @@ public class Muscles : MonoBehaviour
 
     public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
 
-    public MotorDelegate UpdateMotor;
+    MotorDelegate UpdateMotor;
+
+
+
+#if USE_LSPD
+    //only used for LinearPD:
+    private LSPDHierarchy _lpd;
+#endif
+    Vector3[] targetRotations;
+
+
 
     //only used in PDopenloop
     public void SetKinematicReference(IKinematicReference kinematicRoot) 
@@ -104,6 +114,109 @@ public class Muscles : MonoBehaviour
     
     
     }
+
+
+
+    public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
+    {
+        //        Debug.Log("vector action values: " + vectorAction[0] + " " + vectorAction[1] + " " + vectorAction[2] + " " + vectorAction[3] + " " + vectorAction[4] + " " + vectorAction[5]);
+        int i = 0;//keeps track of the number of action
+        switch (MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.LSPD):
+
+
+#if USE_LSPD
+      
+
+
+                int im = 0; //keeps track of the number of motor
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+
+                  
+                    targetRotations[im] = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock != ArticulationDofLock.LockedMotion)
+                        targetRotations[im].x = vectorAction[i++];
+                    if (m.swingYLock != ArticulationDofLock.LockedMotion)
+                        targetRotations[im].y = vectorAction[i++];
+                    if (m.swingZLock != ArticulationDofLock.LockedMotion)
+                        targetRotations[im].z = vectorAction[i++];
+
+                    im++;
+
+                }
+
+
+
+                //_lpd.OnUpdate( targetRotations);
+                _lpd.LaunchMimicry(targetRotations);
+
+
+#else
+                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+
+
+#endif
+
+
+
+                break;
+
+
+
+
+            default:
+
+                foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+
+                    Vector3 targetNormalizedRotation = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.x = vectorAction[i++];
+                    if (m.swingYLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.y = vectorAction[i++];
+                    if (m.swingZLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.z = vectorAction[i++];
+
+
+
+                    UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                }
+
+                break;
+        }
+
+    }
+
+    public void FixedUpdate()
+    {
+
+#if USE_LSPD
+        switch (MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.LSPD):
+
+
+                _lpd.CompleteMimicry();
+
+                break;
+
+        }
+#endif
+
+    }
+
 
 
     // Use this for initialization
@@ -162,7 +275,7 @@ public class Muscles : MonoBehaviour
                 UpdateMotor = LegacyUpdateMotor;
                 break;
 
-            case (MotorMode.stablePD):
+            case (MotorMode.LSPD):
                 UpdateMotor = null;
 
                 //UpdateMotor = StablePD;

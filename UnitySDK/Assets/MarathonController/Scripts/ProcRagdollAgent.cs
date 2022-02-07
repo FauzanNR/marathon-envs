@@ -260,7 +260,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
 
-
+        /*
         int i = 0;//keeps track of hte number of actions
 
         int j = 0;//keeps track of the number of motors
@@ -289,7 +289,8 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
          
             j++;
          
-        }
+        }*/
+        _ragDollMuscles.UpdateMuscles(vectorAction, actionTimeDelta);
 
         previousActions = vectorAction;
         _observations2Learn.PreviousActions = vectorAction;
