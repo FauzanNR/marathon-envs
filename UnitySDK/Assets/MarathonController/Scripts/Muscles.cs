@@ -5,6 +5,8 @@ using UnityEngine;
 
 using System;
 
+using Unity.MLAgents;//for the DecisionRequester
+
 public class Muscles : MonoBehaviour
 {
 
@@ -267,8 +269,47 @@ public class Muscles : MonoBehaviour
             case (MotorMode.LSPD):
                 UpdateMotor = null;
 
-                //UpdateMotor = StablePD;
-                //NOTE: this is not yet working, the implementaiton is in progress
+
+
+
+
+#if USE_LSPD
+                // UpdateMotor = UpdateLinearPD;
+                _lpd = gameObject.AddComponent<LSPDHierarchy>();
+                
+                //SetAllArticulationsFree();
+                //  SetDOFAsFreeArticulations();
+                CenterABMasses();
+
+
+                ArticulationBody root = FindArticulationBodyRoot();
+
+
+                //this ensures the order in which we parse them follows the convention needed for the ABA algo.
+
+                //_motors = _lpd.Init(root, 5000,  Time.fixedDeltaTime);
+
+                
+                DecisionRequester _decisionRequester = GetComponent<DecisionRequester>();
+
+                float GetActionTimeDelta()
+                {
+                    return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+                }
+                 
+                _motors = _lpd.Init(root, 5000,  GetActionTimeDelta());
+
+
+                int l = _motors.Count;
+                targetRotations = new Vector3[l];
+
+              
+
+#else
+                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+
+#endif
+
 
                 break;
 
@@ -659,6 +700,20 @@ public class Muscles : MonoBehaviour
 
     }
 
+    ArticulationBody FindArticulationBodyRoot()
+    {
+
+        ArticulationBody[] abs = GetComponentsInChildren<ArticulationBody>();
+
+
+        foreach (ArticulationBody ab in abs)
+        {
+            if (ab.isRoot)
+                return ab;
+
+        }
+        return null;
+    }
 
 
 }
