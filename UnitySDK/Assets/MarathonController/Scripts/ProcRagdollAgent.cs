@@ -97,6 +97,11 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
             }
         }
 
+      
+       
+
+
+
 
         _hasAwake = true;
     }
@@ -241,19 +246,22 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         //_mapAnim2Ragdoll.OnStep(actionTimeDelta);
         //rig.TrackKinematics();
         _rewards2Learn.OnStep(actionTimeDelta);
+        
 
-        bool shouldDebug = _debugController != null;
-        if (_debugController != null)
-        {
-            shouldDebug &= _debugController.isActiveAndEnabled;
-            shouldDebug &= _debugController.gameObject.activeInHierarchy;
-        }
-        if (shouldDebug)
-        {
-            _debugController.ApplyDebugActions(_motors, _ragDollMuscles, actionTimeDelta);
+       bool shouldDebug = _debugController != null;
+       if (_debugController != null)
+       {
+           shouldDebug &= _debugController.isActiveAndEnabled;
+           shouldDebug &= _debugController.gameObject.activeInHierarchy;
+       }
 
-            return;
-        }
+
+       if (shouldDebug)
+       {
+           _debugController.ApplyDebugActions(_motors, _ragDollMuscles, actionTimeDelta);
+
+           return;
+       }
 
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
@@ -414,52 +422,17 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
 
 
 
-
+        
         /// TOOLS TO DEBUG
         _debugController = FindObjectOfType<DebugMarathonController>();
         if (_debugController != null)
         {
 
-            Debug.Log("DEBUG functionality is active");
+            Debug.Log("we are in DEBUG mode, no snap to Ragdoll and no reset on zero Reward");
             dontResetOnZeroReward = true;
             dontSnapMocapToRagdoll = true;
 
-            //we set it up so it does not move
-            ArticulationBody root = GetComponentsInChildren<ArticulationBody>()
-           .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-           .First(x => x.isRoot);
-            root.immovable = true;
-
-
-            foreach (var m in _motors)
-            {
-                DebugJoints dj = m.gameObject.AddComponent<DebugJoints>();
-                dj.Init();
-            }
-
-
-
-            if (_debugController.debugMode == DebugMarathonController.DebugModes.imitateTargetAnim)
-            {
-
-
-                List<Rigidbody> rbs = new List<Rigidbody>();
-               
-                List<Rigidbody> rblistraw = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>().GetRigidBodies();
-
-                
-
-                foreach (var m in _motors)
-                {
-
-                    Rigidbody a = rblistraw.Find(x => x.name == m.name);
-                    if (a != null)
-                        rbs.Add(a);
-                    
-                }
-                _debugController.targets4imitation = rbs;
-
-            }
+          
 
         }
 
@@ -514,11 +487,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
 	        UnityEditor.EditorApplication.isPaused = true;
 		}
 #endif	        
-        /*
-        if (_debugController != null && _debugController.isActiveAndEnabled)
-        {
-            _debugController.OnAgentEpisodeBegin();
-        }*/
+        
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
     }
 

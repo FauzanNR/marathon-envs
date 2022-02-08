@@ -593,7 +593,7 @@ public class Muscles : MonoBehaviour
     }
 
 
-    void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
+    public void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
 
         var m = joint.mass;

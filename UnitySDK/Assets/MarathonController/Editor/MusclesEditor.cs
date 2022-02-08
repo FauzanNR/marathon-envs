@@ -46,7 +46,15 @@ public class MusclesEditor : Editor
             Muscles t = target as Muscles;
             t.SetDOFAsLargeROMArticulations();
         }
-            
+
+
+        if (GUILayout.Button("Update Prefab"))
+        {
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+        }
+
 
 
 

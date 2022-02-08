@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &285756606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,6 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b6d957e5f9a5e438f7f7bb557585d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debugMode: 0
+  RandomRange: 0.039
   Actions:
   - 0
   - 0
@@ -184,10 +186,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  ApplyRandomActions: 1
-  RandomRange: 1
-  FreezeHips: 1
-  DontUpdateMotor: 0
+  targets4imitation: []
 --- !u!4 &285756607
 Transform:
   m_ObjectHideFlags: 0
@@ -454,6 +453,9 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: DReCon-Modular
+      envPrefab: {fileID: 6770981998011502920, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+    - envId: DReCon-Modular-LSPD
       envPrefab: {fileID: 6770981998011502920, guid: 7dcf1707d943844838cb61d3ef6ef625,
         type: 3}
     envIdDefault: DReCon-Modular
