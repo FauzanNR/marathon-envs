@@ -455,16 +455,11 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         }
 
         _mapAnim2Ragdoll = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
-        //_mocapBodyParts = _mapAnim2Ragdoll.GetRigidBodies();
-
+      
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
-
         _ragDollMuscles = GetComponent<Muscles>();
       
-
-
-
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
         _sensorObservations = GetComponent<SensorObservations>();
 
@@ -474,13 +469,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
             .Where(x => !x.isRoot)
             .Distinct()
             .ToList();
-        //var individualMotors = new List<float>();
-
         
-
-
-
-
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
         previousActions = GetActionsFromRagdollState();
 

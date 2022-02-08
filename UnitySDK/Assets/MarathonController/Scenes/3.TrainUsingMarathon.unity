@@ -184,7 +184,7 @@ MonoBehaviour:
   - 0
   - 0
   - 0
-  ApplyRandomActions: 0
+  ApplyRandomActions: 1
   RandomRange: 1
   FreezeHips: 1
   DontUpdateMotor: 0
@@ -454,7 +454,7 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: DReCon-Modular
-      envPrefab: {fileID: 6770981998011502920, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+      envPrefab: {fileID: 6770981998011502920, guid: 7dcf1707d943844838cb61d3ef6ef625,
         type: 3}
     envIdDefault: DReCon-Modular
     trainingNumEnvsDefault: 1

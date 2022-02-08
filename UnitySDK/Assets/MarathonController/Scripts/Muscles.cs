@@ -93,7 +93,7 @@ public class Muscles : MonoBehaviour
     //only used for LinearPD:
     private LSPDHierarchy _lpd;
 #endif
-    Vector3[] targetRotations;
+   
 
 
 
@@ -119,8 +119,8 @@ public class Muscles : MonoBehaviour
 
 
 #if USE_LSPD
-      
 
+                Vector3[] targetRotations = new Vector3[_motors.Count];
 
                 int im = 0; //keeps track of the number of motor
                 foreach (var m in _motors)
@@ -297,11 +297,11 @@ public class Muscles : MonoBehaviour
                     return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
                 }
                  
-                _motors = _lpd.Init(root, 5000,  GetActionTimeDelta());
+                _motors = _lpd.Init(root, 100,  GetActionTimeDelta());
 
 
-                int l = _motors.Count;
-                targetRotations = new Vector3[l];
+             //   int l = _motors.Count;
+            //    targetRotations = new Vector3[l];
 
               
 
@@ -324,6 +324,69 @@ public class Muscles : MonoBehaviour
          
 
     }
+
+
+
+    public void SetDOFAsLargeROMArticulations()
+    {
+
+
+        ArticulationBody[] articulationBodies =
+            GetComponentsInChildren<ArticulationBody>(true)
+            .Where(x => x.name.StartsWith("articulation:"))
+            .ToArray();
+
+
+
+
+
+        foreach (ArticulationBody body in articulationBodies)
+        {
+            if (body.isRoot)
+                continue;
+
+            body.jointType = ArticulationJointType.SphericalJoint;
+
+
+
+
+            body.anchorRotation = Quaternion.identity; //we make sure the anchor has no Rotation, otherwise the constraints do not make any sense
+
+
+
+            body.twistLock = ArticulationDofLock.LimitedMotion;
+            var driveX = body.xDrive;
+            driveX.lowerLimit = -170;
+            driveX.lowerLimit = -170;
+            driveX.upperLimit = +170;
+
+            body.xDrive = driveX;
+
+
+
+            body.swingYLock = ArticulationDofLock.LimitedMotion;
+            var driveY = body.yDrive;
+
+            driveY.lowerLimit = -170;
+            driveY.upperLimit = +170;
+            body.yDrive = driveY;
+
+
+            body.swingZLock = ArticulationDofLock.LimitedMotion;
+            var driveZ = body.zDrive;
+            driveZ.lowerLimit = -170;
+            driveZ.upperLimit = +170;
+
+            body.zDrive = driveZ;
+
+
+        }
+
+
+
+    }
+
+
 
     // Update is called once per frame
     void Update()
@@ -414,7 +477,7 @@ public class Muscles : MonoBehaviour
 
                 newCoF = (ab.transform.parent.localPosition + newCoF) / 2.0f;
                 ab.centerOfMass = newCoF;
-                Debug.Log("AB: " + ab.name + " old CoF: " + currentCoF + " new CoF: " + ab.centerOfMass);
+//                Debug.Log("AB: " + ab.name + " old CoF: " + currentCoF + " new CoF: " + ab.centerOfMass);
             }
         }
 
