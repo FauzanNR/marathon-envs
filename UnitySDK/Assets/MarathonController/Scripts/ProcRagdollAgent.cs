@@ -50,7 +50,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
 
  
 
-    MarathonTestBedController _debugController;
+    DebugMarathonController _debugController;
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
@@ -243,53 +243,23 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _rewards2Learn.OnStep(actionTimeDelta);
 
         bool shouldDebug = _debugController != null;
-        bool dontUpdateMotor = false;
         if (_debugController != null)
         {
-            dontUpdateMotor = _debugController.DontUpdateMotor;
-            dontUpdateMotor &= _debugController.isActiveAndEnabled;
-            dontUpdateMotor &= _debugController.gameObject.activeInHierarchy;
             shouldDebug &= _debugController.isActiveAndEnabled;
             shouldDebug &= _debugController.gameObject.activeInHierarchy;
         }
         if (shouldDebug)
         {
-            vectorAction = GetDebugActions(vectorAction);
+            _debugController.ApplyDebugActions(_motors, _ragDollMuscles, actionTimeDelta);
+
+            return;
         }
 
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
 
-        /*
-        int i = 0;//keeps track of hte number of actions
 
-        int j = 0;//keeps track of the number of motors
-        foreach (var m in _motors)
-        {
-            if (m.isRoot)
-                continue;
-            if (dontUpdateMotor)
-                continue;
-            Vector3 targetNormalizedRotation = Vector3.zero;
-			if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.x = vectorAction[i++];
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.y = vectorAction[i++];
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.z = vectorAction[i++];
-            if (!ignorActions)
-            {
-             
-                _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
-            }
-
-
-         
-            j++;
-         
-        }*/
+       
         _ragDollMuscles.UpdateMuscles(vectorAction, actionTimeDelta);
 
         previousActions = vectorAction;
@@ -347,47 +317,8 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
             }            
         }
     }
-    float[] GetDebugActions(float[] vectorAction)
-    {
-        var debugActions = new List<float>();
-        foreach (var m in _motors)
-        {
-            if (m.isRoot)
-                continue;
-            DebugMotor debugMotor = m.GetComponent<DebugMotor>();
-            if (debugMotor == null)
-            {
-                debugMotor = m.gameObject.AddComponent<DebugMotor>();
-            }
-            // clip to -1/+1
-            debugMotor.Actions = new Vector3(
-                Mathf.Clamp(debugMotor.Actions.x, -1f, 1f),
-                Mathf.Clamp(debugMotor.Actions.y, -1f, 1f),
-                Mathf.Clamp(debugMotor.Actions.z, -1f, 1f)
-            );
-            Vector3 targetNormalizedRotation = debugMotor.Actions;
 
-			if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                debugActions.Add(targetNormalizedRotation.x);
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                debugActions.Add(targetNormalizedRotation.y);
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                debugActions.Add(targetNormalizedRotation.z);
-        }
 
-        debugActions = debugActions.Select(x => Mathf.Clamp(x, -1f, 1f)).ToList();
-        if (_debugController.ApplyRandomActions)
-        {
-            debugActions = debugActions
-                .Select(x => UnityEngine.Random.Range(-_debugController.RandomRange, _debugController.RandomRange))
-                .ToList();
-        }
-
-        _debugController.Actions = debugActions.ToArray();
-        return debugActions.ToArray();
-    }
 
     float[] SmoothActions(float[] vectorAction)
     {
@@ -444,15 +375,11 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _hasLazyInitialized = true;
 
         _decisionRequester = GetComponent<DecisionRequester>();
-        _debugController = FindObjectOfType<MarathonTestBedController>();
+
         Time.fixedDeltaTime = FixedDeltaTime;
         _spawnableEnv = GetComponentInParent<SpawnableEnv>();
 
-        if (_debugController != null)
-        {
-            dontResetOnZeroReward = true;
-            dontSnapMocapToRagdoll = true;
-        }
+
 
         _mapAnim2Ragdoll = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>();
       
@@ -485,8 +412,65 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
 
-     
+
+
+
+        /// TOOLS TO DEBUG
+        _debugController = FindObjectOfType<DebugMarathonController>();
+        if (_debugController != null)
+        {
+
+            Debug.Log("DEBUG functionality is active");
+            dontResetOnZeroReward = true;
+            dontSnapMocapToRagdoll = true;
+
+            //we set it up so it does not move
+            ArticulationBody root = GetComponentsInChildren<ArticulationBody>()
+           .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+           .First(x => x.isRoot);
+            root.immovable = true;
+
+
+            foreach (var m in _motors)
+            {
+                DebugJoints dj = m.gameObject.AddComponent<DebugJoints>();
+                dj.Init();
+            }
+
+
+
+            if (_debugController.debugMode == DebugMarathonController.DebugModes.imitateTargetAnim)
+            {
+
+
+                List<Rigidbody> rbs = new List<Rigidbody>();
+               
+                List<Rigidbody> rblistraw = _spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>().GetRigidBodies();
+
+                
+
+                foreach (var m in _motors)
+                {
+
+                    Rigidbody a = rblistraw.Find(x => x.name == m.name);
+                    if (a != null)
+                        rbs.Add(a);
+                    
+                }
+                _debugController.targets4imitation = rbs;
+
+            }
+
+        }
+
+
+
         _hasLazyInitialized = true;
+
+
+
+
+
     }
     public override void OnEpisodeBegin()
     {
@@ -530,10 +514,11 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
 	        UnityEditor.EditorApplication.isPaused = true;
 		}
 #endif	        
+        /*
         if (_debugController != null && _debugController.isActiveAndEnabled)
         {
             _debugController.OnAgentEpisodeBegin();
-        }
+        }*/
         _observations2Learn.PreviousActions = GetActionsFromRagdollState();
     }
 

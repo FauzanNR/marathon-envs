@@ -108,6 +108,63 @@ public class Muscles : MonoBehaviour
 
 
 
+
+    //This function is to debug the motor update modes, mimicking a reference animation.
+    /// To be used only with the root frozen, "hand of god" mode, it will not work on a 
+    /// proper physics character
+
+    public void MimicRigidBodies(List<Rigidbody> targets, float deltaTime)
+    {
+        Vector3[] targetRotations = new Vector3[_motors.Count];
+
+        int im = 0;
+        foreach (var a in targets)
+        {
+            targetRotations[im] = Mathf.Deg2Rad * Utils.GetSwingTwist(a.transform.localRotation);
+            im++;
+        }
+
+
+    
+        switch (MotorUpdateMode)
+        {
+
+            case (Muscles.MotorMode.LSPD):
+#if USE_LSPD
+                _lpd.LaunchMimicry(targetRotations);
+#else
+                   Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+#endif
+                break;
+
+
+            default:
+
+                int j = 0;
+                foreach (var m in _motors)
+                {
+
+                    if (m.isRoot)
+                    {
+                        continue; //neveer happens because excluded from list
+                    }
+                    else
+                    {
+
+                        UpdateMotor(m, targetRotations[j], Time.fixedDeltaTime);
+                    }
+
+                    j++;
+
+                }
+                break;
+        }
+
+
+
+    }
+
+
     public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
     {
         //        Debug.Log("vector action values: " + vectorAction[0] + " " + vectorAction[1] + " " + vectorAction[2] + " " + vectorAction[3] + " " + vectorAction[4] + " " + vectorAction[5]);
@@ -197,7 +254,6 @@ public class Muscles : MonoBehaviour
         {
 
             case (Muscles.MotorMode.LSPD):
-
 
                 _lpd.CompleteMimicry();
 
@@ -300,10 +356,6 @@ public class Muscles : MonoBehaviour
                 _motors = _lpd.Init(root, 100,  GetActionTimeDelta());
 
 
-             //   int l = _motors.Count;
-            //    targetRotations = new Vector3[l];
-
-              
 
 #else
                 Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
@@ -762,6 +814,9 @@ public class Muscles : MonoBehaviour
         return result;
 
     }
+
+
+
 
     ArticulationBody FindArticulationBodyRoot()
     {

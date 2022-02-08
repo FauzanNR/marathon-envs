@@ -14,10 +14,10 @@ public class DebugJoints : MonoBehaviour
     static Vector3[] _axisVector = { Vector3.right, Vector3.up, Vector3.forward };
     ArticulationBody _body;
     ArticulationBody _parentBody;
-    MarathonTestBedController _debugController;
+    DebugMarathonController _debugController;
     // Start is called before the first frame update
     ManyWorlds.SpawnableEnv _spawnableEnv;
-    MocapControllerArtanim _mocapController;
+    //MocapControllerArtanim _mocapController;
     Rigidbody _target;
     public Vector3 TargetRotationInJointSpace;
     public Vector3 RotationInJointSpace;
@@ -31,12 +31,20 @@ public class DebugJoints : MonoBehaviour
 
     void Start()
     {
+        Init();
+
+    }
+    public void Init()
+    { 
+
         _body = GetComponent<ArticulationBody>();
         _parentBody = _body.transform.parent.GetComponentInParent<ArticulationBody>();
-        _debugController = FindObjectOfType<MarathonTestBedController>();
+        _debugController = FindObjectOfType<DebugMarathonController>();
         _spawnableEnv = GetComponentInParent<ManyWorlds.SpawnableEnv>();
-        _mocapController = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
-        var mocapBodyParts = _mocapController.GetComponentsInChildren<Rigidbody>().ToList();
+        //_mocapController = _spawnableEnv.GetComponentInChildren<MocapControllerArtanim>();
+        //var mocapBodyParts = _mocapController.GetComponentsInChildren<Rigidbody>().ToList();
+        TrackBodyStatesInWorldSpace tmp = _spawnableEnv.GetComponentInChildren<TrackBodyStatesInWorldSpace>();
+        var mocapBodyParts = tmp.GetComponentsInChildren<Rigidbody>().ToList();
         _target = mocapBodyParts.First(x=>x.name == _body.name);
     }
 
@@ -84,28 +92,11 @@ public class DebugJoints : MonoBehaviour
         float damping = 100f;
         JointPositionDeg *= Mathf.Rad2Deg;
 
-        bool dontUpdateMotor = _debugController.DontUpdateMotor;
+        bool dontUpdateMotor = (_debugController.debugMode == DebugMarathonController.DebugModes.moveWithDebugJoints);
         dontUpdateMotor &= _debugController.isActiveAndEnabled;
         dontUpdateMotor &= _debugController.gameObject.activeInHierarchy;
         if(dontUpdateMotor)
         {
-    		// var drive = _body.yDrive;
-            // drive.stiffness = stiffness;
-            // drive.damping = damping;
-            // drive.target = JointTargetDeg.x;
-            // _body.yDrive = drive;
-            
-            // drive = _body.zDrive;
-            // drive.stiffness = stiffness;
-            // drive.damping = damping;
-            // drive.target = JointTargetDeg.y;
-            // _body.zDrive = drive;
-
-            // drive = _body.xDrive;
-            // drive.stiffness = stiffness;
-            // drive.damping = damping;
-            // drive.target = JointTargetDeg.z;
-            // _body.xDrive = drive;
     		var drive = _body.xDrive;
             drive.stiffness = stiffness;
             drive.damping = damping;
@@ -126,13 +117,6 @@ public class DebugJoints : MonoBehaviour
         }
         else
         {
-    		// var drive = _body.yDrive;
-            // JointTargetDeg = Vector3.zero;
-            // JointTargetDeg.x = drive.target;
-            // drive = _body.zDrive;
-            // JointTargetDeg.y = drive.target;
-            // drive = _body.xDrive;
-            // JointTargetDeg.z = drive.target;
     		var drive = _body.xDrive;
             JointTargetDeg = Vector3.zero;
             JointTargetDeg.x = drive.target;
@@ -145,14 +129,9 @@ public class DebugJoints : MonoBehaviour
         JointPositionRad = JointPositionDeg * Mathf.Deg2Rad;
         JointTargetRad = JointTargetDeg * Mathf.Deg2Rad;
     }
-    public static Quaternion FromToRotation(Quaternion from, Quaternion to) {
-        if (to == from) return Quaternion.identity;
-
-        return to * Quaternion.Inverse(from);
-    }
-
-    // void OnDrawGizmos()
-    void OnDrawGizmosSelected()
+   
+    void OnDrawGizmos()
+    //void OnDrawGizmosSelected()
     {
         if (_body == null)
             return;
