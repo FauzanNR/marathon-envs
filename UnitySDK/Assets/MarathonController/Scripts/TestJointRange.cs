@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class TestActionRange : MonoBehaviour
+public class TestJointRange : MonoBehaviour
 {
     public float SphereSize = 0.03f;
 
@@ -27,8 +27,7 @@ public class TestActionRange : MonoBehaviour
     [Range(0, 1)]
     public float normalizedSwingZ;
         
-        
-        Vector3 _targetNormalizedRotation;
+      
 
 
     [Space(20)]

@@ -33,53 +33,57 @@ public class DebugMarathonController : MonoBehaviour
     bool _initialized = false;
 
 
-    ArticulationBody _root;
-    Vector3 _initRootPos;
+
+   
 
     public void LazyInitialize(List<ArticulationBody> _motors, Muscles _ragDollMuscles)
     {
         if (!_initialized)
         {
-            foreach (var m in _motors)
-            {
-                TestActionRange dj = m.gameObject.AddComponent<TestActionRange>();
-                dj.Init();
-            }
-
+           
 
 
            
             Debug.Log("we are in DEBUG mode, we freeze the root of our characters");
-             _root = _ragDollMuscles.GetComponentsInChildren<ArticulationBody>()
+           ArticulationBody  _root = _ragDollMuscles.GetComponentsInChildren<ArticulationBody>()
                 .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
                 .First(x => x.isRoot);
-            //root.immovable = true; //this makes the ragdoll go crazy, so:
-            _initRootPos = _root.transform.position;
+            _root.immovable = true;
 
 
-            
 
 
-            if (debugMode == DebugMarathonController.DebugModes.imitateTargetAnim)
+
+            switch (debugMode)
             {
 
+                case DebugModes.imitateTargetAnim:
 
-                List<Rigidbody> rbs = new List<Rigidbody>();
-                SpawnableEnv spawnableEnv = _ragDollMuscles.GetComponentInParent<SpawnableEnv>();
-                List<Rigidbody> rblistraw = spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>().GetRigidBodies();
+                    List<Rigidbody> rbs = new List<Rigidbody>();
+                    SpawnableEnv spawnableEnv = _ragDollMuscles.GetComponentInParent<SpawnableEnv>();
+                    List<Rigidbody> rblistraw = spawnableEnv.GetComponentInChildren<MapAnim2Ragdoll>().GetRigidBodies();
 
 
 
-                foreach (var m in _motors)
-                {
+                    foreach (var m in _motors)
+                    {
 
-                    Rigidbody a = rblistraw.Find(x => x.name == m.name);
-                    if (a != null)
-                        rbs.Add(a);
+                        Rigidbody a = rblistraw.Find(x => x.name == m.name);
+                        if (a != null)
+                            rbs.Add(a);
 
-                }
-                targets4imitation = rbs;
+                    }
+                    targets4imitation = rbs;
+                    break;
 
+                case DebugModes.testActionRangeInJoints:
+                    foreach (var m in _motors)
+                    {
+                        TestJointRange dj = m.gameObject.AddComponent<TestJointRange>();
+                        dj.Init();
+                    }
+
+                    break;
             }
 
             _initialized = true;
@@ -92,10 +96,6 @@ public class DebugMarathonController : MonoBehaviour
 
 
         LazyInitialize(_motors, _ragDollMuscles);
-
-
-       // _root.TeleportRoot(_initRootPos, Quaternion.identity);
-
 
 
 

@@ -64,13 +64,19 @@ namespace DReCon
             simSubsetBodies = new BodyChain(simulationSubset);
         }
 
+        int i = 0;
         public override void FeedObservationsToSensor(VectorSensor sensor)
         {
             ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
             ReferenceFrame fSim = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass); // Same orientation, different origin
 
             Vector3 kinCOMV = fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity);
+
+
             Vector3 simCOMV = fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity);
+            i++;
+
+            Debug.Log("frame:  "+  i + "  simComv: " + simCOMV + " " + simChain.CenterOfMassVelocity);
 
             Vector3 inputDesiredVelocity = fKin.WorldDirectionToCharacter(userInputs.GetDesiredVelocity());
             Vector2 inputDesiredHorizontalVelocity = inputDesiredVelocity.Horizontal();

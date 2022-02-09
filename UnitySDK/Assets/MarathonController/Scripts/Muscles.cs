@@ -146,12 +146,52 @@ public class Muscles : MonoBehaviour
 
                     if (m.isRoot)
                     {
-                        continue; //neveer happens because excluded from list
+                        continue; //never happens because excluded from list
                     }
                     else
                     {
+                        //we find the normalized rotation that corresponds to the target rotation (the inverse of what happens inside UpdateMotorWithPD
+                        ArticulationBody joint = m;                       
+                        
+                        Vector3 normalizedRotation = new Vector3();
 
-                        UpdateMotor(m, targetRotations[j], Time.fixedDeltaTime);
+
+
+
+                        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.xDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.x = ( Mathf.Rad2Deg *  targetRotations[j].x - midpoint) / scale;
+                            //target.x = midpoint + (targetNormalizedRotation.x * scale);
+
+                        }
+
+                        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.yDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.y = (Mathf.Rad2Deg * targetRotations[j].y - midpoint) / scale;
+                            //target.y = midpoint + (targetNormalizedRotation.y * scale);
+
+
+                        }
+
+                        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.zDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.z = (Mathf.Rad2Deg * targetRotations[j].z - midpoint) / scale;
+                            //target.z = midpoint + (targetNormalizedRotation.z * scale);
+
+                        }
+
+
+
+                        UpdateMotor(m, normalizedRotation, Time.fixedDeltaTime);
                     }
 
                     j++;
@@ -573,12 +613,6 @@ public class Muscles : MonoBehaviour
             target.z = midpoint + (targetNormalizedRotation.z * scale);
 
         }
-
-        //this is how you calculate the angular velocity in MapAnim2Ragdoll
-        //Utils.GetAngularVelocity(cur, last, timeDelta)
-
-        //Utils.GetArticulationReducedSpaceInVector3(joint.jointVelocity)
-
 
 
         targetVelocity = Utils.AngularVelocityInReducedCoordinates(Utils.GetSwingTwist(joint.transform.localRotation), target, timeDelta);
