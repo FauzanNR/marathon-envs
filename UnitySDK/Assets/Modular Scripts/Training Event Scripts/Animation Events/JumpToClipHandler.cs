@@ -24,6 +24,7 @@ public class JumpToClipHandler : DelayableEventHandler
             return;
         }
 
+        Debug.Log("Resetting clip undelayed!");
         animator.Play(stateName:clipName, layer: 0, normalizedTime: UnityEngine.Random.Range(0f, normalizedTimeRange));
     }
 
@@ -31,6 +32,7 @@ public class JumpToClipHandler : DelayableEventHandler
     {
         IsWaiting = true;
         yield return WaitFrames();
+        Debug.Log("Resetting clip delayed!");
         animator.Play(stateName: clipName, layer: 0, normalizedTime: UnityEngine.Random.Range(0f, normalizedTimeRange));
         IsWaiting = false;
     }

@@ -38,7 +38,17 @@ public class ThrowObservationSource : ObservationSource
         simChain = new BodyChain(simulationTransform);
     }
 
-    
+    private void OnDrawGizmosSelected()
+    {
+        if (!Application.isPlaying) return;
+        Gizmos.color = Color.white;
+        ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, simChain.CenterOfMass);
+        var localTarget = fKin.WorldToCharacter(target.transform.position);
+        var globalStart = fKin.CharacterToWorld(Vector3.zero);
+        Gizmos.DrawRay(globalStart, fKin.CharacterDirectionToWorld(localTarget));
+    }
+
+
 
 
 }

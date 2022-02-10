@@ -11,6 +11,12 @@ public class ThrowRewardSource : RewardSource
     [SerializeField]
     Target target;
 
+    [SerializeField]
+    float rewardFallOff=-4f;
+
+    [SerializeField]
+    float rewardOffset = 0f;
+
     public override float Reward => CalculateReward();
 
     public override void OnAgentInitialize()
@@ -24,7 +30,9 @@ public class ThrowRewardSource : RewardSource
         if (target.h) return 1f;
         else 
         {
-            return Mathf.Exp(-4 * (projectile.position - target.transform.position).magnitude * (projectile.position - target.transform.position).magnitude);
+            var d = (projectile.position - target.transform.position).magnitude - rewardOffset;
+            if (d < 0) d = 0f;
+            return Mathf.Exp(rewardFallOff * d * d);
         }
     }
 }

@@ -25,6 +25,6 @@ public abstract class DelayableEventHandler: TrainingEventHandler
 
     protected IEnumerator WaitFrames()
     {
-        for (int i = 0; i < framesToWait; i++) yield return new WaitForFixedUpdate();
+        for (int i = 0; i < framesToWait+1; i++) yield return new WaitForFixedUpdate();
     }
 }

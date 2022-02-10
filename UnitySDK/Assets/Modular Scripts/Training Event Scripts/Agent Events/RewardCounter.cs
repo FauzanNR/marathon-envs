@@ -14,14 +14,14 @@ public class RewardCounter : TrainingEventHandler
 
     private float rewardSum;
     private float averageReward;
-    private int numberOfActions;
+    private int numberOfSteps;
 
     private void Awake()
     {
         eventsAgent = agent as IEventsAgent;
         rewardSum = 0;
         averageReward = 0;
-        numberOfActions = 0;
+        numberOfSteps = 0;
 
         eventsAgent.onActionHandler += AccumulateRewards;
 
@@ -30,9 +30,9 @@ public class RewardCounter : TrainingEventHandler
     private void AccumulateRewards(object sender, AgentEventArgs args)
     {
         rewardSum += args.reward;
-        numberOfActions++;
+        numberOfSteps++;
 
-        averageReward = rewardSum / numberOfActions;
+        averageReward = rewardSum / numberOfSteps;
     }
 
     public void PrintEvents(object sender, EventArgs args)
@@ -41,7 +41,7 @@ public class RewardCounter : TrainingEventHandler
         Debug.Log($"Total reward: {rewardSum}\nAverage reward per action: {averageReward}");
 
         rewardSum = 0;
-        numberOfActions = 0;
+        numberOfSteps = 0;
         averageReward = 0;
     }
 }

@@ -235,7 +235,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26b8d94b2c843464aa89c777f11cdaa1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  framesToWait: 100
+  framesToWait: 5
   isWaiting: 0
   referenceAnimationParent: {fileID: 775634441627583906}
   referenceAnimationRoot: {fileID: 7927593733761056949}
@@ -255,7 +255,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea40c89ed9f188745bf4160d2945058c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  framesToWait: 100
+  framesToWait: 5
   isWaiting: 0
   toSetKinematic: {fileID: 484456400080509901}
 --- !u!114 &484456398430599064
@@ -270,11 +270,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 55bb8e2e7eebd744db27e2196a950460, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  framesToWait: 80
+  framesToWait: 1
   isWaiting: 0
   animator: {fileID: 7964741659752332212}
   clipName: throw
-  normalizedTimeRange: 0.1
+  normalizedTimeRange: 0.2
 --- !u!1 &484456398434438819
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,6 +393,9 @@ MonoBehaviour:
   pivot: {fileID: 484456399067966931}
   shouldMoveTarget: 1
   currentTarget: {fileID: 484456398434438817}
+  radiusRange: 0.1
+  angleRange: 0.02
+  heightRange: 0.025
 --- !u!1 &484456399067966930
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,7 +652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trackedAgent: {fileID: 5429382177994252463}
-  rewardThreshold: 0.1
+  rewardThreshold: 0.00003
 --- !u!1 &484456400080509905
 GameObject:
   m_ObjectHideFlags: 0
@@ -4647,7 +4650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   agent: {fileID: 5429382177994252463}
   kinematicTransform: {fileID: 7291559889744953321}
-  simulationTransform: {fileID: 3562715701141412551}
+  simulationTransform: {fileID: 6985834718621954053}
   target: {fileID: 484456398434438816}
 --- !u!1 &4129657743619820129
 GameObject:
@@ -6312,7 +6315,7 @@ MonoBehaviour:
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
   NaturalFrequency: 20
-  ForceScale: 0.3
+  ForceScale: 50
   KP_Stiffness: 50
   ForceScaleSPD: 0.3
   skipCollisionSetup: 0
@@ -6364,10 +6367,10 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: b27119121aa9fda4e9f652534935ac40, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: DReCon-v0
+  m_BehaviorName: DReCon-Modular-Throw
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1

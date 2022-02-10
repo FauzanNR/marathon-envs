@@ -46,14 +46,18 @@ public class BasicSetupHandler : DelayableEventHandler
 		if (IsWaiting) return;
 
 		//First we move the animation back to the start 
+
+		Debug.Log("Resetting Animation Parent!");
 		referenceAnimationParent.position = resetOrigin;
 
 		if (shouldResetRotation) referenceAnimationParent.rotation = resetRotation;
 
+
+		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+
 		if (framesToWait != 0)
         {
 			StartCoroutine(DelayedExecution(sender, eventArgs));
-			kinematicRig.TeleportRoot(referenceAnimationRoot.position);
 			return;
 		}
 
@@ -64,19 +68,26 @@ public class BasicSetupHandler : DelayableEventHandler
 		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
 
 		//We teleport the kinematic reference as well, so velocities are not tracked in the move. Since we don't need to change rotation we use to position only version.
-		kinematicRig.TeleportRoot(referenceAnimationRoot.position);
-    }
+		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+	}
 
 	protected override IEnumerator DelayedExecution(object sender, EventArgs eventArgs)
     {
 		IsWaiting = true;
 		yield return WaitFrames();
+		Debug.Log("Teleporting Root!");
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 
+
+		Debug.Log("Copying Kinematics!");
 		//We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
 		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
+
+		Debug.Log("Teleporting Kinematic Root just in case!");
+		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 		IsWaiting = false;
+
 	}
 
 	//As I can see this handler to be extended to chains other then Articulationbody ones, here's a WIP interface

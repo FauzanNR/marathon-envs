@@ -456,7 +456,10 @@ MonoBehaviour:
     - envId: DReCon-Modular
       envPrefab: {fileID: 6770981998011502920, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
         type: 3}
-    envIdDefault: DReCon-Modular
+    - envId: DReCon-Modular-Throw
+      envPrefab: {fileID: 702444780356252709, guid: eefe74b95fe461f439d1752cd15359f0,
+        type: 3}
+    envIdDefault: DReCon-Modular-Throw
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 1

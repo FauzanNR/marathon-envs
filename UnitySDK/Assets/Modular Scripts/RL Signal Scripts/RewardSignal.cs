@@ -59,7 +59,7 @@ public static class RewardMixing
     }
 
     ///<summary>Mix rewards with method selected by enum</summary>
-    public static float MixRewards(this IEnumerable<WeightedRewardSource> rewardsToMix, RewardMixing.MixType mixType)
+    public static float MixRewards(this IEnumerable<WeightedRewardSource> rewardsToMix, MixType mixType)
     {
         switch (mixType)
         {

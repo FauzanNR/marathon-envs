@@ -105,7 +105,7 @@ namespace DReCon
             return ch.CentersOfMass.Zip(simSubsetBodies.Velocities, Tuple.Create);
         }
 
-        private void OnDrawGizmos()
+        private void OnDrawGizmosSelected()
         {
             if (!Application.isPlaying) return;
             ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);

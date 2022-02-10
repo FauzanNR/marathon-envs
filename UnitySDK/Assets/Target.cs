@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Target : TrainingEventHandler
+public class Target : DelayableEventHandler
 {
     // Start is called before the first frame update
     [SerializeField]
@@ -32,7 +32,16 @@ public class Target : TrainingEventHandler
     [SerializeField]
     Transform currentTarget;
 
-    public override EventHandler Handler => (sender, args) => ResetTarget();
+    [SerializeField]
+    float radiusRange = 0.5f;
+
+    [SerializeField]
+    float angleRange = 0.1f;
+
+    [SerializeField]
+    float heightRange = 0.125f;
+
+    public override EventHandler Handler => (sender, args) => WrappedReset();
 
 
     private void Awake()
@@ -55,12 +64,25 @@ public class Target : TrainingEventHandler
             
             var curPosition = projectile.transform.position;
 
+
             if (curPosition.y <= targetHeight && lastPosition.y > targetHeight) idealPosition = curPosition;
 
             lastPosition = projectile.transform.position;
         }
 
 
+    }
+
+    void WrappedReset()
+    {
+        if (IsWaiting) return;
+        if (framesToWait != 0)
+        {
+            StartCoroutine(DelayedExecution(this, EventArgs.Empty));
+            return;
+        }
+
+        ResetTarget();
     }
 
     void ResetTarget()
@@ -72,9 +94,7 @@ public class Target : TrainingEventHandler
         float meanAngle = Mathf.Deg2Rad * Vector3.Angle(Vector3.right, relTargetPos.Horizontal3D());
         float meanHeight = relTargetPos.y;
 
-        float radiusRange = 0.5f;
-        float angleRange = 0.1f;
-        float heightRange = 0.125f;
+        
 
         float sampledRadius = UnityEngine.Random.Range(meanRadius - radiusRange, meanRadius + radiusRange);
         float sampledAngle = UnityEngine.Random.Range(meanAngle - angleRange, meanAngle + angleRange);
@@ -95,5 +115,13 @@ public class Target : TrainingEventHandler
     void Update()
     {
         
+    }
+
+    protected override IEnumerator DelayedExecution(object sender, EventArgs args)
+    {
+        IsWaiting = true;
+        yield return WaitFrames();
+        ResetTarget();
+        IsWaiting = false;
     }
 }

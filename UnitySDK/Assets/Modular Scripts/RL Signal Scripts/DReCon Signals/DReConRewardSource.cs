@@ -67,7 +67,7 @@ public class DReConRewardSource : RewardSource
         return reward;
     }
 
-    private void OnDrawGizmos()
+    private void OnDrawGizmosSelected()
     {
         if (!Application.isPlaying) return;
         ReferenceFrame fKin = new ReferenceFrame(kinChain.RootForward, kinChain.CenterOfMass);
