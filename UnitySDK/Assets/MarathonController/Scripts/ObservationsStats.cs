@@ -197,7 +197,7 @@ public class ObservationStats : MonoBehaviour
         }
         else
         {
-            newCOM = GetCenterOfMass();
+            newCOM = Utils.GetCenterOfMass(_articulationBodyParts);
             var newHorizontalDirection = new Vector3(0f, _root.transform.eulerAngles.y, 0f);
             HorizontalDirection = newHorizontalDirection / 180f;
             if (!LastIsSet)
@@ -273,20 +273,6 @@ public class ObservationStats : MonoBehaviour
             bodyPartStat.LastIsSet = true;
         }
         LastIsSet = true;
-    }
-
-    Vector3 GetCenterOfMass()
-    {
-        var centerOfMass = Vector3.zero;
-        float totalMass = 0f;
-        foreach (ArticulationBody ab in _articulationBodyParts)
-        {
-            centerOfMass += ab.worldCenterOfMass * ab.mass;
-            totalMass += ab.mass;
-        }
-        centerOfMass /= totalMass;
-        // centerOfMass -= _spawnableEnv.transform.position;
-        return centerOfMass;
     }
 
     //Mucked about

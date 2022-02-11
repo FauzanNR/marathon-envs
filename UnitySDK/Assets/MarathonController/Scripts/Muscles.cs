@@ -65,7 +65,6 @@ public class Muscles : MonoBehaviour
         public ArticulationReducedSpace vel;
     }
 
-
     List<LastPos> _lastPos = new List<LastPos>();
 
 
@@ -124,8 +123,6 @@ public class Muscles : MonoBehaviour
             im++;
         }
 
-
-    
         switch (MotorUpdateMode)
         {
 
@@ -204,6 +201,9 @@ public class Muscles : MonoBehaviour
 
     }
 
+
+
+   
 
     public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
     {
@@ -286,6 +286,65 @@ public class Muscles : MonoBehaviour
 
     }
 
+    /*
+    public void UpdateMuscles(float[] vectorAction, float actionTimeDelta)
+    {
+        //        Debug.Log("vector action values: " + vectorAction[0] + " " + vectorAction[1] + " " + vectorAction[2] + " " + vectorAction[3] + " " + vectorAction[4] + " " + vectorAction[5]);
+        int i = 0;//keeps track of the number of action
+
+
+#if USE_LSPD
+
+            Vector3[] targetRotations = new Vector3[_motors.Count];
+                 int im = 0; //keeps track of the number of motor
+
+#else
+
+
+        if (MotorUpdateMode == MotorMode.LSPD)
+                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+
+
+#endif
+
+
+        foreach (var m in _motors)
+                {
+                    if (m.isRoot)
+                        continue;
+            Debug.Log("motor number " + im + " action number: " +  i);
+                    Vector3 targetNormalizedRotation = Vector3.zero;
+                    if (m.jointType != ArticulationJointType.SphericalJoint)
+                        continue;
+                    if (m.twistLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.x = vectorAction[i++];
+                    if (m.swingYLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.y = vectorAction[i++];
+                    if (m.swingZLock != ArticulationDofLock.LockedMotion)
+                        targetNormalizedRotation.z = vectorAction[i++];
+
+
+                    if (MotorUpdateMode == MotorMode.LSPD)
+                    {
+                        targetRotations[im] = targetNormalizedRotation;
+                        im++;
+
+                    }
+                    else {
+                        UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+                    }
+
+                }
+
+#if USE_LSPD
+        if (MotorUpdateMode == MotorMode.LSPD)
+            _lpd.LaunchMimicry(targetRotations);
+#endif
+
+
+    }
+    */
+
     public void FixedUpdate()
     {
 
@@ -293,7 +352,7 @@ public class Muscles : MonoBehaviour
         switch (MotorUpdateMode)
         {
 
-            case (Muscles.MotorMode.LSPD):
+            case (MotorMode.LSPD):
 
                 _lpd.CompleteMimicry();
 
@@ -375,6 +434,8 @@ public class Muscles : MonoBehaviour
                 
                 //SetAllArticulationsFree();
                 //  SetDOFAsFreeArticulations();
+                
+                
                 CenterABMasses();
 
 
@@ -392,8 +453,9 @@ public class Muscles : MonoBehaviour
                 {
                     return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
                 }
-                 
+
                 _motors = _lpd.Init(root, 100,  GetActionTimeDelta());
+                //_lpd.Init(root, 100, GetActionTimeDelta());
 
 
 
@@ -557,19 +619,30 @@ public class Muscles : MonoBehaviour
             { 
                 Vector3 currentCoF = ab.centerOfMass;
 
-                Vector3 newCoF = Vector3.zero;
-                //generally 1, sometimes 2:
-                foreach (Transform child in ab.transform) {
-                    newCoF += child.localPosition;
+                if (ab.transform.childCount > 0)
+                {
+                    Vector3 newCoF = Vector3.zero;
+                    //generally 1, sometimes 2:
 
+                    foreach (Transform child in ab.transform)
+                    {
+                        newCoF += child.localPosition;
+
+                    }
+                    newCoF /= ab.transform.childCount;
+
+                    newCoF = (ab.transform.parent.localPosition + newCoF) / 2.0f;
+                    ab.centerOfMass = newCoF;
+
+                    //Debug.Log("AB: " + ab.name + " old CoF: " + currentCoF + " new CoF: " + ab.centerOfMass);
                 }
-                newCoF /= ab.transform.childCount;
+                else 
+                {
 
-                ArticulationBody ab2 = ab.GetComponentInChildren<ArticulationBody>();
+                    //Debug.Log(ab.name + " has not changed CoF, it is still: " + currentCoF);
 
-                newCoF = (ab.transform.parent.localPosition + newCoF) / 2.0f;
-                ab.centerOfMass = newCoF;
-//                Debug.Log("AB: " + ab.name + " old CoF: " + currentCoF + " new CoF: " + ab.centerOfMass);
+                
+                }
             }
         }
 

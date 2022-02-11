@@ -23,24 +23,19 @@ public class MusclesEditor : Editor
 
     public override void OnInspectorGUI()
     {
+
+        /*
         serializedObject.Update();
 
 
         GUILayout.Label("");
 
-
+        */
 
 
         base.OnInspectorGUI();
 
-        /*
-        if (GUILayout.Button("Setup4-1D-Debug"))
-        {
-            Muscles t = target as Muscles;
-            t.Set1DRotations4Debug();
-        }
-    
-        */
+/*
         if (GUILayout.Button("SetupROM170"))
         {
             Muscles t = target as Muscles;
@@ -55,7 +50,7 @@ public class MusclesEditor : Editor
 
         }
 
-
+        */
 
 
         serializedObject.ApplyModifiedProperties();

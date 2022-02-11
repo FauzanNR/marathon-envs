@@ -8,6 +8,24 @@ public static class Utils
 {
 
 
+    public static Vector3 GetCenterOfMass(List<ArticulationBody> _articulationBodyParts)
+    {
+        var centerOfMass = Vector3.zero;
+        float totalMass = 0f;
+        foreach (ArticulationBody ab in _articulationBodyParts)
+        {
+            if (ab.worldCenterOfMass != ab.worldCenterOfMass || ab.mass != ab.mass)//it's a NaN
+                Debug.Log("AB: " + ab.name + "  has NaNs. Center of Mass value: " + ab.worldCenterOfMass + "Mass value: " + ab.mass);
+            else
+            {
+                centerOfMass += ab.worldCenterOfMass * ab.mass;
+                totalMass += ab.mass;
+            }
+        }
+        centerOfMass /= totalMass;
+        // centerOfMass -= _spawnableEnv.transform.position;
+        return centerOfMass;
+    }
 
     // Find angular velocity. The delta rotation is converted to radians within [-pi, +pi].
     // Vector3 OldGetAngularVelocity(Quaternion from, Quaternion to, float timeDelta)

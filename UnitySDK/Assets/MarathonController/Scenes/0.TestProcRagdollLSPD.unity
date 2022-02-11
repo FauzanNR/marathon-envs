@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b6d957e5f9a5e438f7f7bb557585d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMode: 2
+  debugMode: 0
   RandomRange: 0.5
   Actions: []
   targets4imitation: []
@@ -433,7 +433,10 @@ MonoBehaviour:
     - envId: few-colliders-largeROM
       envPrefab: {fileID: 884079593499418970, guid: 0ff02ee32fad4044bad5f4f44f1b0f3a,
         type: 3}
-    envIdDefault: DReConHumanoid-v0
+    - envId: few-colliders-largeROM-LSPD
+      envPrefab: {fileID: 884079593499418970, guid: 4e9fb5b25645fce4096cfac043ff166f,
+        type: 3}
+    envIdDefault: few-colliders-largeROM-LSPD
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 1
