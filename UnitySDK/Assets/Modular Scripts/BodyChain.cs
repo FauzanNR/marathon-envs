@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Kinematic;
+using Mujoco;
 
 namespace Kinematic
 {
@@ -35,8 +36,10 @@ namespace Kinematic
         public BodyChain(IEnumerable<Transform> bodies)
         {
             chain = bodies.Select(b => b.GetComponent<ArticulationBody>() ? (IKinematic)
-                                        new ArticulationBodyAdapter(b.GetComponent<ArticulationBody>()) : 
-                                        new RigidbodyAdapter(b.GetComponent<Rigidbody>())).ToList().AsReadOnly();
+                                        new ArticulationBodyAdapter(b.GetComponent<ArticulationBody>()) :
+                                            (b.GetComponent<Rigidbody>()?
+                                            new RigidbodyAdapter(b.GetComponent<Rigidbody>()) :
+                                                new MjBodyAdapter(b.GetComponent<MjBody>()))).ToList().AsReadOnly();
 
             mass = chain.Select(k => k.Mass).Sum();
         }
@@ -48,9 +51,13 @@ namespace Kinematic
             {
                 return root.GetComponentsInChildren<ArticulationBody>().Select(ab =>new ArticulationBodyAdapter(ab)).ToList().AsReadOnly();
             }
-            else
+            else if(root.GetComponentInChildren<Rigidbody>())
             {
                 return root.GetComponentsInChildren<Rigidbody>().Select(rb => new RigidbodyAdapter(rb)).ToList().AsReadOnly();
+            }
+            else
+            {
+                return root.GetComponentsInChildren<MjBody>().Select(rb => new MjBodyAdapter(rb)).ToList().AsReadOnly();
             }
         }
 
@@ -138,6 +145,49 @@ namespace Kinematic
         public Vector3 GetRelativePointVelocity(Vector3 localPoint)
         {
             return articulationBody.GetRelativePointVelocity(localPoint);
+        }
+    }
+
+    public class MjBodyAdapter : IKinematic
+    {
+        readonly private MjBody mjBody;
+
+        readonly private MjScene scene;
+
+        readonly private float mass;
+
+        readonly private MjInertial inertial;
+
+        public MjBodyAdapter(MjBody mjBody)
+        {
+            this.mjBody = mjBody;
+            scene = MjScene.Instance;
+            mass = mjBody.GetComponentInChildren<MjInertial>().Mass;
+
+            inertial = mjBody.GetComponentInDirectChildren<MjInertial>();
+        }
+
+        public Vector3 Velocity => mjBody.GlobalVelocity();
+
+        public Vector3 AngularVelocity => mjBody.GlobalAngularVelocity();
+
+        public float Mass => mass;
+
+        public Vector3 CenterOfMass => inertial.transform.position;
+
+        public string Name => mjBody.name;
+
+        public Matrix4x4 TransformMatrix => inertial.transform.localToWorldMatrix;
+
+        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        {
+            
+            return Vector3.Cross((worldPoint - CenterOfMass), AngularVelocity) + Velocity;
+        }
+
+        public Vector3 GetRelativePointVelocity(Vector3 localPoint)
+        {
+            return Vector3.Cross(localPoint, AngularVelocity) + Velocity;
         }
     }
     #endregion

@@ -15,6 +15,9 @@ public class HideRenderers : MonoBehaviour
 
     void Start()
     {
+        #if UNITY_EDITOR
+        UnityEditor.SceneView.FocusWindowIfItsOpen(typeof(UnityEditor.SceneView)); 
+        #endif
 
         SkinnedRenderers = renderersToHide.Select(rth => rth.GetComponentsInChildren<SkinnedMeshRenderer>(true)).SelectMany(x=>x);
         MeshRenderers = renderersToHide.Select(rth => rth.GetComponentsInChildren<MeshRenderer>(true)).SelectMany(x=>x);

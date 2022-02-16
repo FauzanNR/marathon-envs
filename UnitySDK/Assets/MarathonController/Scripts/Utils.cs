@@ -140,6 +140,11 @@ public static class Utils
         return new Vector3(vector3.x, 0f, vector3.z);
     }
 
+    public static float VolumeFromSize(this Vector3 vector3)
+    {
+        return vector3.x* vector3.y*vector3.z;
+    }
+
     public static Vector3 Sum(this IEnumerable<Vector3> vectors)
     {
         Vector3 sum = Vector3.zero;
