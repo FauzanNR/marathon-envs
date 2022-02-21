@@ -150,6 +150,7 @@ namespace Mujoco
 
         }
 
+
         public static unsafe Vector3 GlobalVelocity(this MjBody body)
         {
             var mjScene = MjScene.Instance;
