@@ -15,6 +15,22 @@ public class TeleportMJ : MonoBehaviour
     [SerializeField]
     Transform teleportTransform;
 
+    [SerializeField]
+    Transform animationTransform;
+
+    [SerializeField]
+    MjKinematicRig kinematicRig;
+
+    Vector3 posOffset;
+
+    private void Start()
+    {
+        if (animationTransform != null)
+        {
+            posOffset =  animationTransform.position - targetModel.transform.position;
+        }
+    }
+
     private void  Update()
     {
         Debug.Log(targetModel.transform.position);
@@ -40,7 +56,31 @@ public class TeleportMJ : MonoBehaviour
     {
         MjScene mjScene = MjScene.Instance;
 
+        //mjScene.TeleportMjRoot(targetModel.GetComponentInChildren<MjFreeJoint>(), teleportTransform.position, teleportTransform.rotation);
+
+        if(animationTransform != null)
+        {
+            animationTransform.position = teleportTransform.position + posOffset;
+            animationTransform.rotation = teleportTransform.rotation;
+        }
+
+        if (kinematicRig != null)
+        {
+            kinematicRig.TrackKinematics();
+        }
+
         mjScene.TeleportMjRoot(targetModel.GetComponentInChildren<MjFreeJoint>(), teleportTransform.position, teleportTransform.rotation);
+
+/*        if (animationTransform != null)
+        {
+            animationTransform.position = teleportTransform.position + posOffset;
+            animationTransform.rotation = teleportTransform.rotation;
+        }
+
+        if (kinematicRig != null)
+        {
+            kinematicRig.TrackKinematics();
+        }*/
     }
 
     public void RotateRoot()

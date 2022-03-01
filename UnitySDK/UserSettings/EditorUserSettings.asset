@@ -6,34 +6,34 @@ EditorUserSettings:
   serializedVersion: 4
   m_ConfigSettings:
     RecentlyUsedSceneGuid-0:
-      value: 0153040753050f580f0b542013220c444f4e4a732d2d27367b7b4f66bab26260
-      flags: 0
-    RecentlyUsedSceneGuid-1:
-      value: 5001505753020809085d587a147b5c444215412f7e79253228784435b3e56c3a
-      flags: 0
-    RecentlyUsedSceneGuid-2:
       value: 5a5500525c535c5d5f5c5b7b15220a44404e4f7a742977687c784d66b5e16560
       flags: 0
-    RecentlyUsedSceneGuid-3:
+    RecentlyUsedSceneGuid-1:
       value: 570051035750590f55595f2046755d44174f4b7a7f2a7561782c4b30b0e5646c
       flags: 0
-    RecentlyUsedSceneGuid-4:
-      value: 0706045152050c020f5f092013720844424f4c2e7b2d7467297d4835b3b5616d
-      flags: 0
-    RecentlyUsedSceneGuid-5:
+    RecentlyUsedSceneGuid-2:
       value: 070900525d075c5e0c5d5a7516215b44134e4d7e747c753274784f66b3b9656f
       flags: 0
-    RecentlyUsedSceneGuid-6:
+    RecentlyUsedSceneGuid-3:
       value: 550850055c505f03585c5875147b0d4442151c2e78787f3675714a66bab6653c
       flags: 0
-    RecentlyUsedSceneGuid-7:
-      value: 5202550453005c030f5c5871477a5d44434e497d7b7d73657d7b4a32e0b96739
-      flags: 0
-    RecentlyUsedSceneGuid-8:
+    RecentlyUsedSceneGuid-4:
       value: 5a5402505d540a085e0f5476157b0944124f407c7c797f68782a4f36bbe13539
       flags: 0
-    RecentlyUsedSceneGuid-9:
+    RecentlyUsedSceneGuid-5:
       value: 075255550153080c5d5e5b2444225d44134e4b782f7e7f647e2b4d32e3b3353b
+      flags: 0
+    RecentlyUsedSceneGuid-6:
+      value: 5a00015e50070a0e5d5e5b74437b0f44444f402f7e7922697e791c67e0e26169
+      flags: 0
+    RecentlyUsedSceneGuid-7:
+      value: 0706045152050c020f5f092013720844424f4c2e7b2d7467297d4835b3b5616d
+      flags: 0
+    RecentlyUsedSceneGuid-8:
+      value: 5b54055251000f5d5c0a552415260a444e16417d7d2d7f647b2c4464e3b86168
+      flags: 0
+    RecentlyUsedSceneGuid-9:
+      value: 5202550453005c030f5c5871477a5d44434e497d7b7d73657d7b4a32e0b96739
       flags: 0
     RecentlyUsedScenePath-0:
       value: 22424703114646760c1c0d36182c513319190c3823242a353f662e30e7ee312badd724ece13b3d083c11fb0f073b0f3abc1f0702e212
