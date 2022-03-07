@@ -59,6 +59,7 @@ namespace Kinematic
             {
                 return root.GetComponentsInChildren<MjBody>().Select(rb => new MjBodyAdapter(rb)).ToList().AsReadOnly();
             }
+
         }
 
     
@@ -82,6 +83,8 @@ namespace Kinematic
 
         public Vector3 GetRelativePointVelocity(Vector3 localPoint);
         public string Name { get; }
+
+        public GameObject gameObject { get; }
     }
 
     public class RigidbodyAdapter : IKinematic
@@ -114,6 +117,8 @@ namespace Kinematic
         {
             return rigidbody.GetRelativePointVelocity(localPoint);
         }
+
+        public GameObject gameObject { get => rigidbody.gameObject; }
     }
 
     public class ArticulationBodyAdapter : IKinematic
@@ -146,6 +151,8 @@ namespace Kinematic
         {
             return articulationBody.GetRelativePointVelocity(localPoint);
         }
+
+        public GameObject gameObject { get => articulationBody.gameObject; }
     }
 
     public class MjBodyAdapter : IKinematic
@@ -189,6 +196,8 @@ namespace Kinematic
         {
             return Vector3.Cross(localPoint, AngularVelocity) + Velocity;
         }
+
+        public GameObject gameObject { get => mjBody.gameObject; }
     }
     #endregion
 }

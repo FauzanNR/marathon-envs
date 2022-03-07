@@ -49,8 +49,12 @@ namespace Mujoco
         {
 
             //Debug.Log(string.Join(',', Enumerable.Range(0, 28).Select(i => data->mocap_pos[i].ToString())));
+            Debug.Log(name);
+
 
             MjEngineTool.SetMjVector3(data->mocap_quat, transform.position, MujocoId);
+
+
             var mjQuat = MjEngineTool.MjQuaternion(transform.rotation);
 
             data->mocap_quat[startOffset] = mjQuat.w;

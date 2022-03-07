@@ -150,7 +150,15 @@ namespace Mujoco
 
         }
 
+        public static Vector3 GetBoxSize(this MjInertial inertial)
+        {
+            return new Vector3(Mathf.Sqrt((inertial.DiagInertia[1] + inertial.DiagInertia[2] - inertial.DiagInertia[0]) / inertial.Mass * 6.0f),
+                               Mathf.Sqrt((inertial.DiagInertia[0] + inertial.DiagInertia[2] - inertial.DiagInertia[1]) / inertial.Mass * 6.0f),
+                               Mathf.Sqrt((inertial.DiagInertia[0] + inertial.DiagInertia[1] - inertial.DiagInertia[2]) / inertial.Mass * 6.0f));
+        }
 
+
+        
         public static unsafe Vector3 GlobalVelocity(this MjBody body)
         {
             var mjScene = MjScene.Instance;

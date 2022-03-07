@@ -45,7 +45,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
     Rewards2Learn _rewards2Learn;
-    Muscles _ragDollMuscles;
+    ArticulationMuscles _ragDollMuscles;
     List<ArticulationBody> _motors;
 
  
@@ -459,7 +459,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
-        _ragDollMuscles = GetComponent<Muscles>();
+        _ragDollMuscles = GetComponent<ArticulationMuscles>();
       
 
 
@@ -489,7 +489,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
 
         _mapAnim2Ragdoll.OnAgentInitialize();
         //it can only be used AFTER _mapAnim2Ragdoll is initialzed.
-        _ragDollMuscles.SetKinematicReference(_mapAnim2Ragdoll);//only used in mode PDopenloop
+        //_ragDollMuscles.SetKinematicReference(_mapAnim2Ragdoll);//only used in mode PDopenloop
 
         _observations2Learn.OnAgentInitialize();
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);

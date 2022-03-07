@@ -57,11 +57,7 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
 
 
-    public int ActionSpaceSize => GetActionsFromRagdollState(motorsRoot.GetComponentsInChildren<ArticulationBody>()
-        .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-        .Where(x => !x.isRoot)
-        .Distinct()
-        .ToList()).Length;
+    public int ActionSpaceSize => ragDollMuscles.ActionSpaceSize;
 
     public int ObservationSpaceSize => observationSignal.Size;
 
@@ -72,7 +68,7 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         Time.fixedDeltaTime = fixedDeltaTime;
 
         decisionRequester = GetComponent<DecisionRequester>();
-        ragDollMuscles = GetComponent<Muscles>();
+        if(ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
 
         motors = motorsRoot.GetComponentsInChildren<ArticulationBody>()
             .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
@@ -80,15 +76,13 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
             .Distinct()
             .ToList();
 
-        previousActions = GetActionsFromRagdollState(motors);
+        previousActions = ragDollMuscles.GetActionsFromRagdollState();
 
             
 
         rewardSignal.OnAgentInitialize();
         observationSignal.OnAgentInitialize();
         kinematicRig.Initialize();
-
-        ragDollMuscles.SetKinematicReference(kinematicRig);
     }
 
     override public void CollectObservations(VectorSensor sensor)
@@ -102,21 +96,8 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         Assert.IsTrue(hasLazyInitialized);
         float[] vectorAction = actionBuffers.ContinuousActions.ToArray();
         vectorAction = SmoothActions(vectorAction);
-        int i = 0;
-        foreach (var m in motors)
-        {
-            Vector3 targetNormalizedRotation = Vector3.zero;
-            if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.x = vectorAction[i++];
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.y = vectorAction[i++];
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                targetNormalizedRotation.z = vectorAction[i++];
 
-            ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, ActionTimeDelta);
-        }
+        ragDollMuscles.ApplyActions(vectorAction, ActionTimeDelta);
 
         previousActions = vectorAction;
 
@@ -127,52 +108,12 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     }
     public override void OnEpisodeBegin()
     {
-        previousActions = GetActionsFromRagdollState(motors);
+        previousActions = ragDollMuscles.GetActionsFromRagdollState();
 
         onBeginHandler?.Invoke(this, AgentEventArgs.Empty);
     }
 
 
-    static float[] GetActionsFromRagdollState(IEnumerable<ArticulationBody> motorsIn)
-    {
-        var vectorActions = new List<float>();
-        foreach (var m in motorsIn)
-        {
-            if (m.isRoot)
-                continue;
-            int i = 0;
-            if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = m.xDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
-            }
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = m.yDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
-            }
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-            {
-                var drive = m.zDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
-            }
-        }
-        return vectorActions.ToArray();
-    }
 
     float[] SmoothActions(float[] vectorAction)
     {

@@ -123,6 +123,38 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1588828891 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9212786700054005102, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    type: 3}
+  m_PrefabInstance: {fileID: 5887257994262809721}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1588828897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588828891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4f25a623d39557240a4ffb10d63e4cc7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MotorUpdateMode: 1
+  MusclePowers: []
+  Stiffness: 50
+  Damping: 100
+  ForceLimit: 3.4028235e+38
+  DampingRatio: 1
+  NaturalFrequency: 40
+  ForceScale: 0.3
+  KP_Stiffness: 50
+  ForceScaleSPD: 0.3
+  skipCollisionSetup: 0
+  updateDebugValues: 0
+  jointVelocityInReducedSpace: []
+  _referenceTransforms: []
 --- !u!1 &1739922575
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,5 +406,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 9212786700054005089, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+        type: 3}
+      propertyPath: ragDollMuscles
+      value: 
+      objectReference: {fileID: 1588828897}
+    m_RemovedComponents:
+    - {fileID: 6491915766914092869, guid: 3064b2d2cd3202f44906a4d26b7a41e1, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 3064b2d2cd3202f44906a4d26b7a41e1, type: 3}

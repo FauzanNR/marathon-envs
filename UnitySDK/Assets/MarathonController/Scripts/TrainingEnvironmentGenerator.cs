@@ -112,7 +112,7 @@ public class TrainingEnvironmentGenerator : MonoBehaviour
 
     [HideInInspector]
     [SerializeField]
-    Muscles muscleteam;
+    ArticulationMuscles muscleteam;
 
     public ManyWorlds.SpawnableEnv Outcome{ get { return _outcome; } }
 
@@ -309,7 +309,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         
 
         temp.name = "Ragdoll:" + AgentName ;
-        muscleteam=  temp.AddComponent<Muscles>();
+        muscleteam=  temp.AddComponent<ArticulationMuscles>();
         temp.transform.position = target.transform.position;
         temp.transform.rotation = target.transform.rotation;
 
@@ -735,7 +735,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         // choose the motor update mode
         //muscleteam.MotorUpdateMode = Muscles.MotorMode.PDopenloop;
-        muscleteam.MotorUpdateMode = Muscles.MotorMode.PD;
+        muscleteam.MotorUpdateMode = ArticulationMuscles.MotorMode.PD;
 
 
         return _ragdoll4training;
@@ -891,14 +891,14 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         foreach(ArticulationBody ab in articulatedJoints) { 
 
-            Muscles.MusclePower muscle = new Muscles.MusclePower();
+            ArticulationMuscles.MusclePower muscle = new ArticulationMuscles.MusclePower();
             muscle.PowerVector = new Vector3(40, 40, 40);
 
 
             muscle.Muscle = ab.name;
 
             if (muscleteam.MusclePowers == null)
-                muscleteam.MusclePowers = new List<Muscles.MusclePower>();
+                muscleteam.MusclePowers = new List<ArticulationMuscles.MusclePower>();
 
             muscleteam.MusclePowers.Add(muscle);
 

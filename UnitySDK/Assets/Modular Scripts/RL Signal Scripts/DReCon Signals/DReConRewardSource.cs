@@ -5,14 +5,15 @@ using UnityEngine;
 using System;
 using Kinematic;
 using DReCon;
+using Mujoco;
 
 public class DReConRewardSource : RewardSource
 {
     [SerializeField]
-    private Transform kinematicTransform;
+    protected Transform kinematicTransform;
 
     [SerializeField]
-    private Transform simulationTransform;
+    protected Transform simulationTransform;
 
     [SerializeField]
     private GameObject kinematicHead;
@@ -34,7 +35,7 @@ public class DReConRewardSource : RewardSource
 
     public override void OnAgentInitialize()
     {
-
+        Debug.Log("Base method called!");
         kinChain = new BoundingBoxChain(kinematicTransform);
         simChain = new BoundingBoxChain(simulationTransform);
 
@@ -114,7 +115,7 @@ public class DReConRewardSource : RewardSource
 
         public BoundingBoxChain(Transform chainRoot)
         {
-            SetupFromColliders(InNameOrder(chainRoot.GetComponentsInChildren<Collider>(), GetKinematicChain(chainRoot)));
+            SetupFromColliders(GetCollidersFromChain(GetKinematicChain(chainRoot)));
             mass = chain.Select(k => k.Mass).Sum();
             //Debug.Log($"Chain {chainRoot.name}: {string.Join(", ", chain.Select(k=>Utils.SegmentName(k.Name)))}");
         }
@@ -124,10 +125,14 @@ public class DReConRewardSource : RewardSource
             this.colliders = colliders.ToList().AsReadOnly();
             bounds = colliders.Select(col => GetColliderBounds(col)).ToList().AsReadOnly();
 
-            chain = colliders.Select(col => col.attachedArticulationBody == null ? 
-            (IKinematic)new RigidbodyAdapter(col.attachedRigidbody) : new ArticulationBodyAdapter(col.attachedArticulationBody)).ToList().AsReadOnly();
+            chain = colliders.Select(col => col.attachedRigidbody != null ? 
+                                                (IKinematic)new RigidbodyAdapter(col.attachedRigidbody) : 
+                                                (col.attachedArticulationBody != null ? 
+                                                    new ArticulationBodyAdapter(col.attachedArticulationBody) : new MjBodyAdapter(col.transform.parent.GetComponent<MjBody>()))).ToList().AsReadOnly();
             
             points = chain.Zip(bounds, (bod, bound) => new BoundingPoints(bound, bod)).ToList().AsReadOnly();
+
+            Debug.Log(string.Join(", ", chain.Select(k => k.Name)));
 
         }
 
@@ -236,6 +241,12 @@ public class DReConRewardSource : RewardSource
         {
             return reference.Select(u => toSort.FirstOrDefault(t => Utils.SegmentName(t.name) == Utils.SegmentName(u.Name))).Where(t => t != null);
         }
+        
+        private static IEnumerable<Collider> GetCollidersFromChain(IReadOnlyList<IKinematic> chain)
+        {
+            return chain.Select(k => k.gameObject.transform.GetComponentInDirectChildren<Collider>());
+        }
+
 
         // Produce the 6 face center points
         private class BoundingPoints
