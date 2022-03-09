@@ -69,6 +69,8 @@ public class ArticulationMuscles : Muscles
     Vector3[] jointVelocityInReducedSpace;
     List<ArticulationBody> _motors;
 
+    
+
 
     public override int ActionSpaceSize
     {
@@ -109,11 +111,7 @@ public class ArticulationMuscles : Muscles
     {
         Setup();
 
-        _motors = GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                .Where(x => !x.isRoot)
-                .Distinct()
-                .ToList();
+        _motors = GetMotors();
 
         foreach (ArticulationBody m in _motors)
         {
@@ -700,7 +698,7 @@ public class ArticulationMuscles : Muscles
     public override float[] GetActionsFromRagdollState()
     {
         var vectorActions = new List<float>();
-        foreach (var m in _motors)
+        foreach (var m in GetMotors())
         {
             if (m.isRoot)
                 continue;
@@ -755,5 +753,14 @@ public class ArticulationMuscles : Muscles
 
             UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
         }
+    }
+
+    public List<ArticulationBody> GetMotors()
+    {
+        return GetComponentsInChildren<ArticulationBody>()
+                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                .Where(x => !x.isRoot)
+                .Distinct()
+                .ToList();
     }
 }

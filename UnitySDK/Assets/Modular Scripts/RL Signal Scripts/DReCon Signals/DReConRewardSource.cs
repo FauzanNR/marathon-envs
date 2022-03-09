@@ -175,7 +175,7 @@ public class DReConRewardSource : RewardSource
                 case CapsuleCollider c:
                     return GetBounds(c);
                 default:
-                    throw new NotImplementedException("Collider type not supported");
+                    throw new NotImplementedException($"Collider type of \"{collider.name}\" not supported");
             }
         }
 
@@ -244,7 +244,7 @@ public class DReConRewardSource : RewardSource
         
         private static IEnumerable<Collider> GetCollidersFromChain(IReadOnlyList<IKinematic> chain)
         {
-            return chain.Select(k => k.gameObject.transform.GetComponentInDirectChildren<Collider>());
+            return chain.Select(k => k.gameObject.transform.GetComponentInDirectChildren<Collider>()).Where(c => c!=null);
         }
 
 

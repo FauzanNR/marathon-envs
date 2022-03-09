@@ -147,8 +147,8 @@ MonoBehaviour:
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 40
-  ForceScale: 0.3
+  NaturalFrequency: 0.1
+  ForceScale: 200
   KP_Stiffness: 50
   ForceScaleSPD: 0.3
   skipCollisionSetup: 0
