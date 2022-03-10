@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using Kinematic;
 
 /// <summary>
 /// The kinematic rig maps the source avatar's movement to the standard MarathonController hierarchy, so properties of the kinematic controller's segments can be queried.
@@ -25,13 +26,16 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
     private IReadOnlyList<Rigidbody> riggedRigidbodies;
     private IReadOnlyList<Transform> trackedTransforms;
 
-    public List<Transform> RagdollTransforms => riggedRigidbodies.Select(rb => rb.transform).ToList();
+    public IReadOnlyList<Transform> RagdollTransforms => riggedRigidbodies.Select(rb => rb.transform).ToList();
 
     public IEnumerable<Rigidbody> Rigidbodies => riggedRigidbodies;
-    private void Start()
-    {
-        Initialize();
-    }
+
+
+    public IReadOnlyList<Vector3> RagdollLinVelocities => riggedRigidbodies.Select(rb => rb.velocity).ToList();
+
+    public IReadOnlyList<Vector3> RagdollAngularVelocities => riggedRigidbodies.Select(rb => rb.angularVelocity).ToList();
+
+    public IReadOnlyList<IKinematic> Kinematics => riggedRigidbodies.Select(rb => (IKinematic) new RigidbodyAdapter(rb)).ToList();
 
     // Update is called once per frame
     void FixedUpdate()
@@ -39,7 +43,7 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         TrackKinematics();
     }
 
-    public void Initialize()
+    public void OnAgentInitialize()
     {
         riggedRigidbodies = kinematicRagdollRoot.GetComponentsInChildren<Rigidbody>();
         trackedTransforms = trackedTransformRoot.GetComponentsInChildren<Transform>();
@@ -113,5 +117,16 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 /// </summary>
 public interface IKinematicReference
 {
-    public List<Transform> RagdollTransforms { get; }
+    public IReadOnlyList<Transform> RagdollTransforms { get; }
+
+    public void OnAgentInitialize();
+
+    public void TeleportRoot(Vector3 targetPosition);
+    public void TeleportRoot(Vector3 targetPosition, Quaternion targetRotation);
+
+    public IReadOnlyList<Vector3> RagdollLinVelocities { get; }
+
+    public IReadOnlyList<Vector3> RagdollAngularVelocities { get; }
+
+    public IReadOnlyList<IKinematic> Kinematics { get;  }
 }

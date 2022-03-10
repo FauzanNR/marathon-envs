@@ -35,15 +35,13 @@ public class DReConRewardSource : RewardSource
 
     public override void OnAgentInitialize()
     {
-        Debug.Log("Base method called!");
+        //Debug.Log("Base method called!");
         kinChain = new BoundingBoxChain(kinematicTransform);
         simChain = new BoundingBoxChain(simulationTransform);
 
-        kinHead = kinematicHead.GetComponent<ArticulationBody>() ? 
-            (IKinematic) new ArticulationBodyAdapter(kinematicHead.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(kinematicHead.GetComponent<Rigidbody>());
+        kinHead = IKinematic.GetKinematic(kinematicHead.transform);
         
-        simHead = simulationHead.GetComponent<ArticulationBody>() ? 
-            (IKinematic) new ArticulationBodyAdapter(simulationHead.GetComponent<ArticulationBody>()) : new RigidbodyAdapter(simulationHead.GetComponent<Rigidbody>());
+        simHead = IKinematic.GetKinematic(simulationHead.transform);
 
         nBodies = kinChain.Count;
     }
@@ -132,7 +130,7 @@ public class DReConRewardSource : RewardSource
             
             points = chain.Zip(bounds, (bod, bound) => new BoundingPoints(bound, bod)).ToList().AsReadOnly();
 
-            Debug.Log(string.Join(", ", chain.Select(k => k.Name)));
+            //Debug.Log(string.Join(", ", chain.Select(k => k.Name)));
 
         }
 

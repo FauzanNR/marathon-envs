@@ -12,7 +12,6 @@ using System;
 using Unity.MLAgents.Policies;
 
 
-[RequireComponent(typeof(Muscles))]
 public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 {
     [Header("Settings")]
@@ -23,7 +22,9 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     private float actionSmoothingBeta = 0.2f;
 
     [SerializeField]
-    KinematicRig kinematicRig;
+    GameObject kinematicRigObject;
+
+    IKinematicReference kinematicRig;
 
     [SerializeField]
     ObservationSignal observationSignal;
@@ -33,10 +34,6 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
     [SerializeField]
     Muscles ragDollMuscles;
-
-    [SerializeField]
-    Transform motorsRoot;
-    List<ArticulationBody> motors;
 
     DecisionRequester decisionRequester;
     BehaviorParameters behaviorParameters;
@@ -70,19 +67,15 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         decisionRequester = GetComponent<DecisionRequester>();
         if(ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
 
-        motors = motorsRoot.GetComponentsInChildren<ArticulationBody>()
-            .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-            .Where(x => !x.isRoot)
-            .Distinct()
-            .ToList();
-
         previousActions = ragDollMuscles.GetActionsFromRagdollState();
 
             
 
         rewardSignal.OnAgentInitialize();
         observationSignal.OnAgentInitialize();
-        kinematicRig.Initialize();
+
+        kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
+        kinematicRig.OnAgentInitialize();
     }
 
     override public void CollectObservations(VectorSensor sensor)

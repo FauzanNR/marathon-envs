@@ -22,7 +22,6 @@ public class MjKinematicRigEditor : Editor
         if (GUILayout.Button("Replace MjGeoms with Unity Colliders"))
         {
             MjKinematicRig t = target as MjKinematicRig;
-            t.ReplaceGeoms();
         }
 
 

@@ -85,6 +85,15 @@ namespace Kinematic
         public string Name { get; }
 
         public GameObject gameObject { get; }
+
+        public static IKinematic GetKinematic(Transform transform)
+        {
+            return transform.GetComponent<ArticulationBody>() ? (IKinematic)
+                                        new ArticulationBodyAdapter(transform.GetComponent<ArticulationBody>()) :
+                                            (transform.GetComponent<Rigidbody>() ?
+                                            new RigidbodyAdapter(transform.GetComponent<Rigidbody>()) :
+                                                new MjBodyAdapter(transform.GetComponent<MjBody>()));
+        }
     }
 
     public class RigidbodyAdapter : IKinematic
@@ -98,7 +107,10 @@ namespace Kinematic
 
         public Vector3 Velocity => rigidbody.velocity;
 
+        public Vector3 LocalVelocity => rigidbody.transform.parent.InverseTransformDirection(Velocity);
+
         public Vector3 AngularVelocity => rigidbody.angularVelocity;
+        public Vector3 LocalAngularVelocity => rigidbody.transform.parent.InverseTransformDirection(rigidbody.angularVelocity);
 
         public float Mass => rigidbody.mass;
 
@@ -131,8 +143,10 @@ namespace Kinematic
         }
 
         public Vector3 Velocity => articulationBody.velocity;
+        public Vector3 LocalVelocity => articulationBody.transform.parent.InverseTransformDirection(articulationBody.velocity);
 
         public Vector3 AngularVelocity => articulationBody.angularVelocity;
+        public Vector3 LocalAngularVelocity => articulationBody.transform.parent.InverseTransformDirection(articulationBody.angularVelocity);
 
         public float Mass => articulationBody.mass;
 

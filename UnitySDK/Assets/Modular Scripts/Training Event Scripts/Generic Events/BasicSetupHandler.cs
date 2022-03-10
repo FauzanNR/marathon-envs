@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Teleportable;
 using System.Linq;
+using Mujoco;
 
 public class BasicSetupHandler : DelayableEventHandler
 {
@@ -20,7 +21,9 @@ public class BasicSetupHandler : DelayableEventHandler
     Transform kineticRagdollRoot;
 
 	[SerializeField]
-	KinematicRig kinematicRig;
+	GameObject kinematicRigObject;
+
+	IKinematicReference kinematicRig;
 
 	[SerializeField]
 	Vector3 resetOrigin;
@@ -36,7 +39,8 @@ public class BasicSetupHandler : DelayableEventHandler
 
     private void Awake()
     {
-		kineticChainToReset = new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>());
+		kineticChainToReset = kineticRagdollRoot.GetComponentInChildren<ArticulationBody>()!=null? new ResettableArticulationBody(kineticRagdollRoot.GetComponentsInChildren<ArticulationBody>()) : new ResettableMjBody(kineticRagdollRoot.GetComponentInChildren<MjBody>());
+		kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
 		resetOrigin = referenceAnimationParent.position;
 		resetRotation = referenceAnimationParent.rotation;
 	}
@@ -47,7 +51,7 @@ public class BasicSetupHandler : DelayableEventHandler
 
 		//First we move the animation back to the start 
 
-		Debug.Log("Resetting Animation Parent!");
+		//Debug.Log("Resetting Animation Parent!");
 		referenceAnimationParent.position = resetOrigin;
 
 		if (shouldResetRotation) referenceAnimationParent.rotation = resetRotation;
@@ -94,7 +98,7 @@ public class BasicSetupHandler : DelayableEventHandler
     private interface IResettable
     {
         public void TeleportRoot(Vector3 position, Quaternion rotation);
-        public void CopyKinematicsFrom(KinematicRig reference);
+        public void CopyKinematicsFrom(IKinematicReference reference);
 
     }
 
@@ -109,12 +113,13 @@ public class BasicSetupHandler : DelayableEventHandler
             this.articulationBodies = articulationBodies;
         }
 
-        public void CopyKinematicsFrom(KinematicRig referenceRig)
-        {	
+        public void CopyKinematicsFrom(IKinematicReference referenceGeneralRig)
+        {
 			//Set root kinematics
+			KinematicRig referenceRig = referenceGeneralRig as KinematicRig; // Right now cant work with any other IKinematicReference, defeating the purpose somewhat... The groundwork is layed down already, extending IKinematic with local ref frame values
 			ArticulationBody root = articulationBodies.First(ab => ab.isRoot);
-			root.angularVelocity = referenceRig.Rigidbodies.First().angularVelocity;
-			root.velocity = referenceRig.Rigidbodies.First().velocity;
+			root.angularVelocity = referenceRig.RagdollAngularVelocities[0];
+			root.velocity = referenceRig.RagdollLinVelocities[0];
 
 			foreach ((ArticulationBody ab, Rigidbody sourceRigidbody) in articulationBodies.Skip(1).Zip(referenceRig.Rigidbodies.Skip(1), Tuple.Create))
 			{
@@ -214,5 +219,25 @@ public class BasicSetupHandler : DelayableEventHandler
 				ab.velocity = targetLocalVelocity;
 			}
 		}
+    }
+
+    private class ResettableMjBody : IResettable
+    {
+		MjBody rootBody;
+		public ResettableMjBody(MjBody rootBody)
+		{
+			this.rootBody = rootBody;
+		}
+		public void CopyKinematicsFrom(IKinematicReference reference)
+        {
+			var mjReference = reference as MjKinematicRig;
+			var sourceKinematics = MjScene.Instance.GetMjKinematics(mjReference.Bodies[0]);
+			MjScene.Instance.SetMjKinematics(rootBody, sourceKinematics.Item1, sourceKinematics.Item2);
+        }
+
+        public void TeleportRoot(Vector3 position, Quaternion rotation)
+        {
+			MjScene.Instance.TeleportMjRoot(rootBody.GetComponentInChildren<MjFreeJoint>(), position, rotation);
+        }
     }
 }

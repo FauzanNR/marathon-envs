@@ -142,13 +142,67 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   MotorUpdateMode: 1
-  MusclePowers: []
+  MusclePowers:
+  - Muscle: articulation:mixamorig:Hips
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:LeftUpLeg
+    PowerVector: {x: 120, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:LeftLeg
+    PowerVector: {x: 80, y: 80, z: 80}
+  - Muscle: articulation:mixamorig:LeftFoot
+    PowerVector: {x: 40, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:LeftToeBase
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:LeftToe_End
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:RightUpLeg
+    PowerVector: {x: 120, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:RightLeg
+    PowerVector: {x: 80, y: 80, z: 80}
+  - Muscle: articulation:mixamorig:RightFoot
+    PowerVector: {x: 40, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:RighToeBase
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:RighToe_End
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:Spine
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:Spine1
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:Spine2
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:Neck
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:Head
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:HeadTop_End
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:LeftEye
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:RightEye
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:LeftShoulder
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:LeftArm
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:LeftForeArm
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:LeftHand
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:RightShoulder
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:RightArm
+    PowerVector: {x: 40, y: 40, z: 40}
+  - Muscle: articulation:mixamorig:RightForeArm
+    PowerVector: {x: 20, y: 20, z: 20}
+  - Muscle: articulation:mixamorig:RightHand
+    PowerVector: {x: 40, y: 40, z: 40}
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 0.1
-  ForceScale: 200
+  NaturalFrequency: 20
+  ForceScale: 30
   KP_Stiffness: 50
   ForceScaleSPD: 0.3
   skipCollisionSetup: 0

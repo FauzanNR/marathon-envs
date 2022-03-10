@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.AI;
 using System.Linq.Expressions;
+using Kinematic;
 
 public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicReference
 {//previously Mocap Controller Artanim
@@ -323,7 +324,13 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicRefe
 	float _lastPositionTime = float.MinValue;
 	Vector3 _snapOffset = Vector3.zero;
 
-    public List<Transform> RagdollTransforms => _ragdollTransforms;
+    public IReadOnlyList<Transform> RagdollTransforms => _ragdollTransforms;
+
+    public IReadOnlyList<Vector3> RagdollLinVelocities => throw new NotImplementedException();
+
+    public IReadOnlyList<Vector3> RagdollAngularVelocities => throw new NotImplementedException();
+
+    public IReadOnlyList<IKinematic> Kinematics => throw new NotImplementedException();
 
     void MimicAnimation() {
 		if (!anim.enabled)
@@ -602,4 +609,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicRefe
 		LazyInitialize();
 		return GetComponentsInChildren<Rigidbody>().ToList();
 	}
+
+    public void TeleportRoot(Vector3 targetPosition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TeleportRoot(Vector3 targetPosition, Quaternion targetRotation)
+    {
+        throw new NotImplementedException();
+    }
 }

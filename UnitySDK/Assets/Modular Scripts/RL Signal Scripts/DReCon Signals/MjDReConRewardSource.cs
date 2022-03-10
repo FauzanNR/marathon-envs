@@ -27,7 +27,6 @@ public class MjDReConRewardSource : DReConRewardSource
     {
         foreach (var inertial in rootTransform.GetComponentsInChildren<MjInertial>())
         {
-            Debug.Log(inertial.name);
 
             if (inertial.transform.parent.GetComponent<MjBody>() == null)
             {

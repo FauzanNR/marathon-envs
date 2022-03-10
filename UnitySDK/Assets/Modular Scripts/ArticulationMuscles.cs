@@ -340,7 +340,7 @@ public class ArticulationMuscles : Muscles
         var stiffness = k;
         var damping = c;
 
-
+        Debug.Log("Here!");
 
         Vector3 power = Vector3.zero;
         try
