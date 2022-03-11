@@ -58,9 +58,6 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
         mjMocapBodies = riggedTransforms.Select(t => t.GetComponent<MjMocapBody_>()).ToList();
 
-        Debug.Log(string.Join(", ", mjMocapBodies.Select(mcpbd => mcpbd.name.Replace("K_Mocap", ""))));
-        Debug.Log(string.Join(", ", trackedTransforms.Select(mcpbd => Utils.SegmentName( mcpbd.name))));
-        Debug.Log(string.Join(", ", riggedTransforms.Select(mcpbd => mcpbd.name.Replace("K_Mocap", ""))));
     }
 
     public unsafe void TrackKinematics()

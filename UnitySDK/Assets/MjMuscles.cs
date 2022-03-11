@@ -17,7 +17,7 @@ public class MjMuscles : Muscles
         actuators = actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().AsReadOnly();
     }
 
-    public override int ActionSpaceSize => actuators.Count;
+    public override int ActionSpaceSize => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().Count;
 
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
