@@ -20,6 +20,8 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     private float fixedDeltaTime = 1f / 60f;
     [SerializeField]
     private float actionSmoothingBeta = 0.2f;
+    [SerializeField]
+    private int maxStep = 0;
 
     [SerializeField]
     GameObject kinematicRigObject;
@@ -34,6 +36,7 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
     [SerializeField]
     Muscles ragDollMuscles;
+
 
     DecisionRequester decisionRequester;
     BehaviorParameters behaviorParameters;
@@ -60,22 +63,27 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
     public override void Initialize()
     {
+        this.MaxStep = maxStep;
         Assert.IsFalse(hasLazyInitialized);
         hasLazyInitialized = true;
         Time.fixedDeltaTime = fixedDeltaTime;
-
+        
         decisionRequester = GetComponent<DecisionRequester>();
         if(ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
 
-        previousActions = ragDollMuscles.GetActionsFromRagdollState();
+        previousActions = ragDollMuscles.GetActionsFromState();
 
             
 
         rewardSignal.OnAgentInitialize();
         observationSignal.OnAgentInitialize();
 
-        kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
-        kinematicRig.OnAgentInitialize();
+        if (kinematicRigObject!=null)
+        {
+            kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
+            kinematicRig.OnAgentInitialize();
+        }
+        
     }
 
     override public void CollectObservations(VectorSensor sensor)
@@ -101,7 +109,7 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     }
     public override void OnEpisodeBegin()
     {
-        previousActions = ragDollMuscles.GetActionsFromRagdollState();
+        previousActions = ragDollMuscles.GetActionsFromState();
 
         onBeginHandler?.Invoke(this, AgentEventArgs.Empty);
     }

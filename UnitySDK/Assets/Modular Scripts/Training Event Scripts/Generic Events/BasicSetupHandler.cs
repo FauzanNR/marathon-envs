@@ -59,21 +59,21 @@ public class BasicSetupHandler : DelayableEventHandler
 
 		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 
-		if (framesToWait != 0)
+        if (framesToWait > 0)
         {
-			StartCoroutine(DelayedExecution(sender, eventArgs));
-			return;
-		}
+            StartCoroutine(DelayedExecution(sender, eventArgs));
+            return;
+        }
 
-		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
-		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+        //Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
+        kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 
-		//We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
-		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
+        //We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
+        kineticChainToReset.CopyKinematicsFrom(kinematicRig);
 
-		//We teleport the kinematic reference as well, so velocities are not tracked in the move. Since we don't need to change rotation we use to position only version.
-		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
-	}
+        //We teleport the kinematic reference as well, so velocities are not tracked in the move. Since we don't need to change rotation we use to position only version.
+        kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
+    }
 
 	protected override IEnumerator DelayedExecution(object sender, EventArgs eventArgs)
     {

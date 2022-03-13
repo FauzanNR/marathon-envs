@@ -150,6 +150,51 @@ namespace Mujoco
 
         }
 
+        public static unsafe void TeleportMjRoot(this MjScene mjScene, int id, Vector3 unityPos, Quaternion unityRot)
+        {
+            MujocoLib.mjData_* Data = mjScene.Data;
+            MujocoLib.mjModel_* Model = mjScene.Model;
+
+            Quaternion oldUnityRotation = MjEngineTool.UnityQuaternion(Data->xquat, id);
+            var startOffset = id * 7;
+            Quaternion oldMjQuat = new Quaternion(w: (float)Data->qpos[startOffset + 3],
+                                                  x: (float)Data->qpos[startOffset + 4],
+                                                  y: (float)Data->qpos[startOffset + 5],
+                                                  z: (float)Data->qpos[startOffset + 6]);
+            Quaternion manualUnityQuat = MjEngineTool.UnityQuaternion(oldMjQuat);
+
+            MjEngineTool.SetMjTransform(Data->qpos, unityPos, unityRot, id);
+
+
+
+
+
+            /*Quaternion rotationOffset = unityRot * Quaternion.Inverse(manualUnityQuat);
+            Debug.Log($"rotationOffset: {rotationOffset}");*/
+
+            Quaternion rotationOffset = unityRot * Quaternion.Inverse(manualUnityQuat);
+            Vector3 fromUnityLinVel = MjEngineTool.UnityVector3(Data->qvel, id * 2);
+
+            startOffset = id * 6;
+
+            Vector3 toMjLinVel = MjEngineTool.MjVector3(rotationOffset * fromUnityLinVel);
+            Data->qvel[startOffset] = toMjLinVel[0];
+            Data->qvel[startOffset + 1] = toMjLinVel[1];
+            Data->qvel[startOffset + 2] = toMjLinVel[2];
+
+
+            Vector3 fromUnityAngVel = MjEngineTool.UnityVector3(Data->qvel, (id * 2) + 1);
+            Vector3 toMjAngVel = MjEngineTool.MjVector3(rotationOffset * fromUnityAngVel);
+
+            Data->qvel[startOffset + 3] = toMjAngVel[0];
+            Data->qvel[startOffset + 4] = toMjAngVel[1];
+            Data->qvel[startOffset + 5] = toMjAngVel[2];
+
+            MujocoLib.mj_kinematics(Model, Data);
+            mjScene.SyncUnityToMjState();
+
+        }
+
         public static Vector3 GetBoxSize(this MjInertial inertial)
         {
             return new Vector3(Mathf.Sqrt((inertial.DiagInertia[1] + inertial.DiagInertia[2] - inertial.DiagInertia[0]) / inertial.Mass * 6.0f),

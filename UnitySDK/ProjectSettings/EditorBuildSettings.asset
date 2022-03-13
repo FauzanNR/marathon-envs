@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/MuJoCo/Scenes/KinematicBuild.unity
     guid: f1df6d6a238cc5e48b18a2f0a5ea5192
+  - enabled: 0
+    path: Assets/MuJoCo/MjDReConSceneReWork.unity
+    guid: 52ff6027f4501cf4aa233fe679124890
   m_configObjects: {}

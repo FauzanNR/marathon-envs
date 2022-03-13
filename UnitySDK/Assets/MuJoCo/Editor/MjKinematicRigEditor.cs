@@ -19,9 +19,10 @@ public class MjKinematicRigEditor : Editor
         base.OnInspectorGUI();
 
 
-        if (GUILayout.Button("Replace MjGeoms with Unity Colliders"))
+        if (GUILayout.Button("Fix Mocapbodies"))
         {
             MjKinematicRig t = target as MjKinematicRig;
+            t.ReplaceMocapBodies();
         }
 
 

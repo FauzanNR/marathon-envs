@@ -12,7 +12,7 @@ public class RewardPlotter : TrainingEventHandler
     IEventsAgent eventsAgent;
     public override EventHandler Handler => PrintReward;
 
-    [DebugGUIGraph(min: 0, max: 5, r: 0, g: 1, b: 0, autoScale: true)]
+    [DebugGUIGraph(min: 0, max: 2, r: 0, g: 1, b: 0, autoScale: true)]
     private float curReward;
 
     private void Awake()

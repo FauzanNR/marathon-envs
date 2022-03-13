@@ -131,6 +131,19 @@ namespace DReCon
                 Gizmos.DrawLine(start, start+d);
             }
         }
+
+        public Transform SimulationTransform { get => simulationTransform; }
+        public void SetSimulationSubset(IEnumerable<Transform> transforms)
+        {
+            simulationSubset = transforms.ToList();
+        }
+
+        public Transform KinematicTransform { get => kinematicTransform; }
+        public void SetKinematicSubset(IEnumerable<Transform> transforms)
+        {
+            kinematicSubset = transforms.ToList();
+        }
+
     }
 
 
@@ -190,5 +203,8 @@ namespace DReCon
             Gizmos.color = Color.blue;
             Gizmos.DrawRay(space.GetColumn(3), space.GetColumn(2) * 0.5f);
         }
+
     }
+
+    
 }

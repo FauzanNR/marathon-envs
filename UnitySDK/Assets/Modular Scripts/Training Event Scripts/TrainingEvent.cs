@@ -26,4 +26,9 @@ public abstract class TrainingEvent : MonoBehaviour
     }
 
 
+    public void ManuallyTrigger(EventArgs e)
+    {
+        OnTrainingEvent(e);
+    }
+
 }

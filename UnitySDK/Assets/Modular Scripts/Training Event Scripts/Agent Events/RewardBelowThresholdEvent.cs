@@ -27,7 +27,7 @@ public class RewardBelowThresholdEvent : TrainingEvent
     private void ThresholdWrapper(object sender, AgentEventArgs eventArgs)
     {
         if (eventArgs.reward >= rewardThreshold) return;
-
+        
         OnTrainingEvent(eventArgs);
     }
 

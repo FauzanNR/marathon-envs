@@ -123,92 +123,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &1588828891 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9212786700054005102, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
-    type: 3}
-  m_PrefabInstance: {fileID: 5887257994262809721}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1588828897
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1588828891}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f25a623d39557240a4ffb10d63e4cc7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MotorUpdateMode: 1
-  MusclePowers:
-  - Muscle: articulation:mixamorig:Hips
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftUpLeg
-    PowerVector: {x: 120, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftLeg
-    PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: articulation:mixamorig:LeftFoot
-    PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftToeBase
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftToe_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightUpLeg
-    PowerVector: {x: 120, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightLeg
-    PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: articulation:mixamorig:RightFoot
-    PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RighToeBase
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RighToe_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine1
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine2
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Neck
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Head
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:HeadTop_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftEye
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightEye
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftShoulder
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftArm
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftForeArm
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftHand
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightShoulder
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RightArm
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightForeArm
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RightHand
-    PowerVector: {x: 40, y: 40, z: 40}
-  Stiffness: 50
-  Damping: 100
-  ForceLimit: 3.4028235e+38
-  DampingRatio: 1
-  NaturalFrequency: 20
-  ForceScale: 30
-  KP_Stiffness: 50
-  ForceScaleSPD: 0.3
-  skipCollisionSetup: 0
-  updateDebugValues: 0
-  jointVelocityInReducedSpace: []
-  _referenceTransforms: []
 --- !u!1 &1739922575
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,84 +301,72 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1001 &5887257994262809721
+--- !u!1001 &2898202283523280823
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 546138652744054878, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
-        type: 3}
-      propertyPath: m_Model
-      value: 
-      objectReference: {fileID: 5022602860645237092, guid: 9f0e188cec4b7a740b766b2bc03e692a,
-        type: 3}
-    - target: {fileID: 1392724695903311442, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
-        type: 3}
-      propertyPath: m_Name
-      value: ModularTestEnvironment
-      objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalRotation.w
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalRotation.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalRotation.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalRotation.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5112153924772064333, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9212786700054005089, guid: 3064b2d2cd3202f44906a4d26b7a41e1,
+    - target: {fileID: 7698962731877504412, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
-      propertyPath: ragDollMuscles
-      value: 
-      objectReference: {fileID: 1588828897}
-    m_RemovedComponents:
-    - {fileID: 6491915766914092869, guid: 3064b2d2cd3202f44906a4d26b7a41e1, type: 3}
-  m_SourcePrefab: {fileID: 100100000, guid: 3064b2d2cd3202f44906a4d26b7a41e1, type: 3}
+      propertyPath: m_Name
+      value: RecreatedDReCon
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 3f029a1a96cf4054b9b75bce38530d8e, type: 3}
