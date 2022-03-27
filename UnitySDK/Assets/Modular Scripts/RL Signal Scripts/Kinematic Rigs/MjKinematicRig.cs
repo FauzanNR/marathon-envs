@@ -44,7 +44,7 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
     public IReadOnlyList<IKinematic> Kinematics => ragdollRoot.GetComponentsInChildren<MjBody>().Select(mjb => (IKinematic) new MjBodyAdapter(mjb)).ToList();
 
-
+    public Transform RagdollRoot { get => ragdollRoot; }
 
     public void Awake()
     {
@@ -82,6 +82,8 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
         }*/
 
     }
+
+
 
     public void TeleportRoot(Vector3 position, Quaternion rotation)
     {
@@ -141,6 +143,28 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
             bodyGO.AddComponent<MjMocapBody_>();
         }
     }
-   
+
+    public unsafe void TrackKinematicsOffline()
+    {
+
+
+        Func<string, string> MocapName = animatedName => $"{prefix}{Utils.SegmentName(animatedName)}";
+        var riggedTransforms = weldRoot.GetComponentsInChildren<MjWeld>().Select(krt => krt.Body1.transform).Where(t => t.name.Contains("Mocap") && t.gameObject.activeSelf).ToList().AsReadOnly();
+
+        var trackedTransforms = riggedTransforms.Select(rt => trackedTransformRoot.GetComponentsInChildren<Transform>().First(tt => MocapName(tt.name).Equals(rt.name))).ToList().AsReadOnly();
+
+        foreach ((var mjb, var tr) in riggedTransforms.Zip(trackedTransforms, Tuple.Create))
+        {
+            mjb.position = tr.position;
+            mjb.rotation = tr.rotation;
+        }
+
+        /*        foreach (var mcbd in mjMocapBodies)
+                {
+                    mcbd.OnSyncState(MjScene.Instance.Data);
+                }*/
+
+    }
+
 }
 

@@ -12,4 +12,6 @@ public abstract class Muscles: MonoBehaviour
     public abstract void ApplyActions(float[] actions, float actionTimeDelta);
 
     public abstract float[] GetActionsFromState();
+
+    public virtual void OnAgentInitialize() { }
 }

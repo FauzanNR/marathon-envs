@@ -70,13 +70,14 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         
         decisionRequester = GetComponent<DecisionRequester>();
         if(ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
-
+        ragDollMuscles.OnAgentInitialize();
         previousActions = ragDollMuscles.GetActionsFromState();
 
             
 
         rewardSignal.OnAgentInitialize();
         observationSignal.OnAgentInitialize();
+        
 
         if (kinematicRigObject!=null)
         {

@@ -96,6 +96,12 @@ public class DReConRewardSource : RewardSource
         
     }
 
+    public GameObject KinematicHead { set => kinematicHead = value; }
+    public GameObject SimulationHead { set => simulationHead=value; }
+
+    public Transform KinematicTransform { get => kinematicTransform; }
+    public Transform SimulationTransform { get => simulationTransform; }
+
 
     /// <summary>
     /// Keeps track of Collider components, their local bounding boxes, and the global points of the bounding box face centers for comparison with other chains.

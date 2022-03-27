@@ -1,34 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Mujoco;
+
 using System.Linq;
 using System;
 
-public class MjMuscles : Muscles
+namespace Mujoco
 {
-    [SerializeField]
-    Transform actuatorRoot;
 
-    private IReadOnlyList<MjActuator> actuators;
-
-    private void Awake()
+    public class MjMuscles : Muscles
     {
-        actuators = actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().AsReadOnly();
-    }
+        [SerializeField]
+        protected Transform actuatorRoot;
 
-    public override int ActionSpaceSize => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().Count;
+        protected IReadOnlyList<MjActuator> actuators;
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
-    {
-        foreach((var action, var actuator) in actions.Zip(actuators, Tuple.Create))
+        public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
+
+        private void Awake()
         {
-            actuator.Control = action;
+            OnAgentInitialize();
         }
-    }
 
-    public override float[] GetActionsFromState()
-    {
-        return actuatorRoot.GetComponentsInChildren<MjActuator>().Select(a => a.Control).ToArray();
+        public override int ActionSpaceSize => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().Count;
+
+        public override void ApplyActions(float[] actions, float actionTimeDelta)
+        {
+            foreach ((var action, var actuator) in actions.Zip(actuators, Tuple.Create))
+            {
+                actuator.Control = action;
+            }
+        }
+
+        public override float[] GetActionsFromState()
+        {
+            return actuatorRoot.GetComponentsInChildren<MjActuator>().Select(a => a.Control).ToArray();
+        }
+
+        public override void OnAgentInitialize() { actuators = Actuators; }
     }
 }

@@ -24,6 +24,6 @@ public class AnimationReplayController : MonoBehaviour, IAnimationController
 
     public Vector3 GetDesiredVelocity()
     {
-        return _anim.velocity;
+        return _anim? _anim.velocity : Vector3.zero;
     }
 }
