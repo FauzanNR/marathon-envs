@@ -48,6 +48,8 @@ Currently, our main challenge is that results still look like if they came with 
 
 ### 4. Publications
 
+
+ * IEEEVR2022 Open Access tools and Libraries for Virtual Reality https://openvrlab.github.io/
 * SIGGRAPH 2021 Course based on the benchmarks in this repository (coming soon)
 * Technical Paper (v3.0, 2020): [Realistic Physics Based Character Controller](https://arxiv.org/abs/2006.07508)
 * AAAI 2019 Workshop on Games and Simulations for Artificial Intelligence: [Marathon Environments: Multi-Agent Continuous Control Benchmarks in a Modern Video Game Engine](https://arxiv.org/abs/1902.09097)
