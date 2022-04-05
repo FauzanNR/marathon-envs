@@ -49,14 +49,12 @@ public class TeleportMJ : MonoBehaviour
     public void CopyState()
     {
         MjScene mjScene = MjScene.Instance;
-        (var positions, var velocities) = mjScene.GetMjKinematics(sourceModel);
+        (var positions, var velocities) = MjState.GetMjKinematics(sourceModel);
         mjScene.SetMjKinematics(targetModel, positions, velocities);
     }
 
     public void TeleportRoot()
     {
-        MjScene mjScene = MjScene.Instance;
-
         //mjScene.TeleportMjRoot(targetModel.GetComponentInChildren<MjFreeJoint>(), teleportTransform.position, teleportTransform.rotation);
 
         Vector3 posOffset = animationTransform.position - animationRoot.position;
@@ -78,7 +76,7 @@ public class TeleportMJ : MonoBehaviour
             kinematicRig.TrackKinematics();
         }
 
-        mjScene.TeleportMjRoot(targetModel.GetComponentInChildren<MjFreeJoint>(), posLag + animationRoot.position, rotLag * animationRoot.rotation);
+        MjState.TeleportMjRoot(targetModel.GetComponentInChildren<MjFreeJoint>(), posLag + animationRoot.position, rotLag * animationRoot.rotation);
 
 /*        if (animationTransform != null)
         {
@@ -94,10 +92,9 @@ public class TeleportMJ : MonoBehaviour
 
     public void RotateRoot()
     {
-        MjScene mjScene = MjScene.Instance;
         var root = targetModel.GetComponentInChildren<MjFreeJoint>();
         Debug.Log(root.name);
-        mjScene.TeleportMjRoot(root, targetModel.transform.position, Quaternion.Euler(0f, 10f, 0f) * targetModel.transform.localRotation);
+        MjState.TeleportMjRoot(root, targetModel.transform.position, Quaternion.Euler(0f, 10f, 0f) * targetModel.transform.localRotation);
     }
 
 }

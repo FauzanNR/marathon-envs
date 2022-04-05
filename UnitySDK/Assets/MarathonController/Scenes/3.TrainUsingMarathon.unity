@@ -454,7 +454,7 @@ MonoBehaviour:
   Factory:
     spawnableEnvDefinitions:
     - envId: DReCon-Mj
-      envPrefab: {fileID: 5886749222299064947, guid: cd1e3675d108a7a4889100de9bc1785a,
+      envPrefab: {fileID: 2837203831756395945, guid: cbfd8bf935d29ac48a0d24fac46945ec,
         type: 3}
     envIdDefault: DReCon-Mj
     trainingNumEnvsDefault: 1

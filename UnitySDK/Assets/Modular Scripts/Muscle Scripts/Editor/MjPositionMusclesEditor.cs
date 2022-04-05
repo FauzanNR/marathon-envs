@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using Unity.MLAgents;
 
 namespace Mujoco
 {
@@ -10,6 +11,7 @@ namespace Mujoco
     public class MjPositionMusclesEditor : Editor
     {
         float VelocityLimit = 40f;
+        float ForceLimit = 8f;
         public override void OnInspectorGUI()
         {
             serializedObject.Update();
@@ -65,11 +67,6 @@ namespace Mujoco
                         a.CommonParams.CtrlLimited = true;
                         float scale = Mathf.Deg2Rad * a.CommonParams.Gear[0];
 
-                        if (t is MjPDMuscles tpd && tpd.useBaseline)
-                        {
-                            scale *= GameObject.FindObjectOfType<DReConAgent>().ActionTimeDelta;
-                        }
-
 
                         a.CommonParams.CtrlRange = new Vector2(-VelocityLimit * scale, VelocityLimit * scale);
                     }
@@ -79,6 +76,18 @@ namespace Mujoco
                         a.CommonParams.CtrlLimited = true;
                         a.CommonParams.CtrlRange = new Vector2(h.RangeLower * Mathf.Deg2Rad * a.CommonParams.Gear[0], h.RangeUpper * Mathf.Deg2Rad * a.CommonParams.Gear[0]);
                     }
+                }
+            }
+            GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            ForceLimit = EditorGUILayout.FloatField(label: "Force Limit", ForceLimit);
+            if (GUILayout.Button("Set Force Limits"))
+            {
+                MjPositionMuscles t = target as MjPositionMuscles;
+                foreach (var a in t.Actuators)
+                {
+                    a.CommonParams.ForceLimited = true;
+                    a.CommonParams.ForceRange = new Vector2(-ForceLimit, ForceLimit);
                 }
             }
             GUILayout.EndHorizontal();

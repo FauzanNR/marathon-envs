@@ -79,16 +79,16 @@ public class BasicSetupHandler : DelayableEventHandler
     {
 		IsWaiting = true;
 		yield return WaitFrames();
-		Debug.Log("Teleporting Root!");
+		//Debug.Log("Teleporting Root!");
 		//Then we move the ragdoll as well, still in different joint orientations, but overlapping roots.
 		kineticChainToReset.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 
 
-		Debug.Log("Copying Kinematics!");
+		//Debug.Log("Copying Kinematics!");
 		//We copy the rotations, velocities and angular velocities from the kinematic reference (which has the "same" pose as the animation).
 		kineticChainToReset.CopyKinematicsFrom(kinematicRig);
 
-		Debug.Log("Teleporting Kinematic Root just in case!");
+		//Debug.Log("Teleporting Kinematic Root just in case!");
 		kinematicRig.TeleportRoot(referenceAnimationRoot.position, referenceAnimationRoot.rotation);
 		IsWaiting = false;
 
@@ -231,13 +231,13 @@ public class BasicSetupHandler : DelayableEventHandler
 		public void CopyKinematicsFrom(IKinematicReference reference)
         {
 			var mjReference = reference as MjKinematicRig;
-			var sourceKinematics = MjScene.Instance.GetMjKinematics(mjReference.Bodies[0]);
+			var sourceKinematics = MjState.GetMjKinematics(mjReference.Bodies[0]);
 			MjScene.Instance.SetMjKinematics(rootBody, sourceKinematics.Item1, sourceKinematics.Item2);
         }
 
         public void TeleportRoot(Vector3 position, Quaternion rotation)
         {
-			MjScene.Instance.TeleportMjRoot(rootBody.GetComponentInChildren<MjFreeJoint>(), position, rotation);
+			MjState.TeleportMjRoot(rootBody.GetComponentInChildren<MjFreeJoint>(), position, rotation);
         }
     }
 }

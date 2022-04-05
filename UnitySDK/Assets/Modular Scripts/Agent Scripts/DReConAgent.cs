@@ -52,10 +52,10 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     public event EventHandler<AgentEventArgs> onBeginHandler;
 
 
-    public float ObservationTimeDelta => Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
+    public float ObservationTimeDelta => fixedDeltaTime * decisionRequester.DecisionPeriod;
 
-    public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * decisionRequester.DecisionPeriod;
-
+    public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? fixedDeltaTime : fixedDeltaTime * decisionRequester.DecisionPeriod;
+    public float FixedDeltaTime { get => fixedDeltaTime; }
 
     public int ActionSpaceSize => ragDollMuscles.ActionSpaceSize;
 

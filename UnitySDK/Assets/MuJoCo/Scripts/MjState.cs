@@ -8,7 +8,8 @@ namespace Mujoco
 {
     public static class MjState
     {
-        public static unsafe (IEnumerable<double[]>, IEnumerable<double[]>) GetMjKinematics(this MjScene mjScene, MjBody rootBody)
+        static MjScene mjScene { get => MjScene.Instance; }
+        public static unsafe (IEnumerable<double[]>, IEnumerable<double[]>) GetMjKinematics( MjBody rootBody)
         {
             MujocoLib.mjModel_* Model = mjScene.Model;
             MujocoLib.mjData_* Data = mjScene.Data;
@@ -105,7 +106,7 @@ namespace Mujoco
             mjScene.SyncUnityToMjState();
         }
 
-        public static unsafe void TeleportMjRoot(this MjScene mjScene, MjFreeJoint root, Vector3 unityPos, Quaternion unityRot)
+        public static unsafe void TeleportMjRoot(MjFreeJoint root, Vector3 unityPos, Quaternion unityRot)
         {
             MujocoLib.mjData_* Data = mjScene.Data;
             MujocoLib.mjModel_* Model = mjScene.Model;
@@ -150,7 +151,7 @@ namespace Mujoco
 
         }
 
-        public static unsafe void TeleportMjRoot(this MjScene mjScene, int id, Vector3 unityPos, Quaternion unityRot)
+        public static unsafe void TeleportMjRoot(int id, Vector3 unityPos, Quaternion unityRot)
         {
             MujocoLib.mjData_* Data = mjScene.Data;
             MujocoLib.mjModel_* Model = mjScene.Model;
@@ -206,7 +207,6 @@ namespace Mujoco
         
         public static unsafe Vector3 GlobalVelocity(this MjBody body)
         {
-            var mjScene = MjScene.Instance;
             MujocoLib.mjModel_* Model = mjScene.Model;
             MujocoLib.mjData_* Data = mjScene.Data;
             Vector3 bodyVel = Vector3.one;
@@ -214,7 +214,7 @@ namespace Mujoco
             fixed (double* res = mjBodyVel)
             {
                 MujocoLib.mj_objectVelocity(
-                    mjScene.Model, mjScene.Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 0);
+                    Model, Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 0);
                 // linear velocity is in the last 3 entries
                 bodyVel = MjEngineTool.UnityVector3(res, 1);
             }
@@ -223,7 +223,6 @@ namespace Mujoco
 
         public static unsafe Vector3 GlobalAngularVelocity(this MjBody body)
         {
-            var mjScene = MjScene.Instance;
             MujocoLib.mjModel_* Model = mjScene.Model;
             MujocoLib.mjData_* Data = mjScene.Data;
             Vector3 bodyAngVel = Vector3.one;
@@ -231,7 +230,7 @@ namespace Mujoco
             fixed (double* res = mjBodyAngVel)
             {
                 MujocoLib.mj_objectVelocity(
-                    mjScene.Model, mjScene.Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 0);
+                    Model, mjScene.Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 0);
                 bodyAngVel = MjEngineTool.UnityVector3(res, 0);
             }
             return bodyAngVel;
@@ -239,7 +238,6 @@ namespace Mujoco
 
         public static unsafe Vector3 LocalVelocity(this MjBody body)
         {
-            var mjScene = MjScene.Instance;
             MujocoLib.mjModel_* Model = mjScene.Model;
             MujocoLib.mjData_* Data = mjScene.Data;
             Vector3 bodyAngVel = Vector3.one;
@@ -247,7 +245,7 @@ namespace Mujoco
             fixed (double* res = mjBodyAngVel)
             {
                 MujocoLib.mj_objectVelocity(
-                    mjScene.Model, mjScene.Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 1);
+                    Model, Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 1);
                 bodyAngVel = MjEngineTool.UnityVector3(res, 0);
             }
             return bodyAngVel;
@@ -255,7 +253,6 @@ namespace Mujoco
 
         public static unsafe Vector3 LocalAngularVelocity(this MjBody body)
         {
-            var mjScene = MjScene.Instance;
             MujocoLib.mjModel_* Model = mjScene.Model;
             MujocoLib.mjData_* Data = mjScene.Data;
             Vector3 bodyAngVel = Vector3.one;
@@ -263,10 +260,41 @@ namespace Mujoco
             fixed (double* res = mjBodyAngVel)
             {
                 MujocoLib.mj_objectVelocity(
-                    mjScene.Model, mjScene.Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 1);
+                    mjScene.Model, Data, (int)MujocoLib.mjtObj.mjOBJ_BODY, body.MujocoId, res, 1);
                 bodyAngVel = MjEngineTool.UnityVector3(res, 0);
             }
             return bodyAngVel;
+        }
+
+        public static unsafe float GetAcceleration(this MjActuator act)
+        {
+            MujocoLib.mjData_* Data = mjScene.Data;
+            
+            return (float)(Data -> qacc[act.Joint.MujocoId]);
+        }
+
+        public static float Deg2Length(this MjActuator act, float deg)
+        {
+            return Mathf.Deg2Rad * deg * act.CommonParams.Gear[0];
+        }
+
+        public static float Rad2Length(this MjActuator act, float rad)
+        {
+            return rad * act.CommonParams.Gear[0];
+        }
+
+        public static float Length2Rad(this MjActuator act, float length)
+        {
+            return length / act.CommonParams.Gear[0];
+        }
+        public static float Length2Deg(this MjActuator act, float length)
+        {
+            return length / act.CommonParams.Gear[0] * Mathf.Rad2Deg;
+        }
+
+        public static unsafe int GetDoFAddress(this MjBaseJoint j)
+        {
+            return mjScene.Model->jnt_dofadr[j.MujocoId];
         }
 
     }

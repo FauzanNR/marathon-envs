@@ -96,14 +96,14 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
         if (targetId > -1)
         {
-            Debug.Log(ragdollRoot.GetComponentInChildren<MjFreeJoint>().MujocoId);
-            MjScene.Instance.TeleportMjRoot(targetId, posLag + position, rotLag * rotation);
+            //Debug.Log(ragdollRoot.GetComponentInChildren<MjFreeJoint>().MujocoId);
+            MjState.TeleportMjRoot(targetId, posLag + position, rotLag * rotation);
             return;
         }
 
 
 
-        MjScene.Instance.TeleportMjRoot(ragdollRoot.GetComponentInChildren<MjFreeJoint>(), posLag + position, rotLag * rotation);
+        MjState.TeleportMjRoot(ragdollRoot.GetComponentInChildren<MjFreeJoint>(), posLag + position, rotLag * rotation);
     }
 
     public void TeleportRoot(Vector3 position)
@@ -118,12 +118,12 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
         if (targetId > -1)
         {
             Debug.Log(ragdollRoot.GetComponentInChildren<MjFreeJoint>().MujocoId);
-            MjScene.Instance.TeleportMjRoot(targetId, posLag + position, rotLag * riggedTransforms[0].rotation);
+            MjState.TeleportMjRoot(targetId, posLag + position, rotLag * riggedTransforms[0].rotation);
             return;
         }
 
 
-        MjScene.Instance.TeleportMjRoot(ragdollRoot.GetComponentInChildren<MjFreeJoint>(), posLag + position, rotLag * riggedTransforms[0].rotation);
+        MjState.TeleportMjRoot(ragdollRoot.GetComponentInChildren<MjFreeJoint>(), posLag + position, rotLag * riggedTransforms[0].rotation);
     }
 
     public void ReplaceMocapBodies()
