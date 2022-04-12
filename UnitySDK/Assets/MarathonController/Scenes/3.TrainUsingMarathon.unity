@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &285756606
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,10 +461,10 @@ MonoBehaviour:
     - envId: DReConLSPD
       envPrefab: {fileID: 4295764198013316253, guid: 4fa941cae4ad19a41947f49e864caa42,
         type: 3}
-    envIdDefault: DReCon-Modular
+    envIdDefault: DReConLSPD
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
-  DebugSkipPopUp: 1
+  DebugSkipPopUp: 0
 --- !u!4 &1741962962
 Transform:
   m_ObjectHideFlags: 0
