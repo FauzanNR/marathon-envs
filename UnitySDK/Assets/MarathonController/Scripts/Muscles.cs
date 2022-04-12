@@ -368,7 +368,7 @@ public class Muscles : MonoBehaviour
     // Use this for initialization
     void Start()
     {
-        Setup();
+        SetupCollisions();
 
         _motors = GetComponentsInChildren<ArticulationBody>()
                 .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
@@ -453,10 +453,10 @@ public class Muscles : MonoBehaviour
                 //  SetDOFAsFreeArticulations();
                 
                 
-                CenterABMasses();
+               
 
 
-                ArticulationBody root = FindArticulationBodyRoot();
+              
 
 
                 //this ensures the order in which we parse them follows the convention needed for the ABA algo.
@@ -471,10 +471,8 @@ public class Muscles : MonoBehaviour
                     return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
                 }
 
-                _motors = _lpd.Init(root, 100,  GetActionTimeDelta());
-                //_lpd.Init(root, 100, GetActionTimeDelta());
-
-
+                _motors = _lpd.Init( 1000,  GetActionTimeDelta());
+              
 
 #else
                 Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
@@ -493,6 +491,20 @@ public class Muscles : MonoBehaviour
 
 
          
+
+    }
+
+    public void OnReset() {
+
+
+
+#if USE_LSPD
+
+        _lpd.OnReset();
+
+
+#endif
+
 
     }
 
@@ -582,7 +594,7 @@ public class Muscles : MonoBehaviour
 
     }
 
-    void Setup()
+    void SetupCollisions()
     {
 
         if (!skipCollisionSetup)
@@ -602,10 +614,6 @@ public class Muscles : MonoBehaviour
 
         }
 
-        //
-        var joints = GetComponentsInChildren<Joint>().ToList();
-        foreach (var joint in joints)
-            joint.enablePreprocessing = false;
     }
     void IgnoreCollision(string first, string[] seconds)
     {
@@ -627,7 +635,7 @@ public class Muscles : MonoBehaviour
     }
 
     //this is a simple way to center the masses
-    public void CenterABMasses()
+    /*public void CenterABMasses()
     { 
         ArticulationBody[] abs = GetComponentsInChildren<ArticulationBody>();
         foreach (ArticulationBody ab in abs)
@@ -663,7 +671,7 @@ public class Muscles : MonoBehaviour
             }
         }
 
-    }
+    }*/
 
 
 
@@ -942,20 +950,6 @@ public class Muscles : MonoBehaviour
 
 
 
-    ArticulationBody FindArticulationBodyRoot()
-    {
-
-        ArticulationBody[] abs = GetComponentsInChildren<ArticulationBody>();
-
-
-        foreach (ArticulationBody ab in abs)
-        {
-            if (ab.isRoot)
-                return ab;
-
-        }
-        return null;
-    }
 
 
 }

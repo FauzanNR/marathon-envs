@@ -476,8 +476,12 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
             _mapAnim2Ragdoll.CopyVelocityTo(this.gameObject, resetVelocity);
         }
 
+        _ragDollMuscles.OnReset();
+
         _observations2Learn.OnReset();
         _rewards2Learn.OnReset();
+
+
         // float timeDelta = float.Epsilon;
         // _dReConObservations.OnStep(timeDelta);
         // _dReConRewards.OnStep(timeDelta);

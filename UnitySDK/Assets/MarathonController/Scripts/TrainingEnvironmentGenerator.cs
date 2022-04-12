@@ -731,7 +731,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
 
         // center the articulationBody masses:
 
-        muscleteam.CenterABMasses();
+       // muscleteam.CenterABMasses();
 
         // choose the motor update mode
         //muscleteam.MotorUpdateMode = Muscles.MotorMode.PDopenloop;
