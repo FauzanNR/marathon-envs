@@ -29,9 +29,9 @@ public class Muscles : MonoBehaviour
     [Header("Parameters for Legacy and PD:")]
     public List<MusclePower> MusclePowers;
 
-  //  public float MotorScale = 1f;
-    public float Stiffness = 50f;
-    public float Damping = 100f;
+
+    public float Stiffness = 100f;
+    public float Damping = 50f;
     public float ForceLimit = float.MaxValue;
     public float DampingRatio = 1.0f;
 
@@ -383,8 +383,25 @@ public class Muscles : MonoBehaviour
             l.name = m.name;
             //l.pos = m.jointPosition;
             l.vel = m.jointVelocity;
-
             _lastPos.Add(l);
+
+            /*
+            ArticulationDrive xd = m.xDrive;
+            xd.stiffness = Stiffness;
+            xd.damping = Damping;
+            m.xDrive = xd;
+
+            ArticulationDrive yd = m.xDrive;
+            yd.stiffness = Stiffness;
+            yd.damping = Damping;
+            m.yDrive = yd;
+
+            ArticulationDrive zd = m.xDrive;
+            zd.stiffness = Stiffness;
+            zd.damping = Damping;
+            m.yDrive = zd;
+            */
+
         }
 
 

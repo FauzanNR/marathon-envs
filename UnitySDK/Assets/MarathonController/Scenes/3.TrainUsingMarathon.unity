@@ -152,7 +152,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09b6d957e5f9a5e438f7f7bb557585d1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  debugMode: 0
+  debugMode: 1
   RandomRange: 0.039
   Actions:
   - 0

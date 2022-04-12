@@ -36,7 +36,7 @@ public class DebugMarathonController : MonoBehaviour
 
    
 
-    public void LazyInitialize(List<ArticulationBody> _motors, Muscles _ragDollMuscles)
+    void LazyInitialize(List<ArticulationBody> _motors, Muscles _ragDollMuscles)
     {
         if (!_initialized)
         {

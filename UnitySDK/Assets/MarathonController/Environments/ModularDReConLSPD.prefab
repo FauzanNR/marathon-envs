@@ -3145,7 +3145,7 @@ ArticulationBody:
   m_LinearDamping: 0.05
   m_AngularDamping: 0.05
   m_JointFriction: 0.05
-  m_Immovable: 1
+  m_Immovable: 0
   m_UseGravity: 1
   m_CollisionDetectionMode: 0
 --- !u!114 &2278906782572380021
