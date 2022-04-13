@@ -255,7 +255,7 @@
       "url": "https://packages.unity.com"
     },
     "org.mujoco": {
-      "version": "file:C:/Users/hbkm9/Desktop/mujoco-main/unity",
+      "version": "file:C:/Users/hbkm9/MuJoCo/mujoco-main/unity",
       "depth": 0,
       "source": "local",
       "dependencies": {}

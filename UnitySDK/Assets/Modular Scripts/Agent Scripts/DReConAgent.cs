@@ -69,22 +69,22 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         Time.fixedDeltaTime = fixedDeltaTime;
         
         decisionRequester = GetComponent<DecisionRequester>();
-        if(ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
-        ragDollMuscles.OnAgentInitialize();
-        previousActions = ragDollMuscles.GetActionsFromState();
+    }
 
-            
-
+    private void Start()
+    {
         rewardSignal.OnAgentInitialize();
         observationSignal.OnAgentInitialize();
-        
 
-        if (kinematicRigObject!=null)
+        if (kinematicRigObject != null)
         {
             kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
             kinematicRig.OnAgentInitialize();
         }
-        
+
+        if (ragDollMuscles == null) ragDollMuscles = GetComponent<Muscles>();
+        ragDollMuscles.OnAgentInitialize();
+        previousActions = ragDollMuscles.GetActionsFromState();
     }
 
     override public void CollectObservations(VectorSensor sensor)

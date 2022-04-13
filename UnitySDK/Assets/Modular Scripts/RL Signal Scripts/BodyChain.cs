@@ -177,15 +177,21 @@ namespace Kinematic
 
         readonly private float mass;
 
-        readonly private MjInertial inertial;
+        readonly private Transform inertialTransform;
+
+        readonly private Vector3 inertiaLocalPos;
+
+        readonly private Matrix4x4 inertiaRelMatrix;
 
         public MjBodyAdapter(MjBody mjBody)
         {
             this.mjBody = mjBody;
-            scene = MjScene.Instance;
-            mass = mjBody.GetComponentInChildren<MjInertial>().Mass;
+            scene = MjScene.Instance; 
+            mass = mjBody.GetMass();
+            inertiaLocalPos = mjBody.GetLocalCenterOfMass();
+            inertiaRelMatrix = mjBody.GetLocalCenterOfMassMatrix();
 
-            inertial = mjBody.GetComponentInDirectChildren<MjInertial>();
+            inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
         }
 
         public Vector3 Velocity => mjBody.GlobalVelocity();
@@ -194,11 +200,13 @@ namespace Kinematic
 
         public float Mass => mass;
 
-        public Vector3 CenterOfMass => inertial.transform.position;
+        public Vector3 CenterOfMass =>mjBody.GetTransformMatrix().MultiplyPoint3x4(inertiaLocalPos);
 
         public string Name => mjBody.name;
 
-        public Matrix4x4 TransformMatrix => inertial.transform.localToWorldMatrix;
+        public Matrix4x4 TransformMatrix => mjBody.GetTransformMatrix() * inertiaRelMatrix;
+
+        
 
         public Vector3 GetPointVelocity(Vector3 worldPoint)
         {

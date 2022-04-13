@@ -22,15 +22,15 @@ namespace DReCon
 
             base.OnInspectorGUI();
 
-            string defaultName = "Head";
+            string defaultName = "HEAD";
 
 
             if (GUILayout.Button("Attempt to auto-populate subset"))
             {
                 DReConRewardSource t = target as DReConRewardSource;
 
-                t.SimulationHead = t.SimulationTransform.GetComponentsInChildren<Transform>().First(tr => tr.name.Contains(defaultName)).gameObject; 
-                t.KinematicHead = t.KinematicTransform.GetComponentsInChildren<Transform>().First(tr => tr.name.Contains(defaultName)).gameObject; 
+                t.SimulationHead = t.SimulationTransform.GetComponentsInChildren<Transform>().First(tr => tr.name.ToUpper().Contains(defaultName)).gameObject; 
+                t.KinematicHead = t.KinematicTransform.GetComponentsInChildren<Transform>().First(tr => tr.name.ToUpper().Contains(defaultName)).gameObject; 
             }
 
 

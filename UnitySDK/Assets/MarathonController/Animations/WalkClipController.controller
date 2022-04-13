@@ -13,14 +13,14 @@ AnimatorState:
   m_Transitions: []
   m_StateMachineBehaviours: []
   m_Position: {x: 50, y: 50, z: 0}
-  m_IKOnFeet: 0
+  m_IKOnFeet: 1
   m_WriteDefaultValues: 1
   m_Mirror: 0
   m_SpeedParameterActive: 0
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: -203655887218126122, guid: 593e187e864053f40835a4d49a9aea64,
+  m_Motion: {fileID: -203655887218126122, guid: ba89bd388b2813a47974012953df1bee,
     type: 3}
   m_Tag: 
   m_SpeedParameter: 

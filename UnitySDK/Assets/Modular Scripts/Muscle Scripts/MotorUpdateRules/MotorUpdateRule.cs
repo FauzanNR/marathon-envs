@@ -13,8 +13,7 @@ namespace MotorUpdate
         [SerializeField]
         protected float[] gains;
 
-        [SerializeField]
-        protected float dT = 1 / 60;
+        
 
         public virtual float GetTorque(float[] curState, float[] targetState)
         {
@@ -73,6 +72,28 @@ namespace MotorUpdate
         public GameObject gameObject { get => mjActuator.gameObject; }
 
         public float[] stateVector => new float[] { Position, Velocity, Acceleration};
+    }
+
+    public class MjHingeJointState : IState
+    {
+        readonly private MjHingeJoint joint;
+
+        public MjHingeJointState(MjHingeJoint joint)
+        {
+            this.joint = joint;
+        }
+
+        public float Velocity => joint.GetVelocityRad();
+
+        public float Position => joint.GetPositionRad();
+
+        public float Acceleration => joint.GetAccelerationRad();
+
+        public string Name => joint.name;
+
+        public GameObject gameObject { get => joint.gameObject; }
+
+        public float[] stateVector => new float[] { Position, Velocity, Acceleration };
     }
 
     public class MjPositionState : IState

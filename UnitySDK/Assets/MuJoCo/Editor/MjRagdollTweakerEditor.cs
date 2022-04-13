@@ -43,6 +43,40 @@ namespace Mujoco
                     act.CommonParams.Gear[0] *= t.gearScale;
                 }
             }
+            if (GUILayout.Button("Scale Control Limits"))
+            {
+                MjRagdollTweaker t = target as MjRagdollTweaker;
+                foreach (var act in t.actuatorRoot.GetComponentsInChildren<MjActuator>())
+                {
+                    act.CommonParams.CtrlRange *= t.controlLimitScale;
+                }
+            }
+             if (GUILayout.Button("Scale Armature"))
+            {
+                MjRagdollTweaker t = target as MjRagdollTweaker;
+                foreach (var hj in t.joints)
+                {
+                    hj.Settings.Armature *= t.armatureScale;
+                }
+            }
+
+            if (GUILayout.Button("Set ConType"))
+            {
+                MjRagdollTweaker t = target as MjRagdollTweaker;
+                foreach (var g in t.tweakedRoot.GetComponentsInChildren<MjGeom>())
+                {
+                    g.Settings.Filtering.Contype = t.conType;
+                }
+            }
+
+            if (GUILayout.Button("Set ConAffinity"))
+            {
+                MjRagdollTweaker t = target as MjRagdollTweaker;
+                foreach (var g in t.tweakedRoot.GetComponentsInChildren<MjGeom>())
+                {
+                    g.Settings.Filtering.Conaffinity = t.conAffinity;
+                }
+            }
 
 
 

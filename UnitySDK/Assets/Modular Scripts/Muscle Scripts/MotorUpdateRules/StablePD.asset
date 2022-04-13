@@ -9,10 +9,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5c2c870dcee08b04aab07dc21101060e, type: 3}
+  m_Script: {fileID: 11500000, guid: 7996361ff75fd564c838c73fbd4fde59, type: 3}
   m_Name: StablePD
   m_EditorClassIdentifier: 
   gains:
-  - 9.8
-  - 21.87
-  dT: 0.01
+  - 20
+  - 0.24
+  dT: 0.016666668

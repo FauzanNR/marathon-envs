@@ -112,7 +112,7 @@ namespace Mujoco
             MujocoLib.mjModel_* Model = mjScene.Model;
 
             Quaternion oldUnityRotation = MjEngineTool.UnityQuaternion(Data->xquat, root.MujocoId);
-            var startOffset = root.MujocoId * 7;
+            var startOffset = root.QposAddress;
             Quaternion oldMjQuat = new Quaternion(w: (float)Data->qpos[startOffset + 3],
                                                   x: (float)Data->qpos[startOffset + 4],
                                                   y: (float)Data->qpos[startOffset + 5],
@@ -131,7 +131,7 @@ namespace Mujoco
             Quaternion rotationOffset = unityRot * Quaternion.Inverse(manualUnityQuat);
             Vector3 fromUnityLinVel = MjEngineTool.UnityVector3(Data->qvel, root.MujocoId * 2);
 
-            startOffset = root.MujocoId * 6;
+            startOffset = root.DofAddress;
             
             Vector3 toMjLinVel = MjEngineTool.MjVector3(rotationOffset * fromUnityLinVel);
             Data->qvel[startOffset] = toMjLinVel[0];
@@ -157,7 +157,7 @@ namespace Mujoco
             MujocoLib.mjModel_* Model = mjScene.Model;
 
             Quaternion oldUnityRotation = MjEngineTool.UnityQuaternion(Data->xquat, id);
-            var startOffset = id * 7;
+            var startOffset = mjScene.Model->jnt_qposadr[id];
             Quaternion oldMjQuat = new Quaternion(w: (float)Data->qpos[startOffset + 3],
                                                   x: (float)Data->qpos[startOffset + 4],
                                                   y: (float)Data->qpos[startOffset + 5],
@@ -176,7 +176,7 @@ namespace Mujoco
             Quaternion rotationOffset = unityRot * Quaternion.Inverse(manualUnityQuat);
             Vector3 fromUnityLinVel = MjEngineTool.UnityVector3(Data->qvel, id * 2);
 
-            startOffset = id * 6;
+            startOffset = mjScene.Model->jnt_dofadr[id];
 
             Vector3 toMjLinVel = MjEngineTool.MjVector3(rotationOffset * fromUnityLinVel);
             Data->qvel[startOffset] = toMjLinVel[0];
@@ -270,7 +270,33 @@ namespace Mujoco
         {
             MujocoLib.mjData_* Data = mjScene.Data;
             
-            return (float)(Data -> qacc[act.Joint.MujocoId]);
+            return act.Rad2Length((float)(Data -> qacc[act.Joint.DofAddress]));
+        }
+
+        public static unsafe float GetAccelerationRad(this MjHingeJoint j)
+        {
+            MujocoLib.mjData_* Data = mjScene.Data;
+
+            return (float)(Data->qacc[j.DofAddress]);
+        }
+
+        public static unsafe float GetPositionRad(this MjHingeJoint j)
+        {
+            MujocoLib.mjData_* Data = mjScene.Data;
+
+            return (float)(Data->qpos[j.QposAddress]);
+        }
+
+        public static unsafe float GetVelocityRad(this MjHingeJoint j)
+        {
+            MujocoLib.mjData_* Data = mjScene.Data;
+
+            return (float)(Data->qvel[j.DofAddress]);
+        }
+
+        public static unsafe float[] GetStateVector(this MjHingeJoint j)
+        {
+            return new float[] { j.GetPositionRad(), j.GetVelocityRad(), j.GetAccelerationRad() };
         }
 
         public static float Deg2Length(this MjActuator act, float deg)
@@ -283,18 +309,76 @@ namespace Mujoco
             return rad * act.CommonParams.Gear[0];
         }
 
-        public static float Length2Rad(this MjActuator act, float length)
+        public static float Length2Rad(this MjActuator act, float length, int g = 0)
         {
-            return length / act.CommonParams.Gear[0];
+            return length / act.CommonParams.Gear[g];
         }
-        public static float Length2Deg(this MjActuator act, float length)
+
+        public static float LengthInRad(this MjActuator act, int g = 0)
         {
-            return length / act.CommonParams.Gear[0] * Mathf.Rad2Deg;
+            return act.Length / act.CommonParams.Gear[g];
+        }
+
+        public static float Length2Deg(this MjActuator act, float length, int g=0)
+        {
+            return length / act.CommonParams.Gear[g] * Mathf.Rad2Deg;
+        }
+
+        public static float LengthInDeg(this MjActuator act, int g = 0)
+        {
+            return act.Length / act.CommonParams.Gear[g] * Mathf.Rad2Deg;
         }
 
         public static unsafe int GetDoFAddress(this MjBaseJoint j)
         {
             return mjScene.Model->jnt_dofadr[j.MujocoId];
+        }
+
+        public static unsafe float GetMass(this MjBody bd)
+        {
+            return (float) mjScene.Model -> body_mass[bd.MujocoId];
+        }
+
+        public static unsafe Vector3 GetLocalCenterOfMass(this MjBody bd)
+        {
+            return MjEngineTool.UnityVector3(mjScene.Model->body_ipos, bd.MujocoId);
+        }
+
+        public static unsafe Quaternion GetLocalCenterOfMassRotation(this MjBody bd)
+        {
+            return MjEngineTool.UnityQuaternion(mjScene.Model->body_iquat, bd.MujocoId);
+        }
+
+        public static unsafe Vector3 GetInertia(this MjBody bd)
+        {
+            return MjEngineTool.UnityVector3(mjScene.Model->body_inertia, bd.MujocoId);
+        }
+
+        public static unsafe Vector3 GetPosition(this MjBody bd)
+        {
+            return MjEngineTool.UnityVector3(mjScene.Data->xpos, bd.MujocoId);
+        }
+
+        public static unsafe Matrix4x4 GetLocalCenterOfMassMatrix(this MjBody bd)
+        {
+            return Matrix4x4.TRS(bd.GetLocalCenterOfMass(), bd.GetLocalCenterOfMassRotation(), Vector3.one);
+        }
+
+        public static unsafe Matrix4x4 GetTransformMatrix(this MjBody bd)
+        {
+            var position = MjEngineTool.UnityVector3(mjScene.Data->xpos, bd.MujocoId);
+            var rotation = MjEngineTool.UnityQuaternion(mjScene.Data->xquat, bd.MujocoId);
+            return Matrix4x4.TRS(position, rotation, Vector3.one);
+        }
+
+
+        public static unsafe Quaternion GetQuaternion(this MjBallJoint bj)
+        {
+            var coords = mjScene.Data->qpos;
+            var startOffset = bj.QposAddress;
+            return new Quaternion(
+                x: (float)coords[startOffset + 1], y: (float)coords[startOffset + 3],
+                z: (float)coords[startOffset + 2], w: (float)-coords[startOffset]);
         }
 
     }

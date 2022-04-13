@@ -32,7 +32,7 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
     public IReadOnlyList<Transform> RagdollTransforms => bodies.Select(bd => bd.transform).ToList();
 
-    private IReadOnlyList<MjMocapBody_> mjMocapBodies;
+    private IReadOnlyList<MjMocapBody> mjMocapBodies;
 
     private IReadOnlyList<MjBody> bodies;
 
@@ -63,7 +63,7 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
         trackedTransforms = riggedTransforms.Select(rt => trackedTransformRoot.GetComponentsInChildren<Transform>().First(tt => MocapName(tt.name).Equals(rt.name))).ToList().AsReadOnly();
 
-        mjMocapBodies = riggedTransforms.Select(t => t.GetComponent<MjMocapBody_>()).ToList();
+        mjMocapBodies = riggedTransforms.Select(t => t.GetComponent<MjMocapBody>()).ToList();
         bodies = ragdollRoot.GetComponentsInChildren<MjBody>().ToList();
 
     }
@@ -76,10 +76,10 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
             mjb.rotation = tr.rotation;
         }
 
-/*        foreach (var mcbd in mjMocapBodies)
+        foreach (var mcbd in mjMocapBodies)
         {
             mcbd.OnSyncState(MjScene.Instance.Data);
-        }*/
+        }
 
     }
 
@@ -132,15 +132,15 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
         {
             var mocapGO = weld.Body1.gameObject;
             DestroyImmediate(weld.Body1);
-            var newBody = mocapGO.AddComponent<MjMocapBody_>();
+            var newBody = mocapGO.AddComponent<MjMocapBody>();
             weld.Body1 = newBody;
         }
 
-        foreach (var remainingBody in weldRoot.parent.GetComponentsInDirectChildren<MjBody>().Where(bd => bd.name.ToUpper().Contains("MOCAP")))
+        foreach (var remainingBody in weldRoot.parent.GetComponentsInDirectChildren<MjBody>().Where(bd => bd.name.Contains(prefix)))
         {
             var bodyGO = remainingBody.gameObject;
             DestroyImmediate(remainingBody);
-            bodyGO.AddComponent<MjMocapBody_>();
+            bodyGO.AddComponent<MjMocapBody>();
         }
     }
 
@@ -149,9 +149,13 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
 
 
         Func<string, string> MocapName = animatedName => $"{prefix}{Utils.SegmentName(animatedName)}";
-        var riggedTransforms = weldRoot.GetComponentsInChildren<MjWeld>().Select(krt => krt.Body1.transform).Where(t => t.name.Contains("Mocap") && t.gameObject.activeSelf).ToList().AsReadOnly();
+        Func<string, string> RemovePrefix = mocapName => mocapName.Replace(prefix, "");
 
-        var trackedTransforms = riggedTransforms.Select(rt => trackedTransformRoot.GetComponentsInChildren<Transform>().First(tt => MocapName(tt.name).Equals(rt.name))).ToList().AsReadOnly();
+        var riggedTransforms = weldRoot.GetComponentsInChildren<MjWeld>().Select(krt => krt.Body1.transform).Where(t => t.name.Contains(prefix) && t.gameObject.activeSelf).ToList().AsReadOnly();
+
+        Debug.Log(string.Join(", ", weldRoot.GetComponentsInChildren<MjWeld>().Select(krt => krt.Body1.transform).Select(t => t.name.Contains(prefix))));
+
+        var trackedTransforms = riggedTransforms.Select(rt => trackedTransformRoot.GetComponentsInChildren<Transform>().First(tt => tt.name.Contains(RemovePrefix(rt.name)))).ToList().AsReadOnly();
 
         foreach ((var mjb, var tr) in riggedTransforms.Zip(trackedTransforms, Tuple.Create))
         {

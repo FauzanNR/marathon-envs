@@ -9,12 +9,40 @@ public class EventBuilder : MonoBehaviour
     [SerializeField]
     List<HandledEvent> handledEvents;
 
-    private void Awake()
+    bool isActive;
+
+    private void ActivateEvents()
     {
+        if (isActive) return;
         foreach (HandledEvent handledEvent in handledEvents)
         {
             handledEvent.Activate();
         }
+        isActive = true;
+    }
+    private void DeactivateEvents()
+    {
+        if (!isActive) return;
+        foreach (HandledEvent handledEvent in handledEvents)
+        {
+            handledEvent.Deactivate();
+        }
+        isActive = false;
+    }
+
+    private void Awake()
+    {
+        ActivateEvents();
+    }
+
+    private void OnEnable()
+    {
+        ActivateEvents();
+    }
+
+    private void OnDisable()
+    {
+        DeactivateEvents();
     }
 
 }

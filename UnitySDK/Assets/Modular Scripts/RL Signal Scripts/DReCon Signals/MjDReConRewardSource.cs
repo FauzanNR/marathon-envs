@@ -9,13 +9,10 @@ using Mujoco;
 
 public class MjDReConRewardSource : DReConRewardSource
 {
-    private void Awake()
-    {
-        OnAgentInitialize();
-    }
 
-    public override void OnAgentInitialize()
+    unsafe public override void OnAgentInitialize()
     {
+        MjScene.Instance.CreateScene();
         AddColliders(simulationTransform);
         AddColliders(kinematicTransform);
         base.OnAgentInitialize();
@@ -25,20 +22,22 @@ public class MjDReConRewardSource : DReConRewardSource
 
     public void AddColliders(Transform rootTransform)
     {
-        foreach (var inertial in rootTransform.GetComponentsInChildren<MjInertial>())
+        foreach (var body in rootTransform.GetComponentsInChildren<MjBody>())
         {
 
-            if (inertial.transform.parent.GetComponent<MjBody>() == null)
-            {
-                continue;
-            }
-
-            var colObject = inertial.gameObject;
-            colObject.transform.SetPositionAndRotation(inertial.transform.position, inertial.transform.rotation);
+            var colObject = new GameObject();
+            colObject.transform.SetParent(body.transform);
+            colObject.transform.SetPositionAndRotation(body.transform.TransformPoint(body.GetLocalCenterOfMass()), body.transform.rotation * body.GetLocalCenterOfMassRotation());
 
 
             var box = colObject.AddComponent(typeof(BoxCollider)) as BoxCollider;
-            box.size = inertial.GetBoxSize();
+
+            var diagInertia = body.GetInertia();
+            var mass = body.GetMass();
+
+            box.size = new Vector3(Mathf.Sqrt((diagInertia[1] + diagInertia[2] - diagInertia[0]) / mass * 6.0f),
+                                   Mathf.Sqrt((diagInertia[0] + diagInertia[2] - diagInertia[1]) / mass * 6.0f),
+                                   Mathf.Sqrt((diagInertia[0] + diagInertia[1] - diagInertia[2]) / mass * 6.0f));
 
         }
     }

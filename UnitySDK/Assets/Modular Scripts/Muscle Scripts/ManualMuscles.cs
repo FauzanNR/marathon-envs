@@ -9,40 +9,37 @@ using System;
 public class ManualMuscles : Muscles
 {
     [SerializeField]
-    private List<GameObject> actuatorGameObjects;
-
-    [SerializeField]
-    List<float> targets;
+    private List<ActuatorPositionTarget> actuatorGameObjects;
 
     [SerializeField]
     MotorUpdateRule updateRule;
 
-    private List<IState> actuatorStates;
-    private List<MjActuator> actuators;
 
-    [DebugGUIGraph]
-    public float acc;
-
-    public override int ActionSpaceSize => actuators.Count;
+    public override int ActionSpaceSize => actuatorGameObjects.Count;
 
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
+    unsafe public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
-        foreach((var motor, var action) in actuators.Zip(actions, Tuple.Create))
+        foreach((var motor, var action) in actuatorGameObjects.Zip(actions, Tuple.Create))
         {
-            motor.Control = action;
+            motor.actuator.Control = action;
         }
     }
 
     public override float[] GetActionsFromState()
     {
-        return actuators.Select(a => a.Control).ToArray();
+        return actuatorGameObjects.Select(a => a.actuator.Control).ToArray();
     }
 
     private void Awake()
     {
-        actuators = actuatorGameObjects.Select(ago => ago.GetComponent<MjActuator>()).ToList();
-        actuatorStates = actuators.Select(a => (IState)new MjActuatorState(a)).ToList();
+
+        foreach (var a in actuatorGameObjects)
+        {
+            a.state = new MjHingeJointState(a.actuator.Joint as MjHingeJoint);
+        }
+
+        MjScene.Instance.preUpdateEvent += UpdateTorques;
 
     }
 
@@ -53,24 +50,32 @@ public class ManualMuscles : Muscles
 
     private unsafe void Sync()
     {
-        foreach(var a in actuators)
+        foreach(var a in actuatorGameObjects)
         {
-            a.OnSyncState(MjScene.Instance.Data);
-            a.Joint.OnSyncState(MjScene.Instance.Data);
+            a.actuator.OnSyncState(MjScene.Instance.Data);
+            a.actuator.Joint.OnSyncState(MjScene.Instance.Data);
         }
     }
 
-    private unsafe void FixedUpdate()
+    private unsafe void UpdateTorques(object Sender, EventArgs e)
     {
-        if (MjScene.Instance.Data == null) return;
-
-        MjScene.Instance.SyncUnityToMjState();
-        Debug.Log($"nv: {MjScene.Instance.Model->nv}\nJoint mjId:{actuators[0].Joint.MujocoId}\nJoint QposADdress: {actuators[0].Joint.QposAddress}\nJoint DofAddress: {actuators[0].Joint.GetDoFAddress()}\nAct mjId:{actuators[0].MujocoId}");
-        Debug.Log(string.Join(", ", Enumerable.Range(0, MjScene.Instance.Model->nv * 20).Select(x => (MjScene.Instance.Data->qacc[x]))));
+        Sync();
         //MujocoLib.mj_kinematics(MjScene.Instance.Model, MjScene.Instance.Data);
-        //float[] curActions = actuators.Zip(actuatorStates, Tuple.Create).Zip(targets, (a, t) => updateRule.GetTorque(a.Item2, new StaticState(a.Item1.Deg2Length(t), 0f, 0f))).ToArray();
-        //ApplyActions(curActions, Time.fixedDeltaTime);
-        MjScene.Instance.SyncUnityToMjState();
-        //acc = actuators[0].GetAcceleration();
+        float[] curActions = actuatorGameObjects.Select(a => updateRule.GetTorque(a.state, new StaticState(Mathf.Deg2Rad * a.target, 0f, 0f))).ToArray();
+        ApplyActions(curActions, Time.fixedDeltaTime);
+        Sync();
     }
+
+    [Serializable]
+    class ActuatorPositionTarget
+    {
+        [SerializeField]
+        public MjActuator actuator;
+
+        [SerializeField]
+        public float target;
+
+        public IState state;
+    }
+
 }
