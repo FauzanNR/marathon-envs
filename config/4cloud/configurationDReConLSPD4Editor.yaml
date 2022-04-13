@@ -53,7 +53,7 @@ env_settings:
   - --spawn-env=DReConLSPD
   - --num-spawn-envs=16
   base_port: 5005
-  num_envs: 25 
+  num_envs: 1 #25 
 engine_settings:
   no_graphics: true
 debug: false
