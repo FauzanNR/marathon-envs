@@ -500,7 +500,8 @@ public class Muscles : MonoBehaviour
 
 #if USE_LSPD
 
-        _lpd.OnReset();
+        if(MotorUpdateMode== MotorMode.LSPD)        
+            _lpd.OnReset();
 
 
 #endif
