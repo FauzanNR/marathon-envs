@@ -2,6 +2,7 @@ name: marathon-envs
 channels:
   - pytorch
 dependencies:
+  - python=3.8.0
   - pip
   - pytorch 
   - torchvision 
