@@ -23,10 +23,6 @@ public class ArticulationMuscles : Muscles
     }
 
 
-    public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
-
-    public MotorDelegate UpdateMotor;
-
 
     [Header("Parameters for Legacy and PD:")]
     public List<MusclePower> MusclePowers;
@@ -95,11 +91,27 @@ public class ArticulationMuscles : Muscles
 
         legacy,
         PD,
-        stablePD,
+        LSPD,
         force,
         PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
 
     }
+
+
+
+
+    public delegate void MotorDelegate(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta);
+
+    public MotorDelegate UpdateMotor;
+
+
+
+#if USE_LSPD
+    private LSPDHierarchy _lpd;
+#endif
+
+
+
 
     //for the PDopenloop case:
     public List<Transform> _referenceTransforms;
@@ -151,7 +163,7 @@ public class ArticulationMuscles : Muscles
                 UpdateMotor = LegacyUpdateMotor;
                 break;
 
-            case (MotorMode.stablePD):
+            case (MotorMode.LSPD):
                 UpdateMotor = null;
 
                 //UpdateMotor = StablePD;
@@ -732,23 +744,158 @@ public class ArticulationMuscles : Muscles
         return vectorActions.ToArray();
     }
 
+
+
+    //This function is to debug the motor update modes, mimicking a reference animation.
+    /// To be used only with the root frozen, "hand of god" mode, it will not work on a 
+    /// proper physics character
+
+    public void MimicRigidBodies(List<Rigidbody> targets, float deltaTime)
+    {
+        Vector3[] targetRotations = new Vector3[_motors.Count];
+
+        int im = 0;
+        foreach (var a in targets)
+        {
+            targetRotations[im] = Mathf.Deg2Rad * Utils.GetSwingTwist(a.transform.localRotation);
+            im++;
+        }
+
+        switch (MotorUpdateMode)
+        {
+
+            case (MotorMode.LSPD):
+#if USE_LSPD
+                _lpd.LaunchMimicry(targetRotations);
+#else
+                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+#endif
+                break;
+
+
+            default:
+
+                int j = 0;
+                foreach (var m in _motors)
+                {
+
+                    if (m.isRoot)
+                    {
+                        continue; //never happens because excluded from list
+                    }
+                    else
+                    {
+                        //we find the normalized rotation that corresponds to the target rotation (the inverse of what happens inside UpdateMotorWithPD
+                        ArticulationBody joint = m;
+
+                        Vector3 normalizedRotation = new Vector3();
+
+
+
+
+                        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.xDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.x = (Mathf.Rad2Deg * targetRotations[j].x - midpoint) / scale;
+                            //target.x = midpoint + (targetNormalizedRotation.x * scale);
+
+                        }
+
+                        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.yDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.y = (Mathf.Rad2Deg * targetRotations[j].y - midpoint) / scale;
+                            //target.y = midpoint + (targetNormalizedRotation.y * scale);
+
+
+                        }
+
+                        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
+                        {
+                            var drive = joint.zDrive;
+                            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
+                            var midpoint = drive.lowerLimit + scale;
+                            normalizedRotation.z = (Mathf.Rad2Deg * targetRotations[j].z - midpoint) / scale;
+                            //target.z = midpoint + (targetNormalizedRotation.z * scale);
+
+                        }
+
+
+
+                        UpdateMotor(m, normalizedRotation, Time.fixedDeltaTime);
+                    }
+
+                    j++;
+
+                }
+                break;
+        }
+
+
+
+    }
+
+
+
+
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
         int i = 0;
+
+#if USE_LSPD
+
+            Vector3[] targetRotations = new Vector3[_motors.Count];
+                 int im = 0; //keeps track of the number of motor
+
+#else
+
+
+        if (MotorUpdateMode == MotorMode.LSPD)
+            Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+
+
+#endif
+
+
         foreach (var m in _motors)
         {
+            if (m.isRoot)
+                continue;
+            //Debug.Log("motor number " + im + " action number: " + i);
             Vector3 targetNormalizedRotation = Vector3.zero;
             if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+            if (m.twistLock != ArticulationDofLock.LockedMotion)
                 targetNormalizedRotation.x = actions[i++];
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingYLock != ArticulationDofLock.LockedMotion)
                 targetNormalizedRotation.y = actions[i++];
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingZLock != ArticulationDofLock.LockedMotion)
                 targetNormalizedRotation.z = actions[i++];
 
-            UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+#if USE_LSPD
+            if (MotorUpdateMode == MotorMode.LSPD)
+            {
+                targetRotations[im] = targetNormalizedRotation;
+                im++;
+
+            }
+            else
+#endif
+            {
+                UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
+            }
+
         }
+
+#if USE_LSPD
+        if (MotorUpdateMode == MotorMode.LSPD)
+            _lpd.LaunchMimicry(targetRotations);
+#endif
+
     }
 
     public List<ArticulationBody> GetMotors()
