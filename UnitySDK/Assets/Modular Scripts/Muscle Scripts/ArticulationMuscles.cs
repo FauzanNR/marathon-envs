@@ -4,7 +4,7 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-
+using Unity.MLAgents;//for the DecisionRequester
 public class ArticulationMuscles : Muscles
 {
 
@@ -166,8 +166,48 @@ public class ArticulationMuscles : Muscles
             case (MotorMode.LSPD):
                 UpdateMotor = null;
 
-                //UpdateMotor = StablePD;
-                //NOTE: this is not yet working, the implementaiton is in progress
+
+
+
+
+#if USE_LSPD
+                // UpdateMotor = UpdateLinearPD;
+                _lpd = gameObject.AddComponent<LSPDHierarchy>();
+
+                //SetAllArticulationsFree();
+                //  SetDOFAsFreeArticulations();
+
+
+
+
+
+
+
+
+                //this ensures the order in which we parse them follows the convention needed for the ABA algo.
+
+                //_motors = _lpd.Init(root, 5000,  Time.fixedDeltaTime);
+
+
+                DecisionRequester _decisionRequester = GetComponent<DecisionRequester>();
+
+                float GetActionTimeDelta()
+                {
+                    return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+                }
+
+                _motors = _lpd.Init(1000, GetActionTimeDelta());
+
+
+#else
+                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
+
+#endif
+
+
+     
+
+
 
                 break;
 
@@ -897,6 +937,28 @@ public class ArticulationMuscles : Muscles
 #endif
 
     }
+
+
+
+
+    public void FixedUpdate()
+    {
+
+#if USE_LSPD
+        switch (MotorUpdateMode)
+        {
+
+            case (MotorMode.LSPD):
+
+                _lpd.CompleteMimicry();
+
+                break;
+
+        }
+#endif
+
+    }
+
 
     public List<ArticulationBody> GetMotors()
     {
