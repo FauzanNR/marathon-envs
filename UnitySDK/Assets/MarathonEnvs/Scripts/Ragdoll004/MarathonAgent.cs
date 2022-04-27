@@ -223,7 +223,7 @@ namespace Unity.MLAgents
             NumSensors = MarathonSensors.Count;
         }
 
-        internal void SetupBodyParts()
+        public void SetupBodyParts()
         {
             // set body part directions
             foreach (var bodyPart in BodyParts)
@@ -368,7 +368,7 @@ namespace Unity.MLAgents
             return velocity;
         }
 
-        internal Vector3 GetNormalizedVelocity(Vector3 metersPerSecond)
+        public Vector3 GetNormalizedVelocity(Vector3 metersPerSecond)
         {
             var maxMetersPerSecond = _spawnableEnv.bounds.size
                 / MaxStep
@@ -387,7 +387,7 @@ namespace Unity.MLAgents
             Vector3 normalizedVelocity = new Vector3(x,y,z);
             return normalizedVelocity;
         }
-        internal Vector3 GetNormalizedPosition(Vector3 inputPos)
+        public Vector3 GetNormalizedPosition(Vector3 inputPos)
         {
             Vector3 pos = inputPos - startPosition;
             var maxPos = _spawnableEnv.bounds.size;
@@ -402,7 +402,7 @@ namespace Unity.MLAgents
             return normalizedPos;
         }
 
-        internal Vector3 GetNormalizedVelocity(string bodyPart = null)
+        public Vector3 GetNormalizedVelocity(string bodyPart = null)
         {
             var metersPerSecond = GetRawVelocity(bodyPart);
             var normalizedVelocity = this.GetNormalizedVelocity(metersPerSecond);
@@ -423,7 +423,7 @@ namespace Unity.MLAgents
             return normalizedVelocity;
         }
 
-        internal Vector3 GetNormalizedPosition(string bodyPart = null)
+        public Vector3 GetNormalizedPosition(string bodyPart = null)
         {
             Vector3 pos = BodyParts[bodyPart].position;
             Vector3 normalizedPos = this.GetNormalizedPosition(BodyParts[bodyPart].position);
@@ -446,7 +446,7 @@ namespace Unity.MLAgents
             return uprightBonus;
         }
 
-        internal float GetDirectionBonus(string bodyPart, Vector3 direction, float maxBonus = 0.5f)
+        public float GetDirectionBonus(string bodyPart, Vector3 direction, float maxBonus = 0.5f)
         {
             var toFocalAngle = BodyPartsToFocalRoation[bodyPart] * BodyParts[bodyPart].transform.right;
             var angle = Vector3.Angle(toFocalAngle, direction);
@@ -480,13 +480,13 @@ namespace Unity.MLAgents
             return bonus;
         }
 
-        internal float GetForwardBonus(string bodyPart, float maxBonus = 0.5f)
+        public float GetForwardBonus(string bodyPart, float maxBonus = 0.5f)
         {
             var bonus = GetDirectionBonus(bodyPart, Vector3.forward, maxBonus);
             return bonus;
         }
 
-        internal float GetHeightPenality(float maxHeight)
+        public float GetHeightPenality(float maxHeight)
         {
             var height = GetHeight();
             var heightPenality = maxHeight - height;
@@ -511,7 +511,7 @@ namespace Unity.MLAgents
             return (float) effort;
         }
 
-        internal float GetEffortNormalized(string[] ignorJoints = null)
+        public float GetEffortNormalized(string[] ignorJoints = null)
         {
             double effort = 0;
             double joints = 0;
@@ -619,7 +619,7 @@ namespace Unity.MLAgents
             return false;
         }
 
-        internal bool TerminateOnNonFootHitTerrain()
+        public bool TerminateOnNonFootHitTerrain()
         {
             return NonFootHitTerrain;
         }
