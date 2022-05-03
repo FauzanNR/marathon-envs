@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using System;
-using MotorUpdate;
+
 
 namespace Mujoco
 {
-    public class MjModularMuscles : Muscles
+    public class MjModularMuscles : ModularMuscles
     {
         [SerializeField]
         protected Transform actuatorRoot;
@@ -22,8 +22,7 @@ namespace Mujoco
         private IReadOnlyList<MjActuator> actuators;
         public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
 
-        [SerializeField]
-        MotorUpdateRule updateRule;
+      
 
         [SerializeField]
         Transform kinematicRef;
@@ -68,7 +67,7 @@ namespace Mujoco
             }
         }
 
-        unsafe public override void ApplyActions(float[] actions, float actionTimeDelta)
+        public override void ApplyActions(float[] actions, float actionTimeDelta)
         {
             nextActions = actions;
             
