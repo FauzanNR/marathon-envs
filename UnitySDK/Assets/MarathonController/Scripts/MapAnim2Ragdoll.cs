@@ -7,8 +7,9 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.AI;
 using System.Linq.Expressions;
+using Kinematic;
 
-public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision 
+public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision, IKinematicReference
 {//previously Mocap Controller Artanim
 	public List<float> SensorIsInTouch;
 	List<GameObject> _sensors;
@@ -204,21 +205,21 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
 			var bodyGameobject = abody.gameObject;
-			var rb = bodyGameobject.AddComponent<Rigidbody>();
-			rb.mass = abody.mass;
-			rb.useGravity = abody.useGravity;
+			//var rb = bodyGameobject.AddComponent<Rigidbody>();
+
+			float mass = abody.mass;
+			bool useGravity = abody.useGravity;
+			DestroyImmediate(abody);
+			bodyGameobject.AddComponent<Rigidbody>();
+			Rigidbody rb = bodyGameobject.GetComponent<Rigidbody>();
+
+			rb.mass = mass;
+			rb.useGravity = useGravity;
 			// it makes no sense but if i do not set the layer here, then some objects dont have the correct layer
 			rb.gameObject.layer  = this.gameObject.layer;
-			bodiesNamesToDelete.Add(abody.name);
+			
 		}
-		foreach (var name in bodiesNamesToDelete)
-		{
-			var abody = clone
-				.GetComponentsInChildren<ArticulationBody>()
-				.First(x=>x.name == name);
-			DestroyImmediate(abody);
-
-		}
+		
 		// make Kinematic
 		foreach (var rb in clone.GetComponentsInChildren<Rigidbody>())
 		{
@@ -292,6 +293,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		velocity -= _snapOffset;
 		velocity /= timeDelta;
 		CenterOfMassVelocity = velocity;
+
+
 		CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
 		CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(velocity);
 		CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
@@ -320,7 +323,16 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 	float _lastPositionTime = float.MinValue;
 	Vector3 _snapOffset = Vector3.zero;
-	void MimicAnimation() {
+
+    public IReadOnlyList<Transform> RagdollTransforms => _ragdollTransforms;
+
+    public IReadOnlyList<Vector3> RagdollLinVelocities => throw new NotImplementedException();
+
+    public IReadOnlyList<Vector3> RagdollAngularVelocities => throw new NotImplementedException();
+
+    public IReadOnlyList<IKinematic> Kinematics => throw new NotImplementedException();
+
+    void MimicAnimation() {
 		if (!anim.enabled)
 			return;
 		// copy position for root (assume first target is root)
@@ -331,6 +343,8 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			_ragdollTransforms[i].rotation = _animTransforms[i].rotation;
 		}
 	}
+
+	
 
 	
     public Vector3 GetCenterOfMass()
@@ -347,6 +361,10 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
         return centerOfMass;
     }
 
+	public Vector3 GetCenterOfMassVelocity()
+	{
+		return _ragDollRigidbody.Select(rb => rb.velocity * rb.mass).Sum() / _ragDollRigidbody.Select(rb => rb.mass).Sum();
+	}
 
 	public void OnReset(Quaternion resetRotation)
 	{
@@ -591,4 +609,14 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		LazyInitialize();
 		return GetComponentsInChildren<Rigidbody>().ToList();
 	}
+
+    public void TeleportRoot(Vector3 targetPosition)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void TeleportRoot(Vector3 targetPosition, Quaternion targetRotation)
+    {
+        throw new NotImplementedException();
+    }
 }

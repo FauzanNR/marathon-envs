@@ -29,7 +29,7 @@ public class ObservationStats : MonoBehaviour
     [Header("Anchor stats")]
     public Vector3 HorizontalDirection; // Normalized vector in direction of travel (assume right angle to floor)
     // public Vector3 CenterOfMassInWorldSpace; 
-    public Vector3 AngualrVelocity;
+    public Vector3 AngularVelocity;
 
     [Header("Stats, relative to HorizontalDirection & Center Of Mass")]
     public Vector3 CenterOfMassVelocity;
@@ -209,6 +209,10 @@ public class ObservationStats : MonoBehaviour
             var velocity = newCOM - LastCenterOfMassInWorldSpace;
             velocity /= timeDelta;
             CenterOfMassVelocity = velocity;
+
+            // Mucked about
+           // CenterOfMassVelocity = GetCenterOfMassVelocity();
+            //Debug.Log(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitude = CenterOfMassVelocity.magnitude;
             CenterOfMassVelocityInRootSpace = transform.InverseTransformVector(CenterOfMassVelocity);
             CenterOfMassVelocityMagnitudeInRootSpace = CenterOfMassVelocityInRootSpace.magnitude;
@@ -231,7 +235,7 @@ public class ObservationStats : MonoBehaviour
         {
             LastRotation = transform.rotation;
         }
-        AngualrVelocity = GetAngularVelocity(LastRotation, transform.rotation, timeDelta);
+        AngularVelocity = GetAngularVelocity(LastRotation, transform.rotation, timeDelta);
         LastRotation = transform.rotation;
 
         // get bodyParts stats in local space
@@ -283,6 +287,12 @@ public class ObservationStats : MonoBehaviour
         centerOfMass /= totalMass;
         // centerOfMass -= _spawnableEnv.transform.position;
         return centerOfMass;
+    }
+
+    //Mucked about
+    public Vector3 GetCenterOfMassVelocity()
+    {
+        return _articulationBodyParts.Select(rb => rb.velocity * rb.mass).Sum() / _articulationBodyParts.Select(rb => rb.mass).Sum();
     }
 
     void OnDrawGizmosSelected()

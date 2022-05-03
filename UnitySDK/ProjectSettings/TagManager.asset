@@ -34,7 +34,7 @@ TagManager:
   - Water
   - UI
   - 
-  - 
+  - non ragdoll
   - invisible
   - ball
   - goalieWall
@@ -44,7 +44,7 @@ TagManager:
   - marathon
   - targetAnimation
   - Ground
-  - 
+  - target
   - 
   - 
   - 

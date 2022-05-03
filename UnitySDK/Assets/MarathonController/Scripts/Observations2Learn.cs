@@ -13,6 +13,12 @@ public class Observations2Learn : MonoBehaviour
     [Tooltip("Kinematic character center of mass velocity, Vector3")]
     public Vector3 MocapCOMVelocity;
 
+    [DebugGUIGraph(min: -1, max: 1, r: 0, g: 1, b: 1, group:0, autoScale: true)]
+    public float debugVelocityKin =>MocapCOMVelocity.magnitude;
+
+    [DebugGUIGraph(min: -1, max: 1, r: 1, g: 1, b: 0, group:1, autoScale: true)]
+    public float debugVelocitySim => RagDollCOMVelocity.magnitude;
+
     [Tooltip("RagDoll character center of mass velocity, Vector3")]
     public Vector3 RagDollCOMVelocity;
 
