@@ -308,6 +308,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898202284151412054, guid: 3f029a1a96cf4054b9b75bce38530d8e,
+        type: 3}
+      propertyPath: MotorUpdateMode
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_RootOrder
