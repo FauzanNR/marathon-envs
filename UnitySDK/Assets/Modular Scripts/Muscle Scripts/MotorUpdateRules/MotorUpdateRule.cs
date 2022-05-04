@@ -33,13 +33,85 @@ namespace MotorUpdate
         }
 
 
-        public virtual void Initialize(Agent agent = null,   float dT = 1 / 60)
+
+        //TODO: can these 2 methods replace the previous ones?
+        public virtual void Initialize(Agent agent = null, float dT = 1 / 60) { }
+
+        public virtual float3 GetTorque(IArticulation joint, float3[] targetStates)
         {
+            Debug.LogWarning("you are calling a GetTorque function that allways return 0, it needs to be reimplmeented");
+            return float3.zero;
+        }
+
+        #region ClassicPDandFriends
+
+        /*
+        [System.Serializable]
+        public class MusclePower
+        {
+            public string Muscle;
+            public Vector3 PowerVector;
+        }
+        */
+        public List<IArticulation> GetMotors(GameObject agentObject)
+        {
+            List<IArticulation> result = new List<IArticulation>();
+
+            List<ArticulationBody> abl = agentObject.GetComponentsInChildren<ArticulationBody>()
+                    .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                    .Where(x => !x.isRoot)
+                    .Distinct()
+                    .ToList();
+
+            if (abl.Count > 0)
+            {
+                foreach (ArticulationBody a in abl)
+                {
+
+                    result.Add(new ArticulationBodyAdapter(a));
+
+                }
+
+
+            }
+            else
+            {
+                Debug.LogError("I did not find articulations to be used as motors of my MotorUdpateRule. Send help");
+
+            }
+            //TODO: add the case with mjBody
+
+            return result;
+
+
+
+        }
+
+
+        protected float GetActionTimeDelta(GameObject agentObject)
+        {
+            DecisionRequester _decisionRequester = agentObject.GetComponent<DecisionRequester>();
+            return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         }
 
 
 
-        }
+
+
+        #endregion
+
+
+
+    }
+
+
+
+
+
+
+
+
+
     #region Queryable state Adapters
     public interface IState
     {
@@ -157,14 +229,24 @@ namespace MotorUpdate
 
 
     #region Articulation Adapters
+    //TODO: can this replace iState?
 
-    public interface IArticulation
+
+    public interface IReducedState {
+
+        //Here everything is in reduced Coordinates
+
+        public float3 JointAcceleration { get; }
+        public float3 JointVelocity { get; }
+        public float3 JointPosition { get; }
+
+    }
+
+
+    public interface IArticulation: IReducedState
     {
         //Here everything is in reduced Coordinates
 
-        public float3 Acceleration { get; }
-        public float3 Velocity { get; }
-        public float3 Position { get; }
 
         public bool isXblocked { get; }
         public bool isYblocked { get; }
@@ -178,21 +260,21 @@ namespace MotorUpdate
 
 
 
-    //TODO: can this replace iState?
-    public class UnityArticulation : IArticulation
+   
+    public class ArticulationBodyAdapter : IArticulation
     {
 
         readonly private ArticulationBody _ab;
 
-        public UnityArticulation(ArticulationBody ab)
+        public ArticulationBodyAdapter(ArticulationBody ab)
         {
             this._ab = ab;
         }
 
-        public float3 Position => Utils.GetArticulationReducedSpaceInVector3(_ab.jointPosition);
-        public float3 Velocity => Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity);
+        public float3 JointPosition => Utils.GetArticulationReducedSpaceInVector3(_ab.jointPosition);
+        public float3 JointVelocity => Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity);
 
-        public float3 Acceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
+        public float3 JointAcceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
 
         public bool isXblocked => ( _ab.twistLock == ArticulationDofLock.LockedMotion);
         public bool isYblocked => (_ab.swingYLock == ArticulationDofLock.LockedMotion);
@@ -202,13 +284,39 @@ namespace MotorUpdate
         public string Name => _ab.name;
     }
 
+    public class RigidbodyAdapter : IReducedState
+    {
+
+        readonly private Rigidbody _rb;
+
+        public RigidbodyAdapter(Rigidbody rb)
+        {
+            this._rb = rb;
+        }
+
+        public float3 JointPosition => Mathf.Deg2Rad * Utils.GetSwingTwist(_rb.transform.localRotation);
+        public float3 JointVelocity { get {
+
+                Debug.LogWarning("the velocity of the rigidbody should not matter, why are you trying to read it, I am not sure what I am returning is in reduced coord.");
+                return _rb.angularVelocity ; } }
 
 
+        public float3 JointAcceleration
+        {
+            get
+            {
 
-}
+                Debug.LogWarning("the acceleration of the rigidbody should not matter, why are you trying to read it? I am returing null");
+                return Vector3.zero;
+            }
+        }
 
-
-
+      
+    }
 
     #endregion
+
 }
+
+
+
