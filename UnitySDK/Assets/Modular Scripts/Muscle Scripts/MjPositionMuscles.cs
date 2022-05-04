@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+using Unity.MLAgents;
+
 namespace Mujoco
 {
     public class MjPositionMuscles : MjMuscles
@@ -34,7 +36,7 @@ namespace Mujoco
             return actuators.Zip(biasedScales, (a, bs) => a.Control/bs).ToArray();
         }
 
-        public override void OnAgentInitialize()
+        public override void OnAgentInitialize(Agent agent = null)
         {
             base.OnAgentInitialize();
 

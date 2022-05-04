@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+using Unity.MLAgents;
+
 namespace Mujoco
 {
     public class MjPDMuscles : MjPositionMuscles
@@ -35,7 +37,7 @@ namespace Mujoco
             return pdActuators.Select(pd => pd.CurrentAction).ToArray();
         }
 
-        public override void OnAgentInitialize()
+        public override void OnAgentInitialize(Agent agent = null)
         {
             base.OnAgentInitialize();
             pdActuators = actuators.Select(act => new PDActuator(act, FindReference(act), useBaseline)).ToList();

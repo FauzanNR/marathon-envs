@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-
+using Unity.MLAgents;
 
 public abstract class Muscles: MonoBehaviour
 {
@@ -14,5 +14,5 @@ public abstract class Muscles: MonoBehaviour
 
     public abstract float[] GetActionsFromState();
 
-    public virtual void OnAgentInitialize() { }
+    public virtual void OnAgentInitialize(Agent agent = null) { }
 }

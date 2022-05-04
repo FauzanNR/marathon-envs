@@ -5,6 +5,8 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+using Unity.MLAgents;
+
 namespace Mujoco
 {
 
@@ -37,6 +39,6 @@ namespace Mujoco
             return actuatorRoot.GetComponentsInChildren<MjActuator>().Select(a => a.Control).ToArray();
         }
 
-        public override void OnAgentInitialize() { actuators = Actuators; }
+        public override void OnAgentInitialize(Agent agent = null) { actuators = Actuators; }
     }
 }

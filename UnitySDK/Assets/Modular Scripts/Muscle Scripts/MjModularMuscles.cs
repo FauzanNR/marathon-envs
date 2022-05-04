@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using System;
 
+using Unity.MLAgents;
 
 namespace Mujoco
 {
@@ -80,7 +81,7 @@ namespace Mujoco
             return activeActRefPairs.Select(a => a.Item1.Control).ToArray();
         }
 
-        public override void OnAgentInitialize() 
+        public override void OnAgentInitialize(Agent agent = null) 
         {
             MjScene.Instance.ctrlCallback += UpdateTorque;
             actuators = Actuators;
