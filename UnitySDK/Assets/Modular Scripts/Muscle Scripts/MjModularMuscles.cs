@@ -83,6 +83,8 @@ namespace Mujoco
 
         public override void OnAgentInitialize(Agent agent = null) 
         {
+            base.OnAgentInitialize(agent);
+
             MjScene.Instance.ctrlCallback += UpdateTorque;
             actuators = Actuators;
 

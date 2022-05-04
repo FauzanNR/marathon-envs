@@ -4,6 +4,8 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+
+using Unity.Mathematics;
 using Unity.MLAgents;//for the DecisionRequester
 public class ArticulationMuscles : ModularMuscles
 {
@@ -82,9 +84,9 @@ public class ArticulationMuscles : ModularMuscles
         public ArticulationReducedSpace vel;
     }
 
-
+    /*
     List<LastPos> _lastPos = new List<LastPos>();
-
+    */
 
     public enum MotorMode
     {
@@ -93,7 +95,7 @@ public class ArticulationMuscles : ModularMuscles
         PD,
         LSPD,
         force,
-        PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
+        //PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
 
     }
 
@@ -125,6 +127,7 @@ public class ArticulationMuscles : ModularMuscles
 
         _motors = GetMotors();
 
+        /*
         foreach (ArticulationBody m in _motors)
         {
             LastPos l = new LastPos();
@@ -134,7 +137,7 @@ public class ArticulationMuscles : ModularMuscles
             l.vel = m.jointVelocity;
 
             _lastPos.Add(l);
-        }
+        }*/
 
 
         if (updateDebugValues)
@@ -156,6 +159,12 @@ public class ArticulationMuscles : ModularMuscles
                 break;
 
             case (MotorMode.PD):
+
+                if (updateRule != null)
+                    updateRule.Initialize(GetComponent<Agent>());
+                else
+                    Debug.LogError("there is no update rule that corresponds to classicPD update");
+
                 UpdateMotor = UpdateMotorPDWithVelocity;
                 break;
 
@@ -211,10 +220,11 @@ public class ArticulationMuscles : ModularMuscles
 
                 break;
 
+                /*
             case (MotorMode.PDopenloop):
                 UpdateMotor = UpdateMotorPDopenloop;
                 break;
-
+                */
 
         }
 
@@ -293,7 +303,7 @@ public class ArticulationMuscles : ModularMuscles
     }
 
     //this is a simple way to center the masses
-    public void CenterABMasses()
+   /* public void CenterABMasses()
     {
         ArticulationBody[] abs = GetComponentsInChildren<ArticulationBody>();
         foreach (ArticulationBody ab in abs)
@@ -319,7 +329,7 @@ public class ArticulationMuscles : ModularMuscles
             }
         }
 
-    }
+    }*/
 
 
 
@@ -382,108 +392,25 @@ public class ArticulationMuscles : ModularMuscles
     void UpdateMotorPDWithVelocity(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta)
     {
 
-        var m = joint.mass;
-        var d = DampingRatio; // d should be 0..1.
-        var n = NaturalFrequency; // n should be in the range 1..20
-        var k = Mathf.Pow(n, 2) * m;
-        var c = d * (2 * Mathf.Sqrt(k * m));
-        var stiffness = k;
-        var damping = c;
-
-        Vector3 power = Vector3.zero;
-        try
-        {
-            power = MusclePowers.First(x => x.Muscle == joint.name).PowerVector;
-
-        }
-        catch (Exception e)
-        {
-            Debug.Log("there is no muscle for joint " + joint.name);
-
-        }
-
-        classicPD(joint, targetNormalizedRotation, actionTimeDelta, power);
+        Debug.LogError("we have removed this from the update");
 
     }
 
-    void classicPD(ArticulationBody joint, Vector3 targetNormalizedRotation, float actionTimeDelta, Vector3 power)
-    {
-
-
-        var m = joint.mass;
-        var d = DampingRatio; // d should be 0..1.
-        var n = NaturalFrequency; // n should be in the range 1..20
-        var k = Mathf.Pow(n, 2) * m;
-        var c = d * (2 * Mathf.Sqrt(k * m));
-        var stiffness = k;
-        var damping = c;
-
-
-        //why do you never set up the targetVelocity?
-        // F = stiffness * (currentPosition - target) - damping * (currentVelocity - targetVelocity)
-
-
-        Vector3 targetVel = GetTargetVelocity(joint, targetNormalizedRotation, actionTimeDelta);
+    public void ClassicPDInRule(float3[] targetRotation) {
 
 
 
-        if (joint.twistLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.xDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.x * scale);
-            drive.target = target;
+        float3[] torques = updateRule.GetJointForces( targetRotation);
+        for (int i = 0; i < _motors.Count; i++) {
 
-            drive.targetVelocity = targetVel.x;
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.x * ForceScale;
-            joint.xDrive = drive;
+            _motors[i].AddRelativeTorque(torques[i]);
+        
         }
-
-        if (joint.swingYLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.yDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.y * scale);
-            drive.target = target;
-            // drive.targetVelocity = (target - currentRotationValues.y) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.y;
-
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.y * ForceScale;
-            joint.yDrive = drive;
-        }
-
-        if (joint.swingZLock == ArticulationDofLock.LimitedMotion)
-        {
-            var drive = joint.zDrive;
-            var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-            var midpoint = drive.lowerLimit + scale;
-            var target = midpoint + (targetNormalizedRotation.z * scale);
-
-            drive.target = target;
-            //drive.targetVelocity = (target - currentRotationValues.z) / (_decisionPeriod * Time.fixedDeltaTime);
-            drive.targetVelocity = targetVel.z;
-
-            drive.stiffness = stiffness;
-            drive.damping = damping;
-            drive.forceLimit = power.z * ForceScale;
-            joint.zDrive = drive;
-        }
-
-
 
     }
 
 
-
+    /*
     void UpdateMotorPDopenloop(ArticulationBody joint, Vector3 targetRot, float actionTimeDelta)
     {
 
@@ -505,7 +432,7 @@ public class ArticulationMuscles : ModularMuscles
     }
 
 
-
+    */
 
 
 
@@ -600,7 +527,7 @@ public class ArticulationMuscles : ModularMuscles
 
     }
 
-
+    /*
     void StablePD(ArticulationBody joint, Vector3 input, float actionTimeDelta)
     {
 
@@ -742,6 +669,7 @@ public class ArticulationMuscles : ModularMuscles
         //lastPos.pos = joint.jointPosition;
 
     }
+    */
 
     public override float[] GetActionsFromState()
     {
