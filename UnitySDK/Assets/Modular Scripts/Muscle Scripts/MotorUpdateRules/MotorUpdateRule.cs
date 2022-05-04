@@ -5,11 +5,13 @@ using System.Linq;
 using Unity.Mathematics;
 using Mujoco;
 
+using Unity.MLAgents;
+
 namespace MotorUpdate
 {
     public abstract class MotorUpdateRule : ScriptableObject
     {
-        // Start is called before the first frame update
+       
         [SerializeField]
         protected float[] gains;
 
@@ -24,15 +26,20 @@ namespace MotorUpdate
             }
             return res;
         }
-
+       
         public virtual float GetTorque(IState curState, IState targetState)
         {
             return GetTorque(curState.stateVector, targetState.stateVector);
         }
 
 
+        public virtual void Initialize(Agent agent = null,   float dT = 1 / 60)
+        {
+        }
 
-    }
+
+
+        }
     #region Queryable state Adapters
     public interface IState
     {
@@ -145,5 +152,63 @@ namespace MotorUpdate
 
         public float[] stateVector => new float[] { position, velocity, acceleration };
     }
+    #endregion
+
+
+
+    #region Articulation Adapters
+
+    public interface IArticulation
+    {
+        //Here everything is in reduced Coordinates
+
+        public float3 Acceleration { get; }
+        public float3 Velocity { get; }
+        public float3 Position { get; }
+
+        public bool isXblocked { get; }
+        public bool isYblocked { get; }
+        public bool isZblocked { get; }
+
+        public string Name { get; }
+
+        public GameObject gameObject { get; }
+
+    }
+
+
+
+    //TODO: can this replace iState?
+    public class UnityArticulation : IArticulation
+    {
+
+        readonly private ArticulationBody _ab;
+
+        public UnityArticulation(ArticulationBody ab)
+        {
+            this._ab = ab;
+        }
+
+        public float3 Position => Utils.GetArticulationReducedSpaceInVector3(_ab.jointPosition);
+        public float3 Velocity => Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity);
+
+        public float3 Acceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
+
+        public bool isXblocked => ( _ab.twistLock == ArticulationDofLock.LockedMotion);
+        public bool isYblocked => (_ab.swingYLock == ArticulationDofLock.LockedMotion);
+        public bool isZblocked => (_ab.swingZLock == ArticulationDofLock.LockedMotion);
+
+        public GameObject gameObject => _ab.gameObject;
+        public string Name => _ab.name;
+    }
+
+
+
+
+}
+
+
+
+
     #endregion
 }
