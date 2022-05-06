@@ -12,10 +12,6 @@ public class ArticulationMuscles : ModularMuscles
 
 
 
-    [SerializeField]
-    public MotorMode MotorUpdateMode;
-
-
 
     [System.Serializable]
     public class MusclePower
@@ -88,17 +84,6 @@ public class ArticulationMuscles : ModularMuscles
     List<LastPos> _lastPos = new List<LastPos>();
     */
 
-    public enum MotorMode
-    {
-
-        legacy,
-        PD,
-        LSPD,
-        force,
-        //PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
-
-    }
-
 
 
 
@@ -127,17 +112,7 @@ public class ArticulationMuscles : ModularMuscles
 
         _motors = GetArticulationMotors();
 
-        /*
-        foreach (ArticulationBody m in _motors)
-        {
-            LastPos l = new LastPos();
-
-            l.name = m.name;
-            //l.pos = m.jointPosition;
-            l.vel = m.jointVelocity;
-
-            _lastPos.Add(l);
-        }*/
+      
 
 
         if (updateDebugValues)
@@ -151,14 +126,7 @@ public class ArticulationMuscles : ModularMuscles
         }
 
 
-        switch (MotorUpdateMode)
-        {
-
-            case (MotorMode.force):
-                UpdateMotor = DirectForce;
-                break;
-
-            case (MotorMode.PD):
+      
 
                 if (updateRule != null)
                     updateRule.Initialize(this);
@@ -166,67 +134,9 @@ public class ArticulationMuscles : ModularMuscles
                     Debug.LogError("there is no update rule that corresponds to classicPD update");
 
                 UpdateMotor = UpdateMotorPDWithVelocity;
-                break;
-
-            case (MotorMode.legacy):
-                UpdateMotor = LegacyUpdateMotor;
-                break;
-
-            case (MotorMode.LSPD):
-                UpdateMotor = null;
+           
 
 
-
-
-
-#if USE_LSPD
-                // UpdateMotor = UpdateLinearPD;
-                _lpd = gameObject.AddComponent<LSPDHierarchy>();
-
-                //SetAllArticulationsFree();
-                //  SetDOFAsFreeArticulations();
-
-
-
-
-
-
-
-
-                //this ensures the order in which we parse them follows the convention needed for the ABA algo.
-
-                //_motors = _lpd.Init(root, 5000,  Time.fixedDeltaTime);
-
-
-                DecisionRequester _decisionRequester = GetComponent<DecisionRequester>();
-
-                float GetActionTimeDelta()
-                {
-                    return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-                }
-
-                _motors = _lpd.Init(1000, GetActionTimeDelta());
-
-
-#else
-                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
-
-#endif
-
-
-     
-
-
-
-                break;
-
-                /*
-            case (MotorMode.PDopenloop):
-                UpdateMotor = UpdateMotorPDopenloop;
-                break;
-                */
-
-        }
 
 
 
@@ -717,7 +627,7 @@ public class ArticulationMuscles : ModularMuscles
     //This function is to debug the motor update modes, mimicking a reference animation.
     /// To be used only with the root frozen, "hand of god" mode, it will not work on a 
     /// proper physics character
-
+    /*
     public void MimicRigidBodies(List<Rigidbody> targets, float deltaTime)
     {
         Vector3[] targetRotations = new Vector3[_motors.Count];
@@ -806,12 +716,14 @@ public class ArticulationMuscles : ModularMuscles
 
 
     }
-
+    */
 
 
 
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
+
+        /*
         int i = 0;
 
 #if USE_LSPD
@@ -864,6 +776,7 @@ public class ArticulationMuscles : ModularMuscles
             _lpd.LaunchMimicry(targetRotations);
 #endif
 
+        */
     }
 
 
@@ -899,7 +812,7 @@ public class ArticulationMuscles : ModularMuscles
     }
     public void FixedUpdate()
     {
-
+        /*
 #if USE_LSPD
         switch (MotorUpdateMode)
         {
@@ -912,7 +825,7 @@ public class ArticulationMuscles : ModularMuscles
 
         }
 #endif
-
+        */
     }
 
 
