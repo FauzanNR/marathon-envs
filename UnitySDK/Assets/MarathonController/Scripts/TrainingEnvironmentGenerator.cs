@@ -728,14 +728,7 @@ ProcRagdollAgent  generateRagDollFromAnimatedSource( MapRagdoll2Anim target, Man
         // add the muscles. WE DID EARLIER
         //generateMuscles();
 
-
-        // center the articulationBody masses:
-
-       // muscleteam.CenterABMasses();
-
-        // choose the motor update mode
-        //muscleteam.MotorUpdateMode = Muscles.MotorMode.PDopenloop;
-        muscleteam.MotorUpdateMode = ArticulationMuscles.MotorMode.PD;
+        //  the motor update mode is chosen with the motor update rule
 
 
         return _ragdoll4training;

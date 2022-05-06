@@ -262,76 +262,9 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
 
+        _ragDollMuscles.ApplyActions(vectorAction, ActionTimeDelta);
 
-        int i = 0;//keeps track of hte number of actions
-
-        int j = 0;//keeps track of the number of motors
-
-        if (_ragDollMuscles.MotorUpdateMode == ArticulationMuscles.MotorMode.PD) {
-
-            float3[] targetRots = new float3[_motors.Count];
-
-            foreach (var m in _motors)
-            {
-                if (m.isRoot)
-                    continue;
-                if (dontUpdateMotor)
-                    continue;
-                Vector3 targetRot = Vector3.zero;
-                if (m.jointType != ArticulationJointType.SphericalJoint)
-                    continue;
-                if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                    targetRot.x = vectorAction[i++];
-                if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                    targetRot.y = vectorAction[i++];
-                if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                    targetRot.z = vectorAction[i++];
-
-
-                        
-
-
-
-                j++;
-
-            }
-
-          _ragDollMuscles.ClassicPDInRule(targetRots);
-        
-        }
-        else
-        { 
-            foreach (var m in _motors)
-            {
-                if (m.isRoot)
-                    continue;
-                if (dontUpdateMotor)
-                    continue;
-                Vector3 targetNormalizedRotation = Vector3.zero;
-			    if (m.jointType != ArticulationJointType.SphericalJoint)
-                    continue;
-                if (m.twistLock == ArticulationDofLock.LimitedMotion)
-                    targetNormalizedRotation.x = vectorAction[i++];
-                if (m.swingYLock == ArticulationDofLock.LimitedMotion)
-                    targetNormalizedRotation.y = vectorAction[i++];
-                if (m.swingZLock == ArticulationDofLock.LimitedMotion)
-                    targetNormalizedRotation.z = vectorAction[i++];
-
-            
-
-                if (!ignorActions)
-                {
-             
-                    _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
-                }
-
-
-         
-                j++;
-         
-            }
-
-        }
+      
         previousActions = vectorAction;
         _observations2Learn.PreviousActions = vectorAction;
 
