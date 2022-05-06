@@ -10,12 +10,10 @@ public abstract class ModularMuscles : Muscles
     [SerializeField]
     protected MotorUpdateRule updateRule;
 
-    public override void OnAgentInitialize(Agent agent = null)
-    {
 
-        updateRule.Initialize();
+    public abstract List<IArticulation> GetMotors();
 
-    }
+
 
 
 }

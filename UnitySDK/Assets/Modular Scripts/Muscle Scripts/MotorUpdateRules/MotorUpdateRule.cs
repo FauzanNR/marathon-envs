@@ -35,7 +35,7 @@ namespace MotorUpdate
 
 
         //TODO: can these 3 methods replace the previous ones?
-        public virtual void Initialize(Agent agent = null, float dT = 1 / 60) { }
+        public virtual void Initialize(ModularMuscles muscles = null, float dT = 1 / 60) { }
 
         //TODO: we might need to add a "do the calculations" call, for when we have ongoing jobs
 
@@ -56,66 +56,16 @@ namespace MotorUpdate
 
         }
 
-
-
-
-
-        #region ClassicPDandFriends
-
-        /*
-        [System.Serializable]
-        public class MusclePower
+        #region utility functions
+        protected float GetActionTimeDelta(GameObject muscles)
         {
-            public string Muscle;
-            public Vector3 PowerVector;
-        }
-        */
-        public List<IArticulation> GetMotors(GameObject agentObject)
-        {
-            List<IArticulation> result = new List<IArticulation>();
-
-            List<ArticulationBody> abl = agentObject.GetComponentsInChildren<ArticulationBody>()
-                    .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                    .Where(x => !x.isRoot)
-                    .Distinct()
-                    .ToList();
-
-            if (abl.Count > 0)
-            {
-                foreach (ArticulationBody a in abl)
-                {
-
-                    result.Add(new ArticulationBodyAdapter(a));
-
-                }
-
-
-            }
-            else
-            {
-                Debug.LogError("I did not find articulations to be used as motors of my MotorUdpateRule. Send help");
-
-            }
-            //TODO: add the case with mjBody
-
-            return result;
-
-
-
-        }
-
-
-        protected float GetActionTimeDelta(GameObject agentObject)
-        {
-            DecisionRequester _decisionRequester = agentObject.GetComponent<DecisionRequester>();
+            DecisionRequester _decisionRequester = muscles.GetComponent<DecisionRequester>();
             return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         }
 
-
-
-
-
         #endregion
+
+
 
 
 

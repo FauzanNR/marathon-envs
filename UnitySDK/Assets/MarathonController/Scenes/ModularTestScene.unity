@@ -310,8 +310,14 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2898202284151412054, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
+      propertyPath: updateRule
+      value: 
+      objectReference: {fileID: 11400000, guid: 9151e0a05678974459dbcab852c2756d,
+        type: 2}
+    - target: {fileID: 2898202284151412054, guid: 3f029a1a96cf4054b9b75bce38530d8e,
+        type: 3}
       propertyPath: MotorUpdateMode
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4573900768604909443, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
@@ -372,6 +378,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: RecreatedDReCon
+      objectReference: {fileID: 0}
+    - target: {fileID: 9088123711039994768, guid: 3f029a1a96cf4054b9b75bce38530d8e,
+        type: 3}
+      propertyPath: m_Model
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f029a1a96cf4054b9b75bce38530d8e, type: 3}

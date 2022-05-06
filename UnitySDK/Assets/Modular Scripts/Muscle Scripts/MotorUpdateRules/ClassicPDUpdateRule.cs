@@ -26,17 +26,17 @@ namespace MotorUpdate
       //  public float ForceLimit = float.MaxValue;
         public float DampingRatio = 1.0f;
         public float NaturalFrequency = 40f;
+
       
 
 
-
-        public override void Initialize(Agent agent = null, float dT = 1 / 60)
+        public override void Initialize(ModularMuscles muscles = null, float dT = 1 / 60)
         {
 
 
-            dT = GetActionTimeDelta(agent.gameObject);
+            this.dT = GetActionTimeDelta(muscles.gameObject);
 
-            _motors = GetMotors(agent.gameObject);
+            _motors = muscles.GetMotors();
 
 
 
@@ -74,8 +74,6 @@ namespace MotorUpdate
             return result;
 
         }
-
-
 
 
 

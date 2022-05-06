@@ -31,6 +31,12 @@ public static class Utils
     //you can also use this to calculate acceleration, right?
     public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta = 1f)
     {
+
+        if (timeDelta == 0)
+        {
+            Debug.LogWarning("a velocity with a time increment of 0 does NOT make any sense");
+            return Vector3.zero;
+        }
         Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
         Vector3 angularVelocity = diff / timeDelta;
         return angularVelocity;
