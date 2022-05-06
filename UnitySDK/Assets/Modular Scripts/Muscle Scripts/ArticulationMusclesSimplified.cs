@@ -313,11 +313,11 @@ public class ArticulationMusclesSimplified : ModularMuscles
             Vector3 targetRot = Vector3.zero;
             if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+            if (m.twistLock != ArticulationDofLock.LockedMotion)
                 targetRot.x = actions[i++];
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingYLock != ArticulationDofLock.LockedMotion)
                 targetRot.y = actions[i++];
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingZLock != ArticulationDofLock.LockedMotion)
                 targetRot.z = actions[i++];
 
             j++;

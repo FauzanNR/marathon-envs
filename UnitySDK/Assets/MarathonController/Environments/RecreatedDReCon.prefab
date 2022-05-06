@@ -358,7 +358,7 @@ GameObject:
   - component: {fileID: 9088123711039994768}
   - component: {fileID: 4711368114611900672}
   - component: {fileID: 455324094755571374}
-  - component: {fileID: 2898202284151412054}
+  - component: {fileID: 5247976931186698078}
   m_Layer: 14
   m_Name: Ragdoll:Humanoid
   m_TagString: Untagged
@@ -400,10 +400,11 @@ MonoBehaviour:
   MaxStep: 0
   fixedDeltaTime: 0.0125
   actionSmoothingBeta: 0.2
+  maxStep: 0
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
-  ragDollMuscles: {fileID: 2898202284151412054}
+  ragDollMuscles: {fileID: 0}
 --- !u!114 &9088123711039994768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -463,7 +464,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DecisionPeriod: 2
   TakeActionsBetweenDecisions: 0
---- !u!114 &2898202284151412054
+--- !u!114 &5247976931186698078
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -472,71 +473,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 455324094755571360}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4f25a623d39557240a4ffb10d63e4cc7, type: 3}
+  m_Script: {fileID: 11500000, guid: 06411145c0b2f0d47a255b6da693755a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateRule: {fileID: 11400000, guid: 9151e0a05678974459dbcab852c2756d, type: 2}
   MotorUpdateMode: 1
-  MusclePowers:
-  - Muscle: articulation:mixamorig:Hips
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftUpLeg
-    PowerVector: {x: 120, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftLeg
-    PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: articulation:mixamorig:LeftFoot
-    PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftToeBase
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftToe_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightUpLeg
-    PowerVector: {x: 120, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightLeg
-    PowerVector: {x: 80, y: 80, z: 80}
-  - Muscle: articulation:mixamorig:RightFoot
-    PowerVector: {x: 40, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RighToeBase
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RighToe_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine1
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Spine2
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Neck
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:Head
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:HeadTop_End
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftEye
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightEye
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftShoulder
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftArm
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:LeftForeArm
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:LeftHand
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightShoulder
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RightArm
-    PowerVector: {x: 40, y: 40, z: 40}
-  - Muscle: articulation:mixamorig:RightForeArm
-    PowerVector: {x: 20, y: 20, z: 20}
-  - Muscle: articulation:mixamorig:RightHand
-    PowerVector: {x: 40, y: 40, z: 40}
+  MusclePowers: []
   Stiffness: 50
   Damping: 100
   ForceLimit: 3.4028235e+38
   DampingRatio: 1
-  NaturalFrequency: 20
-  ForceScale: 30
+  NaturalFrequency: 40
+  ForceScale: 0.3
   KP_Stiffness: 50
   ForceScaleSPD: 0.3
   skipCollisionSetup: 0

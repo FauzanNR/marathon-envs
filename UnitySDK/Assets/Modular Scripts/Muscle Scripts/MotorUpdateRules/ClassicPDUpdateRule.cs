@@ -16,14 +16,7 @@ namespace MotorUpdate
         protected float dT = 1 / 60;
 
         List<IArticulation> _motors;
-
-
-       // public List<MusclePower> MusclePowers;
-
-        //  public float MotorScale = 1f;
-       // public float Stiffness = 50f;
-      //  public float Damping = 100f;
-      //  public float ForceLimit = float.MaxValue;
+      
         public float DampingRatio = 1.0f;
         public float NaturalFrequency = 40f;
 
@@ -37,9 +30,6 @@ namespace MotorUpdate
             this.dT = GetActionTimeDelta(muscles.gameObject);
 
             _motors = muscles.GetMotors();
-
-
-
 
         }
 
@@ -56,7 +46,7 @@ namespace MotorUpdate
             float3 targetVel = Utils.AngularVelocityInReducedCoordinates(joint.JointPosition, targetRotation, dT);
 
             //we calculate the force:
-            float3 torque = stiffness * (joint.JointPosition - targetRotation) - damping * (joint.JointVelocity - targetVel);
+            float3 torque = stiffness * (joint.JointPosition - targetRotation)*Mathf.Deg2Rad - damping * (joint.JointVelocity - targetVel) * Mathf.Deg2Rad;
             return torque;
 
 
