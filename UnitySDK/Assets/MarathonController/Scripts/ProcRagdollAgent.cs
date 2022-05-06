@@ -47,7 +47,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
     SpawnableEnv _spawnableEnv;
     Observations2Learn _observations2Learn;
     Rewards2Learn _rewards2Learn;
-    ArticulationMuscles _ragDollMuscles;
+    ArticulationMusclesSimplified _ragDollMuscles;
     List<ArticulationBody> _motors;
 
  
@@ -433,7 +433,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _observations2Learn = GetComponent<Observations2Learn>();
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
-        _ragDollMuscles = GetComponent<ArticulationMuscles>();
+        _ragDollMuscles = GetComponent<ArticulationMusclesSimplified>();
       
 
 
