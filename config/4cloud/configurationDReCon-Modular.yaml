@@ -34,9 +34,9 @@ behaviors:
 env_settings:
   env_args:
   - --spawn-env=DReCon-Modular
-  - --num-spawn-envs=32
+  - --num-spawn-envs=1 #32
   base_port: 5005
-  num_envs: 25 #1
+  num_envs: 1 #25 #1
 engine_settings:
   no_graphics: true
 debug: false
