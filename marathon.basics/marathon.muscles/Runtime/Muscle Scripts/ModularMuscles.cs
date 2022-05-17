@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MotorUpdate;
-using Unity.MLAgents;
-
+using Kinematic;
 
 using Unity.Mathematics;
 
@@ -13,10 +12,11 @@ public abstract class ModularMuscles : Muscles
     [SerializeField]
     protected MotorUpdateRule updateRule;
 
-    protected IArticulation[] _motors;
+    //protected IArticulation[] _motors;
+    protected IKinematic[] _motors;
 
-    public abstract IArticulation[] GetMotors();
-
+    //public abstract IArticulation[] GetMotors();
+    public abstract IKinematic[] GetMotors();
 
     void Awake()
     {
@@ -40,13 +40,16 @@ public abstract class ModularMuscles : Muscles
 
 
         float3[] torques = updateRule.GetJointForces(targetRotation);
+        Debug.LogError("NEED TO APPLY THIS AS JOINT FORCES");
+
+        /*
         for (int i = 0; i < _motors.Length; i++)
         {
 
             _motors[i].AddRelativeTorque(torques[i]);
 
         }
-
+        */
     }
 
 }

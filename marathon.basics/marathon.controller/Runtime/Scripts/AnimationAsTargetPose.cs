@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 
-//using ManyWorlds;
-using MotorUpdate;
+
 using Unity.Mathematics;
 
+using Kinematic;
 public class AnimationAsTargetPose : MonoBehaviour
 {
  
@@ -16,7 +16,7 @@ public class AnimationAsTargetPose : MonoBehaviour
     MapAnim2Ragdoll _mapAnim2Ragdoll;
     float3[] targetRotations;
 
-    MotorUpdate.IArticulation[] lrb;
+    IKinematic[] lrb;
 
     List<IReducedState> targets;
 

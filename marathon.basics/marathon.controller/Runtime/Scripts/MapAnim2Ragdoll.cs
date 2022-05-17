@@ -219,7 +219,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 		}
 
 		/*
-		// swap ArticulatedBody for RidgedBody
+		// swap ArticulatedBody for RidBody
         List<string> bodiesNamesToDelete = new List<string>();
 
 		List<GameObject> gos = clone.GetComponentsInChildren<ArticulationBody>().Select(x => x.gameObject).ToList();
@@ -258,11 +258,11 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 
 		// swap ArticulatedBody for RidgedBody
 		List<string> bodiesNamesToDelete = new List<string>();
-		foreach (var abody in clone.GetComponentsInChildren<IArticulation>())
+		foreach (var abody in clone.GetComponentsInChildren<ArticulationBody>())
 		{
 			var bodyGameobject = abody.gameObject;
 			
-			float mass = abody.Mass;
+			float mass = abody.mass;
 
 			ArticulationBody ab = bodyGameobject.GetComponent<ArticulationBody>();
 			if (abody != null)
@@ -271,7 +271,7 @@ public class MapAnim2Ragdoll : MonoBehaviour, IOnSensorCollision
 			}
 			else {
 				//MjBody ab = bodyGameobject.GetComponent<MjBody>();
-				Debug.LogError("haven't yet added the automated reference clone when the reference is set up with Mujoco Bodies or anything that is not ArticulationBody");
+				Debug.LogError("TODO: add the automated reference clone when the reference is set up with Mujoco Bodies or anything that is not ArticulationBody");
 				
 			}
 			bodyGameobject.AddComponent<Rigidbody>();

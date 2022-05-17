@@ -7,6 +7,10 @@ using System.Linq;
 using MotorUpdate;
 using Unity.Mathematics;
 using Unity.MLAgents;//for the DecisionRequester
+
+
+using Kinematic;
+
 public class ArticulationMuscles : ModularMuscles
 {
 
@@ -91,22 +95,21 @@ public class ArticulationMuscles : ModularMuscles
 
         float3[] targetRots = new float3[_motors.Length];
 
+
+        Debug.LogError("TODO: need t oapply the torques appropriately");
+        /*
         foreach (var m in _motors)
         {
            
-           // if (m.isRoot)
-           //     continue;
-
+       
             Vector3 targetRot = Vector3.zero;
-            //if (m.jointType != ArticulationJointType.SphericalJoint)
-            //    continue;
-            //if (m.twistLock != ArticulationDofLock.LockedMotion)
+         
             if (! m.isXblocked)
                 targetRot.x = actions[i++];
-            //if (m.swingYLock != ArticulationDofLock.LockedMotion)
+  
             if (! m.isYblocked) 
                 targetRot.y = actions[i++];
-            //if (m.swingZLock != ArticulationDofLock.LockedMotion)
+        
             if (! m.isZblocked)
                 targetRot.z = actions[i++];
 
@@ -114,12 +117,12 @@ public class ArticulationMuscles : ModularMuscles
 
            
         }
-
-       ApplyRuleAsRelativeTorques(_motors,targetRots);
-
+         */
+        ApplyRuleAsRelativeTorques(_motors,targetRots);
+       
     }
 
-    void  ApplyRuleAsRelativeTorques(IArticulation[] joints, float3[] targetRotation)
+    void  ApplyRuleAsRelativeTorques(IKinematic[] joints, float3[] targetRotation)
     {
 
 
@@ -127,8 +130,8 @@ public class ArticulationMuscles : ModularMuscles
         float3[] torques = updateRule.GetJointForces( targetRotation);
         for (int i = 0; i < _motors.Length; i++)
         {
-           // Debug.Log("Articulation: " + _motors[i].name + " has a torque calculated for it of: " + torques[i]);
-            _motors[i].AddRelativeTorque(torques[i]);
+            Debug.LogError("TODO: Articulation: " + _motors[i].Name + " has a torque calculated for it of: " + torques[i] + "now we need to apply it");
+            //_motors[i].AddRelativeTorque(torques[i]);
 
         }
 
@@ -148,9 +151,10 @@ public class ArticulationMuscles : ModularMuscles
 
     }
 
-    public override IArticulation[] GetMotors()
+    public override IKinematic[] GetMotors()
     {
-        List<IArticulation> result = new List<IArticulation>();
+          List<IKinematic> result = new List<IKinematic>();
+       
         List<ArticulationBody> abl = GetArticulationMotors();
 
 
@@ -162,7 +166,26 @@ public class ArticulationMuscles : ModularMuscles
         return result.ToArray();
 
     }
-  
 
-  
+
+    /*
+    public  IKinematic[] GetIKinematicMotors()
+    {
+
+        List<IKinematic> result = new List<IKinematic>();
+        List<ArticulationBody> abl = GetArticulationMotors();
+
+
+        foreach (ArticulationBody a in abl)
+        {
+            result.Add(new Kinematic.ArticulationBodyAdapter(a));
+        }
+
+        return result.ToArray();
+
+    }*/
+
+
+
+
 }

@@ -6,6 +6,7 @@ using Unity.Mathematics;
 using Mujoco;
 
 using Unity.MLAgents;
+using Kinematic;
 
 namespace MotorUpdate
 {
@@ -14,8 +15,9 @@ namespace MotorUpdate
 
         protected float dT = 1 / 60;
 
-        protected IArticulation[] _motors;
-       
+        //protected IArticulation[] _motors;
+        protected IKinematic[] _motors;
+
 
 
         //TODO: can these 3 methods replace the previous ones?
@@ -192,10 +194,9 @@ namespace MotorUpdate
     #endregion
 
 
-
+    /*
     #region Articulation Adapters
-    //TODO: can this replace iState?
-
+    
 
     public interface IReducedState {
 
@@ -212,17 +213,17 @@ namespace MotorUpdate
     {
         //Here everything is in reduced Coordinates
 
-
-        public bool isXblocked { get; }
-        public bool isYblocked { get; }
-        public bool isZblocked { get; }
-
+        
+        //public bool isXblocked { get; }
+        //public bool isYblocked { get; }
+        //public bool isZblocked { get; }
+        
         public string Name { get; }
 
         public float Mass { get; }
 
         public GameObject gameObject { get; }
-        public abstract void AddRelativeTorque(float3 torque);
+       // public abstract void AddRelativeTorque(float3 torque);
     }
 
 
@@ -243,10 +244,11 @@ namespace MotorUpdate
 
         public float3 JointAcceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
 
-        public bool isXblocked => ( _ab.twistLock == ArticulationDofLock.LockedMotion);
-        public bool isYblocked => (_ab.swingYLock == ArticulationDofLock.LockedMotion);
-        public bool isZblocked => (_ab.swingZLock == ArticulationDofLock.LockedMotion);
-
+        
+        //public bool isXblocked => ( _ab.twistLock == ArticulationDofLock.LockedMotion);
+        //public bool isYblocked => (_ab.swingYLock == ArticulationDofLock.LockedMotion);
+        //public bool isZblocked => (_ab.swingZLock == ArticulationDofLock.LockedMotion);
+        
         public GameObject gameObject => _ab.gameObject;
         public string Name => _ab.name;
         public float Mass => _ab.mass;
@@ -291,7 +293,7 @@ namespace MotorUpdate
     }
 
     #endregion
-
+    */
 }
 
 

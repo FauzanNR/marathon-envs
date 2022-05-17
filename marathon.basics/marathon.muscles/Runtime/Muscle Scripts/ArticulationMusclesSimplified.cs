@@ -9,6 +9,7 @@ using Unity.Mathematics;
 using Unity.MLAgents;//for the DecisionRequester
 
 using MotorUpdate;
+using Kinematic;
 
 public class ArticulationMusclesSimplified : ModularMuscles
 {
@@ -152,7 +153,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
                 Physics.IgnoreCollision(c1, c2);
     }
     
-
+    /*
     void ApplyRuleAsRelativeTorques(IArticulation[] joints, float3[] targetRotation) {
 
 
@@ -164,7 +165,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
         
         }
 
-    }
+    }*/
 
     public override float[] GetActionsFromState()
     {
@@ -344,9 +345,9 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
     }
 
-    public override IArticulation[] GetMotors()
+    public override IKinematic[] GetMotors()
     {
-        List<IArticulation> result = new List<IArticulation>();
+        List<IKinematic> result = new List<IKinematic>();
         List<ArticulationBody> abl = GetArticulationMotors();
 
       
@@ -374,23 +375,5 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
     #endregion
 
-
-    public void FixedUpdate()
-    {
-        /*
-#if USE_LSPD
-        switch (MotorUpdateMode)
-        {
-
-            case (MotorMode.LSPD):
-
-                _lpd.CompleteMimicry();
-
-                break;
-
-        }
-#endif
-        */
-    }
 
 }

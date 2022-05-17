@@ -2,8 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
-using Kinematic;
+//using Kinematic;
 using Mujoco;
+
+using Unity.Mathematics;
 
 namespace Kinematic
 {
@@ -21,7 +23,7 @@ namespace Kinematic
         public Vector3 CenterOfMassVelocity {get => chain.Select(k => k.Mass * k.Velocity).Sum() / Mass;}
         public IEnumerable<Vector3> CentersOfMass {get => chain.Select(k => k.CenterOfMass);}
         public IEnumerable<Vector3> Velocities {get => chain.Select(k => k.Velocity);}
-        public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
+        //public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
         public Vector3 RootForward { get => chain[0].TransformMatrix.GetColumn(2);  }
 
         public BodyChain() { }
@@ -77,13 +79,28 @@ namespace Kinematic
     }
 
 
-  
 
 
-    #region Adapters for Rigidbody and ArticulationBody
-    // As we support both Rigidbodies and ArticulationBodies, the adapter pattern is used to unify their operation inside BodyChain
 
-    public interface IKinematic
+    #region Adapters for Rigidbody, MjBody and ArticulationBody
+    // We support both Rigidbodies and ArticulationBodies, the adapter pattern is used to unify their operation inside BodyChain
+
+
+    public interface IReducedState
+    {
+
+        //Here everything is in reduced Coordinates
+
+        public float3 JointAcceleration { get; }
+        public float3 JointVelocity { get; }
+        public float3 JointPosition { get; }
+
+    }
+
+
+
+
+    public interface IKinematic : IReducedState
     {
         public Vector3 Velocity { get; }
 
@@ -112,75 +129,108 @@ namespace Kinematic
 
     public class RigidbodyAdapter : IKinematic
     {
-        readonly private Rigidbody rigidbody;
+        readonly private Rigidbody _rb;
 
         public RigidbodyAdapter(Rigidbody rigidbody)
         {
-            this.rigidbody = rigidbody;
+            this._rb = rigidbody;
         }
 
-        public Vector3 Velocity => rigidbody.velocity;
+        public Vector3 Velocity => _rb.velocity;
 
-        public Vector3 LocalVelocity => rigidbody.transform.parent.InverseTransformDirection(Velocity);
+        public Vector3 LocalVelocity => _rb.transform.parent.InverseTransformDirection(Velocity);
 
-        public Vector3 AngularVelocity => rigidbody.angularVelocity;
-        public Vector3 LocalAngularVelocity => rigidbody.transform.parent.InverseTransformDirection(rigidbody.angularVelocity);
+        public Vector3 AngularVelocity => _rb.angularVelocity;
+        public Vector3 LocalAngularVelocity => _rb.transform.parent.InverseTransformDirection(_rb.angularVelocity);
 
-        public float Mass => rigidbody.mass;
+        public float Mass => _rb.mass;
 
-        public Vector3 CenterOfMass => rigidbody.transform.TransformPoint(rigidbody.centerOfMass);
+        public Vector3 CenterOfMass => _rb.transform.TransformPoint(_rb.centerOfMass);
 
-        public string Name => rigidbody.name;
+        public string Name => _rb.name;
 
-        public Matrix4x4 TransformMatrix => rigidbody.transform.localToWorldMatrix;
+        public Matrix4x4 TransformMatrix => _rb.transform.localToWorldMatrix;
 
+        
         public Vector3 GetPointVelocity(Vector3 worldPoint)
         {
-            return rigidbody.GetPointVelocity(worldPoint);
+            return _rb.GetPointVelocity(worldPoint);
         }
+        
 
         public Vector3 GetRelativePointVelocity(Vector3 localPoint)
         {
-            return rigidbody.GetRelativePointVelocity(localPoint);
+            return _rb.GetRelativePointVelocity(localPoint);
         }
 
-        public GameObject gameObject { get => rigidbody.gameObject; }
+        public GameObject gameObject { get => _rb.gameObject; }
+
+
+        public float3 JointPosition => Mathf.Deg2Rad * Utils.GetSwingTwist(_rb.transform.localRotation);
+        public float3 JointVelocity
+        {
+            get
+            {
+
+                Debug.LogWarning("the velocity of the rigidbody should not matter, why are you trying to read it, I am not sure what I am returning is in reduced coord.");
+                return _rb.angularVelocity;
+            }
+        }
+
+
+        public float3 JointAcceleration
+        {
+            get
+            {
+
+                Debug.LogWarning("the acceleration of the rigidbody should not matter, why are you trying to read it? I am returing null");
+                return Vector3.zero;
+            }
+        }
+
     }
 
     public class ArticulationBodyAdapter : IKinematic
     {
-        readonly private ArticulationBody articulationBody;
+        readonly private ArticulationBody _ab;
 
         public ArticulationBodyAdapter(ArticulationBody articulationBody)
         {
-            this.articulationBody = articulationBody;
+            this._ab = articulationBody;
         }
 
-        public Vector3 Velocity => articulationBody.velocity;
-        public Vector3 LocalVelocity => articulationBody.transform.parent.InverseTransformDirection(articulationBody.velocity);
+        public Vector3 Velocity => _ab.velocity;
+        public Vector3 LocalVelocity => _ab.transform.parent.InverseTransformDirection(_ab.velocity);
 
-        public Vector3 AngularVelocity => articulationBody.angularVelocity;
-        public Vector3 LocalAngularVelocity => articulationBody.transform.parent.InverseTransformDirection(articulationBody.angularVelocity);
+        public Vector3 AngularVelocity => _ab.angularVelocity;
+        public Vector3 LocalAngularVelocity => _ab.transform.parent.InverseTransformDirection(_ab.angularVelocity);
 
-        public float Mass => articulationBody.mass;
+        public float Mass => _ab.mass;
 
-        public Vector3 CenterOfMass => articulationBody.transform.TransformPoint(articulationBody.centerOfMass);
+        public Vector3 CenterOfMass => _ab.transform.TransformPoint(_ab.centerOfMass);
 
-        public string Name => articulationBody.name;
+        public string Name => _ab.name;
 
-        public Matrix4x4 TransformMatrix => articulationBody.transform.localToWorldMatrix;
+        public Matrix4x4 TransformMatrix => _ab.transform.localToWorldMatrix;
 
         public Vector3 GetPointVelocity(Vector3 worldPoint)
         {
-            return articulationBody.GetPointVelocity(worldPoint);
+            return _ab.GetPointVelocity(worldPoint);
         }
 
         public Vector3 GetRelativePointVelocity(Vector3 localPoint)
         {
-            return articulationBody.GetRelativePointVelocity(localPoint);
+            return _ab.GetRelativePointVelocity(localPoint);
         }
 
-        public GameObject gameObject { get => articulationBody.gameObject; }
+        public GameObject gameObject { get => _ab.gameObject; }
+
+        public float3 JointPosition => Utils.GetArticulationReducedSpaceInVector3(_ab.jointPosition);
+        public float3 JointVelocity => Utils.GetArticulationReducedSpaceInVector3(_ab.jointVelocity);
+
+        public float3 JointAcceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
+
+
     }
 
     public class MjBodyAdapter : IKinematic
@@ -191,7 +241,7 @@ namespace Kinematic
 
         readonly private float mass;
 
-        readonly private Transform inertialTransform;
+       // readonly private Transform inertialTransform;
 
         readonly private Vector3 inertiaLocalPos;
 
@@ -205,7 +255,7 @@ namespace Kinematic
             inertiaLocalPos = mjBody.GetLocalCenterOfMass();
             inertiaRelMatrix = mjBody.GetLocalCenterOfMassMatrix();
 
-            inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
+         //   inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
         }
 
         public Vector3 Velocity => mjBody.GlobalVelocity();
@@ -234,6 +284,42 @@ namespace Kinematic
         }
 
         public GameObject gameObject { get => mjBody.gameObject; }
+
+
+        public float3 JointPosition
+        {
+            get
+            {
+
+                Debug.LogError("the reduced position of the mjBody is NOT implemented");
+                return Vector3.zero;
+            }
+
+        }
+        public float3 JointVelocity
+        {
+            get
+            {
+
+                Debug.LogError("the reduced acceleration of the mjBody is NOT implemented");
+                return Vector3.zero;
+            }
+
+        }
+
+
+        public float3 JointAcceleration
+        {
+            get
+            {
+
+                Debug.LogError("the reduced acceleration of the mjBody is NOT implemented");
+                return Vector3.zero;
+            }
+        }
+
+
+
     }
     #endregion
 }

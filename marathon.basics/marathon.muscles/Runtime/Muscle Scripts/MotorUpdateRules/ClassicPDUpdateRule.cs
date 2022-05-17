@@ -4,6 +4,7 @@ using UnityEngine;
 
 using Unity.Mathematics;
 using Unity.MLAgents;
+using Kinematic;
 
 namespace MotorUpdate
 {
@@ -21,7 +22,7 @@ namespace MotorUpdate
 
 
 
-        float3 GetRelativeTorque(IArticulation joint, float3 targetRotation)
+        float3 GetRelativeTorque(IKinematic joint, float3 targetRotation)
         {
             //for AddRelativeTorque
             var m = joint.Mass;

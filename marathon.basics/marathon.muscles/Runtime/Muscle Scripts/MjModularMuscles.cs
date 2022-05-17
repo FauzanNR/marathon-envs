@@ -6,7 +6,7 @@ using System;
 
 using Unity.MLAgents;
 
-using MotorUpdate;
+using Kinematic;
 
 namespace Mujoco
 {
@@ -25,14 +25,16 @@ namespace Mujoco
         private IReadOnlyList<MjActuator> actuators;
         public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
 
-        public override IArticulation[] GetMotors() {
+        public override IKinematic[] GetMotors() {
 
-            List<IArticulation> result = new List<IArticulation>();
+            List<IKinematic> result = new List<IKinematic>();
             Debug.LogError("TODO: Get motors in MjModularMuscles is not implemented");
-            /* (    foreach(MjActuator in Actuators)
-                    result.Add(new )
+            actuators = Actuators;
+
+           // foreach (MjActuator a in Actuators)
+           //     result.Add(new (a));
         
-            */
+            
             Debug.LogError("we need to return a list of IArticulation from Actuators, and need to implement the right adapter from mujoco");
             return result.ToArray();
         }
