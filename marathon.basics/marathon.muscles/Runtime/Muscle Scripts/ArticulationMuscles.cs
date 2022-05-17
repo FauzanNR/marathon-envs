@@ -27,7 +27,8 @@ public class ArticulationMuscles : ModularMuscles
 
         _motors = GetMotors();
 
-      
+        updateRule.Initialize(this, Time.fixedDeltaTime);
+        Debug.LogWarning("TODO: check if the update time is the fixedDeltaTime or something else");
         if (updateRule != null)
             updateRule.Initialize(this);
         else
@@ -123,7 +124,7 @@ public class ArticulationMuscles : ModularMuscles
 
 
 
-        float3[] torques = updateRule.GetJointForces(joints, targetRotation);
+        float3[] torques = updateRule.GetJointForces( targetRotation);
         for (int i = 0; i < _motors.Length; i++)
         {
            // Debug.Log("Articulation: " + _motors[i].name + " has a torque calculated for it of: " + torques[i]);

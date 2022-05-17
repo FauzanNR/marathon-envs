@@ -12,10 +12,7 @@ namespace MotorUpdate
     {
               
 
-       
-        protected float dT = 1 / 60;
-
-        IArticulation[] _motors;
+    
       
         public float DampingRatio = 1.0f;
         public float NaturalFrequency = 40f;
@@ -23,17 +20,8 @@ namespace MotorUpdate
       
 
 
-        public override void Initialize(ModularMuscles muscles = null, float dT = 1 / 60)
-        {
 
-
-            this.dT = GetActionTimeDelta(muscles.gameObject);
-
-            _motors = muscles.GetMotors();
-
-        }
-
-        public override float3 GetRelativeTorque(IArticulation joint, float3 targetRotation)
+        float3 GetRelativeTorque(IArticulation joint, float3 targetRotation)
         {
             //for AddRelativeTorque
             var m = joint.Mass;
@@ -54,8 +42,8 @@ namespace MotorUpdate
         }
 
 
-        public //override
-               float3[] GetJointForces(float3[] targetRotation)
+        public override
+               float3[] GetJointForces( float3[] targetRotation)
         {
             float3[] result = new float3[_motors.Length];
 

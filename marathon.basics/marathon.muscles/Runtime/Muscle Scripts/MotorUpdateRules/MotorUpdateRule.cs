@@ -11,61 +11,42 @@ namespace MotorUpdate
 {
     public abstract class MotorUpdateRule : ScriptableObject
     {
+
+        protected float dT = 1 / 60;
+
+        protected IArticulation[] _motors;
        
-        [SerializeField]
-        protected float[] gains;
-
-        
-
-        public virtual float GetTorque(float[] curState, float[] targetState)
-        {
-            float res = 0;
-            for (int i = 0; i < gains.Length; i++)
-            {
-                res -= gains[i] * (curState[i] - targetState[i]);
-            }
-            return res;
-        }
-       
-        public virtual float GetTorque(IState curState, IState targetState)
-        {
-            return GetTorque(curState.stateVector, targetState.stateVector);
-        }
-
-
-        /*
-         
-            var curState = new float[] { (float)e.data->qpos[actuator.Joint.QposAddress],
-                                             (float)e.data->qvel[actuator.Joint.DofAddress],
-                                             (float)e.data->qacc[actuator.Joint.DofAddress]};
-                var targetState = trackPosition ? new float[] { (float)e.data->qpos[reference.QposAddress]+action,
-                                                                    trackVelocity? (float)e.data->qvel[reference.DofAddress] : 0f} : new float[] { action, 0f };
-                float torque = updateRule.GetTorque(curState, targetState);
-         
-         */
 
 
         //TODO: can these 3 methods replace the previous ones?
-        public virtual void Initialize(ModularMuscles muscles = null, float dT = 1 / 60) { }
+        public virtual void Initialize(ModularMuscles muscles = null, float dT = 1 / 60) {
+
+
+            this.dT = GetActionTimeDelta(muscles.gameObject);
+
+            _motors = muscles.GetMotors();
+
+
+        }
 
         //TODO: we might need to add a "do the calculations" call, for when we have ongoing jobs
-
+        /*
         public virtual float3 GetRelativeTorque(IArticulation joint, float3 targetRotation)
         {
             Debug.LogWarning("you are calling a GetRelativeTorque function that allways return 0, it needs to be reimplmeented");
             return float3.zero;
 
             
-        }
+        }*/
 
-        public virtual float3[] GetJointForces(IArticulation[] joints, float3[] targetRotation)
-        {
+        public abstract float3[] GetJointForces( float3[] targetRotation);
+/*        {
             
             Debug.LogWarning("you are calling a GetJointForces function that allways return 0, it needs to be reimplmeented");
             return new float3[0];
 
 
-        }
+        }*/
 
         #region utility functions
         protected float GetActionTimeDelta(GameObject muscles)

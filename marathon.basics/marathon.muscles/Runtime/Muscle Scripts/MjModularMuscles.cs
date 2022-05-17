@@ -61,9 +61,11 @@ namespace Mujoco
                                              (float)e.data->qacc[actuator.Joint.DofAddress]};
                 var targetState = trackPosition ? new float[] { (float)e.data->qpos[reference.QposAddress]+action,
                                                                     trackVelocity? (float)e.data->qvel[reference.DofAddress] : 0f} : new float[] { action, 0f };
-                float torque = updateRule.GetTorque(curState, targetState);
-                e.data->ctrl[actuator.MujocoId] = torque;
-                actuator.Control = torque;
+                Debug.LogError("the calls in MjModularMuscles need to remove the curState in the update call, and add it in the initialization phase");
+                // float torque = updateRule.GetTorque(curState, targetState);
+              
+               // e.data->ctrl[actuator.MujocoId] = torque;
+               // actuator.Control = torque;
             }
 
             foreach ((var actuator, var reference) in passiveActRefPairs)
@@ -74,9 +76,10 @@ namespace Mujoco
                                              (float)e.data->qacc[actuator.Joint.DofAddress]};
                 var targetState = new float[] { (float)e.data->qpos[reference.QposAddress],
                                                  trackVelocity? (float)e.data->qvel[reference.DofAddress] : 0f};
-                float torque = updateRule.GetTorque(curState, targetState);
-                e.data->ctrl[actuator.MujocoId] = torque;
-                actuator.Control = torque;
+                Debug.LogError("the calls in MjModularMuscles need to remove  the curState in the update call, and add it in the initialization phase");
+                //float torque = updateRule.GetTorque(curState, targetState);
+                //e.data->ctrl[actuator.MujocoId] = torque;
+                //actuator.Control = torque;
             }
         }
 

@@ -60,8 +60,12 @@ public class ManualMuscles : Muscles
     private unsafe void UpdateTorques(object Sender, EventArgs e)
     {
         Sync();
-        //MujocoLib.mj_kinematics(MjScene.Instance.Model, MjScene.Instance.Data);
-        float[] curActions = actuatorGameObjects.Select(a => updateRule.GetTorque(a.state, new StaticState(Mathf.Deg2Rad * a.target, 0f, 0f))).ToArray();
+
+        // float[] curActions = actuatorGameObjects.Select(a => updateRule.GetTorque(a.state, new StaticState(Mathf.Deg2Rad * a.target, 0f, 0f))).ToArray();
+        Debug.LogError("TODO: need to transform the target positions in actuatorGameObjects to float3 objects describing the target position of the articulation");
+        //something like: float[] curActions =  updateRule.GetJointForces( updateRule.GetJointForces(actuatorGameObjects.Select(a => (Mathf.Deg2Rad * a.target, 0f, 0f))).ToArray() );
+        float[] curActions = new float[3];
+
         ApplyActions(curActions, Time.fixedDeltaTime);
         Sync();
     }

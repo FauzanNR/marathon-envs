@@ -39,7 +39,7 @@ public abstract class ModularMuscles : Muscles
 
 
 
-        float3[] torques = updateRule.GetJointForces(_motors,targetRotation);
+        float3[] torques = updateRule.GetJointForces(targetRotation);
         for (int i = 0; i < _motors.Length; i++)
         {
 
