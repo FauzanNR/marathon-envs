@@ -241,7 +241,7 @@ namespace MotorUpdate
         public float Mass { get; }
 
         public GameObject gameObject { get; }
-       // public void AddRelativeTorque(float3 torque);
+        public abstract void AddRelativeTorque(float3 torque);
     }
 
 
@@ -271,7 +271,12 @@ namespace MotorUpdate
         public float Mass => _ab.mass;
 
 
+        public  void AddRelativeTorque(float3 torque) {
 
+            _ab.AddRelativeTorque(torque);
+
+
+        }
     }
 
     public class RigidbodyAdapter : IReducedState

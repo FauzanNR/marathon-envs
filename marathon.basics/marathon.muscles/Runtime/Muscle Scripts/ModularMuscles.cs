@@ -13,9 +13,9 @@ public abstract class ModularMuscles : Muscles
     [SerializeField]
     protected MotorUpdateRule updateRule;
 
-    protected List<IArticulation> _motors;
+    protected IArticulation[] _motors;
 
-    public abstract List<IArticulation> GetMotors();
+    public abstract IArticulation[] GetMotors();
 
 
     void Awake()
@@ -34,13 +34,13 @@ public abstract class ModularMuscles : Muscles
     }
 
 
-    public void ApplyRuleAsRelativeTorques(float3[] targetRotation)
+    public void ApplyRuleAsRelativeTorques( float3[] targetRotation)
     {
 
 
 
-        float3[] torques = updateRule.GetJointForces(targetRotation);
-        for (int i = 0; i < _motors.Count; i++)
+        float3[] torques = updateRule.GetJointForces(_motors,targetRotation);
+        for (int i = 0; i < _motors.Length; i++)
         {
 
             _motors[i].AddRelativeTorque(torques[i]);

@@ -344,7 +344,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
     }
 
-    public override List<IArticulation> GetMotors()
+    public override IArticulation[] GetMotors()
     {
         List<IArticulation> result = new List<IArticulation>();
         List<ArticulationBody> abl = GetArticulationMotors();
@@ -355,7 +355,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
                 result.Add(new ArticulationBodyAdapter(a));
             }
 
-        return result;
+        return result.ToArray();
 
 
 

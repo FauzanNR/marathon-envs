@@ -25,15 +25,16 @@ namespace Mujoco
         private IReadOnlyList<MjActuator> actuators;
         public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
 
-        public override List<IArticulation> GetMotors() {
+        public override IArticulation[] GetMotors() {
 
             List<IArticulation> result = new List<IArticulation>();
-            /*(    foreach(MjActuator in Actuators)
+            Debug.LogError("TODO: Get motors in MjModularMuscles is not implemented");
+            /* (    foreach(MjActuator in Actuators)
                     result.Add(new )
         
             */
             Debug.LogError("we need to return a list of IArticulation from Actuators, and need to implement the right adapter from mujoco");
-            return result;
+            return result.ToArray();
         }
 
         [SerializeField]

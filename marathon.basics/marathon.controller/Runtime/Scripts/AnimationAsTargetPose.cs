@@ -16,7 +16,7 @@ public class AnimationAsTargetPose : MonoBehaviour
     MapAnim2Ragdoll _mapAnim2Ragdoll;
     float3[] targetRotations;
 
-    List<MotorUpdate.IArticulation> lrb;
+    MotorUpdate.IArticulation[] lrb;
 
     List<IReducedState> targets;
 

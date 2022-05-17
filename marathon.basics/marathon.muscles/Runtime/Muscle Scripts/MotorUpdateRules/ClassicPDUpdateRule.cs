@@ -15,7 +15,7 @@ namespace MotorUpdate
        
         protected float dT = 1 / 60;
 
-        List<IArticulation> _motors;
+        IArticulation[] _motors;
       
         public float DampingRatio = 1.0f;
         public float NaturalFrequency = 40f;
@@ -57,9 +57,9 @@ namespace MotorUpdate
         public //override
                float3[] GetJointForces(float3[] targetRotation)
         {
-            float3[] result = new float3[_motors.Count];
+            float3[] result = new float3[_motors.Length];
 
-            for (int i = 0; i < _motors.Count; i++)
+            for (int i = 0; i < _motors.Length; i++)
                 result[i] = GetRelativeTorque(_motors[i], targetRotation[i]);
 
             return result;

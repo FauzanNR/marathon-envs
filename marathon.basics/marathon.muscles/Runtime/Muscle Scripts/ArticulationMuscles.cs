@@ -11,7 +11,7 @@ public class ArticulationMuscles : ModularMuscles
 {
 
  
-    List<ArticulationBody> _motors;
+   // List<ArticulationBody> _motors;
 
     
     public override int ActionSpaceSize
@@ -25,7 +25,7 @@ public class ArticulationMuscles : ModularMuscles
     {
         //Setup();
 
-        _motors = GetArticulationMotors();
+        _motors = GetMotors();
 
       
         if (updateRule != null)
@@ -88,22 +88,25 @@ public class ArticulationMuscles : ModularMuscles
 
         int j = 0;//keeps track of the number of motors
 
-        float3[] targetRots = new float3[_motors.Count];
+        float3[] targetRots = new float3[_motors.Length];
 
         foreach (var m in _motors)
         {
            
-            if (m.isRoot)
-                continue;
+           // if (m.isRoot)
+           //     continue;
 
             Vector3 targetRot = Vector3.zero;
-            if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock != ArticulationDofLock.LockedMotion)
+            //if (m.jointType != ArticulationJointType.SphericalJoint)
+            //    continue;
+            //if (m.twistLock != ArticulationDofLock.LockedMotion)
+            if (! m.isXblocked)
                 targetRot.x = actions[i++];
-            if (m.swingYLock != ArticulationDofLock.LockedMotion)
+            //if (m.swingYLock != ArticulationDofLock.LockedMotion)
+            if (! m.isYblocked) 
                 targetRot.y = actions[i++];
-            if (m.swingZLock != ArticulationDofLock.LockedMotion)
+            //if (m.swingZLock != ArticulationDofLock.LockedMotion)
+            if (! m.isZblocked)
                 targetRot.z = actions[i++];
 
             j++;
@@ -111,17 +114,17 @@ public class ArticulationMuscles : ModularMuscles
            
         }
 
-       ApplyRuleAsRelativeTorques(targetRots);
+       ApplyRuleAsRelativeTorques(_motors,targetRots);
 
     }
 
-    void ApplyRuleAsRelativeTorques(float3[] targetRotation)
+    void  ApplyRuleAsRelativeTorques(IArticulation[] joints, float3[] targetRotation)
     {
 
 
 
-        float3[] torques = updateRule.GetJointForces(targetRotation);
-        for (int i = 0; i < _motors.Count; i++)
+        float3[] torques = updateRule.GetJointForces(joints, targetRotation);
+        for (int i = 0; i < _motors.Length; i++)
         {
            // Debug.Log("Articulation: " + _motors[i].name + " has a torque calculated for it of: " + torques[i]);
             _motors[i].AddRelativeTorque(torques[i]);
@@ -144,7 +147,7 @@ public class ArticulationMuscles : ModularMuscles
 
     }
 
-    public override List<IArticulation> GetMotors()
+    public override IArticulation[] GetMotors()
     {
         List<IArticulation> result = new List<IArticulation>();
         List<ArticulationBody> abl = GetArticulationMotors();
@@ -155,7 +158,7 @@ public class ArticulationMuscles : ModularMuscles
             result.Add(new ArticulationBodyAdapter(a));
         }
 
-        return result;
+        return result.ToArray();
 
     }
   
