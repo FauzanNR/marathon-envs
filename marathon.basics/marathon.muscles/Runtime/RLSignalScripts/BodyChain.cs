@@ -62,9 +62,23 @@ namespace Kinematic
 
         }
 
-    
-    
+        public static IReadOnlyList<IKinematic> GetChainFromColliders(IEnumerable<Collider> colliders)
+        {
+
+            return colliders.Select(col => col.attachedRigidbody != null ?
+                                                        (IKinematic)new RigidbodyAdapter(col.attachedRigidbody) :
+                                                        (col.attachedArticulationBody != null ?
+                                                            new ArticulationBodyAdapter(col.attachedArticulationBody) : new MjBodyAdapter(col.transform.parent.GetComponent<MjBody>()))).ToList().AsReadOnly();
+
+
+
+        }
+
     }
+
+
+  
+
 
     #region Adapters for Rigidbody and ArticulationBody
     // As we support both Rigidbodies and ArticulationBodies, the adapter pattern is used to unify their operation inside BodyChain
