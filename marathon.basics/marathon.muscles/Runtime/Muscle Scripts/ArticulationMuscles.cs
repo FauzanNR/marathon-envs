@@ -168,23 +168,6 @@ public class ArticulationMuscles : ModularMuscles
     }
 
 
-    /*
-    public  IKinematic[] GetIKinematicMotors()
-    {
-
-        List<IKinematic> result = new List<IKinematic>();
-        List<ArticulationBody> abl = GetArticulationMotors();
-
-
-        foreach (ArticulationBody a in abl)
-        {
-            result.Add(new Kinematic.ArticulationBodyAdapter(a));
-        }
-
-        return result.ToArray();
-
-    }*/
-
 
 
 
