@@ -14,10 +14,14 @@ using Kinematic;
 public class ArticulationMuscles : ModularMuscles
 {
 
- 
-   // List<ArticulationBody> _motors;
 
-    
+    [SerializeField]
+    ArticulationBody root;
+
+    //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
+    float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+
+
     public override int ActionSpaceSize
     {
         get => GetActionsFromState().Length;
@@ -89,39 +93,19 @@ public class ArticulationMuscles : ModularMuscles
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
 
-        int i = 0;//keeps track of hte number of actions
-
-        int j = 0;//keeps track of the number of motors
-
-        float3[] targetRots = new float3[_motors.Length];
-
-
-        Debug.LogError("TODO: need t oapply the torques appropriately");
         /*
-        foreach (var m in _motors)
-        {
-           
-       
-            Vector3 targetRot = Vector3.zero;
-         
-            if (! m.isXblocked)
-                targetRot.x = actions[i++];
-  
-            if (! m.isYblocked) 
-                targetRot.y = actions[i++];
-        
-            if (! m.isZblocked)
-                targetRot.z = actions[i++];
+        List<int> startIndices = new List<int>();
 
-            j++;
+        root.GetDofStartIndices(startIndices);
+        */
 
-           
-        }
-         */
-        ApplyRuleAsRelativeTorques(_motors,targetRots);
+
+        root.SetJointForces(nullactions4root.Concat(actions).ToList());
        
+     
     }
 
+    /*
     void  ApplyRuleAsRelativeTorques(IKinematic[] joints, float3[] targetRotation)
     {
 
@@ -136,7 +120,7 @@ public class ArticulationMuscles : ModularMuscles
         }
 
     }
-
+    */
 
     List<ArticulationBody> GetArticulationMotors()
     {
