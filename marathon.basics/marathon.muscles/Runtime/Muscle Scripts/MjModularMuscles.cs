@@ -29,13 +29,13 @@ namespace Mujoco
 
             List<IKinematic> result = new List<IKinematic>();
             Debug.LogError("TODO: Get motors in MjModularMuscles is not implemented");
-            actuators = Actuators;
+            
 
-           // foreach (MjActuator a in Actuators)
-           //     result.Add(new (a));
+            //foreach (MjActuator a in Actuators)
+            //    result.Add(new MjBodyAdapter(a));
         
             
-            Debug.LogError("we need to return a list of IArticulation from Actuators, and need to implement the right adapter from mujoco");
+            Debug.LogError("TODO: we need to return a list of IArticulation from Actuators, and need to implement the right adapter from mujoco");
             return result.ToArray();
         }
 

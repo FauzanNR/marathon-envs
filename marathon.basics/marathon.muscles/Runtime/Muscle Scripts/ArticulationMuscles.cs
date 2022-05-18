@@ -18,6 +18,25 @@ public class ArticulationMuscles : ModularMuscles
     [SerializeField]
     ArticulationBody root;
 
+
+    protected IKinematic[] _motors;
+
+    public override void OnAgentInitialize()
+    {
+
+        _motors = GetMotors();
+
+
+        if (updateRule != null)
+            updateRule.Initialize(this);
+        else
+            Debug.LogError("there is no motor update rule");
+
+
+    }
+
+
+
     //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
     float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
@@ -93,12 +112,7 @@ public class ArticulationMuscles : ModularMuscles
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
 
-        /*
-        List<int> startIndices = new List<int>();
-
-        root.GetDofStartIndices(startIndices);
-        */
-
+       
 
         root.SetJointForces(nullactions4root.Concat(actions).ToList());
        

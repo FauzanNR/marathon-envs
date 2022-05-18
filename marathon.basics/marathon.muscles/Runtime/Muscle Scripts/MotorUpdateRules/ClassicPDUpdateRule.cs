@@ -43,8 +43,7 @@ namespace MotorUpdate
         }
 
 
-        public override
-               float3[] GetJointForces( float3[] targetRotation)
+        public override float3[] GetJointForces( float3[] targetRotation)
         {
             float3[] result = new float3[_motors.Length];
 

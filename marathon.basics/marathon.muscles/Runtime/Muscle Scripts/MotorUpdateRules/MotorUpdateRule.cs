@@ -15,12 +15,12 @@ namespace MotorUpdate
 
         protected float dT = 1 / 60;
 
-        //protected IArticulation[] _motors;
+
         protected IKinematic[] _motors;
 
 
 
-        //TODO: can these 3 methods replace the previous ones?
+        
         public virtual void Initialize(ModularMuscles muscles = null, float dT = 1 / 60) {
 
 
@@ -31,24 +31,11 @@ namespace MotorUpdate
 
         }
 
-        //TODO: we might need to add a "do the calculations" call, for when we have ongoing jobs
-        /*
-        public virtual float3 GetRelativeTorque(IArticulation joint, float3 targetRotation)
-        {
-            Debug.LogWarning("you are calling a GetRelativeTorque function that allways return 0, it needs to be reimplmeented");
-            return float3.zero;
-
-            
-        }*/
-
+       
         public abstract float3[] GetJointForces( float3[] targetRotation);
-/*        {
-            
-            Debug.LogWarning("you are calling a GetJointForces function that allways return 0, it needs to be reimplmeented");
-            return new float3[0];
 
 
-        }*/
+
 
         #region utility functions
         protected float GetActionTimeDelta(GameObject muscles)
