@@ -404,7 +404,7 @@ MonoBehaviour:
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
-  ragDollMuscles: {fileID: 0}
+  ragDollMuscles: {fileID: 5247976931186698078}
 --- !u!114 &9088123711039994768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -477,20 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateRule: {fileID: 11400000, guid: 9151e0a05678974459dbcab852c2756d, type: 2}
-  MotorUpdateMode: 1
-  MusclePowers: []
-  Stiffness: 50
-  Damping: 100
-  ForceLimit: 3.4028235e+38
-  DampingRatio: 1
-  NaturalFrequency: 40
-  ForceScale: 0.3
-  KP_Stiffness: 50
-  ForceScaleSPD: 0.3
-  skipCollisionSetup: 0
-  updateDebugValues: 0
-  jointVelocityInReducedSpace: []
-  _referenceTransforms: []
+  root: {fileID: 0}
 --- !u!1 &458535029660540518
 GameObject:
   m_ObjectHideFlags: 0
