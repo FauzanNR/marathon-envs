@@ -36,6 +36,44 @@ struct ReferenceFrame
         public event EventHandler<AgentEventArgs> onActionHandler;
         public event EventHandler<AgentEventArgs> onBeginHandler;
     }
+
+
+    public Vector3 WorldToCharacter(Vector3 position)
+    {
+        return inverseSpace.MultiplyPoint3x4(position);
+    }
+
+    public Vector3 CharacterToWorld(Vector3 position)
+    {
+        return space.MultiplyPoint3x4(position);
+    }
+
+    public Vector3 WorldDirectionToCharacter(Vector3 vector)
+    {
+        return inverseSpace.MultiplyVector(vector);
+    }
+
+    public Vector3 CharacterDirectionToWorld(Vector3 vector)
+    {
+        return space.MultiplyVector(vector);
+    }
+
+    public override string ToString()
+    {
+        return $"Orientation: {space.rotation.eulerAngles}\nPosition: {(Vector3)space.GetColumn(3)}";
+    }
+
+    public void Draw()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(space.GetColumn(3), space.GetColumn(0) * 0.5f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawRay(space.GetColumn(3), space.GetColumn(1) * 0.5f);
+        Gizmos.color = Color.blue;
+        Gizmos.DrawRay(space.GetColumn(3), space.GetColumn(2) * 0.5f);
+    }
+
+
 }
 
 
