@@ -177,7 +177,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
             if (m.isRoot)
                 continue;
-            int i = 0;
+           
             if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
             if (m.twistLock != ArticulationDofLock.LockedMotion)
@@ -325,7 +325,8 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
         }
 
-        ApplyRuleAsRelativeTorques(targetRots);
+        Debug.LogError("TODO: integrate with the update rule");
+        //ApplyRuleAsRelativeTorques(targetRots);
 
     }
 
@@ -345,22 +346,6 @@ public class ArticulationMusclesSimplified : ModularMuscles
 
     }
 
-    public override IKinematic[] GetMotors()
-    {
-        List<IKinematic> result = new List<IKinematic>();
-        List<ArticulationBody> abl = GetArticulationMotors();
-
-      
-            foreach (ArticulationBody a in abl)
-            {
-                result.Add(new ArticulationBodyAdapter(a));
-            }
-
-        return result.ToArray();
-
-
-
-    }
 
 
     protected float GetActionTimeDelta(GameObject agentObject)

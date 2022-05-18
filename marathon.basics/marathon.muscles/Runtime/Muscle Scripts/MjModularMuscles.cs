@@ -4,9 +4,9 @@ using UnityEngine;
 using System.Linq;
 using System;
 
-using Unity.MLAgents;
 
-using Kinematic;
+
+using MotorUpdate;
 
 namespace Mujoco
 {
@@ -25,20 +25,7 @@ namespace Mujoco
         private IReadOnlyList<MjActuator> actuators;
         public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
 
-        public override IKinematic[] GetMotors() {
-
-            List<IKinematic> result = new List<IKinematic>();
-            Debug.LogError("TODO: Get motors in MjModularMuscles is not implemented");
-            
-
-            //foreach (MjActuator a in Actuators)
-            //    result.Add(new MjBodyAdapter(a));
-        
-            
-            Debug.LogError("TODO: we need to return a list of IArticulation from Actuators, and need to implement the right adapter from mujoco");
-            return result.ToArray();
-        }
-
+     
         [SerializeField]
         Transform kinematicRef;
 
@@ -55,20 +42,36 @@ namespace Mujoco
 
         unsafe private void UpdateTorque(object sender, MjStepArgs e)
         {
+            List<IState> ICurrentState = new List<IState>();
+            List<IState> ITargetState = new List<IState>();
+
+
+
             foreach ((var action, (var actuator, var reference)) in nextActions.Zip(activeActRefPairs, Tuple.Create))
             {
-
+                /*
                 var curState = new float[] { (float)e.data->qpos[actuator.Joint.QposAddress],
                                              (float)e.data->qvel[actuator.Joint.DofAddress],
                                              (float)e.data->qacc[actuator.Joint.DofAddress]};
+                */
+
+
+                ICurrentState.Add(new StaticState((float)e.data->qpos[actuator.Joint.QposAddress],
+                                             (float)e.data->qvel[actuator.Joint.DofAddress],
+                                             (float)e.data->qacc[actuator.Joint.DofAddress]));
+
                 var targetState = trackPosition ? new float[] { (float)e.data->qpos[reference.QposAddress]+action,
                                                                     trackVelocity? (float)e.data->qvel[reference.DofAddress] : 0f} : new float[] { action, 0f };
-                Debug.LogError("the calls in MjModularMuscles need to remove the curState in the update call, and add it in the initialization phase");
+
+                ITargetState.Add(new StaticState(targetState[0], targetState[1], targetState[2]));
+
                 // float torque = updateRule.GetTorque(curState, targetState);
               
                // e.data->ctrl[actuator.MujocoId] = torque;
                // actuator.Control = torque;
             }
+            float[] torques= updateRule.GetJointForces(ICurrentState.ToArray(), ITargetState.ToArray());
+            Debug.LogError("TODO: finish updating the actuator with these torque values ");
 
             foreach ((var actuator, var reference) in passiveActRefPairs)
             {

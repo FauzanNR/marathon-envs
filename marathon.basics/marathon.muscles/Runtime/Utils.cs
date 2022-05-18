@@ -4,6 +4,9 @@ using UnityEngine;
 using System;
 using System.Linq;
 
+using Kinematic;
+using Unity.MLAgents;
+
 public static class Utils 
 {
 
@@ -201,5 +204,49 @@ public static class Utils
     {
         return query.Split(':').Last();
     }
+
+
+
+    static public List<ArticulationBody> GetArticulationMotors(GameObject go)
+    {
+
+
+        return go.GetComponentsInChildren<ArticulationBody>()
+                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                .Where(x => !x.isRoot)
+                .Distinct()
+                .ToList();
+
+
+    }
+
+    static public IKinematic[] GetMotors(GameObject go)
+    {
+        List<IKinematic> result = new List<IKinematic>();
+
+        List<ArticulationBody> abl = GetArticulationMotors(go);
+
+
+        foreach (ArticulationBody a in abl)
+        {
+            result.Add(new ArticulationBodyAdapter(a));
+        }
+
+        return result.ToArray();
+
+    }
+
+
+    public static float GetActionTimeDelta(DecisionRequester _decisionRequester)
+    {
+      
+        if (_decisionRequester == null)
+        {
+            return Time.fixedDeltaTime;
+        }
+
+        return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
+    }
+
 
 }

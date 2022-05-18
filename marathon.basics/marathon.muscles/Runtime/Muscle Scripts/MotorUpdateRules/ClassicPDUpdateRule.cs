@@ -42,17 +42,12 @@ namespace MotorUpdate
 
         }
 
-
-        public override float3[] GetJointForces( float3[] targetRotation)
-        {
-            float3[] result = new float3[_motors.Length];
-
-            for (int i = 0; i < _motors.Length; i++)
-                result[i] = GetRelativeTorque(_motors[i], targetRotation[i]);
-
-            return result;
-
+        public override float[] GetJointForces(IState[] currentState, IState[] targetState) {
+            Debug.LogError("Need to implmeent this");
+            return new float[1] { 0.0f };
+        
         }
+       
 
 
 

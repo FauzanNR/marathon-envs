@@ -53,7 +53,7 @@ public class AnimationAsTargetPose : MonoBehaviour
         _mapAnim2Ragdoll = transform.parent.GetComponentInChildren<MapAnim2Ragdoll>();
 
         _ragDollMuscles = GetComponent<ModularMuscles>();
-        lrb = _ragDollMuscles.GetMotors();
+        lrb = Utils.GetMotors(gameObject);
 
         targets = getTargets();
         targetRotations = new float3[targets.Count];
@@ -77,7 +77,37 @@ public class AnimationAsTargetPose : MonoBehaviour
             im++;
         }
 
-        _ragDollMuscles.ApplyRuleAsRelativeTorques(targetRotations);
+       
+
+        Debug.LogError("TODO: need to apply the rule as a forces");
+
+
+        //_ragDollMuscles.ApplyRuleAsRelativeTorques(targetRotations);
+        /*
+       public void ApplyRuleAsRelativeTorques(float3[] targetRotation)
+       {
+
+
+
+           float3[] torques = updateRule.GetJointForces(targetRotation);
+           Debug.LogError("NEED TO APPLY THIS AS JOINT FORCES");
+
+
+       }
+
+
+          public override float3[] GetJointForces(float3[] targetRotation)
+     {
+         float3[] result = new float3[_motors.Length];
+
+         for (int i = 0; i < _motors.Length; i++)
+             result[i] = GetRelativeTorque(_motors[i], targetRotation[i]);
+
+         return result;
+
+     }*/
+
+
     }
 
 }

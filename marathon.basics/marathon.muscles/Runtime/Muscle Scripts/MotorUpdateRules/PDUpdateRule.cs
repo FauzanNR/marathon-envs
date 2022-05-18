@@ -31,25 +31,22 @@ namespace MotorUpdate
         }
 
 
-        public override  float3[] GetJointForces(float3[] targetRotation)
-        {
-            float3[] result = new float3[_motors.Length];
+        public override float[] GetJointForces(IState[] currentState, IState[] targetState) {
 
-            for (int i = 0; i < _motors.Length; i++)
+            float[] res = new float[currentState.Length];
+            for (int i = 0; i < currentState.Length; i++)
             {
-
-                Debug.LogError("TODO: convert the 3D target rotations to Istates (which are unidimensionals");
-               // result[i] = GetTorque(_motors[i], targetRotation[i]);
-
-              //  IState()
+                res[i] = GetTorque(currentState[i].stateVector , targetState[i].stateVector);
             }
+            return res;
 
-
-            return result;
 
         }
 
-     
+
+
+
+
 
     }
 }

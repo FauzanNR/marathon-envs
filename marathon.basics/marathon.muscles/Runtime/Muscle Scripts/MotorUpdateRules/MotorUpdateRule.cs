@@ -5,7 +5,7 @@ using System.Linq;
 using Unity.Mathematics;
 using Mujoco;
 
-using Unity.MLAgents;
+
 using Kinematic;
 
 namespace MotorUpdate
@@ -16,39 +16,24 @@ namespace MotorUpdate
         protected float dT = 1 / 60;
 
 
-        protected IKinematic[] _motors;
+     
 
 
 
         
-        public virtual void Initialize(ModularMuscles muscles = null, float dT = 1 / 60) {
+        public virtual void Initialize(Muscles muscles = null, float dT = 1 / 60) {
 
 
-            this.dT = GetActionTimeDelta(muscles.gameObject);
-
-            _motors = muscles.GetMotors();
 
 
         }
 
-       
-        public abstract float3[] GetJointForces( float3[] targetRotation);
+    
 
 
+        public abstract float[] GetJointForces(IState[] currentState, IState[] targetState);
 
 
-        #region utility functions
-        protected float GetActionTimeDelta(GameObject muscles)
-        {
-            DecisionRequester _decisionRequester = muscles.GetComponent<DecisionRequester>();
-            if (_decisionRequester == null) {
-                return Time.fixedDeltaTime;
-            }
-
-            return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-        }
-
-        #endregion
 
 
 

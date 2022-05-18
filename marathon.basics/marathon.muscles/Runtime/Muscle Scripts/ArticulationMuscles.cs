@@ -19,16 +19,25 @@ public class ArticulationMuscles : ModularMuscles
     ArticulationBody root;
 
 
-    protected IKinematic[] _motors;
+   // protected IKinematic[] _motors;
+
+
+
+    //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
+    float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
+
 
     public override void OnAgentInitialize()
     {
 
-        _motors = GetMotors();
+     //   _motors = Utils.GetMotors(gameObject);
 
 
         if (updateRule != null)
-            updateRule.Initialize(this);
+        {
+                updateRule.Initialize(this, Utils.GetActionTimeDelta(gameObject.GetComponent<DecisionRequester>() ) );
+        }
+           
         else
             Debug.LogError("there is no motor update rule");
 
@@ -36,9 +45,6 @@ public class ArticulationMuscles : ModularMuscles
     }
 
 
-
-    //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
-    float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
 
     public override int ActionSpaceSize
@@ -47,30 +53,13 @@ public class ArticulationMuscles : ModularMuscles
     }
 
 
-    // Use this for initialization
-    void Awake()
-    {
-        //Setup();
-
-        _motors = GetMotors();
-
-        //updateRule.Initialize(this, Time.fixedDeltaTime);
-        Debug.LogWarning("TODO: check if the update time is the fixedDeltaTime or something else");
-        if (updateRule != null)
-            updateRule.Initialize(this, Time.fixedDeltaTime);
-        else
-            Debug.LogError("there is no motor update rule");
-
-     
-    }
-
 
  
     public override float[] GetActionsFromState()
     {
         
         var vectorActions = new List<float>();
-        foreach (var m in GetArticulationMotors())
+        foreach (var m in Utils.GetArticulationMotors(gameObject))
         {
             if (m.isRoot)
                 continue;
@@ -119,51 +108,7 @@ public class ArticulationMuscles : ModularMuscles
      
     }
 
-    /*
-    void  ApplyRuleAsRelativeTorques(IKinematic[] joints, float3[] targetRotation)
-    {
-
-
-
-        float3[] torques = updateRule.GetJointForces( targetRotation);
-        for (int i = 0; i < _motors.Length; i++)
-        {
-            Debug.LogError("TODO: Articulation: " + _motors[i].Name + " has a torque calculated for it of: " + torques[i] + "now we need to apply it");
-            //_motors[i].AddRelativeTorque(torques[i]);
-
-        }
-
-    }
-    */
-
-    List<ArticulationBody> GetArticulationMotors()
-    {
-
-
-        return GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                .Where(x => !x.isRoot)
-                .Distinct()
-                .ToList();
-
-
-    }
-
-    public override IKinematic[] GetMotors()
-    {
-          List<IKinematic> result = new List<IKinematic>();
-       
-        List<ArticulationBody> abl = GetArticulationMotors();
-
-
-        foreach (ArticulationBody a in abl)
-        {
-            result.Add(new ArticulationBodyAdapter(a));
-        }
-
-        return result.ToArray();
-
-    }
+   
 
 
 
