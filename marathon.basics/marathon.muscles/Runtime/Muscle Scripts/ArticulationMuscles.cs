@@ -35,10 +35,10 @@ public class ArticulationMuscles : ModularMuscles
 
         _motors = GetMotors();
 
-        updateRule.Initialize(this, Time.fixedDeltaTime);
+        //updateRule.Initialize(this, Time.fixedDeltaTime);
         Debug.LogWarning("TODO: check if the update time is the fixedDeltaTime or something else");
         if (updateRule != null)
-            updateRule.Initialize(this);
+            updateRule.Initialize(this, , Time.fixedDeltaTime);
         else
             Debug.LogError("there is no motor update rule");
 
