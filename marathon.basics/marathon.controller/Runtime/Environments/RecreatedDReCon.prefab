@@ -477,7 +477,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   updateRule: {fileID: 11400000, guid: 9151e0a05678974459dbcab852c2756d, type: 2}
-  root: {fileID: 0}
+  root: {fileID: 2328979252357156786}
 --- !u!1 &458535029660540518
 GameObject:
   m_ObjectHideFlags: 0
