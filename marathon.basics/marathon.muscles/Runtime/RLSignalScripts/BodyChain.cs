@@ -24,7 +24,7 @@ namespace Kinematic
         public IEnumerable<Vector3> CentersOfMass {get => chain.Select(k => k.CenterOfMass);}
         public IEnumerable<Vector3> Velocities {get => chain.Select(k => k.Velocity);}
         //public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
-        public Vector3 RootForward { get => chain[0].TransformMatrix.GetColumn(2);  }
+        public Vector3 RootForward { get => chain[0].Forward;  }
 
         public BodyChain() { }
 
@@ -37,11 +37,7 @@ namespace Kinematic
 
         public BodyChain(IEnumerable<Transform> bodies)
         {
-            chain = bodies.Select(b => b.GetComponent<ArticulationBody>() ? (IKinematic)
-                                        new ArticulationBodyAdapter(b.GetComponent<ArticulationBody>()) :
-                                            (b.GetComponent<Rigidbody>()?
-                                            new RigidbodyAdapter(b.GetComponent<Rigidbody>()) :
-                                                new MjBodyAdapter(b.GetComponent<MjBody>()))).ToList().AsReadOnly();
+            chain = bodies.Select(b => b.GetKinematic()).ToList().AsReadOnly();
 
             mass = chain.Select(k => k.Mass).Sum();
         }
@@ -117,7 +113,12 @@ namespace Kinematic
 
         public GameObject gameObject { get; }
 
-        public static IKinematic GetKinematic(Transform transform)
+        public Vector3 Forward { get; }
+    }
+
+    public static class KinematicExtensions
+    {
+        public static IKinematic GetKinematic(this Transform transform)
         {
             return transform.GetComponent<ArticulationBody>() ? (IKinematic)
                                         new ArticulationBodyAdapter(transform.GetComponent<ArticulationBody>()) :
@@ -126,6 +127,7 @@ namespace Kinematic
                                                 new MjBodyAdapter(transform.GetComponent<MjBody>()));
         }
     }
+
 
     public class RigidbodyAdapter : IKinematic
     {
@@ -188,6 +190,8 @@ namespace Kinematic
             }
         }
 
+        public Vector3 Forward => _rb.transform.forward;
+
     }
 
     public class ArticulationBodyAdapter : IKinematic
@@ -230,12 +234,13 @@ namespace Kinematic
 
         public float3 JointAcceleration => Utils.GetArticulationReducedSpaceInVector3(_ab.jointAcceleration);
 
+        public Vector3 Forward => _ab.transform.forward;
 
     }
 
     public class MjBodyAdapter : IKinematic
     {
-        readonly private MjBody mjBody;
+        readonly private MjBody _mb;
 
         readonly private MjScene scene;
 
@@ -249,7 +254,7 @@ namespace Kinematic
 
         public MjBodyAdapter(MjBody mjBody)
         {
-            this.mjBody = mjBody;
+            this._mb = mjBody;
             scene = MjScene.Instance; 
             mass = mjBody.GetMass();
             inertiaLocalPos = mjBody.GetLocalCenterOfMass();
@@ -258,17 +263,17 @@ namespace Kinematic
          //   inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
         }
 
-        public Vector3 Velocity => mjBody.GlobalVelocity();
+        public Vector3 Velocity => _mb.GlobalVelocity();
 
-        public Vector3 AngularVelocity => mjBody.GlobalAngularVelocity();
+        public Vector3 AngularVelocity => _mb.GlobalAngularVelocity();
 
         public float Mass => mass;
 
-        public Vector3 CenterOfMass =>mjBody.GetTransformMatrix().MultiplyPoint3x4(inertiaLocalPos);
+        public Vector3 CenterOfMass =>_mb.GetTransformMatrix().MultiplyPoint3x4(inertiaLocalPos);
 
-        public string Name => mjBody.name;
+        public string Name => _mb.name;
 
-        public Matrix4x4 TransformMatrix => mjBody.GetTransformMatrix() * inertiaRelMatrix;
+        public Matrix4x4 TransformMatrix => _mb.GetTransformMatrix() * inertiaRelMatrix;
 
         
 
@@ -283,7 +288,7 @@ namespace Kinematic
             return Vector3.Cross(localPoint, AngularVelocity) + Velocity;
         }
 
-        public GameObject gameObject { get => mjBody.gameObject; }
+        public GameObject gameObject { get => _mb.gameObject; }
 
 
         public float3 JointPosition
@@ -318,6 +323,7 @@ namespace Kinematic
             }
         }
 
+        public Vector3 Forward => _mb.GetTransformMatrix().GetColumn(2);
 
 
     }

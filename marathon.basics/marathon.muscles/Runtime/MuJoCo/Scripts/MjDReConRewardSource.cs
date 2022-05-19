@@ -12,7 +12,6 @@ public class MjDReConRewardSource : DReConRewardSource
 
     unsafe public override void OnAgentInitialize()
     {
-        MjScene.Instance.CreateScene();
         AddColliders(simulationTransform);
         AddColliders(kinematicTransform);
         base.OnAgentInitialize();
