@@ -398,9 +398,9 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  fixedDeltaTime: 0.0125
+  fixedDeltaTime: 0.01666667
   actionSmoothingBeta: 0.2
-  maxStep: 400
+  maxStep: 0
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
@@ -427,7 +427,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 9f0e188cec4b7a740b766b2bc03e692a, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: DReCon-Modular
@@ -476,7 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06411145c0b2f0d47a255b6da693755a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateRule: {fileID: 11400000, guid: 9151e0a05678974459dbcab852c2756d, type: 2}
+  updateRule: {fileID: 11400000, guid: 15e8e0283404f984995d5fa88859c571, type: 2}
   root: {fileID: 2328979252357156786}
 --- !u!1 &458535029660540518
 GameObject:
