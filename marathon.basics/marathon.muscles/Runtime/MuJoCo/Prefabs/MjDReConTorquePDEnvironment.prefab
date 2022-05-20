@@ -20905,8 +20905,8 @@ MonoBehaviour:
   UseManyWorlds: 0
   paddingBetweenEnvs: 1
   bounds:
-    m_Center: {x: 0, y: 0, z: 0}
-    m_Extent: {x: 0, y: 0, z: 0}
+    m_Center: {x: 0, y: 1, z: 0}
+    m_Extent: {x: 100, y: 1, z: 100}
 --- !u!114 &4793730405678012172
 MonoBehaviour:
   m_ObjectHideFlags: 0
