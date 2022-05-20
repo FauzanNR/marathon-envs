@@ -101,7 +101,26 @@ public class ArticulationMuscles : ModularMuscles
     public override void ApplyActions(float[] actions, float actionTimeDelta)
     {
 
-       
+        Debug.LogError("we need to actually ask the update rule for the torques to apply");
+
+        /*
+        float[] torques = updateRule.GetJointForces(currentStates.ToArray(), ITargetState.ToArray());
+
+        foreach ((var action, ActuatorReferencePair arp) in nextActions.Zip(arps, Tuple.Create))
+        {
+
+
+            currentStates.Add(new StaticState((float)e.data->qpos[arp.act.Joint.QposAddress],
+                                         (float)e.data->qvel[arp.act.Joint.DofAddress],
+                                         (float)e.data->qacc[arp.act.Joint.DofAddress]));
+
+            var targetState = trackPosition ? new float[] { (float)e.data->qpos[arp.reference.QposAddress]+action,
+                                                                    trackVelocity? (float)e.data->qvel[arp.reference.DofAddress] : 0f, 0f} : new float[] { action, 0f, 0f };
+
+            ITargetState.Add(new StaticState(targetState[0], targetState[1], targetState[2]));
+        }
+
+        */
 
         root.SetJointForces(nullactions4root.Concat(actions).ToList());
        
