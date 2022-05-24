@@ -98,7 +98,7 @@ public class ArticulationMuscles : ModularMuscles
     }
   
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
+    public override void ApplyActions(float[] actions)
     {
 
         Debug.LogError("we need to actually ask the update rule for the torques to apply");

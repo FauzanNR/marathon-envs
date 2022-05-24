@@ -296,7 +296,7 @@ public class ArticulationMusclesSimplified : ModularMuscles
     */
 
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
+    public override void ApplyActions(float[] actions)
     {
 
         int i = 0;//keeps track of hte number of actions

@@ -10,7 +10,7 @@ public class DummyMuscles : Muscles
     [SerializeField]
     Transform movedTransform;
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
+    public override void ApplyActions(float[] actions)
     {
         movedTransform.position = 0.99f * movedTransform.position + 0.01f * new Vector3(actions[0], actions[1], actions[2]);
     }

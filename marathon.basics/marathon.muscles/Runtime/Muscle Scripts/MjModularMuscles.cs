@@ -73,7 +73,7 @@ namespace Mujoco
 
         }
 
-        public override void ApplyActions(float[] actions, float actionTimeDelta)
+        public override void ApplyActions(float[] actions)
         {
             nextActions = actions;
             

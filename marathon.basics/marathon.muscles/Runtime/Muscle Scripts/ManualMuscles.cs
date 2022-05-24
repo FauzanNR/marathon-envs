@@ -18,7 +18,7 @@ public class ManualMuscles : Muscles
     public override int ActionSpaceSize => actuatorGameObjects.Count;
 
 
-    unsafe public override void ApplyActions(float[] actions, float actionTimeDelta)
+    unsafe public override void ApplyActions(float[] actions)
     {
         foreach((var motor, var action) in actuatorGameObjects.Zip(actions, Tuple.Create))
         {
@@ -66,7 +66,7 @@ public class ManualMuscles : Muscles
         //something like: float[] curActions =  updateRule.GetJointForces( updateRule.GetJointForces(actuatorGameObjects.Select(a => (Mathf.Deg2Rad * a.target, 0f, 0f))).ToArray() );
         float[] curActions = new float[3];
 
-        ApplyActions(curActions, Time.fixedDeltaTime);
+        ApplyActions(curActions);
         Sync();
     }
 

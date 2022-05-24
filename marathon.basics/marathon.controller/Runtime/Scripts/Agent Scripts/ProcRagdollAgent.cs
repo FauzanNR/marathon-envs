@@ -262,7 +262,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         if (!SkipActionSmoothing)
             vectorAction = SmoothActions(vectorAction);
 
-        _ragDollMuscles.ApplyActions(vectorAction, ActionTimeDelta);
+        _ragDollMuscles.ApplyActions(vectorAction);
 
       
         previousActions = vectorAction;
@@ -434,8 +434,8 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
         _ragDollMuscles = GetComponent<ArticulationMusclesSimplified>();
-      
 
+      
 
 
         _inputController = _spawnableEnv.GetComponentInChildren<InputController>();
@@ -469,7 +469,7 @@ public class ProcRagdollAgent : Agent, IRememberPreviousActions
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
 
-     
+        _ragDollMuscles.OnAgentInitialize();
         _hasLazyInitialized = true;
     }
     public override void OnEpisodeBegin()
