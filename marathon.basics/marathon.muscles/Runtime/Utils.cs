@@ -64,7 +64,7 @@ public static class Utils
 
 
 
-    public static Vector3 GetSwingTwist(Quaternion localRotation, out Quaternion swing, out Quaternion twist)
+     static Vector3 GetSwingTwist(Quaternion localRotation, out Quaternion swing, out Quaternion twist)
     {
 
         //the decomposition in swing-twist, typically works like this:
