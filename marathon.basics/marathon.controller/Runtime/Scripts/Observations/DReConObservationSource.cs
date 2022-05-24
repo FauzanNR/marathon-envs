@@ -62,8 +62,8 @@ namespace DReCon
             simChain = new BodyChain(simulationTransform);
             kinSubsetBodies = new BodyChain(kinematicSubset);
             simSubsetBodies = new BodyChain(simulationSubset);
-            print(kinChain.Mass);
-            print(simChain.Mass);
+           // print(kinChain.Mass);
+           // print(simChain.Mass);
         }
 
         public override void FeedObservationsToSensor(VectorSensor sensor)
