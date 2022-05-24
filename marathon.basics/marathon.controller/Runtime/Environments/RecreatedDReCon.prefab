@@ -478,6 +478,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   updateRule: {fileID: 11400000, guid: 15e8e0283404f984995d5fa88859c571, type: 2}
   root: {fileID: 2328979252357156786}
+  kinematicRef: {fileID: 2898202283330171268}
 --- !u!1 &458535029660540518
 GameObject:
   m_ObjectHideFlags: 0

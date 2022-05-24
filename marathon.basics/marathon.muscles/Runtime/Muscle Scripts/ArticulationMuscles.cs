@@ -5,49 +5,76 @@ using System;
 using System.Linq;
 
 using MotorUpdate;
-using Unity.Mathematics;
-using Unity.MLAgents;//for the DecisionRequester
+
+
 
 
 using Kinematic;
 
 public class ArticulationMuscles : ModularMuscles
 {
-
+    /*Assumptions in this model:
+        * 1. We provide a kinematic reference directly to the PD controllers
+        * 2. The action array trained has per main purpose to learn  what to "add" to  the kinematic reference to keep balance
+        */
 
     [SerializeField]
     ArticulationBody root;
 
 
-   // protected IKinematic[] _motors;
+    protected ArticulationBody[] _motors;
 
-
+    [SerializeField]
+    Transform kinematicRef;
 
     //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
     float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
+    [SerializeField]
+    protected List<ArticulationBody> actuatorSubset;
 
+    protected IReadOnlyList<ActuatorReferencePair> actuatorPairs;
+    public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
     public override void OnAgentInitialize()
     {
 
-     //   _motors = Utils.GetMotors(gameObject);
+        base.OnAgentInitialize();
 
-
-        if (updateRule != null)
-        {
-                updateRule.Initialize(this, Utils.GetActionTimeDelta(gameObject.GetComponent<DecisionRequester>() ) );
-        }
-           
-        else
-            Debug.LogError("there is no motor update rule");
+        IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
+        actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
 
     }
 
 
+    private Rigidbody FindReference(ArticulationBody act)
+    {
+        return kinematicRef ? kinematicRef.GetComponentsInChildren<Rigidbody>().First(rj => rj.name.Contains(act.name)) : null;
+    }
+
+    protected class ActuatorReferencePair
+    {
+        public readonly ArticulationBody act;
+        public readonly RigidbodyAdapter reference;
+        public readonly bool active;
+
+        public readonly ArticulationBodyAdapter aba;
+
+        public ActuatorReferencePair(ArticulationBody act, Rigidbody reference, bool active)
+        {
+            this.act = act;
+            this.reference = new RigidbodyAdapter(reference);
+            aba = new ArticulationBodyAdapter(act);
+            this.active = active;
+        }
+
+        
 
 
-    public override int ActionSpaceSize
+    }
+
+
+        public override int ActionSpaceSize
     {
         get => GetActionsFromState().Length;
     }
@@ -59,39 +86,32 @@ public class ArticulationMuscles : ModularMuscles
     {
         
         var vectorActions = new List<float>();
-        foreach (var m in Utils.GetArticulationMotors(gameObject))
+        //foreach (var m in _motors)
+        foreach (var actupair in actuatorPairs)
         {
+            var m = actupair.act;
             if (m.isRoot)
                 continue;
-            int i = 0;
+            //int i = 0;
             if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
-            if (m.twistLock == ArticulationDofLock.LimitedMotion)
+            if (m.twistLock != ArticulationDofLock.LockedMotion)
             {
-                var drive = m.xDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
+
+                vectorActions.Add(0f);
+                //  vectorActions.Add(m.jointPosition[i++]);
             }
-            if (m.swingYLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingYLock != ArticulationDofLock.LockedMotion)
             {
-                var drive = m.yDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
+
+                vectorActions.Add(0f);
+                //  vectorActions.Add(m.jointPosition[i++]);
             }
-            if (m.swingZLock == ArticulationDofLock.LimitedMotion)
+            if (m.swingZLock != ArticulationDofLock.LockedMotion)
             {
-                var drive = m.zDrive;
-                var scale = (drive.upperLimit - drive.lowerLimit) / 2f;
-                var midpoint = drive.lowerLimit + scale;
-                var deg = m.jointPosition[i++] * Mathf.Rad2Deg;
-                var target = (deg - midpoint) / scale;
-                vectorActions.Add(target);
+
+                vectorActions.Add(0f);
+                //  vectorActions.Add(m.jointPosition[i++]);
             }
         }
         return vectorActions.ToArray();
@@ -101,36 +121,54 @@ public class ArticulationMuscles : ModularMuscles
     public override void ApplyActions(float[] actions)
     {
 
-        Debug.LogError("we need to actually ask the update rule for the torques to apply");
+       
 
-        /*
-        float[] torques = updateRule.GetJointForces(currentStates.ToArray(), ITargetState.ToArray());
+        var currentStates = new List<IState>();
+        var targetStates = new List<IState>();
 
-        foreach ((var action, ActuatorReferencePair arp) in nextActions.Zip(arps, Tuple.Create))
+        int j = 0;
+
+        foreach (ActuatorReferencePair actPair in actuatorPairs)
         {
 
+            if (actPair.act.isRoot)
+            {
+                Debug.LogError("The ROOT should not be in the actuators");
+            }
+                
+         
+            Vector3 refPosInReducedCoordinates = actPair.reference.JointPosition;
+            Vector3 refVelInReducedCoordinates = actPair.reference.JointVelocity;
 
-            currentStates.Add(new StaticState((float)e.data->qpos[arp.act.Joint.QposAddress],
-                                         (float)e.data->qvel[arp.act.Joint.DofAddress],
-                                         (float)e.data->qacc[arp.act.Joint.DofAddress]));
+            if (actPair.act.twistLock != ArticulationDofLock.LockedMotion)
+            {
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
+                targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
+                j++;
 
-            var targetState = trackPosition ? new float[] { (float)e.data->qpos[arp.reference.QposAddress]+action,
-                                                                    trackVelocity? (float)e.data->qvel[arp.reference.DofAddress] : 0f, 0f} : new float[] { action, 0f, 0f };
+            }
+            if (actPair.act.swingYLock != ArticulationDofLock.LockedMotion)
+            {
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.y, actPair.aba.JointVelocity.y, actPair.aba.JointAcceleration.y));
+                targetStates.Add(new StaticState(refPosInReducedCoordinates.y + actions[j], refVelInReducedCoordinates.y + actions[j] / _deltaTime, 0));
+                j++;
+            }
+            if (actPair.act.swingZLock != ArticulationDofLock.LockedMotion)
+            {
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.z, actPair.aba.JointVelocity.z, actPair.aba.JointAcceleration.z));
+                targetStates.Add(new StaticState(refPosInReducedCoordinates.z + actions[j], refVelInReducedCoordinates.z + actions[j] / _deltaTime, 0));
+                j++;
+            }
 
-            ITargetState.Add(new StaticState(targetState[0], targetState[1], targetState[2]));
+
         }
 
-        */
 
-        root.SetJointForces(nullactions4root.Concat(actions).ToList());
+        float[] torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
+
+        root.SetJointForces(nullactions4root.Concat(torques).ToList());
        
      
     }
-
-   
-
-
-
-
 
 }

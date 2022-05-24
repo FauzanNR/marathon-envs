@@ -188,7 +188,7 @@ PrefabInstance:
     - target: {fileID: 7698962731877504412, guid: 8367f16d723e13d4f8b02a04762c55d6,
         type: 3}
       propertyPath: m_Name
-      value: RecreatedDReCon (1)
+      value: 'RecreatedDReCon '
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8367f16d723e13d4f8b02a04762c55d6, type: 3}
