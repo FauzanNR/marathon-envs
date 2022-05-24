@@ -173,9 +173,9 @@ namespace Kinematic
         {
             get
             {
+                //notice this only makes sense because the DoF axes matrix is the identitiy, i.e. the relation between the localRotaiton and the degrees of Freedom is the identity matrix
 
-                Debug.LogWarning("the velocity of the rigidbody should not matter, why are you trying to read it, I am not sure what I am returning is in reduced coord.");
-                return _rb.angularVelocity;
+                return LocalAngularVelocity;
             }
         }
 
