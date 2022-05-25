@@ -35,6 +35,8 @@ public class ArticulationMuscles : ModularMuscles
 
     protected IReadOnlyList<ActuatorReferencePair> actuatorPairs;
     public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
+
+
     public override void OnAgentInitialize()
     {
 
@@ -78,10 +80,7 @@ public class ArticulationMuscles : ModularMuscles
     {
         get => GetActionsFromState().Length;
     }
-
-
-
- 
+   
     public override float[] GetActionsFromState()
     {
         
@@ -121,7 +120,6 @@ public class ArticulationMuscles : ModularMuscles
     public override void ApplyActions(float[] actions)
     {
 
-       
 
         var currentStates = new List<IState>();
         var targetStates = new List<IState>();
@@ -166,7 +164,10 @@ public class ArticulationMuscles : ModularMuscles
 
         float[] torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
 
-        root.SetJointForces(nullactions4root.Concat(torques).ToList());
+        if (root.immovable)
+            root.SetJointForces(torques.ToList());
+        else
+            root.SetJointForces(nullactions4root.Concat(torques).ToList());
        
      
     }

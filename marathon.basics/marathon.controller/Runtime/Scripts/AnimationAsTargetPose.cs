@@ -5,6 +5,7 @@ using System.Linq;
 
 
 using Unity.Mathematics;
+using MotorUpdate;
 
 using Kinematic;
 public class AnimationAsTargetPose : MonoBehaviour
@@ -12,15 +13,19 @@ public class AnimationAsTargetPose : MonoBehaviour
  
     ModularMuscles _ragDollMuscles;
 
+    [SerializeField]
+    GameObject kinematicRigObject;
+
+    IKinematicReference kinematicRig;
+
    
-    MapAnim2Ragdoll _mapAnim2Ragdoll;
     float3[] targetRotations;
 
     IKinematic[] lrb;
 
     List<IReducedState> targets;
 
-
+    MotorUpdateRule updateRule;
 
     List<IReducedState> getTargets() {
 
@@ -42,21 +47,34 @@ public class AnimationAsTargetPose : MonoBehaviour
         return rbs;
 
 
-    }
+    } 
 
     // Start is called before the first frame update
     void OnEnable()
     {
 
-      
 
-        _mapAnim2Ragdoll = transform.parent.GetComponentInChildren<MapAnim2Ragdoll>();
 
-        _ragDollMuscles = GetComponent<ModularMuscles>();
-        lrb = Utils.GetMotors(gameObject);
 
-        targets = getTargets();
-        targetRotations = new float3[targets.Count];
+
+           _ragDollMuscles = GetComponent<ModularMuscles>();
+        _ragDollMuscles.OnAgentInitialize();
+
+
+        if (kinematicRigObject != null)
+        {
+            kinematicRig = kinematicRigObject.GetComponent<IKinematicReference>();
+            kinematicRig.OnAgentInitialize();
+        }
+        else {
+            Debug.LogError("I do not know what is the reference kinematic");
+        
+        }
+
+         lrb = Utils.GetMotors(gameObject);
+
+         //targets = getTargets();
+
 
     }
 
@@ -69,45 +87,42 @@ public class AnimationAsTargetPose : MonoBehaviour
     {
         float[] actions = _ragDollMuscles.GetActionsFromState();
 
+        /*
         int im = 0;
+      
         foreach (var a in targets)
         {
             targetRotations[im] = a.JointPosition;
 
             im++;
         }
-
+      */
+        float[] previousActions = _ragDollMuscles.GetActionsFromState();
        
 
-        Debug.LogError("TODO: need to apply the rule as a forces");
+        _ragDollMuscles.ApplyActions(Enumerable.Repeat(0f, previousActions.Length).ToArray());
 
 
-        //_ragDollMuscles.ApplyRuleAsRelativeTorques(targetRotations);
-        /*
+        _ragDollMuscles.ApplyActions(previousActions);
+
+
+
+        // ApplyRuleAsRelativeTorques(targetRotations);
+    }
        public void ApplyRuleAsRelativeTorques(float3[] targetRotation)
        {
 
+         
 
-
-           float3[] torques = updateRule.GetJointForces(targetRotation);
-           Debug.LogError("NEED TO APPLY THIS AS JOINT FORCES");
-
+        //TODO:
+        //float3[] torques = updateRule.GetJointForces(targetRotation);
+        
+      
 
        }
 
 
-          public override float3[] GetJointForces(float3[] targetRotation)
-     {
-         float3[] result = new float3[_motors.Length];
 
-         for (int i = 0; i < _motors.Length; i++)
-             result[i] = GetRelativeTorque(_motors[i], targetRotation[i]);
-
-         return result;
-
-     }*/
-
-
-    }
+    
 
 }
