@@ -39,7 +39,7 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
 
     DecisionRequester decisionRequester;
-    BehaviorParameters behaviorParameters;
+ 
 
     float[] previousActions;
     public float[] PreviousActions { get => previousActions;}
