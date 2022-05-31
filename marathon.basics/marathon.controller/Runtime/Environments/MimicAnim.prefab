@@ -6340,7 +6340,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06411145c0b2f0d47a255b6da693755a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  updateRule: {fileID: 11400000, guid: 358bcf95287442e4c84456d03ca8d21f, type: 2}
+  updateRule: {fileID: 11400000, guid: 15e8e0283404f984995d5fa88859c571, type: 2}
   root: {fileID: 364983994000107846}
   kinematicRef: {fileID: 971342482019866480}
   actuatorSubset: []
@@ -8890,7 +8890,7 @@ Animator:
   m_GameObject: {fileID: 5233470200365733690}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f4b99d8bdc0873c4d8e812bb5baa82be, type: 3}
-  m_Controller: {fileID: 9100000, guid: d6b88590516206a42815c6a65079d979, type: 2}
+  m_Controller: {fileID: 9100000, guid: 955b08fcd0d43d84a9f49236cf939a46, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 1
   m_ApplyRootMotion: 1

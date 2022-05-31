@@ -129,31 +129,39 @@ public class ArticulationMuscles : ModularMuscles
         foreach (ActuatorReferencePair actPair in actuatorPairs)
         {
 
+
             if (actPair.act.isRoot)
             {
                 Debug.LogError("The ROOT should not be in the actuators");
             }
                 
          
-            Vector3 refPosInReducedCoordinates = actPair.reference.JointPosition;
-            Vector3 refVelInReducedCoordinates = actPair.reference.JointVelocity;
+            Vector3 refPosInReducedCoordinates = actPair.reference.JointPosition ;
+            Vector3 refVelInReducedCoordinates = actPair.reference.JointVelocity ;
+
 
             if (actPair.act.twistLock != ArticulationDofLock.LockedMotion)
             {
-                currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.x , actPair.aba.JointVelocity.x , actPair.aba.JointAcceleration.x ));
                 targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
+
+                if (j == 0)
+                    Debug.Log("values for: " + actPair.act.name + " is: " + actPair.aba.JointPosition);
+
+
+
                 j++;
 
             }
             if (actPair.act.swingYLock != ArticulationDofLock.LockedMotion)
             {
-                currentStates.Add(new StaticState(actPair.aba.JointPosition.y, actPair.aba.JointVelocity.y, actPair.aba.JointAcceleration.y));
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.y  , actPair.aba.JointVelocity.y , actPair.aba.JointAcceleration.y ));
                 targetStates.Add(new StaticState(refPosInReducedCoordinates.y + actions[j], refVelInReducedCoordinates.y + actions[j] / _deltaTime, 0));
                 j++;
             }
             if (actPair.act.swingZLock != ArticulationDofLock.LockedMotion)
             {
-                currentStates.Add(new StaticState(actPair.aba.JointPosition.z, actPair.aba.JointVelocity.z, actPair.aba.JointAcceleration.z));
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.z , actPair.aba.JointVelocity.z , actPair.aba.JointAcceleration.z ));
                 targetStates.Add(new StaticState(refPosInReducedCoordinates.z + actions[j], refVelInReducedCoordinates.z + actions[j] / _deltaTime, 0));
                 j++;
             }
