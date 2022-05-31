@@ -308,6 +308,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 89517167273473138, guid: b8e5ce6ab9438e345813fa690c861614,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 971342481937871497, guid: b8e5ce6ab9438e345813fa690c861614,
+        type: 3}
+      propertyPath: updateRule
+      value: 
+      objectReference: {fileID: 11400000, guid: 15e8e0283404f984995d5fa88859c571,
+        type: 2}
     - target: {fileID: 1890209796972366199, guid: b8e5ce6ab9438e345813fa690c861614,
         type: 3}
       propertyPath: m_RootOrder
@@ -368,5 +379,7 @@ PrefabInstance:
       propertyPath: m_Name
       value: MimicAnim
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5625937236620621494, guid: b8e5ce6ab9438e345813fa690c861614, type: 3}
+    - {fileID: 3056746409916050497, guid: b8e5ce6ab9438e345813fa690c861614, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: b8e5ce6ab9438e345813fa690c861614, type: 3}

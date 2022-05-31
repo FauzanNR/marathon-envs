@@ -18,6 +18,9 @@ namespace MotorUpdate
         float GetTorque(float[] curState, float[] targetState)
         {
             float res = 0;
+
+            if (gains.Length == 0)
+                Debug.LogWarning("I am not applying any torque because the gains are null");
             for (int i = 0; i < gains.Length; i++)
             {
                 res -= gains[i] * (curState[i] - targetState[i]);

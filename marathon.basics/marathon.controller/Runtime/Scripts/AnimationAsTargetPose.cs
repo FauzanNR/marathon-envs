@@ -53,11 +53,7 @@ public class AnimationAsTargetPose : MonoBehaviour
     void OnEnable()
     {
 
-
-
-
-
-           _ragDollMuscles = GetComponent<ModularMuscles>();
+        _ragDollMuscles = GetComponent<ModularMuscles>();
         _ragDollMuscles.OnAgentInitialize();
 
 
@@ -87,20 +83,21 @@ public class AnimationAsTargetPose : MonoBehaviour
     {
         float[] actions = _ragDollMuscles.GetActionsFromState();
 
-        /*
+        
         int im = 0;
       
-        foreach (var a in targets)
+/*        foreach (var a in targets)
         {
             targetRotations[im] = a.JointPosition;
 
             im++;
         }
-      */
+  */    
+
         float[] previousActions = _ragDollMuscles.GetActionsFromState();
        
 
-        _ragDollMuscles.ApplyActions(Enumerable.Repeat(0f, previousActions.Length).ToArray());
+      //  _ragDollMuscles.ApplyActions(Enumerable.Repeat(0f, previousActions.Length).ToArray());
 
 
         _ragDollMuscles.ApplyActions(previousActions);
