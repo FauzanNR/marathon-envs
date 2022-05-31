@@ -19,13 +19,11 @@ public class AnimationAsTargetPose : MonoBehaviour
     IKinematicReference kinematicRig;
 
    
-    float3[] targetRotations;
-
+  
     IKinematic[] lrb;
 
-    List<IReducedState> targets;
+   
 
-    MotorUpdateRule updateRule;
 
     List<IReducedState> getTargets() {
 
@@ -69,9 +67,7 @@ public class AnimationAsTargetPose : MonoBehaviour
 
          lrb = Utils.GetMotors(gameObject);
 
-         //targets = getTargets();
-
-
+       
     }
 
 
