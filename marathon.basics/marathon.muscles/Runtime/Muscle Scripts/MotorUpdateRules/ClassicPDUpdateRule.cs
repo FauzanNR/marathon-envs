@@ -35,7 +35,8 @@ namespace MotorUpdate
             float3 targetVel = Utils.AngularVelocityInReducedCoordinates(joint.JointPosition, targetRotation, dT);
 
             //we calculate the force:
-            float3 torque = stiffness * (joint.JointPosition - targetRotation)*Mathf.Deg2Rad - damping * (joint.JointVelocity - targetVel) * Mathf.Deg2Rad;
+            //float3 torque = stiffness * (joint.JointPosition - targetRotation)*Mathf.Deg2Rad - damping * (joint.JointVelocity - targetVel) * Mathf.Deg2Rad;
+            float3 torque = stiffness * (joint.JointPosition - targetRotation)  - damping * (joint.JointVelocity - targetVel) ;
             return torque;
 
 
