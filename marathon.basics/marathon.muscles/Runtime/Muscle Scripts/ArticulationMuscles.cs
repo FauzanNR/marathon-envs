@@ -150,20 +150,9 @@ public class ArticulationMuscles : ModularMuscles
             {
                 
              
-                    currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
-                    targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
+               currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
+               targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
 
-
-               
-
-
-               // currentStates.Add(new StaticState(actPair.aba.JointPosition.x , actPair.aba.JointVelocity.x , actPair.aba.JointAcceleration.x ));
-               // targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
-
-                if (j == 0) { 
-                    Debug.Log("values for: " + actPair.act.name + " is: " + actPair.aba.JointPosition);
-
-                }
 
                 j++;
 
@@ -171,8 +160,8 @@ public class ArticulationMuscles : ModularMuscles
             if (actPair.act.swingYLock != ArticulationDofLock.LockedMotion)
             {
               
-                    currentStates.Add(new StaticState(actPair.aba.JointPosition.y, actPair.aba.JointVelocity.y, actPair.aba.JointAcceleration.y));
-                    targetStates.Add(new StaticState(refPosInReducedCoordinates.y + actions[j], refVelInReducedCoordinates.y + actions[j] / _deltaTime, 0));
+                 currentStates.Add(new StaticState(actPair.aba.JointPosition.y, actPair.aba.JointVelocity.y, actPair.aba.JointAcceleration.y));
+                 targetStates.Add(new StaticState(refPosInReducedCoordinates.y + actions[j], refVelInReducedCoordinates.y + actions[j] / _deltaTime, 0));
                 
 
                 j++;
@@ -181,8 +170,8 @@ public class ArticulationMuscles : ModularMuscles
             {
 
                
-                    currentStates.Add(new StaticState(actPair.aba.JointPosition.z, actPair.aba.JointVelocity.z, actPair.aba.JointAcceleration.z));
-                    targetStates.Add(new StaticState(refPosInReducedCoordinates.z + actions[j], refVelInReducedCoordinates.z + actions[j] / _deltaTime, 0));
+                currentStates.Add(new StaticState(actPair.aba.JointPosition.z, actPair.aba.JointVelocity.z, actPair.aba.JointAcceleration.z));
+                targetStates.Add(new StaticState(refPosInReducedCoordinates.z + actions[j], refVelInReducedCoordinates.z + actions[j] / _deltaTime, 0));
                
                 j++;
             }
