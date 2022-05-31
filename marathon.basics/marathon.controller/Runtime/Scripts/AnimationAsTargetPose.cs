@@ -83,40 +83,26 @@ public class AnimationAsTargetPose : MonoBehaviour
     {
         float[] actions = _ragDollMuscles.GetActionsFromState();
 
-        
-        int im = 0;
-      
-/*        foreach (var a in targets)
-        {
-            targetRotations[im] = a.JointPosition;
+        /*      
+            int im = 0;
 
-            im++;
-        }
-  */    
+          foreach (var a in targets)
+            {
+                targetRotations[im] = a.JointPosition;
+
+                im++;
+            }
+      */
 
         float[] previousActions = _ragDollMuscles.GetActionsFromState();
        
 
-      //  _ragDollMuscles.ApplyActions(Enumerable.Repeat(0f, previousActions.Length).ToArray());
+        _ragDollMuscles.ApplyActions(Enumerable.Repeat(0f, previousActions.Length).ToArray());
 
 
-        _ragDollMuscles.ApplyActions(previousActions);
-
-
-
-        // ApplyRuleAsRelativeTorques(targetRotations);
+    
     }
-       public void ApplyRuleAsRelativeTorques(float3[] targetRotation)
-       {
-
-         
-
-        //TODO:
-        //float3[] torques = updateRule.GetJointForces(targetRotation);
-        
-      
-
-       }
+     
 
 
 

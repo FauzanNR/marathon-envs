@@ -31,7 +31,7 @@ public class ArticulationMuscles : ModularMuscles
     float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
     [SerializeField]
-    protected List<ArticulationBody> actuatorSubset;
+   // protected List<ArticulationBody> actuatorSubset;
 
     protected IReadOnlyList<ActuatorReferencePair> actuatorPairs;
     public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
@@ -42,7 +42,9 @@ public class ArticulationMuscles : ModularMuscles
 
         base.OnAgentInitialize();
 
-        IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
+        //   IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
+        //   actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
+        IReadOnlyList<ArticulationBody> subset =  new List<ArticulationBody> ();
         actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
 
