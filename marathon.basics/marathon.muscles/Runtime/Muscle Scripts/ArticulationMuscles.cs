@@ -118,17 +118,11 @@ public class ArticulationMuscles : ModularMuscles
             Vector3 refVelInReducedCoordinates = actPair.reference.JointVelocity ;
 
 
-
-
-
-
             if (actPair.act.twistLock != ArticulationDofLock.LockedMotion)
             {
-                
              
                currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
                targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
-
 
                 j++;
 
@@ -163,7 +157,6 @@ public class ArticulationMuscles : ModularMuscles
         else
             root.SetJointForces(nullactions4root.Concat(torques).ToList());
        
-     
     }
 
 }
