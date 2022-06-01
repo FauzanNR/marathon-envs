@@ -26,6 +26,8 @@ namespace Kinematic
         //public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
         public Vector3 RootForward { get => chain[0].Forward;  }
 
+
+
         public BodyChain() { }
 
         public BodyChain(Transform chainRoot)
@@ -114,6 +116,9 @@ namespace Kinematic
         public GameObject gameObject { get; }
 
         public Vector3 Forward { get; }
+
+
+        public float3x3 JointAxes { get; }
     }
 
     public static class KinematicExtensions
@@ -191,6 +196,7 @@ namespace Kinematic
         }
 
         public Vector3 Forward => _rb.transform.forward;
+        public float3x3 JointAxes { get => float3x3.identity; }
 
     }
 
@@ -198,9 +204,19 @@ namespace Kinematic
     {
         readonly private ArticulationBody _ab;
 
+        readonly private float3x3 jointAxes;
+
         public ArticulationBodyAdapter(ArticulationBody articulationBody)
         {
             this._ab = articulationBody;
+
+            jointAxes = float3x3.identity;
+            if (_ab.twistLock == ArticulationDofLock.LockedMotion)
+                jointAxes.c0 = float3.zero;
+            if (_ab.swingYLock == ArticulationDofLock.LockedMotion)
+                jointAxes.c1 = float3.zero;
+            if (_ab.swingZLock == ArticulationDofLock.LockedMotion)
+                jointAxes.c2 = float3.zero;
         }
 
         public Vector3 Velocity => _ab.velocity;
@@ -236,6 +252,11 @@ namespace Kinematic
 
         public Vector3 Forward => _ab.transform.forward;
 
+        public float3x3 JointAxes { get => jointAxes; }
+
+
+
+
     }
 
     public class MjBodyAdapter : IKinematic
@@ -254,7 +275,10 @@ namespace Kinematic
 
         readonly private IReadOnlyList<MjHingeJoint> joints;
 
-        readonly public float3x3 jointAxes;
+        readonly private float3x3 jointAxes;
+
+        public float3x3 JointAxes { get => jointAxes; }
+
 
         public MjBodyAdapter(MjBody mjBody)
         {

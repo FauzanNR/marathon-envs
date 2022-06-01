@@ -26,7 +26,7 @@ namespace Mujoco
         [SerializeField]
         protected List<MjActuator> actuatorSubset;
 
-        protected IReadOnlyList<ActuatorReferencePair> actuatorPairs;
+        protected IReadOnlyList<MujocoActuatorReferencePair> actuatorPairs;
 
         public virtual IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList(); }
 
@@ -54,12 +54,12 @@ namespace Mujoco
 
         }
 
-        unsafe private void UpdateTorques(float[] actions, IEnumerable<ActuatorReferencePair> arps, MjStepArgs e)
+        unsafe private void UpdateTorques(float[] actions, IEnumerable<MujocoActuatorReferencePair> arps, MjStepArgs e)
         {
             List<IState> currentStates = new List<IState>();
             List<IState> ITargetState = new List<IState>();
 
-            foreach ((var action, ActuatorReferencePair arp) in nextActions.Zip(arps, Tuple.Create))
+            foreach ((var action, MujocoActuatorReferencePair arp) in nextActions.Zip(arps, Tuple.Create))
             {
 
 
@@ -80,7 +80,7 @@ namespace Mujoco
 
             float[] torques = updateRule.GetJointForces(currentStates.ToArray(), ITargetState.ToArray());
 
-            foreach ((var torque,  ActuatorReferencePair arp) in torques.Zip(arps, Tuple.Create))
+            foreach ((var torque,  MujocoActuatorReferencePair arp) in torques.Zip(arps, Tuple.Create))
             {
                 e.data->ctrl[arp.act.MujocoId] = torque;
                 arp.act.Control = torque;
@@ -113,7 +113,7 @@ namespace Mujoco
 
             //if (IsSubsetDefined && kinematicRef && trackPosition)
             //{
-                actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
+                actuatorPairs = Actuators.Select(a => new MujocoActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
             //    return;
             //}
 
@@ -135,18 +135,5 @@ namespace Mujoco
             return kinematicRef? kinematicRef.GetComponentsInChildren<MjHingeJoint>().First(rj => rj.name.Contains(act.Joint.name)) : null;
         }
 
-        protected class ActuatorReferencePair
-        {
-            public readonly MjActuator act;
-            public readonly MjHingeJoint reference;
-            public readonly bool active;
-
-            public ActuatorReferencePair(MjActuator act, MjHingeJoint reference, bool active)
-            {
-                this.act = act;
-                this.reference = reference;
-                this.active = active;
-            }
-        }
     }
 }

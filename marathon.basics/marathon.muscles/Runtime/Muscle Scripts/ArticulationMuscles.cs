@@ -33,7 +33,7 @@ public class ArticulationMuscles : ModularMuscles
     [SerializeField]
    // protected List<ArticulationBody> actuatorSubset;
 
-    protected IReadOnlyList<ActuatorReferencePair> actuatorPairs;
+    protected IReadOnlyList<PhysXActuatorReferencePair> actuatorPairs;
     public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
 
 
@@ -45,7 +45,7 @@ public class ArticulationMuscles : ModularMuscles
         //   IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
         //   actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
         IReadOnlyList<ArticulationBody> subset =  new List<ArticulationBody> ();
-        actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
+        actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
        
 
@@ -57,7 +57,7 @@ public class ArticulationMuscles : ModularMuscles
         return kinematicRef ? kinematicRef.GetComponentsInChildren<Rigidbody>().First(rj => rj.name.Contains(act.name)) : null;
     }
 
-    protected class ActuatorReferencePair
+    protected class PhysXActuatorReferencePair
     {
         public readonly ArticulationBody act;
         public readonly RigidbodyAdapter reference;
@@ -65,7 +65,7 @@ public class ArticulationMuscles : ModularMuscles
 
         public readonly ArticulationBodyAdapter aba;
 
-        public ActuatorReferencePair(ArticulationBody act, Rigidbody reference, bool active)
+        public PhysXActuatorReferencePair(ArticulationBody act, Rigidbody reference, bool active)
         {
             this.act = act;
             this.reference = new RigidbodyAdapter(reference);
@@ -129,7 +129,7 @@ public class ArticulationMuscles : ModularMuscles
 
         int j = 0;
 
-        foreach (ActuatorReferencePair actPair in actuatorPairs)
+        foreach (PhysXActuatorReferencePair actPair in actuatorPairs)
         {
 
             if (actPair.act.isRoot)
@@ -181,7 +181,7 @@ public class ArticulationMuscles : ModularMuscles
 
 
         float[] torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
-
+        Debug.Log("the torques are of size: " + torques.Count());
         if (root.immovable)
             root.SetJointForces(torques.ToList());
         else
