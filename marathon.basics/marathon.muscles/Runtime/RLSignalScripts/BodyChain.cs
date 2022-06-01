@@ -252,6 +252,10 @@ namespace Kinematic
 
         readonly private Matrix4x4 inertiaRelMatrix;
 
+        readonly private IReadOnlyList<MjHingeJoint> joints;
+
+        readonly public float3x3 jointAxes;
+
         public MjBodyAdapter(MjBody mjBody)
         {
             this._mb = mjBody;
@@ -259,11 +263,22 @@ namespace Kinematic
             mass = mjBody.GetMass();
             inertiaLocalPos = mjBody.GetLocalCenterOfMass();
             inertiaRelMatrix = mjBody.GetLocalCenterOfMassMatrix();
+            joints = _mb.GetComponentsInDirectChildren<MjHingeJoint>();
+            jointAxes = new float3x3();
+            for (int i=0; i<joints.Count; i++)
+            {
+                Vector3 localJointAxis = joints[i].transform.localRotation * Vector3.right;
+                jointAxes[i * 3] = localJointAxis.x;
+                jointAxes[i * 3+1] = localJointAxis.y;
+                jointAxes[i * 3+2] = localJointAxis.z;
+            }
 
          //   inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
         }
 
         public Vector3 Velocity => _mb.GlobalVelocity();
+
+        public int DoFCount => joints.Count; 
 
         public Vector3 AngularVelocity => _mb.GlobalAngularVelocity();
 
@@ -295,9 +310,13 @@ namespace Kinematic
         {
             get
             {
+                float3 pos = new float3() ;
+                for (int i=0; i< joints.Count; i++)
+                {
+                    pos[i] = joints[i].GetPositionRad();
+                }
 
-                Debug.LogError("the reduced position of the mjBody is NOT implemented");
-                return Vector3.zero;
+                return pos;
             }
 
         }
@@ -306,8 +325,13 @@ namespace Kinematic
             get
             {
 
-                Debug.LogError("the reduced acceleration of the mjBody is NOT implemented");
-                return Vector3.zero;
+                float3 vel = new float3();
+                for (int i = 0; i < joints.Count; i++)
+                {
+                    vel[i] = joints[i].GetVelocityRad();
+                }
+
+                return vel;
             }
 
         }
@@ -318,8 +342,13 @@ namespace Kinematic
             get
             {
 
-                Debug.LogError("the reduced acceleration of the mjBody is NOT implemented");
-                return Vector3.zero;
+                float3 acc = new float3();
+                for (int i = 0; i < joints.Count; i++)
+                {
+                    acc[i] = joints[i].GetAccelerationRad();
+                }
+
+                return vel;
             }
         }
 
