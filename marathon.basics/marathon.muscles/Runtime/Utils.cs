@@ -207,15 +207,15 @@ public static class Utils
 
 
 
-    static public List<ArticulationBody> GetArticulationMotors(GameObject go)
+    static public List<ArticulationBody> GetArticulationMotors(GameObject theRoot, bool returnRoot = false)
     {
 
 
-        return go.GetComponentsInChildren<ArticulationBody>()
+        return theRoot.GetComponentsInChildren<ArticulationBody>()
                 .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
                 .Where(x => !x.isRoot)
                 .Distinct()
-                .ToList();
+                .OrderBy(act => act.index).ToList();
 
 
     }
@@ -247,6 +247,9 @@ public static class Utils
 
         return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
     }
+
+
+   
 
 
 }

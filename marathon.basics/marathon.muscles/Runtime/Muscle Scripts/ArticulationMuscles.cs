@@ -21,18 +21,14 @@ public class ArticulationMuscles : ModularMuscles
     [SerializeField]
     ArticulationBody root;
 
-
-    protected ArticulationBody[] _motors;
-
+ 
     [SerializeField]
     Transform kinematicRef;
 
     //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
     float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
-    [SerializeField]
-   // protected List<ArticulationBody> actuatorSubset;
-
+  
     protected IReadOnlyList<PhysXActuatorReferencePair> actuatorPairs;
     public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
 
@@ -47,8 +43,7 @@ public class ArticulationMuscles : ModularMuscles
         IReadOnlyList<ArticulationBody> subset =  new List<ArticulationBody> ();
         actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
-       
-
+          
     }
 
 
@@ -57,26 +52,7 @@ public class ArticulationMuscles : ModularMuscles
         return kinematicRef ? kinematicRef.GetComponentsInChildren<Rigidbody>().First(rj => rj.name.Contains(act.name)) : null;
     }
 
-    protected class PhysXActuatorReferencePair
-    {
-        public readonly ArticulationBody act;
-        public readonly RigidbodyAdapter reference;
-        public readonly bool active;
-
-        public readonly ArticulationBodyAdapter aba;
-
-        public PhysXActuatorReferencePair(ArticulationBody act, Rigidbody reference, bool active)
-        {
-            this.act = act;
-            this.reference = new RigidbodyAdapter(reference);
-            aba = new ArticulationBodyAdapter(act);
-            this.active = active;
-        }
-
-        
-
-
-    }
+   
 
 
         public override int ActionSpaceSize
