@@ -210,13 +210,24 @@ public static class Utils
     static public List<ArticulationBody> GetArticulationMotors(GameObject theRoot, bool returnRoot = false)
     {
 
-
+        if (!returnRoot) { 
         return theRoot.GetComponentsInChildren<ArticulationBody>()
                 .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
                 .Where(x => !x.isRoot)
                 .Distinct()
                 .OrderBy(act => act.index).ToList();
+        }
+        else
+        {
+            return theRoot.GetComponentsInChildren<ArticulationBody>()
+                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                //.Where(x => !x.isRoot)
+                .Distinct()
+                .OrderBy(act => act.index).ToList();
 
+
+
+        }
 
     }
 
