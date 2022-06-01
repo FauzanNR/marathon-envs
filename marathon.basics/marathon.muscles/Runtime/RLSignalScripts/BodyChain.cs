@@ -348,7 +348,7 @@ namespace Kinematic
                     acc[i] = joints[i].GetAccelerationRad();
                 }
 
-                return vel;
+                return acc;
             }
         }
 
