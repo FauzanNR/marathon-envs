@@ -43,9 +43,9 @@ namespace MotorUpdate
 
         }
 
-        public override float[] GetJointForces(IState[] currentState, IState[] targetState) {
+        public override List<float> GetJointForces(IState[] currentState, IState[] targetState) {
             Debug.LogError("Need to implmeent this");
-            return new float[1] { 0.0f };
+            return new List<float> { 0.0f };
         
         }
        

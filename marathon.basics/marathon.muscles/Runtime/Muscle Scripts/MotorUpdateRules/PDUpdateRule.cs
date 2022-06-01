@@ -34,14 +34,14 @@ namespace MotorUpdate
         }
 
 
-        public override float[] GetJointForces(IState[] currentState, IState[] targetState) {
+        public override List<float> GetJointForces(IState[] currentState, IState[] targetState) {
 
             float[] res = new float[currentState.Length];
             for (int i = 0; i < currentState.Length; i++)
             {
                 res[i] = GetTorque(currentState[i].stateVector , targetState[i].stateVector);
             }
-            return res;
+            return new List<float>(res);
 
 
         }

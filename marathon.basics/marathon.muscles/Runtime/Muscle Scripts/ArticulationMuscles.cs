@@ -156,10 +156,10 @@ public class ArticulationMuscles : ModularMuscles
         }
 
 
-        float[] torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
-        Debug.Log("the torques are of size: " + torques.Count());
+        List<float> torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
+       
         if (root.immovable)
-            root.SetJointForces(torques.ToList());
+            root.SetJointForces(torques);
         else
             root.SetJointForces(nullactions4root.Concat(torques).ToList());
        

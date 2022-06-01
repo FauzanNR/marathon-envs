@@ -78,7 +78,7 @@ namespace Mujoco
                 ITargetState.Add(new StaticState(targetState[0], targetState[1], targetState[2]));
             }
 
-            float[] torques = updateRule.GetJointForces(currentStates.ToArray(), ITargetState.ToArray());
+            List<float> torques = updateRule.GetJointForces(currentStates.ToArray(), ITargetState.ToArray());
 
             foreach ((var torque,  MujocoActuatorReferencePair arp) in torques.Zip(arps, Tuple.Create))
             {

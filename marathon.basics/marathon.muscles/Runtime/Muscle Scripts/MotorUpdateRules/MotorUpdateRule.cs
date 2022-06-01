@@ -31,7 +31,7 @@ namespace MotorUpdate
     
 
 
-        public abstract float[] GetJointForces(IState[] currentState, IState[] targetState);
+        public abstract List<float> GetJointForces(IState[] currentState, IState[] targetState);
 
 
 
