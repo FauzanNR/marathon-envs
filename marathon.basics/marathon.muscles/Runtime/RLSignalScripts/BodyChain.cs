@@ -268,9 +268,9 @@ namespace Kinematic
             for (int i=0; i<joints.Count; i++)
             {
                 Vector3 localJointAxis = joints[i].transform.localRotation * Vector3.right;
-                jointAxes[i * 3] = localJointAxis.x;
-                jointAxes[i * 3+1] = localJointAxis.y;
-                jointAxes[i * 3+2] = localJointAxis.z;
+                jointAxes[0][i] = localJointAxis.x;
+                jointAxes[1][i] = localJointAxis.y;
+                jointAxes[2][i] = localJointAxis.z;
             }
 
          //   inertialTransform = mjBody.transform.GetComponentInDirectChildren<BoxCollider>().transform; // Could be queried for Matrix and pos, but is unfortunately not up to date with the Mj simulation
