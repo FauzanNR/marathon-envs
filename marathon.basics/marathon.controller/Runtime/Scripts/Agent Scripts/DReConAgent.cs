@@ -110,8 +110,9 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     }
     public override void OnEpisodeBegin()
     {
+        ragDollMuscles.OnAgentInitialize();
         previousActions = ragDollMuscles.GetActionsFromState();
-
+     
         onBeginHandler?.Invoke(this, AgentEventArgs.Empty);
     }
 
