@@ -102,6 +102,9 @@ namespace Mujoco
             //return actuatorPairs.Select(a => a.act.Control).ToArray();
         }
 
+       
+
+
         public override void OnAgentInitialize() 
         {
 

@@ -19,9 +19,9 @@ namespace Kinematic
 
         protected float mass; //chain.Select(k => k.Mass).Sum();
         public float Mass {get => mass;}
-        public Vector3 CenterOfMass {get => chain.Select(k => k.Mass * k.CenterOfMass).Sum() / Mass;}
+        public Vector3 CenterOfMass {get => ((IEnumerable<Vector3>) chain.Select( k => k.Mass * k.CenterOfMass)).Sum() / Mass;}
         public Vector3 CenterOfMassVelocity {get => chain.Select(k => k.Mass * k.Velocity).Sum() / Mass;}
-        public IEnumerable<Vector3> CentersOfMass {get => chain.Select(k => k.CenterOfMass);}
+        public IEnumerable<Vector3> CentersOfMass {get => (IEnumerable<Vector3>)chain.Select(k => k.CenterOfMass);}
         public IEnumerable<Vector3> Velocities {get => chain.Select(k => k.Velocity);}
         //public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
         public Vector3 RootForward { get => chain[0].Forward;  }
@@ -104,11 +104,11 @@ namespace Kinematic
 
         public Vector3 AngularVelocity { get; }
         public float Mass { get; }
-        public Vector3 CenterOfMass { get; }
+        public float3 CenterOfMass { get; }
 
         public Matrix4x4 TransformMatrix { get; }
 
-        public Vector3 GetPointVelocity(Vector3 worldPoint);
+        public Vector3 GetPointVelocity(float3 worldPoint);
 
         public Vector3 GetRelativePointVelocity(Vector3 localPoint);
         public string Name { get; }
@@ -119,6 +119,15 @@ namespace Kinematic
 
 
         public float3x3 JointAxes { get; }
+
+        public int index { get; } //position in the hierarchy
+        public bool isRoot { get; } //is it a root
+
+        public float3 InertiaTensor { get; }
+
+        public float3 AnchorPosition { get; }
+        
+
     }
 
     public static class KinematicExtensions
@@ -152,14 +161,14 @@ namespace Kinematic
 
         public float Mass => _rb.mass;
 
-        public Vector3 CenterOfMass => _rb.transform.TransformPoint(_rb.centerOfMass);
+        public float3 CenterOfMass => _rb.transform.TransformPoint(_rb.centerOfMass);
 
         public string Name => _rb.name;
 
         public Matrix4x4 TransformMatrix => _rb.transform.localToWorldMatrix;
 
         
-        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        public Vector3 GetPointVelocity(float3 worldPoint)
         {
             return _rb.GetPointVelocity(worldPoint);
         }
@@ -198,6 +207,15 @@ namespace Kinematic
         public Vector3 Forward => _rb.transform.forward;
         public float3x3 JointAxes { get => float3x3.identity; }
 
+        public int index { get =>  -1; }
+        public bool isRoot { get => false; }
+        public float3 InertiaTensor { get => _rb.inertiaTensor; }
+        public float3 AnchorPosition { get {
+                Debug.LogWarning("you are asking an anchor for a rigidBody, which does not have an anchor, I return zero ");
+                return float3.zero;
+            } 
+        }
+
     }
 
     public class ArticulationBodyAdapter : IKinematic
@@ -227,13 +245,13 @@ namespace Kinematic
 
         public float Mass => _ab.mass;
 
-        public Vector3 CenterOfMass => _ab.transform.TransformPoint(_ab.centerOfMass);
+        public float3 CenterOfMass => _ab.transform.TransformPoint(_ab.centerOfMass);
 
         public string Name => _ab.name;
 
         public Matrix4x4 TransformMatrix => _ab.transform.localToWorldMatrix;
 
-        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        public Vector3 GetPointVelocity(float3 worldPoint)
         {
             return _ab.GetPointVelocity(worldPoint);
         }
@@ -254,8 +272,12 @@ namespace Kinematic
 
         public float3x3 JointAxes { get => jointAxes; }
 
+        public int index { get => _ab.index; }
+        public bool isRoot { get => _ab.isRoot; }
 
+        public float3 InertiaTensor { get => _ab.inertiaTensor; }
 
+        public float3 AnchorPosition { get => _ab.anchorPosition; }
 
     }
 
@@ -308,7 +330,7 @@ namespace Kinematic
 
         public float Mass => mass;
 
-        public Vector3 CenterOfMass =>_mb.GetTransformMatrix().MultiplyPoint3x4(inertiaLocalPos);
+        public float3 CenterOfMass =>_mb.GetTransformMatrix().MultiplyPoint3x4(inertiaLocalPos);
 
         public string Name => _mb.name;
 
@@ -316,7 +338,7 @@ namespace Kinematic
 
         
 
-        public Vector3 GetPointVelocity(Vector3 worldPoint)
+        public Vector3 GetPointVelocity(float3 worldPoint)
         {
             
             return Vector3.Cross((worldPoint - CenterOfMass), AngularVelocity) + Velocity;
@@ -378,6 +400,33 @@ namespace Kinematic
 
         public Vector3 Forward => _mb.GetTransformMatrix().GetColumn(2);
 
+
+        public int index { get {
+                Debug.LogError("index in mujoco articulations not implemented");
+                
+                return -1; }  }
+        public bool isRoot { get 
+                {
+                Debug.LogError("isRoot in mujoco articulations not implemented");
+
+
+                return false;
+            
+            
+            }  }
+
+
+        public float3 InertiaTensor { get => _mb.GetInertia(); }
+
+
+        public float3 AnchorPosition
+        {
+            get
+            {
+                Debug.LogError("Anchor position in local coordinates not implmeented for MjBody ");
+                return float3.zero;
+            }
+        }
 
     }
     #endregion

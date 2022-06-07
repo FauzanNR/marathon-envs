@@ -73,6 +73,8 @@ namespace DReCon
 
             Vector3 kinCOMV = fKin.WorldDirectionToCharacter(kinChain.CenterOfMassVelocity);
             Vector3 simCOMV = fSim.WorldDirectionToCharacter(simChain.CenterOfMassVelocity);
+            if (float.IsNaN(simCOMV.x))
+                Debug.LogError("ERROR IN simCOMV: " + simCOMV);
 
             Vector3 inputDesiredVelocity = fKin.WorldDirectionToCharacter(userInputs.GetDesiredVelocity());
             Vector2 inputDesiredHorizontalVelocity = inputDesiredVelocity.Horizontal();

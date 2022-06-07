@@ -36,7 +36,7 @@ env_settings:
   - --spawn-env=DReCon-Mj
   - --num-spawn-envs=1 
   base_port: 5005
-  num_envs: 40 #1
+  num_envs: 1 #34 #1
 engine_settings:
   no_graphics: true
 debug: false

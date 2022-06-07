@@ -30,7 +30,7 @@ public class ArticulationMuscles : ModularMuscles
 
   
     protected IReadOnlyList<PhysXActuatorReferencePair> actuatorPairs;
-    public virtual IReadOnlyList<ArticulationBody> Actuators { get => Utils.GetArticulationMotors(gameObject); }
+    public virtual IReadOnlyList<IKinematic> Actuators { get => Utils.GetArticulationMotors(gameObject); }
 
 
     public override void OnAgentInitialize()
@@ -41,9 +41,11 @@ public class ArticulationMuscles : ModularMuscles
         //   IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
         //   actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
         IReadOnlyList<ArticulationBody> subset =  new List<ArticulationBody> ();
-        actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
+        //        actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
-          
+        actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a.gameObject.GetComponent<ArticulationBody>(), FindReference(a.gameObject.GetComponent<ArticulationBody>()), subset.Contains(a.gameObject.GetComponent<ArticulationBody>()))).ToList();
+
+
     }
 
 

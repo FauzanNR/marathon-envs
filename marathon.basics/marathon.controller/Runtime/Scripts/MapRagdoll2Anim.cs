@@ -47,8 +47,14 @@ public class MapRagdoll2Anim : MonoBehaviour
 			// first time, copy position and rotation
 			foreach (var animTransform in animTransforms)
 			{
+
 				var ragdollTransform = ragdollTransforms
 					.First(x=>x.name == $"articulation:{animTransform.name}");
+
+				float x = ragdollTransform.position.x;
+				if ( float.IsNaN(x))
+					Debug.LogError("error in MapRagdoll: " + ragdollTransform.position);
+
 				animTransform.position = ragdollTransform.position;
 				animTransform.rotation = ragdollTransform.rotation;
 				_animTransforms.Add(animTransform);

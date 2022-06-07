@@ -206,8 +206,8 @@ public static class Utils
     }
 
 
-
-    static public List<ArticulationBody> GetArticulationMotors(GameObject theRoot, bool returnRoot = false)
+  
+    static  List<ArticulationBody> GetArticulationBodyMotors(GameObject theRoot, bool returnRoot = false)
     {
 
         if (!returnRoot) { 
@@ -231,11 +231,55 @@ public static class Utils
 
     }
 
+
+    static public List<IKinematic> GetArticulationMotors(GameObject theRoot, bool returnRoot = false)
+    {
+        List<ArticulationBody> theList;
+        if (!returnRoot)
+        {
+            theList =  theRoot.GetComponentsInChildren<ArticulationBody>()
+                    .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                    .Where(x => !x.isRoot)
+                    .Distinct()
+                    .OrderBy(act => act.index).ToList();
+        }
+        else
+        {
+            theList = theRoot.GetComponentsInChildren<ArticulationBody>()
+                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                //.Where(x => !x.isRoot)
+                .Distinct()
+                .OrderBy(act => act.index).ToList();
+
+
+
+        }
+        if (theList.Count == 0) {
+            Debug.LogError("version for Mujoco muscles not implemented yet");
+        
+        }
+
+
+
+        List<IKinematic> theResult = new List<IKinematic>();
+
+        foreach (ArticulationBody ab in theList)
+        {
+            theResult.Add(new ArticulationBodyAdapter(ab));
+        
+        }
+        return theResult;
+      
+
+    }
+
+
+
     static public IKinematic[] GetMotors(GameObject go)
     {
         List<IKinematic> result = new List<IKinematic>();
 
-        List<ArticulationBody> abl = GetArticulationMotors(go);
+        List<ArticulationBody> abl = GetArticulationBodyMotors(go);
 
 
         foreach (ArticulationBody a in abl)
