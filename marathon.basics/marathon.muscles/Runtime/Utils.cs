@@ -7,6 +7,8 @@ using System.Linq;
 using Kinematic;
 using Unity.MLAgents;
 
+using Mujoco;
+
 public static class Utils 
 {
 
@@ -254,27 +256,68 @@ public static class Utils
 
 
         }
-        if (theList.Count == 0) {
-            Debug.LogError("version for Mujoco muscles not implemented yet");
-        
-        }
 
-
-
+        // Debug.Log("I have found: "  + theList.Count + " motors");
         List<IKinematic> theResult = new List<IKinematic>();
 
-        foreach (ArticulationBody ab in theList)
+        if (theList.Count > 0)
         {
-            theResult.Add(new ArticulationBodyAdapter(ab));
-        
+
+          
+
+            foreach (ArticulationBody ab in theList)
+            {
+                theResult.Add(new ArticulationBodyAdapter(ab));
+
+            }
+            return theResult;
+
+
         }
+
+        List<MjBody> theMjList = new List<MjBody>();
+        if (!returnRoot)
+            theMjList = theRoot.GetComponentsInChildren<MjBody>()
+                            .Where(x => ! IsRoot(x))
+                            .Distinct()
+                            .OrderBy(act => act.MujocoId).ToList();
+        else
+            theMjList = theRoot.GetComponentsInChildren<MjBody>()
+                            //.Where(x => !IsRoot(x))
+                            .Distinct()
+                            .OrderBy(act => act.MujocoId).ToList();
+
+
+
+        foreach (MjBody ab in theMjList)
+        {
+            int number_of_joints = 0;
+            foreach (Transform child in ab.transform) {//this is a special thing that only goes through the immediate sons
+                if (child.GetComponent<MjHingeJoint>())
+                    number_of_joints++;
+            
+            }
+
+
+
+            //Debug.Log(ab.name + " has " + number_of_joints + " joint sons");
+
+            if(number_of_joints > 0)
+                theResult.Add(new MjBodyAdapter(ab));
+
+        }
+
+        //the root has no MjHingeJoints, so we need to:
+        if (returnRoot)
+            theResult.Add(new MjBodyAdapter(theRoot.GetComponent<MjBody>()));
+
+
         return theResult;
-      
 
     }
 
 
-
+    /*
     static public IKinematic[] GetMotors(GameObject go)
     {
         List<IKinematic> result = new List<IKinematic>();
@@ -290,7 +333,8 @@ public static class Utils
         return result.ToArray();
 
     }
-
+    */
+    
 
     public static float GetActionTimeDelta(DecisionRequester _decisionRequester)
     {
@@ -303,8 +347,11 @@ public static class Utils
         return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
     }
 
+    public static bool IsRoot(MjBody _mb)
+    {
+        return _mb.transform.parent != null ? !_mb.transform.parent.GetComponent<MjBody>() : true;
+    }
 
-   
 
 
 }

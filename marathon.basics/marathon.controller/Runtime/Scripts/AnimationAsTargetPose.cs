@@ -65,7 +65,7 @@ public class AnimationAsTargetPose : MonoBehaviour
         
         }
 
-         lrb = Utils.GetMotors(gameObject);
+         lrb = Utils.GetArticulationMotors(gameObject).ToArray();
 
        
     }

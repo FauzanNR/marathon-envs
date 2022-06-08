@@ -404,7 +404,7 @@ namespace Kinematic
 
 
         public int index { get => _mb.MujocoId; }
-        public bool isRoot { get => _mb.transform.parent != null ? !_mb.transform.parent.GetComponent<MjBody>() : true; }
+        public bool isRoot { get => Utils.IsRoot(_mb); }
 
 
         public float3 InertiaTensor { get => _mb.GetInertia(); }
