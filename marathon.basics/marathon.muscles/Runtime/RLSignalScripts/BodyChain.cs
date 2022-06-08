@@ -403,19 +403,8 @@ namespace Kinematic
         public Vector3 Forward => _mb.GetTransformMatrix().GetColumn(2);
 
 
-        public int index { get {
-                Debug.LogError("index in mujoco articulations not implemented");
-                
-                return -1; }  }
-        public bool isRoot { get 
-                {
-                Debug.LogError("isRoot in mujoco articulations not implemented");
-
-
-                return false;
-            
-            
-            }  }
+        public int index { get => _mb.MujocoId; }
+        public bool isRoot { get => _mb.transform.parent != null ? _mb.transform.parent.GetComponent<MjBody>() : false; }
 
 
         public float3 InertiaTensor { get => _mb.GetInertia(); }
@@ -425,8 +414,7 @@ namespace Kinematic
         {
             get
             {
-                Debug.LogError("Anchor position in local coordinates not implmeented for MjBody ");
-                return float3.zero;
+                return _mb.GetComponentInDirectChildren<MjBaseJoint>().transform.localPosition;
             }
         }
 
