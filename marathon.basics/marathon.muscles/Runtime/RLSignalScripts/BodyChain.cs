@@ -19,9 +19,11 @@ namespace Kinematic
 
         protected float mass; //chain.Select(k => k.Mass).Sum();
         public float Mass {get => mass;}
-        public Vector3 CenterOfMass {get => ((IEnumerable<Vector3>) chain.Select( k => k.Mass * k.CenterOfMass)).Sum() / Mass;}
+        public Vector3 CenterOfMass { get => chain.Select(k => (Vector3)(k.Mass * k.CenterOfMass)).Sum() / Mass;
+                    
+                }
         public Vector3 CenterOfMassVelocity {get => chain.Select(k => k.Mass * k.Velocity).Sum() / Mass;}
-        public IEnumerable<Vector3> CentersOfMass {get => (IEnumerable<Vector3>)chain.Select(k => k.CenterOfMass);}
+        public IEnumerable<Vector3> CentersOfMass {get => chain.Select(k => (Vector3) k.CenterOfMass);}
         public IEnumerable<Vector3> Velocities {get => chain.Select(k => k.Velocity);}
         //public IEnumerable<Matrix4x4> TransformMatrices { get => chain.Select(k => k.TransformMatrix); }
         public Vector3 RootForward { get => chain[0].Forward;  }
