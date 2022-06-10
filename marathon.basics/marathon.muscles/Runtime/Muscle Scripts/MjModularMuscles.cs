@@ -110,19 +110,20 @@ namespace Mujoco
 
             base.OnAgentInitialize();
 
-            MjScene.Instance.ctrlCallback += UpdateTorque;
+            
             //IReadOnlyList<MjActuator>  actuators = Actuators;
             IReadOnlyList<MjActuator> subset = actuatorSubset == null ? new List<MjActuator> { } : actuatorSubset;
 
             //if (IsSubsetDefined && kinematicRef && trackPosition)
             //{
-                actuatorPairs = Actuators.Select(a => new MujocoActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
+            actuatorPairs = Actuators.Select(a => new MujocoActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
             //    return;
             //}
 
             //actuatorPairs = actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), true)).ToList();
 
-
+            MjScene.Instance.ctrlCallback += UpdateTorque;
+            nextActions = GetActionsFromState();
         
 
         }
