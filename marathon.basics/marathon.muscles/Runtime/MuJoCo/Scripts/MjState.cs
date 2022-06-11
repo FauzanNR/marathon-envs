@@ -339,6 +339,7 @@ namespace Mujoco
             return (float) mjScene.Model -> body_mass[bd.MujocoId];
         }
 
+
         public static unsafe Vector3 GetLocalCenterOfMass(this MjBody bd)
         {
             return MjEngineTool.UnityVector3(mjScene.Model->body_ipos, bd.MujocoId);
@@ -380,6 +381,54 @@ namespace Mujoco
                 x: (float)coords[startOffset + 1], y: (float)coords[startOffset + 3],
                 z: (float)coords[startOffset + 2], w: (float)-coords[startOffset]);
         }
+
+        public static MjActuator FindActuator(this MjBaseJoint joint)
+        {
+            return GameObject.FindObjectsOfType<MjActuator>().FirstOrDefault(a => a.Joint == joint);
+        }
+
+        public static int DoFCount(this MjBaseJoint joint)
+        {
+            if (joint.GetComponent<MjFreeJoint>()) return 6;
+            if (joint.GetComponent<MjBallJoint>()) return 4;
+            return 1;
+        }
+
+        public static float GetVolume(this MjGeom geom)
+        {
+
+            switch (geom.ShapeType)
+            {
+                case MjShapeComponent.ShapeTypes.Sphere:
+                    return 4 * Mathf.PI * geom.Sphere.Radius * geom.Sphere.Radius * geom.Sphere.Radius / 3;
+
+                case MjShapeComponent.ShapeTypes.Capsule:
+                    var height = geom.Capsule.HalfHeight * 2;
+                    var radius = geom.Capsule.Radius;
+                    return Mathf.PI * (radius * radius * height + 4 * radius * radius * radius / 3);
+
+                case MjShapeComponent.ShapeTypes.Cylinder:
+                    height = 2 * geom.Cylinder.HalfHeight;
+                    radius = geom.Cylinder.Radius;
+                    return Mathf.PI * radius * radius * height;
+
+                case MjShapeComponent.ShapeTypes.Ellipsoid:
+                    return 4 * Mathf.PI * geom.Ellipsoid.Radiuses[0] * geom.Ellipsoid.Radiuses[1] * geom.Ellipsoid.Radiuses[2] / 3;
+
+                case MjShapeComponent.ShapeTypes.Box:
+                    return geom.Box.Extents[0] * geom.Box.Extents[1] * geom.Box.Extents[2] / 8;
+
+                default:
+                    return 0;
+            }
+        }
+
+        public static float GetMass(this MjGeom geom)
+        {
+            if (geom.Mass != 0) return geom.Mass;
+            return geom.Density * geom.GetVolume();
+        }
+
 
     }
 }
