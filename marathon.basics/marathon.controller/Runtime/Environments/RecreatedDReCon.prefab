@@ -11851,7 +11851,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4573900768604909443}
   - component: {fileID: 2629145796007088774}
-  - component: {fileID: 2898202283523280816}
+  - component: {fileID: 3490941093651870534}
   m_Layer: 0
   m_Name: RecreatedDReCon
   m_TagString: Untagged
@@ -11899,7 +11899,7 @@ MonoBehaviour:
   bounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 0, y: 0, z: 0}
---- !u!114 &2898202283523280816
+--- !u!114 &3490941093651870534
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11908,14 +11908,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7698962731877504412}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e82c49ecc2a12864da15d32941a3657c, type: 3}
+  m_Script: {fileID: 11500000, guid: 457e377961703a448b660178a5e6bd46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderersToHide:
-  - {fileID: 455324094755571360}
-  - {fileID: 7918339846315241934}
-  - {fileID: 2898202283330171269}
-  - {fileID: 2272130835252409571}
+  renderersToHide: []
 --- !u!1 &7710641889371928287
 GameObject:
   m_ObjectHideFlags: 0
