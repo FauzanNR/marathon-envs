@@ -4,6 +4,8 @@ using UnityEngine;
 using UnityEditor;
 using System.Linq;
 
+#if UNITY_EDITOR
+
 namespace Mujoco
 {
 
@@ -184,3 +186,5 @@ namespace Mujoco
 
     }
 }
+
+#endif
