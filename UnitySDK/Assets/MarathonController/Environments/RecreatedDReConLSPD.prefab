@@ -7,6 +7,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2898202283523280816, guid: 3f029a1a96cf4054b9b75bce38530d8e,
+        type: 3}
+      propertyPath: renderersToHide.Array.size
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2898202284151412054, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: MotorUpdateMode
@@ -70,7 +75,7 @@ PrefabInstance:
     - target: {fileID: 7698962731877504412, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
       propertyPath: m_Name
-      value: RecreatedDReCon
+      value: RecreatedDReConLSPD
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3f029a1a96cf4054b9b75bce38530d8e, type: 3}
