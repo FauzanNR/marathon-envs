@@ -1,5 +1,15 @@
 {
   "dependencies": {
+    "ch.artanim.lspd": {
+      "version": "https://bitbucket.org/artanim/linear-stable-proportional-derivative.git?path=/ch.artanim.lspd#v0.0.5",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.jobs": "0.11.0-preview.6",
+        "com.unity.mathematics": "1.2.1"
+      },
+      "hash": "a9315681fd9ac2f6822c544c598006cfaa2b9604"
+    },
     "com.joebooth.many-worlds": {
       "version": "https://github.com/sohojoe/many-worlds.git?path=/com.joebooth.many-worlds#v1.1.0",
       "depth": 0,
@@ -77,12 +87,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "0.15.0-preview.21",
-      "depth": 1,
+      "version": "1.0.0-pre.5",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework.performance": "2.3.1-preview",
-        "com.unity.burst": "1.4.1"
+        "com.unity.burst": "1.5.4",
+        "com.unity.test-framework": "1.1.22"
       },
       "url": "https://packages.unity.com"
     },
@@ -119,11 +129,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.jobs": {
-      "version": "0.8.0-preview.23",
-      "depth": 0,
+      "version": "0.11.0-preview.6",
+      "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.collections": "0.15.0-preview.21",
+        "com.unity.collections": "1.0.0-pre.5",
         "com.unity.mathematics": "1.2.1"
       },
       "url": "https://packages.unity.com"
@@ -176,6 +186,22 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.sysroot": {
+      "version": "2.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.sysroot.linux-x86_64": {
+      "version": "2.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "2.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.test-framework": {
       "version": "1.1.29",
       "depth": 0,
@@ -184,16 +210,6 @@
         "com.unity.ext.nunit": "1.0.6",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.test-framework.performance": {
-      "version": "2.3.1-preview",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.test-framework": "1.1.0",
-        "com.unity.nuget.newtonsoft-json": "2.0.0-preview"
       },
       "url": "https://packages.unity.com"
     },
@@ -218,6 +234,16 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.toolchain.win-x86_64-linux-x86_64": {
+      "version": "2.0.0",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "2.0.0",
+        "com.unity.sysroot.linux-x86_64": "2.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ugui": {
       "version": "1.0.0",
       "depth": 0,
@@ -236,6 +262,14 @@
         "com.unity.modules.xr": "1.0.0"
       },
       "url": "https://packages.unity.com"
+    },
+    "marathon.basics": {
+      "version": "file:../../marathon.basics",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.unity.mathematics": "1.2.1"
+      }
     },
     "org.mujoco": {
       "version": "https://github.com/joanllobera/mujoco.git?path=unity#v2.1.5marathon",
