@@ -23,6 +23,14 @@ namespace MotorUpdate
 
 
         }
+
+
+        public abstract List<float> GetJointForces(IState[] currentState, IState[] targetState);
+
+
+
+
+
         public virtual float GetTorque(float[] curState, float[] targetState)
         {
             float res = 0;
