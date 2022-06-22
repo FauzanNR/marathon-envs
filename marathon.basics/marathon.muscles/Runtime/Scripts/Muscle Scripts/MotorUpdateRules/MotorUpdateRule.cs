@@ -30,7 +30,7 @@ namespace MotorUpdate
 
 
 
-
+        /*
         public virtual float GetTorque(float[] curState, float[] targetState)
         {
             float res = 0;
@@ -44,7 +44,7 @@ namespace MotorUpdate
         public virtual float GetTorque(IState curState, IState targetState)
         {
             return GetTorque(curState.stateVector, targetState.stateVector);
-        }
+        }*/
 
 
 

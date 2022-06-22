@@ -4,11 +4,6 @@ using UnityEngine;
 using System;
 using System.Linq;
 
-using Kinematic;
-using Unity.MLAgents;
-
-using Mujoco;
-
 public static class Utils 
 {
 
@@ -36,12 +31,6 @@ public static class Utils
     //you can also use this to calculate acceleration, right?
     public static Vector3 AngularVelocityInReducedCoordinates(Vector3 fromIn, Vector3 toIn, float timeDelta = 1f)
     {
-
-        if (timeDelta == 0)
-        {
-            Debug.LogWarning("a velocity with a time increment of 0 does NOT make any sense");
-            return Vector3.zero;
-        }
         Vector3 diff = (fromIn - toIn)*Mathf.Deg2Rad;
         Vector3 angularVelocity = diff / timeDelta;
         return angularVelocity;
@@ -66,7 +55,7 @@ public static class Utils
 
 
 
-     static Vector3 GetSwingTwist(Quaternion localRotation, out Quaternion swing, out Quaternion twist)
+    public static Vector3 GetSwingTwist(Quaternion localRotation, out Quaternion swing, out Quaternion twist)
     {
 
         //the decomposition in swing-twist, typically works like this:
@@ -208,150 +197,11 @@ public static class Utils
     }
 
 
-  
-    static  List<ArticulationBody> GetArticulationBodyMotors(GameObject theRoot, bool returnRoot = false)
+    public float GetActionTimeDelta(GameObject agentObject)
     {
-
-        if (!returnRoot) { 
-        return theRoot.GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                .Where(x => !x.isRoot)
-                .Distinct()
-                .OrderBy(act => act.index).ToList();
-        }
-        else
-        {
-            return theRoot.GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                //.Where(x => !x.isRoot)
-                .Distinct()
-                .OrderBy(act => act.index).ToList();
-
-
-
-        }
-
-    }
-
-
-    static public List<IKinematic> GetArticulationMotors(GameObject theRoot, bool returnRoot = false)
-    {
-        List<ArticulationBody> theList;
-        if (!returnRoot)
-        {
-            theList =  theRoot.GetComponentsInChildren<ArticulationBody>()
-                    .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                    .Where(x => !x.isRoot)
-                    .Distinct()
-                    .OrderBy(act => act.index).ToList();
-        }
-        else
-        {
-            theList = theRoot.GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
-                //.Where(x => !x.isRoot)
-                .Distinct()
-                .OrderBy(act => act.index).ToList();
-
-
-
-        }
-
-        // Debug.Log("I have found: "  + theList.Count + " motors");
-        List<IKinematic> theResult = new List<IKinematic>();
-
-        if (theList.Count > 0)
-        {
-
-          
-
-            foreach (ArticulationBody ab in theList)
-            {
-                theResult.Add(new ArticulationBodyAdapter(ab));
-
-            }
-            return theResult;
-
-
-        }
-
-        List<MjBody> theMjList = new List<MjBody>();
-        if (!returnRoot)
-            theMjList = theRoot.GetComponentsInChildren<MjBody>()
-                            .Where(x => ! IsRoot(x))
-                            .Distinct()
-                            .OrderBy(act => act.MujocoId).ToList();
-        else
-            theMjList = theRoot.GetComponentsInChildren<MjBody>()
-                            //.Where(x => !IsRoot(x))
-                            .Distinct()
-                            .OrderBy(act => act.MujocoId).ToList();
-
-
-
-        foreach (MjBody ab in theMjList)
-        {
-            int number_of_joints = 0;
-            foreach (Transform child in ab.transform) {//this is a special thing that only goes through the immediate sons
-                if (child.GetComponent<MjHingeJoint>())
-                    number_of_joints++;
-            
-            }
-
-
-
-            //Debug.Log(ab.name + " has " + number_of_joints + " joint sons");
-
-            if(number_of_joints > 0)
-                theResult.Add(new MjBodyAdapter(ab));
-
-        }
-
-        //the root has no MjHingeJoints, so we need to:
-        if (returnRoot)
-            theResult.Add(new MjBodyAdapter(theRoot.GetComponent<MjBody>()));
-
-
-        return theResult;
-
-    }
-
-
-    /*
-    static public IKinematic[] GetMotors(GameObject go)
-    {
-        List<IKinematic> result = new List<IKinematic>();
-
-        List<ArticulationBody> abl = GetArticulationBodyMotors(go);
-
-
-        foreach (ArticulationBody a in abl)
-        {
-            result.Add(new ArticulationBodyAdapter(a));
-        }
-
-        return result.ToArray();
-
-    }
-    */
-    
-
-    public static float GetActionTimeDelta(DecisionRequester _decisionRequester)
-    {
-      
-        if (_decisionRequester == null)
-        {
-            return Time.fixedDeltaTime;
-        }
-
+        DecisionRequester _decisionRequester = agentObject.GetComponent<DecisionRequester>();
         return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
     }
-
-    public static bool IsRoot(MjBody _mb)
-    {
-        return _mb.transform.parent != null ? !_mb.transform.parent.GetComponent<MjBody>() : true;
-    }
-
 
 
 }

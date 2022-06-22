@@ -19,9 +19,10 @@ namespace Mujoco
 
         public override IReadOnlyList<MjActuator> Actuators { get => actuatorRoot.GetComponentsInChildren<MjActuator>().Where(act => !IsVelocity(act)).ToList(); }
 
-        
 
-        public override void ApplyActions(float[] actions, float actionTimeDelta)
+
+        //public override void ApplyActions(float[] actions, float actionTimeDelta)
+        public override void ApplyActions(float[] actions)
         {
             foreach ((var action, (var actuator, var bs)) in actions.Zip(actuators.Zip(biasedScales, Tuple.Create), Tuple.Create))
             {

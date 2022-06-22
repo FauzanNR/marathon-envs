@@ -24,7 +24,8 @@ namespace Mujoco
 
         public override int ActionSpaceSize => actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().Count;
 
-        public override void ApplyActions(float[] actions, float actionTimeDelta)
+        //public override void ApplyActions(float[] actions, float actionTimeDelta)
+        public override void ApplyActions(float[] actions)
         {
             foreach ((var action, var actuator) in actions.Zip(actuators, Tuple.Create))
             {

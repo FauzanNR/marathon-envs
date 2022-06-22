@@ -99,7 +99,8 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         float[] vectorAction = actionBuffers.ContinuousActions.ToArray();
         vectorAction = SmoothActions(vectorAction);
 
-        ragDollMuscles.ApplyActions(vectorAction, ActionTimeDelta);
+        // ragDollMuscles.ApplyActions(vectorAction, ActionTimeDelta);
+        ragDollMuscles.ApplyActions(vectorAction);
 
         previousActions = vectorAction;
 

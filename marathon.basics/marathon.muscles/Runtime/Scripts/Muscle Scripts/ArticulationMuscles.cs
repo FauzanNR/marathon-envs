@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 
 using Unity.MLAgents;//for the DecisionRequester
-public class ArticulationMuscles : Muscles
+public class ArticulationMuscles : ModularMuscles
 {
 
 
@@ -22,7 +22,7 @@ public class ArticulationMuscles : Muscles
         public Vector3 PowerVector;
     }
 
-
+    float actionTimeDelta;
 
     [Header("Parameters for Legacy and PD:")]
     public List<MusclePower> MusclePowers;
@@ -122,7 +122,7 @@ public class ArticulationMuscles : Muscles
     void Awake()
     {
         Setup();
-
+        actionTimeDelta = Utils.GetActionTimeDelta(GetComponent<DecisionRequester>());
         _motors = GetMotors();
 
         foreach (ArticulationBody m in _motors)
@@ -869,7 +869,8 @@ public class ArticulationMuscles : Muscles
 
 
 
-    public override void ApplyActions(float[] actions, float actionTimeDelta)
+    //public override void ApplyActions(float[] actions, float actionTimeDelta)
+    public override void ApplyActions(float[] actions)
     {
         int i = 0;
 
