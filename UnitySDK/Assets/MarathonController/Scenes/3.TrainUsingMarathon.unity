@@ -459,10 +459,10 @@ MonoBehaviour:
     - envId: DReConLSPD
       envPrefab: {fileID: 9023060833483192139, guid: 7f176aa505c0fff4489cbf748724557a,
         type: 3}
-    envIdDefault: DReConLSPD
+    envIdDefault: DReCon-Mj
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
-  DebugSkipPopUp: 1
+  DebugSkipPopUp: 0
 --- !u!4 &1741962962
 Transform:
   m_ObjectHideFlags: 0
