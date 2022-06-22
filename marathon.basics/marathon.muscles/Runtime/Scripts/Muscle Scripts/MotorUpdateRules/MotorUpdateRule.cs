@@ -13,8 +13,16 @@ namespace MotorUpdate
         [SerializeField]
         protected float[] gains;
 
-        
 
+
+
+        public virtual void Initialize(Muscles muscles = null, float dT = 1 / 60)
+        {
+
+
+
+
+        }
         public virtual float GetTorque(float[] curState, float[] targetState)
         {
             float res = 0;
