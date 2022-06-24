@@ -15,12 +15,6 @@
     "precompiledReferences": [],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": [
-        {
-            "name": "ch.artanim.lspd",
-            "expression": "0.1",
-            "define": "USE_LSPD"
-        }
-    ],
+    "versionDefines": [],
     "noEngineReferences": false
 }
