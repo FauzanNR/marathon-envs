@@ -107,12 +107,13 @@ public class ArticulationMuscles : ModularMuscles
 
 
 #if USE_LSPD
-    private LSPDHierarchy _lpd;
+  //  private LSPDHierarchy _lpd;
+ 
 #endif
 
 
 
-
+    
     //for the PDopenloop case:
     public List<Transform> _referenceTransforms;
 
@@ -171,7 +172,7 @@ public class ArticulationMuscles : ModularMuscles
 
 
 #if USE_LSPD
-                              
+                  /*            
                 _lpd = gameObject.AddComponent<LSPDHierarchy>();
 
              
@@ -183,8 +184,8 @@ public class ArticulationMuscles : ModularMuscles
                 }
 
                 _motors = _lpd.Init(1000, GetActionTimeDelta());
-                
-
+                */
+                Debug.LogWarning("TODO: fix integration of LSPD");
 #else
                 Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
 
@@ -792,7 +793,8 @@ public class ArticulationMuscles : ModularMuscles
 
             case (MotorMode.LSPD):
 #if USE_LSPD
-                _lpd.LaunchMimicry(targetRotations);
+              //  _lpd.LaunchMimicry(targetRotations);
+                Debug.LogWarning("TODO: fix integration of LSPD");
 #else
                 Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
 #endif
@@ -875,9 +877,11 @@ public class ArticulationMuscles : ModularMuscles
 
 #if USE_LSPD
 
+Debug.LogWarning("TODO: fix integration of LSPD");
+            /*
             Vector3[] targetRotations = new Vector3[_motors.Count];
                  int im = 0; //keeps track of the number of motor
-
+                 */
 #else
 
 
@@ -904,14 +908,15 @@ public class ArticulationMuscles : ModularMuscles
                 targetNormalizedRotation.z = actions[i++];
 
 #if USE_LSPD
-            
+Debug.LogWarning("TODO: fix integration of LSPD");            
+/*
             if (MotorUpdateMode == MotorMode.LSPD)
             {
                 targetRotations[im] = targetNormalizedRotation;
                 im++;
 
             }
-            else
+            else*/
 #endif
             {
                 UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
@@ -920,8 +925,11 @@ public class ArticulationMuscles : ModularMuscles
         }
 
 #if USE_LSPD
+Debug.LogWarning("TODO: fix integration of LSPD");
+/*
          if (MotorUpdateMode == MotorMode.LSPD)
             _lpd.LaunchMimicry(targetRotations);
+            */
 #endif
 
     }
@@ -933,7 +941,9 @@ public class ArticulationMuscles : ModularMuscles
     {
 
 #if USE_LSPD
-       
+
+Debug.LogWarning("TODO: fix integration of LSPD");
+       /*
         switch (MotorUpdateMode)
         {
 
@@ -943,7 +953,7 @@ public class ArticulationMuscles : ModularMuscles
 
                 break;
 
-        }
+        }*/
 #endif
 
     }
