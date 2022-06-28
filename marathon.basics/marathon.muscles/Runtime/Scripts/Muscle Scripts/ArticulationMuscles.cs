@@ -91,7 +91,6 @@ public class ArticulationMuscles : ModularMuscles
 
         legacy,
         PD,
-        LSPD,
         force,
         PDopenloop //this is a PD combined with the kinematic input processed as an openloop, see in DReCon
 
@@ -105,10 +104,6 @@ public class ArticulationMuscles : ModularMuscles
     public MotorDelegate UpdateMotor;
 
 
-
-#if USE_LSPD
-    private LSPDHierarchy _lpd;
-#endif
 
 
 
@@ -163,39 +158,6 @@ public class ArticulationMuscles : ModularMuscles
                 UpdateMotor = LegacyUpdateMotor;
                 break;
 
-            case (MotorMode.LSPD):
-                UpdateMotor = null;
-
-
-
-
-
-#if USE_LSPD
-                              
-                _lpd = gameObject.AddComponent<LSPDHierarchy>();
-
-             
-                DecisionRequester _decisionRequester = GetComponent<DecisionRequester>();
-
-                float GetActionTimeDelta()
-                {
-                    return _decisionRequester.TakeActionsBetweenDecisions ? Time.fixedDeltaTime : Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-                }
-
-                _motors = _lpd.Init(1000, GetActionTimeDelta());
-                
-
-#else
-                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
-
-#endif
-
-
-     
-
-
-
-                break;
 
             case (MotorMode.PDopenloop):
                 UpdateMotor = UpdateMotorPDopenloop;
@@ -790,15 +752,7 @@ public class ArticulationMuscles : ModularMuscles
         switch (MotorUpdateMode)
         {
 
-            case (MotorMode.LSPD):
-#if USE_LSPD
-                _lpd.LaunchMimicry(targetRotations);
-#else
-                Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
-#endif
-                break;
-
-
+ 
             default:
 
                 int j = 0;
@@ -873,19 +827,7 @@ public class ArticulationMuscles : ModularMuscles
     {
         int i = 0;
 
-#if USE_LSPD
 
-            Vector3[] targetRotations = new Vector3[_motors.Count];
-                 int im = 0; //keeps track of the number of motor
-
-#else
-
-
-        if (MotorUpdateMode == MotorMode.LSPD)
-            Debug.LogError("To use this functionality you need to import the Artanim LSPD package");
-
-
-#endif
 
 
         foreach (var m in _motors)
@@ -903,50 +845,16 @@ public class ArticulationMuscles : ModularMuscles
             if (m.swingZLock != ArticulationDofLock.LockedMotion)
                 targetNormalizedRotation.z = actions[i++];
 
-#if USE_LSPD
-            
-            if (MotorUpdateMode == MotorMode.LSPD)
-            {
-                targetRotations[im] = targetNormalizedRotation;
-                im++;
 
-            }
-            else
-#endif
-            {
                 UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
-            }
+          
 
         }
-
-#if USE_LSPD
-         if (MotorUpdateMode == MotorMode.LSPD)
-            _lpd.LaunchMimicry(targetRotations);
-#endif
 
     }
 
 
 
-
-    public void FixedUpdate()
-    {
-
-#if USE_LSPD
-       
-        switch (MotorUpdateMode)
-        {
-
-            case (MotorMode.LSPD):
-
-                _lpd.CompleteMimicry();
-
-                break;
-
-        }
-#endif
-
-    }
 
 
     public List<ArticulationBody> GetMotors()
