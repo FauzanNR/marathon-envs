@@ -39,9 +39,11 @@ public class DReConRewardSource : RewardSource
         kinChain = new BoundingBoxChain(kinematicTransform);
         simChain = new BoundingBoxChain(simulationTransform);
 
-        kinHead = IKinematic.GetKinematic(kinematicHead.transform);
-        
-        simHead = IKinematic.GetKinematic(simulationHead.transform);
+        //kinHead = IKinematic.GetKinematic(kinematicHead.transform);
+        //simHead = IKinematic.GetKinematic(simulationHead.transform);
+
+        kinHead = kinematicHead.transform.GetKinematic();
+        simHead = simulationHead.transform.GetKinematic();
 
         nBodies = kinChain.Count;
     }
