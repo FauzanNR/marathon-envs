@@ -456,8 +456,8 @@ MonoBehaviour:
     - envId: DReCon-Mj
       envPrefab: {fileID: 6586864498826033785, guid: 4b5b760a3f0a5cd4c99e277dab68d745,
         type: 3}
-    - envId: DReConLSPD
-      envPrefab: {fileID: 9023060833483192139, guid: 7f176aa505c0fff4489cbf748724557a,
+    - envId: DReCon
+      envPrefab: {fileID: 2629145796007088774, guid: 3f029a1a96cf4054b9b75bce38530d8e,
         type: 3}
     envIdDefault: DReCon-Mj
     trainingNumEnvsDefault: 1
