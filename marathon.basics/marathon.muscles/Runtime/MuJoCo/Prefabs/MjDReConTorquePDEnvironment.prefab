@@ -20914,12 +20914,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 6427866368462134976}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e82c49ecc2a12864da15d32941a3657c, type: 3}
+  m_Script: {fileID: 11500000, guid: 457e377961703a448b660178a5e6bd46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderersToHide:
-  - {fileID: 6427866368016156489}
-  - {fileID: 7963524179445734348}
+  renderersToHide: []
 --- !u!114 &4793730405678012173
 MonoBehaviour:
   m_ObjectHideFlags: 0
