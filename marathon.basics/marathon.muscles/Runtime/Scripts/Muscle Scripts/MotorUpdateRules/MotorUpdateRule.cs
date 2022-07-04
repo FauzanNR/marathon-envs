@@ -10,8 +10,8 @@ namespace MotorUpdate
     public abstract class MotorUpdateRule : ScriptableObject
     {
         // Start is called before the first frame update
-        [SerializeField]
-        protected float[] gains;
+        //[SerializeField]
+        //protected float[] gains;
 
 
 

@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 
 using Unity.MLAgents;//for the DecisionRequester
-public class ArticulationMuscles : ModularMuscles
+public class ArticulationMuscles : Muscles
 {
 
 

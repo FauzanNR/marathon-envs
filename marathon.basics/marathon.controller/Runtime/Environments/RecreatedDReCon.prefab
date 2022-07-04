@@ -400,6 +400,7 @@ MonoBehaviour:
   MaxStep: 0
   fixedDeltaTime: 0.0125
   actionSmoothingBeta: 0.2
+  maxStep: 0
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
@@ -475,6 +476,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4f25a623d39557240a4ffb10d63e4cc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateRule: {fileID: 0}
   MotorUpdateMode: 1
   MusclePowers:
   - Muscle: articulation:mixamorig:Hips
