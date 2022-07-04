@@ -20292,6 +20292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: be91f00d596e3ba438afba46927e73db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  updateRule: {fileID: 11400000, guid: a3d83506b6bae9746930986c1c8b9d16, type: 2}
   actuatorRoot: {fileID: 3622084347362243779}
   actuatorSubset:
   - {fileID: 3622084345470692948}
@@ -20313,10 +20314,7 @@ MonoBehaviour:
   - {fileID: 3622084346453016237}
   - {fileID: 3622084347148932240}
   - {fileID: 3622084345929373246}
-  updateRule: {fileID: 11400000, guid: 15e8e0283404f984995d5fa88859c571, type: 2}
   kinematicRef: {fileID: 3622084345754346415}
-  trackPosition: 1
-  trackVelocity: 0
 --- !u!1 &6427866368016899485
 GameObject:
   m_ObjectHideFlags: 0
@@ -20940,6 +20938,8 @@ MonoBehaviour:
   gearScale: 1.2
   controlLimitScale: 0.01
   armatureScale: 0.6666667
+  conAffinity: 0
+  conType: 0
 --- !u!1 &6427866368482140471
 GameObject:
   m_ObjectHideFlags: 0

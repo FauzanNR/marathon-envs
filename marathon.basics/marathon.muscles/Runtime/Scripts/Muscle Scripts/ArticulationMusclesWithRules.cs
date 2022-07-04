@@ -103,35 +103,37 @@ public class ArticulationMusclesWithRules : ModularMuscles
     public override float[] GetActionsFromState()
     {
         var vectorActions = new List<float>();
-       
-        foreach (var actupair in actuatorPairs)
-        {
+        if (actuatorPairs != null) { 
+            foreach (var actupair in actuatorPairs)
+            {
 
-            var m = actupair.aba;
-            if (m.isRoot)
-                continue;
-            int i = 0;
+                var m = actupair.aba;
+                if (m.isRoot)
+                    continue;
+                int i = 0;
           
-            if (m.JointAxes.c0[0] != 0)
-            {
+                if (m.JointAxes.c0[0] != 0)
+                {
               
-                var target = m.JointPosition[0];
-                vectorActions.Add(target);
-            }
+                    var target = m.JointPosition[0];
+                    vectorActions.Add(target);
+                }
           
-            if (m.JointAxes.c1[1] != 0)
-            {
+                if (m.JointAxes.c1[1] != 0)
+                {
                
-                var target = m.JointPosition[1];
-                vectorActions.Add(target);
-            }
+                    var target = m.JointPosition[1];
+                    vectorActions.Add(target);
+                }
            
-            if (m.JointAxes.c1[1] != 0)
-            {
+                if (m.JointAxes.c1[1] != 0)
+                {
           
-                var target = m.JointPosition[2];
-                vectorActions.Add(target);
+                    var target = m.JointPosition[2];
+                    vectorActions.Add(target);
+                }
             }
+
         }
         return vectorActions.ToArray();
     }

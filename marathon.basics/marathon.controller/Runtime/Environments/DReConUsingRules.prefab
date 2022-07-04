@@ -404,7 +404,7 @@ MonoBehaviour:
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
-  ragDollMuscles: {fileID: 0}
+  ragDollMuscles: {fileID: 7529644190733316927}
 --- !u!114 &9088123711039994768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -478,7 +478,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   updateRule: {fileID: 11400000, guid: a3d83506b6bae9746930986c1c8b9d16, type: 2}
   root: {fileID: 2328979252357156786}
-  kinematicRef: {fileID: 2525623248189318837}
+  kinematicRef: {fileID: 2898202285022763497}
 --- !u!1 &458535029660540518
 GameObject:
   m_ObjectHideFlags: 0
