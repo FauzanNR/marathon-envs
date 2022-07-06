@@ -166,14 +166,49 @@ public class ArticulationMusclesWithRules : ModularMuscles
 
         List<float> torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
 
-      
+
+        int indexTorques = 0;
+
+        foreach (PhysXActuatorReferencePair actPair in actuatorPairs)
+        {
+
+            if (actPair.act.isRoot)
+            {
+                Debug.LogError("The ROOT should not be in the actuators");
+            }
+
+            Vector3 oneJointTorque = Vector3.zero;
+            
+            
+
+            if (actPair.act.twistLock != ArticulationDofLock.LockedMotion)
+            {
+                oneJointTorque.x = torques[indexTorques++];
 
 
+            }
+            if (actPair.act.swingYLock != ArticulationDofLock.LockedMotion)
+            {
+                oneJointTorque.y = torques[indexTorques++];
+
+            }
+            if (actPair.act.swingZLock != ArticulationDofLock.LockedMotion)
+            {
+                oneJointTorque.z = torques[indexTorques++];
+
+            }
+            actPair.act.AddRelativeTorque(oneJointTorque);
+
+        }
+
+
+
+        /*
         if (root.immovable)
             root.SetJointForces(torques);
         else
             root.SetJointForces(nullactions4root.Concat(torques).ToList());
-       
+       */
     }
 
 
