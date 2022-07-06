@@ -46,6 +46,8 @@ public class ArticulationMusclesWithRules : ModularMuscles
         //  actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a.gameObject.GetComponent<ArticulationBody>(), FindReference(a.gameObject.GetComponent<ArticulationBody>()), subset.Contains(a.gameObject.GetComponent<ArticulationBody>()))).ToList();
         actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a.gameObject.GetComponent<ArticulationBody>(), FindReference(a.gameObject.GetComponent<ArticulationBody>()), true)).ToList();
 
+
+        DebugIndices();
     }
 
 
@@ -62,43 +64,7 @@ public class ArticulationMusclesWithRules : ModularMuscles
         get => GetActionsFromState().Length;
     }
 
-    /*
-    public override float[] GetActionsFromState()
-    {
-        
-        var vectorActions = new List<float>();
-        //foreach (var m in _motors)
-        foreach (var actupair in actuatorPairs)
-        {
-            var m = actupair.act;
-            if (m.isRoot)
-                continue;
-            //int i = 0;
-            if (m.jointType != ArticulationJointType.SphericalJoint)
-                continue;
-            if (m.twistLock != ArticulationDofLock.LockedMotion)
-            {
-
-                vectorActions.Add(0f);
-                //  vectorActions.Add(m.jointPosition[i++]);
-            }
-            if (m.swingYLock != ArticulationDofLock.LockedMotion)
-            {
-
-                vectorActions.Add(0f);
-                //  vectorActions.Add(m.jointPosition[i++]);
-            }
-            if (m.swingZLock != ArticulationDofLock.LockedMotion)
-            {
-
-                vectorActions.Add(0f);
-                //  vectorActions.Add(m.jointPosition[i++]);
-            }
-        }
-        return vectorActions.ToArray();
-    }
-  */
-
+  
 
     public override float[] GetActionsFromState()
     {
@@ -194,13 +160,73 @@ public class ArticulationMusclesWithRules : ModularMuscles
         }
 
 
+
+
+
+
         List<float> torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
-       
+
+      
+
+
         if (root.immovable)
             root.SetJointForces(torques);
         else
             root.SetJointForces(nullactions4root.Concat(torques).ToList());
        
     }
+
+
+
+
+    void DebugIndices() {
+
+        List<int> vectorTorquesIndices = new List<int>();
+
+
+        List<float> currentForces = new List<float>();
+
+
+        ArticulationBody myRootAB = root;
+        int totalDOF = myRootAB.GetJointForces(currentForces);
+
+        myRootAB.GetDofStartIndices(vectorTorquesIndices);
+
+
+        string s = " totalDOF: " + totalDOF + " indices: ";
+        for (int index = 0; index < vectorTorquesIndices.Count; index++)
+        {
+
+            s += vectorTorquesIndices[index] + " ";
+        }
+
+        Debug.Log(s);
+
+
+        int i = 0;
+        foreach (PhysXActuatorReferencePair actPair in actuatorPairs)
+        {
+           
+            ArticulationBody abtemp = actPair.act;
+            Debug.Log("ActuatorPair:" + i + "articulation: " + abtemp.name + " index: " + abtemp.index + "  " + vectorTorquesIndices[abtemp.index] + " " + abtemp.dofCount);
+            i++;
+
+        }
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
