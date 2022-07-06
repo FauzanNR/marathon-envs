@@ -459,10 +459,10 @@ MonoBehaviour:
     - envId: DReCon
       envPrefab: {fileID: 2629145796007088774, guid: 7f231da685ea80643bc85c955a82949c,
         type: 3}
-    envIdDefault: DReCon-Mj
+    envIdDefault: DReCon
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
-  DebugSkipPopUp: 0
+  DebugSkipPopUp: 1
 --- !u!4 &1741962962
 Transform:
   m_ObjectHideFlags: 0
