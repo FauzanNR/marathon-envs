@@ -43,7 +43,7 @@ namespace Mujoco
 
         private bool IsSubsetDefined { get => (actuatorSubset != null && actuatorSubset.Count > 0); }
 
-        public override int ActionSpaceSize => actuatorPairs.Where(arp=>arp.active).Count();
+        public override int ActionSpaceSize => IsSubsetDefined && kinematicRef ? actuatorSubset.Count : actuatorRoot.GetComponentsInChildren<MjActuator>().ToList().Count;
 
         float[] nextActions;
 

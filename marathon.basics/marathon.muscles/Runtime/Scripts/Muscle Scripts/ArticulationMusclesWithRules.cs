@@ -21,16 +21,16 @@ public class ArticulationMusclesWithRules : ModularMuscles
     [SerializeField]
     ArticulationBody root;
 
- 
+
     [SerializeField]
     Transform kinematicRef;
 
     //we need 6 extra zeros to apply nothing to the root Articulation when we do apply actions
     float[] nullactions4root = new float[6] { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
 
-  
+
     protected IReadOnlyList<PhysXActuatorReferencePair> actuatorPairs;
-    public virtual IReadOnlyList<IKinematic> Actuators { get => Utils.GetArticulationMotors(gameObject); }
+    public virtual IReadOnlyList<IKinematic> Actuators { get => Utils.GetArticulationMotors(root.gameObject); }
 
 
     public override void OnAgentInitialize()
@@ -40,7 +40,7 @@ public class ArticulationMusclesWithRules : ModularMuscles
 
         //   IReadOnlyList<ArticulationBody> subset = actuatorSubset == null ? new List<ArticulationBody> { } : actuatorSubset;
         //   actuatorPairs = Actuators.Select(a => new ActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
-        IReadOnlyList<ArticulationBody> subset =  new List<ArticulationBody> ();
+        IReadOnlyList<ArticulationBody> subset = new List<ArticulationBody>();
         //                actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a, FindReference(a), subset.Contains(a))).ToList();
 
         //  actuatorPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a.gameObject.GetComponent<ArticulationBody>(), FindReference(a.gameObject.GetComponent<ArticulationBody>()), subset.Contains(a.gameObject.GetComponent<ArticulationBody>()))).ToList();
@@ -56,20 +56,20 @@ public class ArticulationMusclesWithRules : ModularMuscles
         return kinematicRef ? kinematicRef.GetComponentsInChildren<Rigidbody>().First(rj => rj.name.Contains(act.name)) : null;
     }
 
-   
 
 
-        public override int ActionSpaceSize
+
+    public override int ActionSpaceSize
     {
         get => GetActionsFromState().Length;
     }
 
-  
+
 
     public override float[] GetActionsFromState()
     {
         var vectorActions = new List<float>();
-        if (actuatorPairs != null) { 
+        if (actuatorPairs != null) {
             foreach (var actupair in actuatorPairs)
             {
 
@@ -77,29 +77,62 @@ public class ArticulationMusclesWithRules : ModularMuscles
                 if (m.isRoot)
                     continue;
                 int i = 0;
-          
+
                 if (m.JointAxes.c0[0] != 0)
                 {
-              
+
                     var target = m.JointPosition[0];
                     vectorActions.Add(target);
                 }
-          
+
                 if (m.JointAxes.c1[1] != 0)
                 {
-               
+
                     var target = m.JointPosition[1];
                     vectorActions.Add(target);
                 }
-           
+
                 if (m.JointAxes.c1[1] != 0)
                 {
-          
+
                     var target = m.JointPosition[2];
                     vectorActions.Add(target);
                 }
             }
 
+        }
+        else
+        {
+            var tempPairs = Actuators.OrderBy(act => act.index).Select(a => new PhysXActuatorReferencePair(a.gameObject.GetComponent<ArticulationBody>(), FindReference(a.gameObject.GetComponent<ArticulationBody>()), true)).ToList();
+
+            foreach (var actupair in tempPairs)
+            {
+                var m = actupair.aba;
+                if (m.isRoot)
+                    continue;
+                int i = 0;
+
+                if (m.JointAxes.c0[0] != 0)
+                {
+
+                    var target = m.JointPosition[0];
+                    vectorActions.Add(target);
+                }
+
+                if (m.JointAxes.c1[1] != 0)
+                {
+
+                    var target = m.JointPosition[1];
+                    vectorActions.Add(target);
+                }
+
+                if (m.JointAxes.c1[1] != 0)
+                {
+
+                    var target = m.JointPosition[2];
+                    vectorActions.Add(target);
+                }
+            }
         }
         return vectorActions.ToArray();
     }
@@ -109,71 +142,29 @@ public class ArticulationMusclesWithRules : ModularMuscles
     public override void ApplyActions(float[] actions)
     {
 
-
-        var currentStates = new List<IState>();
-        var targetStates = new List<IState>();
+        //Since these are static, we could make them fields of the behaviour as well.
+        IState[] currentStates = actuatorPairs.SelectMany(arp => arp.activeActStates).ToArray();
+        IState[] targetStates = actuatorPairs.SelectMany(arp => arp.activeRefStates).ToArray();
 
         int j = 0;
 
-        foreach (PhysXActuatorReferencePair actPair in actuatorPairs)
-        {
-
-            if (actPair.act.isRoot)
-            {
-                Debug.LogError("The ROOT should not be in the actuators");
-            }
-                
-         
-            Vector3 refPosInReducedCoordinates = actPair.reference.JointPosition ;
-            Vector3 refVelInReducedCoordinates = actPair.reference.JointVelocity ;
-
-
-            if (actPair.act.twistLock != ArticulationDofLock.LockedMotion)
-            {
-             
-               currentStates.Add(new StaticState(actPair.aba.JointPosition.x, actPair.aba.JointVelocity.x, actPair.aba.JointAcceleration.x));
-               targetStates.Add(new StaticState(refPosInReducedCoordinates.x + actions[j], refVelInReducedCoordinates.x + actions[j] / _deltaTime, 0));
-
-                j++;
-
-            }
-            if (actPair.act.swingYLock != ArticulationDofLock.LockedMotion)
-            {
-              
-                 currentStates.Add(new StaticState(actPair.aba.JointPosition.y, actPair.aba.JointVelocity.y, actPair.aba.JointAcceleration.y));
-                 targetStates.Add(new StaticState(refPosInReducedCoordinates.y + actions[j], refVelInReducedCoordinates.y + actions[j] / _deltaTime, 0));
-                
-
-                j++;
-            }
-            if (actPair.act.swingZLock != ArticulationDofLock.LockedMotion)
-            {
-
-               
-                currentStates.Add(new StaticState(actPair.aba.JointPosition.z, actPair.aba.JointVelocity.z, actPair.aba.JointAcceleration.z));
-                targetStates.Add(new StaticState(refPosInReducedCoordinates.z + actions[j], refVelInReducedCoordinates.z + actions[j] / _deltaTime, 0));
-               
-                j++;
-            }
-
-
-        }
-
-
-
-
-
+        List<float> jointForces = new List<float>();
+        actuatorPairs.First().act.GetJointForces(jointForces);
+        int dofCount = 0;
+        List<List<int>> activeIdxs = new List<List<int>>();
 
         List<float> torques = updateRule.GetJointForces(currentStates.ToArray(), targetStates.ToArray());
 
-      
+        //Could be field as well
+        int[] dofIndices = actuatorPairs.SelectMany(arp => arp.stateIdxs).ToArray();
+        foreach((float force, int idx) in torques.Zip(dofIndices, Tuple.Create))
+        {
+            jointForces[idx] = force;
+        }
 
+        
+        root.SetJointForces(jointForces);
 
-        if (root.immovable)
-            root.SetJointForces(torques);
-        else
-            root.SetJointForces(nullactions4root.Concat(torques).ToList());
-       
     }
 
 

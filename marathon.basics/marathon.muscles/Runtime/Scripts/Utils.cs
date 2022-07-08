@@ -208,7 +208,17 @@ public static class Utils
     }
 
 
-  
+    public static void PrintChildren<T>(GameObject parent) where T:Component
+    {
+        Debug.Log(string.Join(", ", parent.GetComponentsInChildren<T>().Select(c => c.name)));
+    }
+
+    public static void PrintNames(IEnumerable<Component> components)
+    {
+        Debug.Log(string.Join(", ", components.Select(c => c.name)));
+    }
+
+
     static  List<ArticulationBody> GetArticulationBodyMotors(GameObject theRoot, bool returnRoot = false)
     {
 
@@ -240,7 +250,7 @@ public static class Utils
         if (!returnRoot)
         {
             theList =  theRoot.GetComponentsInChildren<ArticulationBody>()
-                    .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                    .Where(x => x.jointType != ArticulationJointType.FixedJoint)
                     .Where(x => !x.isRoot)
                     .Distinct()
                     .OrderBy(act => act.index).ToList();
@@ -248,7 +258,7 @@ public static class Utils
         else
         {
             theList = theRoot.GetComponentsInChildren<ArticulationBody>()
-                .Where(x => x.jointType == ArticulationJointType.SphericalJoint)
+                .Where(x => x.jointType != ArticulationJointType.FixedJoint)
                 //.Where(x => !x.isRoot)
                 .Distinct()
                 .OrderBy(act => act.index).ToList();

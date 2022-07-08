@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using Unity.Mathematics;
 using Mujoco;
+using Kinematic;
 
 namespace MotorUpdate
 {
@@ -134,6 +135,55 @@ namespace MotorUpdate
         public GameObject gameObject { get => mjActuator.gameObject; }
 
         public float[] stateVector => new float[] { Position, Velocity, Acceleration };
+    }
+
+    public class ArticulationBodyState : IState
+    {
+        readonly private ArticulationBody articulation;
+
+        readonly private int idx;
+
+        public ArticulationBodyState(ArticulationBody articulation, int idx)
+        {
+            this.articulation = articulation;
+            this.idx = idx;
+        }
+
+        public float Acceleration => articulation.jointAcceleration[idx];
+
+        public float Velocity => articulation.jointVelocity[idx];
+
+        public float Position => articulation.jointPosition[idx];
+
+        public float[] stateVector => new float[] { Position, Velocity, Acceleration };
+
+        public string Name => articulation.name;
+
+        public GameObject gameObject => articulation.gameObject;
+    }
+
+    public class RigidbodyState : IState
+    {
+        Kinematic.RigidbodyAdapter adapter;
+        int idx;
+
+        public RigidbodyState(RigidbodyAdapter adapter, int idx)
+        {
+            this.adapter = adapter;
+            this.idx = idx;
+        }
+
+        public float Acceleration => adapter.JointAcceleration[idx];
+
+        public float Velocity => adapter.JointVelocity[idx];
+
+        public float Position => adapter.JointPosition[idx];
+
+        public float[] stateVector => new float[] { Position, Velocity, 0f };
+
+        public string Name => adapter.Name;
+
+        public GameObject gameObject => adapter.gameObject;
     }
 
     public struct StaticState : IState

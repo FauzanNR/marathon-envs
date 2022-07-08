@@ -37,6 +37,11 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 
     public IReadOnlyList<IKinematic> Kinematics => riggedRigidbodies.Select(rb => (IKinematic) new RigidbodyAdapter(rb)).ToList();
 
+    public Transform TrackedTransformRoot { get => trackedTransformRoot; }
+
+    [SerializeField]
+    private bool initializeAlone;
+
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -87,11 +92,19 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
         }
     }
 
+    private void Awake()
+    {
+        OnAgentInitialize();
+    }
+
     private (IReadOnlyList<Rigidbody>, IReadOnlyList<Transform>) MarathonControllerMapping(IReadOnlyList<Rigidbody> rigidbodies, IReadOnlyList<Transform> transforms)
     {
-        List<string> rigidbodyNames = riggedRigidbodies.Select(rb => Utils.SegmentName(rb.name)).ToList();
-        transforms = transforms.Where(t => rigidbodyNames.Contains(Utils.SegmentName(t.name))).ToList();
-
+        List<string> rigidbodyNames = riggedRigidbodies.Select(rb => Utils.SegmentName(rb.name)).OrderBy(n=>n).ToList();
+        rigidbodies = rigidbodies.OrderBy(r => r.name).ToList();
+        Utils.PrintNames(riggedRigidbodies);
+        
+        transforms = transforms.Where(t => rigidbodyNames.Contains(Utils.SegmentName(t.name))).OrderBy(n=>n.name).ToList();
+        Utils.PrintNames(transforms);
         return (rigidbodies, transforms);
     }
 
