@@ -22,7 +22,8 @@ namespace Mujoco
                 MjRagdollTweaker t = target as MjRagdollTweaker;
                 foreach (var hj in t.joints)
                 {
-                    hj.Settings.Spring.Stiffness *= t.stiffnessScale;
+                    if (hj.Settings.Spring.Stiffness == 0f) hj.Settings.Spring.Stiffness = t.stiffnessScale;
+                    else hj.Settings.Spring.Stiffness *= t.stiffnessScale;
                 }
             }
 
@@ -31,7 +32,8 @@ namespace Mujoco
                 MjRagdollTweaker t = target as MjRagdollTweaker;
                 foreach (var hj in t.joints)
                 {
-                    hj.Settings.Spring.Damping *= t.dampingScale;
+                    if (hj.Settings.Spring.Damping == 0f) hj.Settings.Spring.Damping = t.dampingScale;
+                    else hj.Settings.Spring.Damping *= t.dampingScale;
                 }
             }
 

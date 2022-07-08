@@ -459,7 +459,10 @@ MonoBehaviour:
     - envId: DReCon
       envPrefab: {fileID: 2629145796007088774, guid: 7f231da685ea80643bc85c955a82949c,
         type: 3}
-    envIdDefault: DReCon
+    - envId: MujocoMixamo
+      envPrefab: {fileID: 7459421237271401953, guid: c5698d9ecc0f28d409dcf89a25a80828,
+        type: 3}
+    envIdDefault: MujocoMixamo
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1
   DebugSkipPopUp: 1

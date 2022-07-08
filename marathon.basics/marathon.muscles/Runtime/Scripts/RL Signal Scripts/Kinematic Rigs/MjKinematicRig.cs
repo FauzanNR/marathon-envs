@@ -144,6 +144,35 @@ public class MjKinematicRig : MonoBehaviour, IKinematicReference
         }
     }
 
+    public void CreateMocapBodies()
+    {
+
+        foreach (var t in trackedTransformRoot.GetComponentsInChildren<Transform>())
+        {
+            var go =new GameObject("Mocap_K_" + Utils.SegmentName(t.name));
+            go.transform.position = t.position;
+            go.transform.rotation = t.rotation;
+            var mocapBd = go.AddComponent<MjMocapBody>();
+            go.transform.parent = ragdollRoot.parent;
+
+            var wGo = new GameObject("weld_" + t.name);
+            wGo.transform.parent = weldRoot;
+            var mjW = wGo.AddComponent<MjWeld>();
+            mjW.Body1 = mocapBd;
+            try
+            {
+                mjW.Body2 = ragdollRoot.GetComponentsInChildren<MjBody>().First(rd => go.name.Equals("Mocap_" + rd.name));
+            }
+            catch
+            {
+                DestroyImmediate(wGo);
+                DestroyImmediate(go);
+            }
+        }
+
+
+    }
+
     public unsafe void TrackKinematicsOffline()
     {
 

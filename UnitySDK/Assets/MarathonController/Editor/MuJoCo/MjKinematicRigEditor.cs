@@ -44,6 +44,12 @@ namespace Mujoco
                 t.TrackKinematicsOffline();
             }
 
+            if (GUILayout.Button("Create MocapBodies"))
+            {
+                MjKinematicRig t = target as MjKinematicRig;
+                t.CreateMocapBodies();
+            }
+
 
 
             serializedObject.ApplyModifiedProperties();
