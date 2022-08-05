@@ -309,8 +309,10 @@ public static class Utils
 
         //the root has no MjHingeJoints, so we need to:
         if (returnRoot)
+        {
             theResult.Add(new MjBodyAdapter(theRoot.GetComponent<MjBody>()));
-
+            theResult = theResult.OrderBy(ikin => ikin.index).ToList();
+        }
 
         return theResult;
 
