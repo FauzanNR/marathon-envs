@@ -368,6 +368,11 @@ namespace Mujoco
         {
             var position = MjEngineTool.UnityVector3(mjScene.Data->xpos, bd.MujocoId);
             var rotation = MjEngineTool.UnityQuaternion(mjScene.Data->xquat, bd.MujocoId);
+            if (Mathf.Abs(rotation.x) + Mathf.Abs(rotation.y) + Mathf.Abs(rotation.z) + Mathf.Abs(rotation.w) < 0.9)
+            {
+                Debug.LogWarning(bd.name + " has rotation: " + rotation + " this has a module smaller than 0.9, so I reset it to the identity quaternion");
+                rotation = Quaternion.identity;
+            }
             return Matrix4x4.TRS(position, rotation, Vector3.one);
         }
 
