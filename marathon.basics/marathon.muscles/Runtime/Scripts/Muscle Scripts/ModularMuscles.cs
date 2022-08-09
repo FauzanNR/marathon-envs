@@ -13,7 +13,7 @@ public abstract class ModularMuscles : Muscles
     [SerializeField]
     protected MotorUpdateRule updateRule;
 
-    protected float _deltaTime;
+   
 
     public override void OnAgentInitialize()
     {
