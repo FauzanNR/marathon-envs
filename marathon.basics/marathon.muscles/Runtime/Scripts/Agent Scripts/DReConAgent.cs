@@ -16,8 +16,9 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 {
     [Header("Settings")]
 
-    [SerializeField]
-    private float fixedDeltaTime = 1f / 60f;
+    //Too dangerous
+    //[SerializeField]
+    //private float fixedDeltaTime = 1f / 60f;
     [SerializeField]
     private float actionSmoothingBeta = 0.2f;
     [SerializeField]
@@ -52,10 +53,10 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
     public event EventHandler<AgentEventArgs> onBeginHandler;
 
 
-    public float ObservationTimeDelta => fixedDeltaTime * decisionRequester.DecisionPeriod;
+    public float ObservationTimeDelta => FixedDeltaTime * decisionRequester.DecisionPeriod;
 
-    public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? fixedDeltaTime : fixedDeltaTime * decisionRequester.DecisionPeriod;
-    public float FixedDeltaTime { get => fixedDeltaTime; }
+    public float ActionTimeDelta => decisionRequester.TakeActionsBetweenDecisions ? FixedDeltaTime : FixedDeltaTime * decisionRequester.DecisionPeriod;
+    public float FixedDeltaTime { get => Time.fixedDeltaTime; }
 
     public int ActionSpaceSize => ragDollMuscles.ActionSpaceSize;
 
@@ -66,7 +67,9 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
         this.MaxStep = maxStep;
         Assert.IsFalse(hasLazyInitialized);
         hasLazyInitialized = true;
-        Time.fixedDeltaTime = fixedDeltaTime;
+        
+        //Too dangerous
+        //Time.fixedDeltaTime = fixedDeltaTime;
         
         decisionRequester = GetComponent<DecisionRequester>();
     }

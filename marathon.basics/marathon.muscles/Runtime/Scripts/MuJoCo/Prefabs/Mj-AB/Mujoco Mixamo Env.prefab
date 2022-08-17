@@ -30917,7 +30917,7 @@ MonoBehaviour:
   MaxStep: 400
   fixedDeltaTime: 0.008333334
   actionSmoothingBeta: 0.2
-  maxStep: 800
+  maxStep: 400
   kinematicRigObject: {fileID: 6599308937639176181}
   observationSignal: {fileID: 6568208045097183089}
   rewardSignal: {fileID: 352750558350984866}

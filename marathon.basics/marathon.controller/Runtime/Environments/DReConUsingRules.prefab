@@ -398,9 +398,9 @@ MonoBehaviour:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
   MaxStep: 0
-  fixedDeltaTime: 0.0125
+  fixedDeltaTime: 0.008333334
   actionSmoothingBeta: 0.2
-  maxStep: 0
+  maxStep: 400
   kinematicRigObject: {fileID: 2898202283330171269}
   observationSignal: {fileID: 1092443839365089973}
   rewardSignal: {fileID: 5830733573969029990}
