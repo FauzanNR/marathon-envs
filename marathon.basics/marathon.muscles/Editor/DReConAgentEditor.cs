@@ -1,3 +1,5 @@
+#if UNITY_EDITOR
+
 using DReCon;
 using System.Collections;
 using System.Collections.Generic;
@@ -51,3 +53,5 @@ public class DReConAgentEditor : Editor
 
 
 }
+
+#endif
