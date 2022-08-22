@@ -33,7 +33,7 @@ public class Test2CompareHandsDistance
 
         public bool IsTestFinished
         {
-            get { return frameCount > configObject.frameEnd;  }
+            get { return frameCount > configObject.frameEnd; }
         }
 
 
@@ -42,16 +42,17 @@ public class Test2CompareHandsDistance
         {
 
             Debug.Log("enabling the config object");
-           
+
             configObject = new TestParameters();
 
             configObject = (TestParameters)Resources.Load("TestParameters/LSPDSetup");
-            
+
 
             Time.fixedDeltaTime = 1 / configObject.fixedFreq;
             Vector3 spawnStartPos = Vector3.zero;
 
-            foreach (TestParameters.Object2Test object2Test in configObject.objects2test) {
+            foreach (TestParameters.Object2Test object2Test in configObject.objects2test)
+            {
 
                 SpawnableEnv spawnableEnv = object2Test.spawnableEnv;
                 spawnableEnv.UpdateBounds();
@@ -80,10 +81,10 @@ public class Test2CompareHandsDistance
             configObject.metrics = new metric[] { checkDistance1, checkDistance2 };
 
             foreach (metric m in configObject.metrics)
-            
+
                 m.initSampleList();
 
-            
+
 
 
         }
@@ -92,7 +93,7 @@ public class Test2CompareHandsDistance
         {
 
 
-          
+
 
 
 
@@ -121,9 +122,9 @@ public class Test2CompareHandsDistance
                 }
 
 
-        }
+            }
 
-          
+
 
 
 
@@ -136,15 +137,15 @@ public class Test2CompareHandsDistance
 
         [UnityTest]
 
-    public IEnumerator T01_TestHandsDistance()
+        public IEnumerator T01_TestHandsDistance()
 
-    {
-      yield return new MonoBehaviourTest<MyMonoBehaviourTest>();
-    }
+        {
+            yield return new MonoBehaviourTest<MyMonoBehaviourTest>();
+        }
 
 
 
-   
+    }  
 
 
 }
