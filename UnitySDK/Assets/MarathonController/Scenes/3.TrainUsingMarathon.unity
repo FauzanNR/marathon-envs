@@ -462,6 +462,9 @@ MonoBehaviour:
     - envId: MujocoMixamo
       envPrefab: {fileID: 7459421237271401953, guid: c5698d9ecc0f28d409dcf89a25a80828,
         type: 3}
+    - envId: DreCon-KP500
+      envPrefab: {fileID: 5821188606958601557, guid: b8f9be1d8ce2dac4da231d5297c5798f,
+        type: 3}
     envIdDefault: MujocoMixamo
     trainingNumEnvsDefault: 1
     inferenceNumEnvsDefault: 1

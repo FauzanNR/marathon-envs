@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0aba844a6d39a72439d14c1c88b577b2, type: 3}
-  m_Name: PD 1
+  m_Name: PD-KP500
   m_EditorClassIdentifier: 
   gains:
   - 500
