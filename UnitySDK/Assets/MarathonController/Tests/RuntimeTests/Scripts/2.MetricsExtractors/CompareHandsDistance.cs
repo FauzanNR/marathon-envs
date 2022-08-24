@@ -70,10 +70,15 @@ public class CompareHandsDistance : MonoBehaviour
         //in the Unit test version, this will be re-defined and defined like the line below:
         //configObject = (TestParameters)Resources.Load("TestParameters/DReConAndMujoco120HZ500KP");
 
+
+        
     }
 
     void Start()
         {
+
+        configObject.WriteMetricsToFile();
+
 
         Time.fixedDeltaTime = 1 / configObject.fixedFreq;
 
@@ -109,7 +114,7 @@ public class CompareHandsDistance : MonoBehaviour
             checkDistance2.name = "Mujoco Hand Distance";
 
             configObject.metrics = new metric[] { checkDistance1, checkDistance2 };
-            configObject.initMetrics();
+            configObject.InitMetrics();
 
 
 

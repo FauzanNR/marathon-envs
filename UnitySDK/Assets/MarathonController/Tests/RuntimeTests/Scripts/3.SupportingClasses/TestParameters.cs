@@ -15,6 +15,8 @@ public class TestParameters : ScriptableObject
     public float KP = 0;
 
 
+    //TextAsset file2store;
+    RuntimeText textWriter = new RuntimeText();
 
 
     public SpawnableEnv[] envs4test;
@@ -29,14 +31,19 @@ public class TestParameters : ScriptableObject
     public float frameEnd=20;
 
 
-    public void initMetrics()
+    public void InitMetrics()
     {
         foreach(metric m in metrics)
             m.initSampleList();
         
     }
 
+    public void WriteMetricsToFile()
+    {
 
+        textWriter.WriteString();
+
+    }
 
 
 }
