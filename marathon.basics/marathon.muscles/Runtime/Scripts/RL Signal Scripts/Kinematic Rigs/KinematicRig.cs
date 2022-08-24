@@ -117,16 +117,16 @@ public class KinematicRig : MonoBehaviour, IKinematicReference
 /// </summary>
 public interface IKinematicReference
 {
-    public IReadOnlyList<Transform> RagdollTransforms { get; }
+     IReadOnlyList<Transform> RagdollTransforms { get; }
 
-    public void OnAgentInitialize();
+     void OnAgentInitialize();
 
-    public void TeleportRoot(Vector3 targetPosition);
-    public void TeleportRoot(Vector3 targetPosition, Quaternion targetRotation);
+     void TeleportRoot(Vector3 targetPosition);
+     void TeleportRoot(Vector3 targetPosition, Quaternion targetRotation);
 
-    public IReadOnlyList<Vector3> RagdollLinVelocities { get; }
+     IReadOnlyList<Vector3> RagdollLinVelocities { get; }
 
-    public IReadOnlyList<Vector3> RagdollAngularVelocities { get; }
+     IReadOnlyList<Vector3> RagdollAngularVelocities { get; }
 
-    public IReadOnlyList<IKinematic> Kinematics { get;  }
+     IReadOnlyList<IKinematic> Kinematics { get;  }
 }

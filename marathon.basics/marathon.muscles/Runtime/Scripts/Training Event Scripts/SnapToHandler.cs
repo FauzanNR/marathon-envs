@@ -47,8 +47,8 @@ namespace Teleportable
 {
     interface ITeleportable
     {
-        public Vector3 Position { get; set; }
-        public Quaternion Rotation { get; set; }
+         Vector3 Position { get; set; }
+         Quaternion Rotation { get; set; }
     }
 
     //Only transform and Rigidbody supported, ArticulationBody doesn't play nice with snapping

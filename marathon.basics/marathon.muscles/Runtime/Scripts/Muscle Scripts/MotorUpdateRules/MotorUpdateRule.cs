@@ -52,15 +52,15 @@ namespace MotorUpdate
     #region Queryable state Adapters
     public interface IState
     {
-        public float Acceleration { get; }
-        public float Velocity { get; }
-        public float Position { get; }
+         float Acceleration { get; }
+         float Velocity { get; }
+         float Position { get; }
 
-        public float[] stateVector { get; }
+         float[] stateVector { get; }
 
-        public string Name { get; }
+         string Name { get; }
 
-        public GameObject gameObject { get; }
+         GameObject gameObject { get; }
        
     }
 

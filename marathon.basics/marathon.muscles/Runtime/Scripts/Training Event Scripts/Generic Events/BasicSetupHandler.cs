@@ -97,8 +97,8 @@ public class BasicSetupHandler : DelayableEventHandler
 	//As I can see this handler to be extended to chains other then Articulationbody ones, here's a WIP interface
     private interface IResettable
     {
-        public void TeleportRoot(Vector3 position, Quaternion rotation);
-        public void CopyKinematicsFrom(IKinematicReference reference);
+         void TeleportRoot(Vector3 position, Quaternion rotation);
+         void CopyKinematicsFrom(IKinematicReference reference);
 
     }
 
