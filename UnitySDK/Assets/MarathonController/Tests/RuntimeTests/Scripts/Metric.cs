@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class metric
+public struct metric
 {
 
     //a simple struct to generate metrics from arrays of samples.
@@ -43,7 +43,7 @@ public class metric
     }
     public void addSample(float[] val) {
 
-        sample a = new sample();
+        sample a;
         a.values = val;
         samples.Add(a);
     
@@ -52,7 +52,7 @@ public class metric
     public void addSample(float val)
     {
 
-        sample a = new sample(); 
+        sample a;
         a.values = new float[1];
         
         a.values[0] = val;

@@ -227,7 +227,7 @@ public class ArticulationMusclesWithRules : ModularMuscles
 
         myRootAB.GetDofStartIndices(vectorTorquesIndices);
 
-        /*
+
         string s = " totalDOF: " + totalDOF + " indices: ";
         for (int index = 0; index < vectorTorquesIndices.Count; index++)
         {
@@ -236,14 +236,14 @@ public class ArticulationMusclesWithRules : ModularMuscles
         }
 
         Debug.Log(s);
-        */
+
 
         int i = 0;
         foreach (PhysXActuatorReferencePair actPair in actuatorPairs)
         {
            
             ArticulationBody abtemp = actPair.act;
-           // Debug.Log("ActuatorPair:" + i + "articulation: " + abtemp.name + " index: " + abtemp.index + "  " + vectorTorquesIndices[abtemp.index] + " " + abtemp.dofCount);
+            Debug.Log("ActuatorPair:" + i + "articulation: " + abtemp.name + " index: " + abtemp.index + "  " + vectorTorquesIndices[abtemp.index] + " " + abtemp.dofCount);
             i++;
 
         }

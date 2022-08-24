@@ -62,9 +62,6 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
     public int ObservationSpaceSize => observationSignal.Size;
 
-    public GameObject KinematicRigObject { get => kinematicRigObject; }     //needed for unit tests
-
-
     public override void Initialize()
     {
         this.MaxStep = maxStep;
@@ -135,13 +132,13 @@ public class DReConAgent : Agent, IRememberPreviousActions, IEventsAgent
 
 public interface IRememberPreviousActions
 {
-     float[] PreviousActions { get; }
+    public float[] PreviousActions { get; }
 }
 
 public interface IEventsAgent
 {
-     event EventHandler<AgentEventArgs> onActionHandler;
-     event EventHandler<AgentEventArgs> onBeginHandler;
+    public event EventHandler<AgentEventArgs> onActionHandler;
+    public event EventHandler<AgentEventArgs> onBeginHandler;
 }
 
 public class AgentEventArgs: EventArgs

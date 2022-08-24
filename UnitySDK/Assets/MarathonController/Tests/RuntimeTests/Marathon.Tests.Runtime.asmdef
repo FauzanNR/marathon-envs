@@ -7,8 +7,7 @@
         "Unity.Mathematics",
         "Marathon.Controller",
         "JoeBooth.Many-Worlds",
-        "Unity.ML-Agents",
-        "MarathonMuscles"
+        "Unity.ML-Agents"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

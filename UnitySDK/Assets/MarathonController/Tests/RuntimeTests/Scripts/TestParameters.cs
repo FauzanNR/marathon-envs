@@ -14,17 +14,24 @@ public class TestParameters : ScriptableObject
     public float fixedFreq = 25;
     public float KP = 0;
 
+    public struct Object2Test {
+        public SpawnableEnv spawnableEnv;
 
 
+        public Transform rootRagdoll;
+        public Transform rootSource;
 
-    public SpawnableEnv[] envs4test;
+        public  Transform leftHandRagdoll;
+        public Transform leftHandSource;
 
+        public Transform rightHandRagdoll;
+        public Transform rightHandSource;
+    }
 
-    public Vector3[] test2store;
+    public Object2Test[] objects2test;
 
-    [SerializeField]
     public metric[] metrics;
-    
+
 
     public float frameEnd=20;
 
