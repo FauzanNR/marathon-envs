@@ -51,7 +51,7 @@ public class CompareHandsDistance : MonoBehaviour
         protected TestParameters configObject;
         protected int frameCount;
 
-        public SpawnableEnv[] spawnedEnvs;
+        protected SpawnableEnv[] spawnedEnvs;
 
       
 
