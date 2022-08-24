@@ -91,9 +91,9 @@ namespace Kinematic
 
         //Here everything is in reduced Coordinates
 
-        public float3 JointAcceleration { get; }
-        public float3 JointVelocity { get; }
-        public float3 JointPosition { get; }
+         float3 JointAcceleration { get; }
+         float3 JointVelocity { get; }
+         float3 JointPosition { get; }
 
     }
 
@@ -102,32 +102,32 @@ namespace Kinematic
 
     public interface IKinematic : IReducedState
     {
-        public Vector3 Velocity { get; }
+         Vector3 Velocity { get; }
 
-        public Vector3 AngularVelocity { get; }
-        public float Mass { get; }
-        public float3 CenterOfMass { get; }
+         Vector3 AngularVelocity { get; }
+         float Mass { get; }
+         float3 CenterOfMass { get; }
 
-        public Matrix4x4 TransformMatrix { get; }
+         Matrix4x4 TransformMatrix { get; }
 
-        public Vector3 GetPointVelocity(float3 worldPoint);
+         Vector3 GetPointVelocity(float3 worldPoint);
 
-        public Vector3 GetRelativePointVelocity(Vector3 localPoint);
-        public string Name { get; }
+         Vector3 GetRelativePointVelocity(Vector3 localPoint);
+         string Name { get; }
 
-        public GameObject gameObject { get; }
+         GameObject gameObject { get; }
 
-        public Vector3 Forward { get; }
+         Vector3 Forward { get; }
 
 
-        public float3x3 JointAxes { get; }
+         float3x3 JointAxes { get; }
 
-        public int index { get; } //position in the hierarchy
-        public bool isRoot { get; } //is it a root
+         int index { get; } //position in the hierarchy
+         bool isRoot { get; } //is it a root
 
-        public float3 InertiaTensor { get; }
+         float3 InertiaTensor { get; }
 
-        public float3 AnchorPosition { get; }
+         float3 AnchorPosition { get; }
         
 
     }
