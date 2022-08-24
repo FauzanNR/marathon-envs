@@ -1,17 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
-//using NUnit.Framework;
-using UnityEngine.Assertions;
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.TestTools;
+
 using ManyWorlds;
 using Unity.MLAgents;
 
 using System.Linq;
 
-public class Test2CompareHandsDistance
+public class MyTestScript : MonoBehaviour
 {
+
+    [SerializeField]
+    TestParameters myParameters;
+
 
     public struct Transforms4metrics
     {
@@ -26,13 +27,13 @@ public class Test2CompareHandsDistance
         public Transform rightHandRagdoll;
         public Transform rightHandSource;
 
-      
+
     }
 
 
-  
 
-  
+
+
 
     //returns the difference between the ragdoll hands and the reference hands, relative to each root
     public static float[] GetHandsDistance(Transforms4metrics o)
@@ -44,24 +45,18 @@ public class Test2CompareHandsDistance
 
     }
 
-    public class MyMonoBehaviourTest : MonoBehaviour, IMonoBehaviourTest
-    {
+
         public Transforms4metrics[] objects2measure;
 
-        TestParameters configObject;
-        private int frameCount;
+        protected TestParameters configObject;
+        protected int frameCount;
 
         public SpawnableEnv[] spawnedEnvs;
 
-        public bool IsTestFinished
-        {
-            get {
-                return frameCount > 
-                    configObject.frameEnd;
-                   }
-        }
+      
 
-        public static Transform FindDeepChild(Transform t, string name) {
+        public static Transform FindDeepChild(Transform t, string name)
+        {
 
             return t.GetComponentsInChildren<Transform>()
                               .FirstOrDefault(c => c.gameObject.name == name);
@@ -69,24 +64,21 @@ public class Test2CompareHandsDistance
         }
 
 
-        void OnEnable()
+    private void OnEnable()
+    {
+        configObject = myParameters;
+        //in the Unit test version, this will be re-defined and defined like the line below:
+        //configObject = (TestParameters)Resources.Load("TestParameters/DReConAndMujoco120HZ500KP");
+
+    }
+
+    void Start()
         {
-            configObject = (TestParameters)Resources.Load("TestParameters/DReConAndMujoco120HZ500KP");
+
+        Time.fixedDeltaTime = 1 / configObject.fixedFreq;
 
 
-        }
-
-        void Start()
-        {
-
-            //Debug.Log("enabling the config object");
-
-
-        
-            
-            Time.fixedDeltaTime = 1 / configObject.fixedFreq;
-
-            Vector3 spawnStartPos = Vector3.zero;
+        Vector3 spawnStartPos = Vector3.zero;
 
 
             List<SpawnableEnv> spawnedList = new List<SpawnableEnv>();
@@ -109,8 +101,6 @@ public class Test2CompareHandsDistance
 
             //configure it how we want it
 
-
-
             //most of this can probably be a method in class test parameters 
             metric checkDistance1 = new metric();
             checkDistance1.name = "DReCon Hand Distance";
@@ -122,7 +112,7 @@ public class Test2CompareHandsDistance
             configObject.initMetrics();
 
 
-          
+
             DReConAgent ragdoll1 = spawnedEnvs[0].GetComponentInChildren<DReConAgent>();
 
             Transforms4metrics t4m1 = new Transforms4metrics();
@@ -132,7 +122,7 @@ public class Test2CompareHandsDistance
             t4m1.rightHandRagdoll = FindDeepChild(t4m1.rootRagdoll, "articulation:mixamorig:RightHand");
 
             t4m1.rootSource = ragdoll1.KinematicRigObject.transform.Find("articulation:mixamorig:Hips");
-            t4m1.leftHandSource = FindDeepChild(t4m1.rootSource, "articulation:mixamorig:LeftHand"); 
+            t4m1.leftHandSource = FindDeepChild(t4m1.rootSource, "articulation:mixamorig:LeftHand");
             t4m1.rightHandSource = FindDeepChild(t4m1.rootSource, "articulation:mixamorig:RightHand");
 
             /*
@@ -155,7 +145,7 @@ public class Test2CompareHandsDistance
 
             t4m2.rootRagdoll = simulation.Find("Hips");
 
-           t4m2.leftHandRagdoll = FindDeepChild(t4m2.rootRagdoll, "LeftHand");
+            t4m2.leftHandRagdoll = FindDeepChild(t4m2.rootRagdoll, "LeftHand");
             t4m2.rightHandRagdoll = FindDeepChild(t4m2.rootRagdoll, "RightHand");
 
             t4m2.rootSource = simulation.Find("K_Hips");
@@ -174,8 +164,11 @@ t4m2.leftHandSource + "\n rightHand: " + t4m2.rightHandSource);
             objects2measure = new Transforms4metrics[2] { t4m1, t4m2 };
 
 
+        configObject.test2store = new Vector3[2] { Vector3.zero, 3.14f* Vector3.one };
+
+
         }
-  
+
 
 
         void Update()
@@ -188,9 +181,9 @@ t4m2.leftHandSource + "\n rightHand: " + t4m2.rightHandSource);
                 int whichmetric = 0;
                 foreach (metric m in configObject.metrics)
                 {
-                    
+
                     var floatarray = GetHandsDistance(objects2measure[whichmetric]);
-                    Debug.Log("checking in frame " + frameCount + "object: " + whichmetric + "float array: " + floatarray[0] + " " + floatarray[1]);
+                  //  Debug.Log("checking in frame " + frameCount + "object: " + whichmetric + "float array: " + floatarray[0] + " " + floatarray[1]);
 
                     m.addSample(floatarray);
 
@@ -213,17 +206,10 @@ t4m2.leftHandSource + "\n rightHand: " + t4m2.rightHandSource);
 
 
 
-        [UnityTest]
-
-        public IEnumerator T01_TestHandsDistance()
-
-        {
-            yield return new MonoBehaviourTest<MyMonoBehaviourTest>();
-        }
 
 
 
-    }  
+
 
 
 }
