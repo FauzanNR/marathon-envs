@@ -10,11 +10,9 @@ using Unity.MLAgents;
 
 using System.Linq;
 
-public class Test2CompareHandsDistance1
-{
 
 
-    public class MyMonoBehaviourTest : MyTestScript, IMonoBehaviourTest
+    public class Test2CompareHandsDistance : CompareHandsDistance, IMonoBehaviourTest
     {
 
         public void  OnEnable() {
@@ -34,10 +32,10 @@ public class Test2CompareHandsDistance1
 
         [UnityTest]
 
-        public IEnumerator T01_TestHandsDistance1()
+        public IEnumerator T01_TestHandsDistanceDReConAndMujoco120HZ500KP()
 
         {
-            yield return new MonoBehaviourTest<MyMonoBehaviourTest>();
+            yield return new MonoBehaviourTest<Test2CompareHandsDistance>();
         }
 
 
@@ -45,4 +43,3 @@ public class Test2CompareHandsDistance1
     }  
 
 
-}
