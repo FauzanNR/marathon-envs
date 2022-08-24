@@ -10,10 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a85688afaaf52984c85da9bd5ecf61b4, type: 3}
-  m_Name: MujocoAndDReCon120HZ500KP
+  m_Name: DReConAndMujoco120HZ500KP
   m_EditorClassIdentifier: 
   fixedFreq: 120
   KP: 500
-  envs2test:
-  - {fileID: 7459421237271401953, guid: c5698d9ecc0f28d409dcf89a25a80828, type: 3}
+  objects2test:
+  - {fileID: 0}
+  envs4test:
   - {fileID: 2629145796007088774, guid: 7f231da685ea80643bc85c955a82949c, type: 3}
+  - {fileID: 7459421237271401953, guid: c5698d9ecc0f28d409dcf89a25a80828, type: 3}
+  frameEnd: 20
