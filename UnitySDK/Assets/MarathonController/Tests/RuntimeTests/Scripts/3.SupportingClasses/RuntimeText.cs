@@ -8,36 +8,37 @@ public class RuntimeText
 {
 
     public string filename = "test23.txt";
-    public string path = "";
+   // public
+   string path = "";
 
 
 
 
-    public  void WriteString()
+    public  void WriteString(string message)
 
     {
 
 #if UNITY_EDITOR
-        path = "Assets/Resources/";
+        //path = "/Assets/Ressources/";
+        path = "";
 #else
         path = Application.persistentDataPath + "/";
 #endif
 
-        string pathandfilename = path + filename;
-
+        string pathandfilename = path + filename + ".txt";
 
         //Write some text to the test.txt file
 
         StreamWriter writer = new StreamWriter(pathandfilename, true);
 
-        writer.WriteLine("Test");
+        writer.WriteLine(message);
 
-        writer.Close();
+        writer.Close(); 
 
-        StreamReader reader = new StreamReader(pathandfilename);
+      //  StreamReader reader = new StreamReader(pathandfilename);
 
 
-        reader.Close();
+      //  reader.Close();
         Debug.Log("Wrote data to: " + pathandfilename);
 
     }
@@ -47,12 +48,12 @@ public class RuntimeText
     {
         
 #if UNITY_EDITOR
-        path = "Assets/Resources/";
+        path = "/Assets/Resources/";
 #else
         path = Application.persistentDataPath + "/";
 #endif
 
-        string pathandfilename = path + filename;
+        string pathandfilename = path + filename + ".txt";
 
 
         //Read the text from directly from the test.txt file

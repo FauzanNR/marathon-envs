@@ -25,7 +25,7 @@ public class TestParameters : ScriptableObject
     public Vector3[] test2store;
 
     [SerializeField]
-    public metric[] metrics;
+    public Metric[] metrics;
     
 
     public float frameEnd=20;
@@ -33,7 +33,7 @@ public class TestParameters : ScriptableObject
 
     public void InitMetrics()
     {
-        foreach(metric m in metrics)
+        foreach(Metric m in metrics)
             m.initSampleList();
         
     }
@@ -41,7 +41,24 @@ public class TestParameters : ScriptableObject
     public void WriteMetricsToFile()
     {
 
-        textWriter.WriteString();
+        string s= "name mean std \n";
+
+
+        foreach (Metric m in metrics)
+        {
+            m.updateStats();
+            s += m.name + " " + m.mean + m.std  + "\n";
+
+        
+        
+        }
+
+        string now = System.DateTime.Now.Year + "-" + System.DateTime.Now.Month.ToString("00") + "-" + System.DateTime.Now.Day + "-"  + System.DateTime.Now.ToShortTimeString().Replace(" ", "").Replace(":","");
+
+        textWriter.filename = "file-" + this.name +now;
+
+
+        textWriter.WriteString(s);
 
     }
 

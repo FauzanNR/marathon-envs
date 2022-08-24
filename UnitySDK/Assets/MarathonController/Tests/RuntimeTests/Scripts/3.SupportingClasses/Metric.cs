@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-public class metric
+public class Metric
 {
 
     //a simple struct to generate metrics from arrays of samples.

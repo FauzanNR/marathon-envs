@@ -77,8 +77,7 @@ public class CompareHandsDistance : MonoBehaviour
     void Start()
         {
 
-        configObject.WriteMetricsToFile();
-
+       
 
         Time.fixedDeltaTime = 1 / configObject.fixedFreq;
 
@@ -107,13 +106,13 @@ public class CompareHandsDistance : MonoBehaviour
             //configure it how we want it
 
             //most of this can probably be a method in class test parameters 
-            metric checkDistance1 = new metric();
+            Metric checkDistance1 = new Metric();
             checkDistance1.name = "DReCon Hand Distance";
 
-            metric checkDistance2 = new metric();
+            Metric checkDistance2 = new Metric();
             checkDistance2.name = "Mujoco Hand Distance";
 
-            configObject.metrics = new metric[] { checkDistance1, checkDistance2 };
+            configObject.metrics = new Metric[] { checkDistance1, checkDistance2 };
             configObject.InitMetrics();
 
 
@@ -184,7 +183,7 @@ t4m2.leftHandSource + "\n rightHand: " + t4m2.rightHandSource);
             if (frameCount > 1)
             {
                 int whichmetric = 0;
-                foreach (metric m in configObject.metrics)
+                foreach (Metric m in configObject.metrics)
                 {
 
                     var floatarray = GetHandsDistance(objects2measure[whichmetric]);
@@ -200,11 +199,15 @@ t4m2.leftHandSource + "\n rightHand: " + t4m2.rightHandSource);
 
             }
 
+            if(frameCount == configObject.frameEnd)
+                    configObject.WriteMetricsToFile();
 
 
 
 
-        }
+
+
+    }
 
 
 
