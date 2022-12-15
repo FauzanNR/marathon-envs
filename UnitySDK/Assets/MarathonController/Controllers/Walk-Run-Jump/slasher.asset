@@ -1,0 +1,90 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2774db094247c4810922f4534abbb6a2, type: 3}
+  m_Name: slasher
+  m_EditorClassIdentifier: 
+  _values:
+  - name: f_avg_root
+    lower: {x: 0, y: 0, z: -63.434967}
+    upper: {x: 19.47123, y: 63.434975, z: 0}
+  - name: f_avg_Pelvis
+    lower: {x: -1.7612305, y: -11.017944, z: -63.553497}
+    upper: {x: 19.266804, y: 63.56909, z: 1.8385527}
+  - name: f_avg_L_Hip
+    lower: {x: -5.536255, y: -19.523499, z: -22.419952}
+    upper: {x: 17.01708, y: 1.0541786, z: 2.374365}
+  - name: f_avg_L_Knee
+    lower: {x: 0, y: -9.794617, z: -0.011505127}
+    upper: {x: 20.529068, y: 12.585257, z: 3.1083717}
+  - name: f_avg_L_Ankle
+    lower: {x: -19.086823, y: -10.909454, z: 0}
+    upper: {x: 8.516563, y: 18.381062, z: 31.497974}
+  - name: f_avg_L_Foot
+    lower: {x: -16.09021, y: -1.4466858, z: 0}
+    upper: {x: 0.35611156, y: 0, z: 0.21832515}
+  - name: f_avg_R_Hip
+    lower: {x: -46.92737, y: -8.455475, z: -4.029724}
+    upper: {x: 0, y: 11.441695, z: 11.915575}
+  - name: f_avg_R_Knee
+    lower: {x: -21.877869, y: -0.49264526, z: -1.0970459}
+    upper: {x: 39.072803, y: 19.135881, z: 4.2651463}
+  - name: f_avg_R_Ankle
+    lower: {x: -10.119232, y: 0, z: -5.8685913}
+    upper: {x: 53.160393, y: 16.638811, z: 9.21735}
+  - name: f_avg_R_Foot
+    lower: {x: -3.515564, y: -1.791687, z: -2.6290588}
+    upper: {x: 1.0002495, y: 0, z: 0}
+  - name: f_avg_Spine1
+    lower: {x: -3.9652405, y: -5.2712708, z: -1.4426575}
+    upper: {x: 10.208457, y: 3.9538698, z: 2.8605354}
+  - name: f_avg_Spine2
+    lower: {x: -7.9907227, y: -10.368652, z: -5.582672}
+    upper: {x: 3.198922, y: 7.2749004, z: 4.662063}
+  - name: f_avg_Spine3
+    lower: {x: -2.228485, y: 0, z: 0}
+    upper: {x: 0, y: 0.22607422, z: 0.14318255}
+  - name: f_avg_L_Collar
+    lower: {x: -3.5176697, y: -10.923645, z: -11.79361}
+    upper: {x: 1.9944912, y: 4.4177794, z: 32.470387}
+  - name: f_avg_L_Shoulder
+    lower: {x: -26.658112, y: 0, z: -2.7357483}
+    upper: {x: 4.610656, y: 131.57956, z: 66.390755}
+  - name: f_avg_L_Elbow
+    lower: {x: -36.83676, y: 0, z: -11.699127}
+    upper: {x: 29.982143, y: 56.489822, z: 9.868689}
+  - name: f_avg_L_Wrist
+    lower: {x: -5.3388367, y: -37.13382, z: -127.51703}
+    upper: {x: 15.411955, y: 5.893543, z: 0}
+  - name: f_avg_L_Hand
+    lower: {x: -4.34964, y: -2.204712, z: 0}
+    upper: {x: 0, y: 0, z: 22.65302}
+  - name: f_avg_Neck
+    lower: {x: -20.39801, y: -4.6864014, z: -2.2655334}
+    upper: {x: 0, y: 10.501695, z: 6.7370133}
+  - name: f_avg_Head
+    lower: {x: -12, y: -3.8102112, z: -0.70758057}
+    upper: {x: 7.9467134, y: 26.731165, z: 5.762368}
+  - name: f_avg_R_Collar
+    lower: {x: -5.06485, y: -10.066528, z: -32.533203}
+    upper: {x: 3.3060973, y: 17.033583, z: 11.883412}
+  - name: f_avg_R_Shoulder
+    lower: {x: -29.386658, y: -111.476776, z: -82.07669}
+    upper: {x: 11.594733, y: 0, z: 2.3228378}
+  - name: f_avg_R_Elbow
+    lower: {x: -32.378815, y: -60.589447, z: -1.4623108}
+    upper: {x: 11.882897, y: 0, z: 19.482906}
+  - name: f_avg_R_Wrist
+    lower: {x: -16.029327, y: -10.706482, z: -53.420593}
+    upper: {x: 9.11518, y: 11.126907, z: 3.478509}
+  - name: f_avg_R_Hand
+    lower: {x: -4.1655884, y: 0, z: -19.781067}
+    upper: {x: 0, y: 3.5683851, z: 0}

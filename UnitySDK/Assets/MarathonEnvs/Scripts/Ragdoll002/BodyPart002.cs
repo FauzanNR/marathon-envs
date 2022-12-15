@@ -13,7 +13,7 @@ using Unity.MLAgents;
 [System.Serializable]
 public class BodyPart002
 {
-    
+
     public string Name;
     public BodyHelper002.BodyPartGroup Group;
 
@@ -64,7 +64,7 @@ public class BodyPart002
     private Vector3 _animationPositionWorld;
     private Quaternion _animationRotation;
 
-    static Vector3 Vector3Max (Vector3 a, Vector3 b)
+    static Vector3 Vector3Max(Vector3 a, Vector3 b)
     {
         var answer = new Vector3(
             Mathf.Max(Mathf.Abs(a.x), Mathf.Abs(b.x)),
@@ -74,34 +74,37 @@ public class BodyPart002
     }
 
     // Initialize
-    public void Init()
+    public void Init(DecisionRequester decisionRequester)
     {
-        _decisionRequester = GameObject.Find("MarathonMan").GetComponent<DecisionRequester>();
+        _decisionRequester = decisionRequester;
 
         _firstRunComplete = false;
-        if (Rigidbody != null){
+        if (Rigidbody != null)
+        {
             Rigidbody.angularVelocity = Vector3.zero;
             Rigidbody.velocity = Vector3.zero;
         }
 
-        if (!_hasRanVeryFirstInit) {
+        if (!_hasRanVeryFirstInit)
+        {
 
             InitialRootRotation = Root.Transform.transform.rotation;
             InitialRootPosition = Root.Transform.transform.position;
             BaseRotation = Root.Transform.transform.rotation;
             BasePosition = Root.Transform.transform.position;
 
-			DefaultLocalRotation = LocalRotation;
+            DefaultLocalRotation = LocalRotation;
             Vector3 forward = this.Transform.forward;
             Vector3 up = this.Transform.up;
-			Quaternion toJointSpace = Quaternion.LookRotation(forward, up);
-			
-			ToJointSpaceInverse = Quaternion.Inverse(toJointSpace);
-			ToJointSpaceDefault = DefaultLocalRotation * toJointSpace;
+            Quaternion toJointSpace = Quaternion.LookRotation(forward, up);
 
-    		// set body part direction
-			Vector3 focalOffset = new Vector3(10,0,0);
-            if (Rigidbody != null){
+            ToJointSpaceInverse = Quaternion.Inverse(toJointSpace);
+            ToJointSpaceDefault = DefaultLocalRotation * toJointSpace;
+
+            // set body part direction
+            Vector3 focalOffset = new Vector3(10, 0, 0);
+            if (Rigidbody != null)
+            {
                 var focalPoint = Rigidbody.position + focalOffset;
                 ToFocalRoation = Rigidbody.rotation;
                 ToFocalRoation.SetLookRotation(focalPoint - Rigidbody.position);
@@ -119,16 +122,19 @@ public class BodyPart002
     {
         Quaternion rotation;
         Vector3 position;
-        if (this == Root) {
+        if (this == Root)
+        {
             rotation = Quaternion.Inverse(InitialRootRotation) * Transform.rotation;
-            position =  Transform.position - InitialRootPosition;
+            position = Transform.position - InitialRootPosition;
         }
-        else {
+        else
+        {
             rotation = Quaternion.Inverse(Root.Transform.rotation) * Transform.rotation;
-            position =  Transform.position - Root.Transform.position;
+            position = Transform.position - Root.Transform.position;
         }
-        
-        if (_firstRunComplete == false){
+
+        if (_firstRunComplete == false)
+        {
             _lastUpdateObsTime = Time.time;
             _lastLocalPosition = position;
             _lastWorldPosition = Transform.position;
@@ -138,10 +144,10 @@ public class BodyPart002
 
         var dt = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
 
-        var velocity = (position - _lastLocalPosition)/dt;
-        var velocityWorld = (Transform.position - _lastWorldPosition)/dt;
-        var angularVelocity = JointHelper002.CalcDeltaRotationNormalizedEuler(_lastObsRotation, rotation)/dt;
-        var angularVelocityWorld = JointHelper002.CalcDeltaRotationNormalizedEuler(_lastWorldRotation, Transform.rotation)/dt;
+        var velocity = (position - _lastLocalPosition) / dt;
+        var velocityWorld = (Transform.position - _lastWorldPosition) / dt;
+        var angularVelocity = JointHelper002.CalcDeltaRotationNormalizedEuler(_lastObsRotation, rotation) / dt;
+        var angularVelocityWorld = JointHelper002.CalcDeltaRotationNormalizedEuler(_lastWorldRotation, Transform.rotation) / dt;
 
         // old calulation for observation vector
         //angularVelocity = NormalizedEulerAngles(rotationVelocity.eulerAngles);
@@ -178,7 +184,7 @@ public class BodyPart002
         ObsDeltaFromAnimationPosition = _animationPositionWorld - Transform.position;
 
         ObsAngleDeltaFromAnimationRotation = Quaternion.Angle(_animationRotation, rotation);
-        ObsAngleDeltaFromAnimationRotation = JointHelper002.NormalizedAngle(ObsAngleDeltaFromAnimationRotation);  
+        ObsAngleDeltaFromAnimationRotation = JointHelper002.NormalizedAngle(ObsAngleDeltaFromAnimationRotation);
 
         ObsDeltaFromAnimationVelocity = _animationVelocityWorld - velocityWorld;
         ObsDeltaFromAnimationAngularVelocity = (_animationAngularVelocity - angularVelocity);
@@ -191,15 +197,19 @@ public class BodyPart002
     }
 
     // returns local rotation
-    public Quaternion LocalRotation {
-        get {
+    public Quaternion LocalRotation
+    {
+        get
+        {
             return Quaternion.Inverse(RootRotation) * Transform.rotation;
         }
     }
 
     // retuns root rotation
-    public Quaternion RootRotation{
-        get {
+    public Quaternion RootRotation
+    {
+        get
+        {
             return InitialRootRotation;
         }
     }
@@ -211,7 +221,8 @@ public class BodyPart002
     {
         Transform.position = animPosition;
         Transform.rotation = animRotation;
-        if (Rigidbody != null){
+        if (Rigidbody != null)
+        {
             foreach (var childRb in Rigidbody.GetComponentsInChildren<Rigidbody>())
             {
                 if (childRb == Rigidbody)
