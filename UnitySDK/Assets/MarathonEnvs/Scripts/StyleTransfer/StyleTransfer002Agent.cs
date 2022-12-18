@@ -19,7 +19,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public List<float> Rewards;
     public List<float> SensorIsInTouch;
     StyleTransfer002Master _master;
-    StyleTransfer002Animator _localStyleAnimator;
+    public StyleTransfer002Animator _localStyleAnimator;
     StyleTransfer002Animator _styleAnimator;
     DecisionRequester _decisionRequester;
 
@@ -40,7 +40,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         _master = GetComponent<StyleTransfer002Master>();
         _decisionRequester = GetComponent<DecisionRequester>();
         var spawnableEnv = GetComponentInParent<SpawnableEnv>();
-        _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
+        // _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
         _styleAnimator = _localStyleAnimator.GetFirstOfThisAnim();
         _startCount++;
     }
@@ -67,14 +67,26 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             sensor.AddObservation(bodyPart.ObsRotationVelocity);
             sensor.AddObservation(bodyPart.ObsVelocity);
         }
+        var a = 0;
         foreach (var muscle in _master.Muscles)
         {
+
             if (muscle.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked)
+            {
+
                 sensor.AddObservation(muscle.TargetNormalizedRotationX);
+            }
             if (muscle.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked)
+            {
+                a += 1;
+                print(" actiooon" + muscle.ConfigurableJoint.gameObject.name);
                 sensor.AddObservation(muscle.TargetNormalizedRotationY);
+            }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
+            {
+
                 sensor.AddObservation(muscle.TargetNormalizedRotationZ);
+            }
         }
 
         sensor.AddObservation(_master.ObsCenterOfMass);
@@ -87,7 +99,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public override void OnActionReceived(ActionBuffers actions)
     {
         float[] vectorAction = actions.ContinuousActions.Select(x => x).ToArray();
-
         if (!_hasLazyInitialized)
         {
             return;
@@ -100,13 +111,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         foreach (var muscle in _master.Muscles)
         {
             if (muscle.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked)
+            {
                 muscle.TargetNormalizedRotationX = vectorAction[i++];
+            }
             if (muscle.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked)
+            {
                 muscle.TargetNormalizedRotationY = vectorAction[i++];
+            }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
+            {
                 muscle.TargetNormalizedRotationZ = vectorAction[i++];
+            }
         }
-
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
         var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
@@ -247,6 +263,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             else
                 _scoreHistogramData.SetItem(column, AverageReward);
         }
+        print("EPisode begin");
     }
 
     // A method called on terrain collision. Used for early stopping an episode
