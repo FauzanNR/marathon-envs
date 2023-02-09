@@ -40,7 +40,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         _master = GetComponent<StyleTransfer002Master>();
         _decisionRequester = GetComponent<DecisionRequester>();
         var spawnableEnv = GetComponentInParent<SpawnableEnv>();
-        // _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
+        _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
         _styleAnimator = _localStyleAnimator.GetFirstOfThisAnim();
         _startCount++;
     }
@@ -59,15 +59,17 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         }
 
         sensor.AddObservation(_master.ObsPhase);
-
+        var a = 0;
         foreach (var bodyPart in _master.BodyParts)
         {
+            a += 1;
+            print(" act " + a);
             sensor.AddObservation(bodyPart.ObsLocalPosition);
             sensor.AddObservation(bodyPart.ObsRotation);
             sensor.AddObservation(bodyPart.ObsRotationVelocity);
             sensor.AddObservation(bodyPart.ObsVelocity);
         }
-        var a = 0;
+
         foreach (var muscle in _master.Muscles)
         {
 
@@ -78,8 +80,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             }
             if (muscle.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked)
             {
-                a += 1;
-                print(" actiooon" + muscle.ConfigurableJoint.gameObject.name);
+                // a += 1;
+                // print(" actiooon" + muscle.ConfigurableJoint.gameObject.name);
                 sensor.AddObservation(muscle.TargetNormalizedRotationY);
             }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
@@ -93,6 +95,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(_master.ObsVelocity);
         sensor.AddObservation(_master.ObsAngularMoment);
         sensor.AddObservation(SensorIsInTouch);
+        print(SensorIsInTouch.Count);
     }
 
     // A method that applies the vectorAction to the muscles, and calculates the rewards. 
@@ -139,34 +142,34 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
-        var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
+        // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
-        var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
-        var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
+        // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
+        // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
 
-        //Debug.Log("---------------");
-        //Debug.Log("rotation reward: " + rotationReward);
-        //Debug.Log("endEffectorReward: " + endEffectorReward);
-        //Debug.Log("endEffectorVelocityReward: " + endEffectorVelocityReward);
-        //Debug.Log("jointAngularVelocityReward: " + jointAngularVelocityReward);
-        //Debug.Log("jointAngularVelocityRewardWorld: " + jointAngularVelocityRewardWorld);
-        //Debug.Log("centerMassReward: " + centerMassReward);
-        //Debug.Log("centerMassVelocityReward: " + centerOfMassVelocityReward);
-        //Debug.Log("angularMomentReward: " + angularMomentReward);
-        //Debug.Log("sensorReward: " + sensorReward);
-        //Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
+        // Debug.Log("---------------");
+        // Debug.Log("rotation reward: " + rotationReward);
+        // Debug.Log("endEffectorReward: " + endEffectorReward);
+        // Debug.Log("endEffectorVelocityReward: " + endEffectorVelocityReward);
+        // Debug.Log("jointAngularVelocityReward: " + jointAngularVelocityReward);
+        // Debug.Log("jointAngularVelocityRewardWorld: " + jointAngularVelocityRewardWorld);
+        // Debug.Log("centerMassReward: " + centerMassReward);
+        // Debug.Log("centerMassVelocityReward: " + centerOfMassVelocityReward);
+        // Debug.Log("angularMomentReward: " + angularMomentReward);
+        // Debug.Log("sensorReward: " + sensorReward);
+        // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
 
         float reward = rotationReward +
             centerOfMassVelocityReward +
             endEffectorReward +
             endEffectorVelocityReward +
             jointAngularVelocityReward +
-            jointAngularVelocityRewardWorld +
+            // jointAngularVelocityRewardWorld +
             centerMassReward +
-            angularMomentReward +
-            sensorReward +
-            jointsNotAtLimitReward;
+            angularMomentReward;
+        // sensorReward +
+        // jointsNotAtLimitReward;
 
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
@@ -183,6 +186,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                     _master.StartAnimationIndex--;
             }
         }
+        // print("StepCount " + StepCount);
         FrameReward = reward;
         var stepCount = StepCount > 0 ? StepCount : 1;
         AverageReward = GetCumulativeReward() / (float)stepCount;

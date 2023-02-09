@@ -308,7 +308,8 @@ public class StyleTransfer002Master : MonoBehaviour
         if (_phaseIsRunning && IsInferenceMode && CameraFollowMe)
         {
             _muscleAnimator.anim.enabled = true;
-            _muscleAnimator.anim.Play("Record", 0, animStep.NormalizedTime);
+            // _muscleAnimator.anim.Play("Record", 0, animStep.NormalizedTime);
+            _muscleAnimator.anim.Play("Ugoshi", 0, animStep.NormalizedTime);
             _muscleAnimator.anim.transform.position = animStep.TransformPosition;
             _muscleAnimator.anim.transform.rotation = animStep.TransformRotation;
         }

@@ -238,7 +238,11 @@ public class BodyPart002
     }
 
     // Set the position of the animation being mimicked
-    public void SetAnimationPosition(Vector3 animPositionWorld, Quaternion animRotationLocal, Vector3 animVelocityWorld, Vector3 animAngularVelocityLocal, Vector3 animAngularVelocityWorld)
+    public void SetAnimationPosition(Vector3 animPositionWorld,
+                                    Quaternion animRotationLocal,
+                                    Vector3 animVelocityWorld,
+                                    Vector3 animAngularVelocityLocal,
+                                    Vector3 animAngularVelocityWorld)
     {
         _animationPositionWorld = animPositionWorld;
         _animationRotation = animRotationLocal;

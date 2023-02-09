@@ -75,7 +75,7 @@ public class StyleTransfer002Animator : MonoBehaviour, IOnSensorCollision
         _decisionRequester = agent.GetComponent<DecisionRequester>();
 
         anim = GetComponent<Animator>();
-        anim.Play("slah", 0, NormalizedTime);
+        anim.Play("Ugoshi", 0, NormalizedTime);
         anim.Update(0f);
         AnimationSteps = new List<AnimationStep>();
 
