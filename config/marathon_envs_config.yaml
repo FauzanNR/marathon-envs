@@ -52,7 +52,7 @@ behaviors:
       lambd: 0.95
       learning_rate: 1e-4
       batch_size: 4096
-      buffer_size: 21504 # 768 * 28
+      buffer_size: 114688 # 768 * 28
     time_horizon: 100
     summary_freq: 100000
     network_settings:
