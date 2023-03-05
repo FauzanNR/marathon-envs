@@ -63,7 +63,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         foreach (var bodyPart in _master.BodyParts)
         {
             a += 1;
-            print(" act " + a);
             sensor.AddObservation(bodyPart.ObsLocalPosition);
             sensor.AddObservation(bodyPart.ObsRotation);
             sensor.AddObservation(bodyPart.ObsRotationVelocity);
@@ -95,7 +94,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(_master.ObsVelocity);
         sensor.AddObservation(_master.ObsAngularMoment);
         sensor.AddObservation(SensorIsInTouch);
-        print(SensorIsInTouch.Count);
     }
 
     // A method that applies the vectorAction to the muscles, and calculates the rewards. 
@@ -267,7 +265,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             else
                 _scoreHistogramData.SetItem(column, AverageReward);
         }
-        print("EPisode begin");
     }
 
     // A method called on terrain collision. Used for early stopping an episode

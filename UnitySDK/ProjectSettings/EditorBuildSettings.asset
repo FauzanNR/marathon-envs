@@ -11,7 +11,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/MarathonController/TestsInProgress/3.TrainUsingMarathon-TESTS.unity
     guid: b7cfdd79c031b45fa8b2f255a22d5570
-  - enabled: 1
+  - enabled: 0
     path: Assets/MarathonEnvs/Scenes/Ugoshi.unity
     guid: 3abdf6d369919e8429285d50c5b48ced
+  - enabled: 1
+    path: Assets/MarathonEnvs/Scenes/slasher.unity
+    guid: 970bac7f7a682bd4890734304db475a8
   m_configObjects: {}
