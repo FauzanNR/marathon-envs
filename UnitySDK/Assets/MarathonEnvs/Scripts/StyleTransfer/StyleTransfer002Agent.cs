@@ -10,10 +10,10 @@ using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
 using System.Linq;
 using ManyWorlds;
+using System;
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
 {
-
     public float FrameReward;
     public float AverageReward;
     public List<float> Rewards;
@@ -33,6 +33,12 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     bool _ignorScoreForThisFrame;
     bool _isDone;
     bool _hasLazyInitialized;
+
+    private float distanceToTarget;
+    public Transform targetAttackPosition;
+    public bool handCollosion;
+    private float faceDirectionReward;
+    public float distanceReward;
 
     // Use this for initialization
     void Start()
@@ -58,6 +64,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
 
+        distanceToTarget = Vector3.Distance(transform.position, targetAttackPosition.position);
+        sensor.AddObservation(distanceToTarget);
         sensor.AddObservation(_master.ObsPhase);
         var a = 0;
         foreach (var bodyPart in _master.BodyParts)
@@ -108,6 +116,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         if (_styleAnimator == _localStyleAnimator)
             _styleAnimator.OnAgentAction();
         _master.OnAgentAction();
+
         int i = 0;
         foreach (var muscle in _master.Muscles)
         {
@@ -137,15 +146,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-        var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
+        var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
-
+        #region 
         // Debug.Log("---------------");
         // Debug.Log("rotation reward: " + rotationReward);
         // Debug.Log("endEffectorReward: " + endEffectorReward);
@@ -157,22 +166,28 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // Debug.Log("angularMomentReward: " + angularMomentReward);
         // Debug.Log("sensorReward: " + sensorReward);
         // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
+        #endregion
 
-        float reward = rotationReward +
-            centerOfMassVelocityReward +
-            endEffectorReward +
-            endEffectorVelocityReward +
-            jointAngularVelocityReward +
-            // jointAngularVelocityRewardWorld +
-            centerMassReward +
-            angularMomentReward;
-        // sensorReward +
-        // jointsNotAtLimitReward;
+        faceDirectionReward = ((Vector3.Dot(-targetAttackPosition.forward, transform.forward) + 1) * .5f) * .05f;
+        distanceReward = 0.15f * Mathf.Clamp((Mathf.Exp(-distanceToTarget + .2f)), 0, 1);
 
+
+        float reward =
+        distanceReward +//15% distance to target
+        rotationReward +//35% joint rotation
+            centerOfMassVelocityReward +//10% center of mass velocity
+            endEffectorReward +//10% effector
+            endEffectorVelocityReward +//10% effector velocity
+            jointAngularVelocityReward +//10% each joui
+                                        // jointAngularVelocityRewardWorld +
+            centerMassReward +//5%
+            angularMomentReward;//10%
+                                // sensorReward +
+                                // jointsNotAtLimitReward;
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
-
-        if (reward < 0.5)
+        // print("StepCount " + reward);
+        if (reward < 0.45)
             EndEpisode();
 
         if (!_isDone)
@@ -184,7 +199,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                     _master.StartAnimationIndex--;
             }
         }
-        // print("StepCount " + StepCount);
         FrameReward = reward;
         var stepCount = StepCount > 0 ? StepCount : 1;
         AverageReward = GetCumulativeReward() / (float)stepCount;
