@@ -16,7 +16,7 @@ public class ProcRagdollAgent : Agent
     public float FixedDeltaTime = 1f / 60f;
     public float ActionSmoothingBeta = 0.2f;
     public bool ReproduceDReCon = true;
-   
+
 
     [Header("Camera")]
 
@@ -46,14 +46,14 @@ public class ProcRagdollAgent : Agent
     Muscles _ragDollMuscles;
     List<ArticulationBody> _motors;
 
- 
+
 
     MarathonTestBedController _debugController;
     InputController _inputController;
     SensorObservations _sensorObservations;
     DecisionRequester _decisionRequester;
     IAnimationController _controllerToMimic;
- 
+
 
 
     bool _hasLazyInitialized;
@@ -84,9 +84,8 @@ public class ProcRagdollAgent : Agent
                     follow.target = CameraTarget;
             }
         }
-
-
         _hasAwake = true;
+        Initialize();
     }
     void Update()
     {
@@ -98,7 +97,7 @@ public class ProcRagdollAgent : Agent
         Assert.IsTrue(_hasLazyInitialized);
 
         // hadle mocap going out of bounds
-        bool isOutOfBounds = !_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mapAnim2Ragdoll.transform.position+new Vector3(0f, .1f, 0f));
+        bool isOutOfBounds = !_spawnableEnv.IsPointWithinBoundsInWorldSpace(_mapAnim2Ragdoll.transform.position + new Vector3(0f, .1f, 0f));
         bool reset = isOutOfBounds && dontResetWhenOutOfBounds == false;
         if (reset)
         {
@@ -113,7 +112,7 @@ public class ProcRagdollAgent : Agent
         observationTimeDelta = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
         _mapAnim2Ragdoll.OnStep(observationTimeDelta);
         _observations2Learn.OnStep(observationTimeDelta);
-      
+
 
         if (ReproduceDReCon)
         {
@@ -221,11 +220,11 @@ public class ProcRagdollAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         Assert.IsTrue(_hasLazyInitialized);
-        float[] vectorAction = actionBuffers.ContinuousActions.Select(x=>x).ToArray();
+        float[] vectorAction = actionBuffers.ContinuousActions.Select(x => x).ToArray();
 
         actionTimeDelta = Time.fixedDeltaTime;
         if (!_decisionRequester.TakeActionsBetweenDecisions)
-            actionTimeDelta = actionTimeDelta*_decisionRequester.DecisionPeriod;
+            actionTimeDelta = actionTimeDelta * _decisionRequester.DecisionPeriod;
         _mapAnim2Ragdoll.OnStep(actionTimeDelta);
         _rewards2Learn.OnStep(actionTimeDelta);
 
@@ -258,7 +257,7 @@ public class ProcRagdollAgent : Agent
             if (dontUpdateMotor)
                 continue;
             Vector3 targetNormalizedRotation = Vector3.zero;
-			if (m.jointType != ArticulationJointType.SphericalJoint)
+            if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
                 targetNormalizedRotation.x = vectorAction[i++];
@@ -268,14 +267,14 @@ public class ProcRagdollAgent : Agent
                 targetNormalizedRotation.z = vectorAction[i++];
             if (!ignorActions)
             {
-             
+
                 _ragDollMuscles.UpdateMotor(m, targetNormalizedRotation, actionTimeDelta);
             }
 
 
-         
+
             j++;
-         
+
         }
 
         _observations2Learn.PreviousActions = vectorAction;
@@ -329,7 +328,7 @@ public class ProcRagdollAgent : Agent
                 // snapPosition.y = 0f;
                 var snapDistance = _mapAnim2Ragdoll.SnapTo(snapPosition);
                 // AddReward(-.5f);
-            }            
+            }
         }
     }
     float[] GetDebugActions(float[] vectorAction)
@@ -352,7 +351,7 @@ public class ProcRagdollAgent : Agent
             );
             Vector3 targetNormalizedRotation = debugMotor.Actions;
 
-			if (m.jointType != ArticulationJointType.SphericalJoint)
+            if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
                 debugActions.Add(targetNormalizedRotation.x);
@@ -390,7 +389,7 @@ public class ProcRagdollAgent : Agent
             if (m.isRoot)
                 continue;
             int i = 0;
-			if (m.jointType != ArticulationJointType.SphericalJoint)
+            if (m.jointType != ArticulationJointType.SphericalJoint)
                 continue;
             if (m.twistLock == ArticulationDofLock.LimitedMotion)
             {
@@ -446,7 +445,7 @@ public class ProcRagdollAgent : Agent
         _rewards2Learn = GetComponent<Rewards2Learn>();
 
         _ragDollMuscles = GetComponent<Muscles>();
-      
+
 
 
 
@@ -461,7 +460,7 @@ public class ProcRagdollAgent : Agent
             .ToList();
         //var individualMotors = new List<float>();
 
-        
+
 
 
 
@@ -480,7 +479,7 @@ public class ProcRagdollAgent : Agent
         _rewards2Learn.OnAgentInitialize(ReproduceDReCon);
         _controllerToMimic.OnAgentInitialize();
 
-     
+
         _hasLazyInitialized = true;
     }
     public override void OnEpisodeBegin()
@@ -519,11 +518,11 @@ public class ProcRagdollAgent : Agent
         // float timeDelta = float.Epsilon;
         // _dReConObservations.OnStep(timeDelta);
         // _dReConRewards.OnStep(timeDelta);
-#if UNITY_EDITOR		
-		if (DebugPauseOnReset)
-		{
-	        UnityEditor.EditorApplication.isPaused = true;
-		}
+#if UNITY_EDITOR
+        if (DebugPauseOnReset)
+        {
+            UnityEditor.EditorApplication.isPaused = true;
+        }
 #endif	        
         if (_debugController != null && _debugController.isActiveAndEnabled)
         {

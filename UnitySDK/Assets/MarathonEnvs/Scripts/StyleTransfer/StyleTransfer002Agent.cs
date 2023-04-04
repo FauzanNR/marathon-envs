@@ -144,14 +144,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         var sensorDistance = _master.SensorDistance / 1f;
 
-        var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
+        var rotationReward = 0.4f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
         var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
+        var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-        var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
+        var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
         #region 
@@ -169,19 +169,20 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         #endregion
 
         faceDirectionReward = ((Vector3.Dot(-targetAttackPosition.forward, transform.forward) + 1) * .5f) * .05f;
-        distanceReward = 0.15f * Mathf.Clamp((Mathf.Exp(-distanceToTarget + .2f)), 0, 1);
+        distanceReward = 0.1f * Mathf.Clamp((Mathf.Exp(-distanceToTarget + .2f)), 0, 1);
 
 
         float reward =
-        distanceReward +//15% distance to target
-        rotationReward +//35% joint rotation
+        faceDirectionReward + //5% face direction
+        distanceReward +//10% distance to target
+        rotationReward +//40% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//10% effector
-            endEffectorVelocityReward +//10% effector velocity
+            endEffectorVelocityReward +//5% effector velocity
             jointAngularVelocityReward +//10% each joui
                                         // jointAngularVelocityRewardWorld +
             centerMassReward +//5%
-            angularMomentReward;//10%
+            angularMomentReward;//15%
                                 // sensorReward +
                                 // jointsNotAtLimitReward;
         if (!_master.IgnorRewardUntilObservation)
@@ -298,7 +299,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             case BodyHelper002.BodyPartGroup.Foot:
             case BodyHelper002.BodyPartGroup.LegUpper:
             case BodyHelper002.BodyPartGroup.LegLower:
-            case BodyHelper002.BodyPartGroup.Hand:
+            // case BodyHelper002.BodyPartGroup.Hand:
             case BodyHelper002.BodyPartGroup.ArmLower:
             case BodyHelper002.BodyPartGroup.ArmUpper:
                 break;
@@ -319,6 +320,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             .FirstOrDefault(x => x == sensorCollider.gameObject);
         if (sensor != null)
         {
+            print("Sensorrr " + sensor.name);
             var idx = _sensors.IndexOf(sensor);
             SensorIsInTouch[idx] = 1f;
         }
