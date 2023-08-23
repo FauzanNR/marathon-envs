@@ -11,6 +11,7 @@ using Unity.MLAgents.Sensors;
 using System.Linq;
 using ManyWorlds;
 using System;
+using UnityEngine.Animations;
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
 {
@@ -35,10 +36,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     bool _hasLazyInitialized;
 
     private float distanceToTarget;
-    public Transform targetAttackPosition;
+    public Transform targetAttackTransform;
     public bool handCollosion;
     private float faceDirectionReward;
     public float distanceReward;
+    private float targetDistance = 1f;
 
     // Use this for initialization
     void Start()
@@ -63,8 +65,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             OnEpisodeBegin();
         }
+        //direction and distance observation
+        var faceDirection = FaceDirectionTowardTarget() / FaceDirection;
+        distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
 
-        distanceToTarget = Vector3.Distance(transform.position, targetAttackPosition.position);
+        sensor.AddObservation(faceDirection);
         sensor.AddObservation(distanceToTarget);
         sensor.AddObservation(_master.ObsPhase);
         var a = 0;
@@ -79,7 +84,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         foreach (var muscle in _master.Muscles)
         {
-
             if (muscle.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked)
             {
 
@@ -93,7 +97,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
             {
-
                 sensor.AddObservation(muscle.TargetNormalizedRotationZ);
             }
         }
@@ -102,7 +105,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(_master.ObsVelocity);
         sensor.AddObservation(_master.ObsAngularMoment);
         sensor.AddObservation(SensorIsInTouch);
+        sensor.AddObservation(targetAttackTransform.position);
     }
+
+    //Method to calculate face direction
+    float FaceDirectionTowardTarget()
+    {
+        var directionToTarget = targetAttackTransform.position - transform.position;
+        var angleDifference = Vector3.Angle(transform.forward, directionToTarget);
+        return Mathf.Exp(-angleDifference / 45f);
+    }
+    float FaceDirection => Vector3.Dot(-targetAttackTransform.forward, transform.forward);
+    float DistanceToTarget => Vector3.Distance(targetAttackTransform.position, transform.position);
 
     // A method that applies the vectorAction to the muscles, and calculates the rewards. 
     public override void OnActionReceived(ActionBuffers actions)
@@ -133,6 +147,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 muscle.TargetNormalizedRotationZ = vectorAction[i++];
             }
         }
+
+        //Reward for agent to get closer to target, next reward will be ignored until the agent satisfied this task
+
+        var faceDirectionToTarget = FaceDirectionTowardTarget();
+        var faceToFaceDirection = FaceDirection;
+        faceDirectionReward = 0.3f * (faceDirectionToTarget / faceToFaceDirection);
+
+        distanceReward = 0.3f * Mathf.Clamp(Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance)), 0.0f, 1.0f);
+        print("Distance debug: " + distanceReward);
+        var rewardDifference = faceDirectionReward / distanceReward;
+        // if (rewardDifference > )
+
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
         var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
@@ -144,7 +170,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         var sensorDistance = _master.SensorDistance / 1f;
 
-        var rotationReward = 0.4f * Mathf.Exp(-rotationDistance);
+        var rotationReward = 0.1f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
         var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
@@ -168,14 +194,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
         #endregion
 
-        faceDirectionReward = ((Vector3.Dot(-targetAttackPosition.forward, transform.forward) + 1) * .5f) * .05f;
-        distanceReward = 0.1f * Mathf.Clamp((Mathf.Exp(-distanceToTarget + .2f)), 0, 1);
-
-
+        //tune the reward amount above
         float reward =
-        faceDirectionReward + //5% face direction
-        distanceReward +//10% distance to target
-        rotationReward +//40% joint rotation
+            faceDirectionReward + //5% face direction
+            distanceReward +//40% distance to target
+            rotationReward +//10% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//10% effector
             endEffectorVelocityReward +//5% effector velocity
@@ -293,6 +316,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var bodyPart = _master.BodyParts.FirstOrDefault(x => x.Transform.gameObject == other);
         if (bodyPart == null)
             return;
+        // print("Body part " + other.name);
         switch (bodyPart.Group)
         {
             case BodyHelper002.BodyPartGroup.None:
@@ -320,7 +344,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             .FirstOrDefault(x => x == sensorCollider.gameObject);
         if (sensor != null)
         {
-            print("Sensorrr " + sensor.name);
+            // print("Sensorrr " + sensor.name);
             var idx = _sensors.IndexOf(sensor);
             SensorIsInTouch[idx] = 1f;
         }
