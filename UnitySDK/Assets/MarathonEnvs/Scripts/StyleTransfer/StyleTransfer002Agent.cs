@@ -40,7 +40,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public bool handCollosion;
     private float faceDirectionReward;
     public float distanceReward;
-    private float targetDistance = 1f;
+    private float targetDistance = 1.02f;
+    private float rewardScale50Perent = 0.5f;
 
     // Use this for initialization
     void Start()
@@ -66,7 +67,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
         //direction and distance observation
-        var faceDirection = FaceDirectionTowardTarget() / FaceDirection;
+        var faceDirection =   (rewardScale50Perent *  FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
 
         sensor.AddObservation(faceDirection);
@@ -152,12 +153,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = 0.3f * (faceDirectionToTarget / faceToFaceDirection);
+        faceDirectionReward = rewardScale50Perent * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
 
-        distanceReward = 0.3f * Mathf.Clamp(Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance)), 0.0f, 1.0f);
-        print("Distance debug: " + distanceReward);
-        var rewardDifference = faceDirectionReward / distanceReward;
-        // if (rewardDifference > )
+        distanceReward = rewardScale50Perent * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
+        var rewardDifference = faceDirectionReward + distanceReward;
+        print("Distance debug: " + rewardDifference);
+        if (rewardDifference > 0.98f){
+
+        }
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;

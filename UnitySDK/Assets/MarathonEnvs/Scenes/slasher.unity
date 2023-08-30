@@ -326,7 +326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!135 &1245515616
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -1156,8 +1156,8 @@ MonoBehaviour:
   Rewards: []
   SensorIsInTouch: []
   _localStyleAnimator: {fileID: 8548524217647296425}
-  ShowMonitor: 0
-  targetAttackPosition: {fileID: 148738738}
+  ShowMonitor: 1
+  targetAttackTransform: {fileID: 148738738}
   handCollosion: 0
   distanceReward: 0
 --- !u!114 &4008977141542875
@@ -4767,7 +4767,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4993543595248336296}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0.48}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4807,7 +4807,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &4994638087672047058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8955,7 +8955,7 @@ MonoBehaviour:
   SensorIsInTouch: []
   _localStyleAnimator: {fileID: 8548524217647296425}
   ShowMonitor: 0
-  targetAttackPosition: {fileID: 0}
+  targetAttackTransform: {fileID: 0}
   handCollosion: 0
   distanceReward: 0
 --- !u!114 &6303771693497470871
