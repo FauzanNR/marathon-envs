@@ -42,6 +42,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public float distanceReward;
     private float targetDistance = 1.02f;
     private float rewardScale50Perent = 0.5f;
+    private float reward;
 
     // Use this for initialization
     void Start()
@@ -57,6 +58,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     // Update is called once per frame
     void Update()
     {
+        var forward = transform.TransformDirection(Vector3.forward) * 10f;
+        Debug.DrawRay(transform.position, forward, Color.red);
     }
 
     // Collect observations that are used by the Neural Network for training and inference.
@@ -67,7 +70,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
         //direction and distance observation
-        var faceDirection =   (rewardScale50Perent *  FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
+        var faceDirection = (rewardScale50Perent * FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
 
         sensor.AddObservation(faceDirection);
@@ -153,14 +156,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = rewardScale50Perent * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
+        faceDirectionReward = 0.25f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
 
-        distanceReward = rewardScale50Perent * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
+        distanceReward = 0.25f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
         var rewardDifference = faceDirectionReward + distanceReward;
         print("Distance debug: " + rewardDifference);
-        if (rewardDifference > 0.98f){
-
-        }
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
@@ -197,23 +197,32 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
         #endregion
 
-        //tune the reward amount above
-        float reward =
-            faceDirectionReward + //5% face direction
-            distanceReward +//40% distance to target
-            rotationReward +//10% joint rotation
-            centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//10% effector
-            endEffectorVelocityReward +//5% effector velocity
-            jointAngularVelocityReward +//10% each joui
-                                        // jointAngularVelocityRewardWorld +
-            centerMassReward +//5%
-            angularMomentReward;//15%
-                                // sensorReward +
-                                // jointsNotAtLimitReward;
-        if (!_master.IgnorRewardUntilObservation)
-            AddReward(reward);
-        // print("StepCount " + reward);
+        //force the agent to align with the target first then, give another reward down the road,-1 for bad consequence
+        if (rewardDifference > 0.480f)
+        {
+            //tune the reward amount above
+            reward =
+                faceDirectionReward + //25% face direction
+                distanceReward + //25% distance to target
+                rotationReward + //10% joint rotation
+                centerOfMassVelocityReward + //10% center of mass velocity
+                endEffectorReward + //10% effector
+                endEffectorVelocityReward + //5% effector velocity
+                jointAngularVelocityReward + //10% each joui
+                                             // jointAngularVelocityRewardWorld +
+                centerMassReward + //5%
+                angularMomentReward; //10%
+                                     // sensorReward +
+                                     // jointsNotAtLimitReward;
+            if (!_master.IgnorRewardUntilObservation)
+                AddReward(reward);
+            // print("StepCount " + reward);
+        }
+        else
+        {
+            AddReward(-1);
+        }
+
         if (reward < 0.45)
             EndEpisode();
 
