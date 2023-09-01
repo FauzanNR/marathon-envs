@@ -12,6 +12,7 @@ using System.Linq;
 using ManyWorlds;
 using System;
 using UnityEngine.Animations;
+using System.Windows.Forms;
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
 {
@@ -35,13 +36,16 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     bool _isDone;
     bool _hasLazyInitialized;
 
-    private float distanceToTarget;
+   
+   public Transform torsoBodyAncor;
     public Transform targetAttackTransform;
     public bool handCollosion;
+     private float distanceToTarget;
     private float faceDirectionReward;
     public float distanceReward;
     private float targetDistance = 1.02f;
     private float rewardScale50Perent = 0.5f;
+    private float reward;
 
     // Use this for initialization
     void Start()
@@ -57,6 +61,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     // Update is called once per frame
     void Update()
     {
+         var forwardNormalize = torsoBodyAncor.TransformDirection(-Vector3.right) * 5f;
+        Debug.DrawRay(torsoBodyAncor.position, forwardNormalize, Color.red);
     }
 
     // Collect observations that are used by the Neural Network for training and inference.
@@ -112,12 +118,12 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     //Method to calculate face direction
     float FaceDirectionTowardTarget()
     {
-        var directionToTarget = targetAttackTransform.position - transform.position;
-        var angleDifference = Vector3.Angle(transform.forward, directionToTarget);
+        var directionToTarget = targetAttackTransform.position - torsoBodyAncor.position;
+        var angleDifference = Vector3.Angle(-transform.right, directionToTarget);
         return Mathf.Exp(-angleDifference / 45f);
     }
-    float FaceDirection => Vector3.Dot(-targetAttackTransform.forward, transform.forward);
-    float DistanceToTarget => Vector3.Distance(targetAttackTransform.position, transform.position);
+    float FaceDirection => Vector3.Dot(-targetAttackTransform.forward, -torsoBodyAncor.right);
+    float DistanceToTarget => Vector3.Distance(targetAttackTransform.position, torsoBodyAncor.position);
 
     // A method that applies the vectorAction to the muscles, and calculates the rewards. 
     public override void OnActionReceived(ActionBuffers actions)
@@ -153,15 +159,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = rewardScale50Perent * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
+        faceDirectionReward = 0.3f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
 
-        distanceReward = rewardScale50Perent * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
-        var rewardDifference = faceDirectionReward + distanceReward;
-        print("Distance debug: " + rewardDifference);
-        if (rewardDifference > 0.98f){
+        distanceReward = 0.3f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
+        var DifferenceReward = faceDirectionReward + distanceReward;
+        print("Distance debug: " + DifferenceReward);
 
-        }
-
+        
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
         var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
@@ -180,7 +184,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-        var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
+        var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
         #region 
@@ -197,10 +201,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
         #endregion
 
+//force the agent to align with the opponent body and give the reward down the training
+        if (DifferenceReward > 0.425f){
+
         //tune the reward amount above
-        float reward =
-            faceDirectionReward + //5% face direction
-            distanceReward +//40% distance to target
+        reward =
+            faceDirectionReward + //25% face direction
+            distanceReward +//25% distance to target
             rotationReward +//10% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//10% effector
@@ -208,11 +215,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             jointAngularVelocityReward +//10% each joui
                                         // jointAngularVelocityRewardWorld +
             centerMassReward +//5%
-            angularMomentReward;//15%
+            angularMomentReward;//10%
                                 // sensorReward +
                                 // jointsNotAtLimitReward;
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
+        }else{
+            AddReward(-0.1f);
+        }
+
         // print("StepCount " + reward);
         if (reward < 0.45)
             EndEpisode();
@@ -306,6 +317,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             else
                 _scoreHistogramData.SetItem(column, AverageReward);
         }
+
+        var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
+        var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
+        var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
+        transform.position = randomSpawn;
     }
 
     // A method called on terrain collision. Used for early stopping an episode
