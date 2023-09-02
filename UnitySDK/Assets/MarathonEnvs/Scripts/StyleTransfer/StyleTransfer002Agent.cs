@@ -163,7 +163,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         distanceReward = 0.3f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
         var DifferenceReward = faceDirectionReward + distanceReward;
-        print("Distance debug: " + DifferenceReward);
+        // print("Distance debug: " + DifferenceReward);
 
         
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
@@ -202,7 +202,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         #endregion
 
 //force the agent to align with the opponent body and give the reward down the training
-        if (DifferenceReward > 0.425f){
+        // if (DifferenceReward > 0.425f){
 
         //tune the reward amount above
         reward =
@@ -220,13 +220,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                                 // jointsNotAtLimitReward;
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
-        }else{
-            AddReward(-0.1f);
-        }
+        // }else{
+        //     AddReward(-0.1f);
+        // }
 
         // print("StepCount " + reward);
-        if (reward < 0.45)
-            EndEpisode();
+        // if (reward < 0.25)
+        //     EndEpisode();
 
         if (!_isDone)
         {
