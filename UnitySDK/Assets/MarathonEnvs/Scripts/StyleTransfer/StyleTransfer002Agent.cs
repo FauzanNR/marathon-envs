@@ -159,9 +159,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = 0.3f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
+        faceDirectionReward = 0.25f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
 
-        distanceReward = 0.3f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
+        distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
         var DifferenceReward = faceDirectionReward + distanceReward;
         // print("Distance debug: " + DifferenceReward);
 
@@ -183,7 +183,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-        var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
+        var centerMassReward = 0.25f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
@@ -207,14 +207,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //tune the reward amount above
         reward =
             faceDirectionReward + //25% face direction
-            distanceReward +//25% distance to target
+            distanceReward +//5% distance to target
             rotationReward +//10% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//10% effector
             endEffectorVelocityReward +//5% effector velocity
             jointAngularVelocityReward +//10% each joui
                                         // jointAngularVelocityRewardWorld +
-            centerMassReward +//5%
+            centerMassReward +//25%
             angularMomentReward;//10%
                                 // sensorReward +
                                 // jointsNotAtLimitReward;
