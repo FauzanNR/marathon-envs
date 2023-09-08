@@ -20,6 +20,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public float AverageReward;
     public List<float> Rewards;
     public List<float> SensorIsInTouch;
+    private Transform targetAttackTransformContainer;
     StyleTransfer002Master _master;
     public StyleTransfer002Animator _localStyleAnimator;
     StyleTransfer002Animator _styleAnimator;
@@ -36,11 +37,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     bool _isDone;
     bool _hasLazyInitialized;
 
-   
-   public Transform torsoBodyAncor;
+
+    public Transform torsoBodyAncor;
     public Transform targetAttackTransform;
     public bool handCollosion;
-     private float distanceToTarget;
+    private float distanceToTarget;
     private float faceDirectionReward;
     public float distanceReward;
     private float targetDistance = 1.02f;
@@ -50,18 +51,20 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     // Use this for initialization
     void Start()
     {
+        targetAttackTransformContainer = targetAttackTransform;
         _master = GetComponent<StyleTransfer002Master>();
         _decisionRequester = GetComponent<DecisionRequester>();
         var spawnableEnv = GetComponentInParent<SpawnableEnv>();
         _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
         _styleAnimator = _localStyleAnimator.GetFirstOfThisAnim();
         _startCount++;
+        print("starararat");
     }
 
     // Update is called once per frame
     void Update()
     {
-         var forwardNormalize = torsoBodyAncor.TransformDirection(-Vector3.right) * 5f;
+        var forwardNormalize = torsoBodyAncor.TransformDirection(-Vector3.right) * 5f;
         Debug.DrawRay(torsoBodyAncor.position, forwardNormalize, Color.red);
     }
 
@@ -73,7 +76,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
         //direction and distance observation
-        var faceDirection =   (rewardScale50Perent *  FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
+        var faceDirection = (rewardScale50Perent * FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
 
         sensor.AddObservation(faceDirection);
@@ -165,7 +168,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var DifferenceReward = faceDirectionReward + distanceReward;
         // print("Distance debug: " + DifferenceReward);
 
-        
+
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
         var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
@@ -201,7 +204,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // Debug.Log("joints not at limit rewards:" + jointsNotAtLimitReward);
         #endregion
 
-//force the agent to align with the opponent body and give the reward down the training
+        //force the agent to align with the opponent body and give the reward down the training
         // if (DifferenceReward > 0.425f){
 
         //tune the reward amount above
@@ -225,8 +228,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // }
 
         // print("StepCount " + reward);
-        // if (reward < 0.25)
-        //     EndEpisode();
+        if (reward < 0.35)
+            EndEpisode();
 
         if (!_isDone)
         {
@@ -318,10 +321,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 _scoreHistogramData.SetItem(column, AverageReward);
         }
 
+        targetAttackTransform = targetAttackTransformContainer;
         var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
         var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
         transform.position = randomSpawn;
+
+
     }
 
     // A method called on terrain collision. Used for early stopping an episode
@@ -342,7 +348,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             case BodyHelper002.BodyPartGroup.Foot:
             case BodyHelper002.BodyPartGroup.LegUpper:
             case BodyHelper002.BodyPartGroup.LegLower:
-            // case BodyHelper002.BodyPartGroup.Hand:
+            case BodyHelper002.BodyPartGroup.Hand:
             case BodyHelper002.BodyPartGroup.ArmLower:
             case BodyHelper002.BodyPartGroup.ArmUpper:
                 break;
