@@ -346,11 +346,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             case BodyHelper002.BodyPartGroup.None:
             case BodyHelper002.BodyPartGroup.Foot:
-            case BodyHelper002.BodyPartGroup.LegUpper:
-            case BodyHelper002.BodyPartGroup.LegLower:
-            case BodyHelper002.BodyPartGroup.Hand:
-            case BodyHelper002.BodyPartGroup.ArmLower:
-            case BodyHelper002.BodyPartGroup.ArmUpper:
+                // case BodyHelper002.BodyPartGroup.LegUpper:
+                // case BodyHelper002.BodyPartGroup.LegLower:
+                // case BodyHelper002.BodyPartGroup.Hand:
+                // case BodyHelper002.BodyPartGroup.ArmLower:
+                // case BodyHelper002.BodyPartGroup.ArmUpper:
                 break;
             default:
                 EndEpisode();
