@@ -123,6 +123,39 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &22989787 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8639652040650434176, guid: 5de9cdbf152ec8242a311d541617e292,
+    type: 3}
+  m_PrefabInstance: {fileID: 390113240}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &22989792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22989787}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a5c1e3c4d0090f42a98b1fc95327f12, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTouch: 0
+--- !u!136 &22989797
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 22989787}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.07
+  m_Height: 0.19
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.085, z: 0}
 --- !u!4 &148738738 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6179833678923426922, guid: 5de9cdbf152ec8242a311d541617e292,
@@ -215,6 +248,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8639652040650434189, guid: 5de9cdbf152ec8242a311d541617e292,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5de9cdbf152ec8242a311d541617e292, type: 3}
@@ -1106,7 +1144,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702640404891808}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.04, y: -0.19999999, z: 0.03}
+  m_LocalPosition: {x: 1.26, y: -0.19999999, z: 0.03}
   m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1164,8 +1202,11 @@ MonoBehaviour:
   ShowMonitor: 1
   torsoBodyAncor: {fileID: 4041107916953272}
   targetAttackTransform: {fileID: 148738738}
+  handTarget: {fileID: 22989792}
+  agentHand: {fileID: 4293933284913628}
   handCollosion: 0
   distanceReward: 0
+  gripDuration: 3
 --- !u!114 &4008977141542875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1179,16 +1220,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 265
+    VectorObservationSize: 268
     NumStackedVectorObservations: 1
     m_ActionSpec:
-      m_NumContinuousActions: 23
+      m_NumContinuousActions: 22
       BranchSizes: 
-    VectorActionSize: 17000000
+    VectorActionSize: 16000000
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 05787ca11d7455b4ba41a4c99e52ebfc, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: MarathonManBackflip-v0
@@ -8963,8 +9004,11 @@ MonoBehaviour:
   ShowMonitor: 0
   torsoBodyAncor: {fileID: 0}
   targetAttackTransform: {fileID: 0}
+  handTarget: {fileID: 0}
+  agentHand: {fileID: 0}
   handCollosion: 0
   distanceReward: 0
+  gripDuration: 3
 --- !u!114 &6303771693497470871
 MonoBehaviour:
   m_ObjectHideFlags: 0

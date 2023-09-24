@@ -13,6 +13,7 @@ using ManyWorlds;
 using System;
 using UnityEngine.Animations;
 using System.Windows.Forms;
+using UnityEditor;
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
 {
@@ -40,6 +41,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public Transform torsoBodyAncor;
     public Transform targetAttackTransform;
+
+    public HandTarget handTarget;
+    public Transform agentHand;
+
     public bool handCollosion;
     private float distanceToTarget;
     private float faceDirectionReward;
@@ -47,6 +52,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float targetDistance = 1.02f;
     private float rewardScale50Perent = 0.5f;
     private float reward;
+    private float timerGrip = 0f;
+    public float gripDuration = 3f;
 
     // Use this for initialization
     void Start()
@@ -58,7 +65,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         _localStyleAnimator = spawnableEnv.gameObject.GetComponentInChildren<StyleTransfer002Animator>();
         _styleAnimator = _localStyleAnimator.GetFirstOfThisAnim();
         _startCount++;
-        print("starararat");
+        // print("starararat");
     }
 
     // Update is called once per frame
@@ -116,6 +123,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(_master.ObsAngularMoment);
         sensor.AddObservation(SensorIsInTouch);
         sensor.AddObservation(targetAttackTransform.position);
+        sensor.AddObservation(handTarget.transform.position);
     }
 
     //Method to calculate face direction
@@ -132,6 +140,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public override void OnActionReceived(ActionBuffers actions)
     {
         float[] vectorAction = actions.ContinuousActions.Select(x => x).ToArray();
+
+        // var a = 0;
+        // foreach(var action in vectorAction){
+        //     print("an action with value "+ a +" "+action);
+        //     a++;
+        // }
+
         if (!_hasLazyInitialized)
         {
             return;
@@ -147,27 +162,48 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             if (muscle.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked)
             {
                 muscle.TargetNormalizedRotationX = vectorAction[i++];
+                // print(i + " "+muscle.Name);
             }
             if (muscle.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked)
             {
                 muscle.TargetNormalizedRotationY = vectorAction[i++];
+                //   print(i + " "+muscle.Name);
             }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
             {
                 muscle.TargetNormalizedRotationZ = vectorAction[i++];
+                //   print(i + " "+muscle.Name);
             }
         }
 
         //Reward for agent to get closer to target, next reward will be ignored until the agent satisfied this task
-
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = 0.25f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
-
+        faceDirectionReward = 0.10f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
         distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
         var DifferenceReward = faceDirectionReward + distanceReward;
         // print("Distance debug: " + DifferenceReward);
-
+        // print("faceDirectionReward: " + faceDirectionReward);
+        // print("distanceReward: " + distanceReward);
+        //Hand grip action and reward 
+        var handGripReward = 0f;
+        if (DifferenceReward > 0.13f)
+        {
+            if (handTarget.isTouch)
+            {
+                timerGrip += Time.fixedDeltaTime;
+                if (timerGrip < gripDuration)
+                {
+                    var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * 5f;//vectorAction[0];
+                    handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+                }else
+                    timerGrip = 0f;
+            }
+            else
+            {
+                handGripReward = 0.1f;
+            }
+        }
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
@@ -186,7 +222,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-        var centerMassReward = 0.25f * Mathf.Exp(-centerOfMassDistance);
+        var centerMassReward = 0.20f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
@@ -209,28 +245,27 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //tune the reward amount above
         reward =
-            faceDirectionReward + //25% face direction
             distanceReward +//5% distance to target
+            endEffectorVelocityReward +//5% effector velocity          
+            handGripReward + // 10% grip opponent hand
             rotationReward +//10% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//10% effector
-            endEffectorVelocityReward +//5% effector velocity
-            jointAngularVelocityReward +//10% each joui
-                                        // jointAngularVelocityRewardWorld +
-            centerMassReward +//25%
-            angularMomentReward;//10%
-                                // sensorReward +
-                                // jointsNotAtLimitReward;
+            jointAngularVelocityReward +//10% each joint Velocity
+            angularMomentReward +//10%
+            faceDirectionReward + //10% face direction
+            centerMassReward;//20%
+                            // sensorReward +
+                            // jointsNotAtLimitReward;
+                            // jointAngularVelocityRewardWorld +
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
         // }else{
         //     AddReward(-0.1f);
         // }
 
-        // print("StepCount " + reward);
         if (reward < 0.35)
-            EndEpisode();
-
+                EndEpisode();
         if (!_isDone)
         {
             if (_master.IsDone())
@@ -238,11 +273,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 EndEpisode();
                 if (_master.StartAnimationIndex > 0)
                     _master.StartAnimationIndex--;
-            }
         }
         FrameReward = reward;
         var stepCount = StepCount > 0 ? StepCount : 1;
         AverageReward = GetCumulativeReward() / (float)stepCount;
+        }
     }
 
     // A helper function that calculates a fraction of joints at their limit positions
@@ -353,7 +388,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 // case BodyHelper002.BodyPartGroup.ArmUpper:
                 break;
             default:
-                EndEpisode();
+                {
+                    // print("part end " + bodyPart.Group);
+                    EndEpisode();
+                }
                 break;
         }
     }
@@ -390,5 +428,4 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             SensorIsInTouch[idx] = 0f;
         }
     }
-
 }
