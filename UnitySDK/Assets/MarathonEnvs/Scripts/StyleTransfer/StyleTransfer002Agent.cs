@@ -44,6 +44,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public HandTarget handTarget;
     public Transform agentHand;
+    public Transform rightFoot;
+    public Transform leftFoot;
 
     public bool handCollosion;
     private float distanceToTarget;
@@ -82,12 +84,17 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             OnEpisodeBegin();
         }
-        //direction and distance observation
+        //direction and distance to target observation
         var faceDirection = (rewardScale50Perent * FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
-
         sensor.AddObservation(faceDirection);
         sensor.AddObservation(distanceToTarget);
+        // leg distance observatoin
+        var legDistance = Vector3.Distance(rightFoot.position,leftFoot.position);
+        sensor.AddObservation(legDistance);
+        sensor.AddObservation(rightFoot.position);
+        sensor.AddObservation(leftFoot.position);
+        
         sensor.AddObservation(_master.ObsPhase);
         var a = 0;
         foreach (var bodyPart in _master.BodyParts)
@@ -124,6 +131,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(SensorIsInTouch);
         sensor.AddObservation(targetAttackTransform.position);
         sensor.AddObservation(handTarget.transform.position);
+       
+
     }
 
     //Method to calculate face direction
@@ -179,7 +188,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //Reward for agent to get closer to target, next reward will be ignored until the agent satisfied this task
         var faceDirectionToTarget = FaceDirectionTowardTarget();
         var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = 0.10f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
+        faceDirectionReward = 0.05f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
         distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
         var DifferenceReward = faceDirectionReward + distanceReward;
         // print("Distance debug: " + DifferenceReward);
@@ -216,13 +225,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         var sensorDistance = _master.SensorDistance / 1f;
 
-        var rotationReward = 0.1f * Mathf.Exp(-rotationDistance);
+        var rotationReward = 0.2f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-        var centerMassReward = 0.20f * Mathf.Exp(-centerOfMassDistance);
+        var centerMassReward = 0.1f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
@@ -248,13 +257,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             distanceReward +//5% distance to target
             endEffectorVelocityReward +//5% effector velocity          
             handGripReward + // 10% grip opponent hand
-            rotationReward +//10% joint rotation
+            rotationReward +//20% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//10% effector
+            endEffectorReward +//15% effector
             jointAngularVelocityReward +//10% each joint Velocity
             angularMomentReward +//10%
-            faceDirectionReward + //10% face direction
-            centerMassReward;//20%
+            faceDirectionReward + //5% face direction
+            centerMassReward;//10%
                             // sensorReward +
                             // jointsNotAtLimitReward;
                             // jointAngularVelocityRewardWorld +
@@ -264,7 +273,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //     AddReward(-0.1f);
         // }
 
-        if (reward < 0.35)
+        if (reward < 0.15)
                 EndEpisode();
         if (!_isDone)
         {
