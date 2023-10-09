@@ -90,11 +90,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(faceDirection);
         sensor.AddObservation(distanceToTarget);
         // leg distance observatoin
-        var legDistance = Vector3.Distance(rightFoot.position,leftFoot.position);
+        var legDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
         sensor.AddObservation(legDistance);
         sensor.AddObservation(rightFoot.position);
         sensor.AddObservation(leftFoot.position);
-        
+
         sensor.AddObservation(_master.ObsPhase);
         var a = 0;
         foreach (var bodyPart in _master.BodyParts)
@@ -131,7 +131,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(SensorIsInTouch);
         sensor.AddObservation(targetAttackTransform.position);
         sensor.AddObservation(handTarget.transform.position);
-       
+
 
     }
 
@@ -203,9 +203,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 timerGrip += Time.fixedDeltaTime;
                 if (timerGrip < gripDuration)
                 {
-                    var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * 5f;//vectorAction[0];
+                    var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * vectorAction[0];
                     handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
-                }else
+                }
+                else
                     timerGrip = 0f;
             }
             else
@@ -264,9 +265,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             angularMomentReward +//10%
             faceDirectionReward + //5% face direction
             centerMassReward;//10%
-                            // sensorReward +
-                            // jointsNotAtLimitReward;
-                            // jointAngularVelocityRewardWorld +
+                             // sensorReward +
+                             // jointsNotAtLimitReward;
+                             // jointAngularVelocityRewardWorld +
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
         // }else{
@@ -274,7 +275,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // }
 
         if (reward < 0.15)
-                EndEpisode();
+            EndEpisode();
         if (!_isDone)
         {
             if (_master.IsDone())
@@ -282,10 +283,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 EndEpisode();
                 if (_master.StartAnimationIndex > 0)
                     _master.StartAnimationIndex--;
-        }
-        FrameReward = reward;
-        var stepCount = StepCount > 0 ? StepCount : 1;
-        AverageReward = GetCumulativeReward() / (float)stepCount;
+            }
+            FrameReward = reward;
+            var stepCount = StepCount > 0 ? StepCount : 1;
+            AverageReward = GetCumulativeReward() / (float)stepCount;
         }
     }
 
