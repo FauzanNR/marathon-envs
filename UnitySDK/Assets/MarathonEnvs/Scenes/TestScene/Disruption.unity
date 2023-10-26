@@ -356,7 +356,7 @@ MonoBehaviour:
   shootDelay: 2.08
   orbitSpeed: 0.05
   orbitRadius: 10
-  orbitHeight: 0.1
+  orbitHeight: -0.02
   projectileForce: 40
 --- !u!4 &602981414
 Transform:
@@ -495,7 +495,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 708991637}
   serializedVersion: 2
-  m_Mass: 2
+  m_Mass: 1
   m_Drag: 0.5
   m_AngularDrag: 0.05
   m_UseGravity: 1
@@ -4407,6 +4407,7 @@ MonoBehaviour:
   ShowMonitor: 1
   torsoBodyAncor: {fileID: 2494354945056041211}
   targetAttackTransform: {fileID: 8597596245350364657}
+  ragdollManager: {fileID: 0}
   handTarget: {fileID: 2491583261993645475}
   agentHand: {fileID: 2494044807585632159}
   rightFoot: {fileID: 2494047133979350643}
@@ -16389,6 +16390,7 @@ MonoBehaviour:
   ShowMonitor: 0
   torsoBodyAncor: {fileID: 0}
   targetAttackTransform: {fileID: 0}
+  ragdollManager: {fileID: 0}
   handTarget: {fileID: 0}
   agentHand: {fileID: 0}
   rightFoot: {fileID: 0}

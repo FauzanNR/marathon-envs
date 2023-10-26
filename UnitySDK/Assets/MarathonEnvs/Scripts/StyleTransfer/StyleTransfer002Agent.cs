@@ -42,6 +42,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public Transform torsoBodyAncor;
     public Transform targetAttackTransform;
 
+    public RagdollManager ragdollManager;
     public HandTarget handTarget;
     public Transform agentHand;
     public Transform rightFoot;
@@ -194,6 +195,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // print("Distance debug: " + DifferenceReward);
         // print("faceDirectionReward: " + faceDirectionReward);
         // print("distanceReward: " + distanceReward);
+
         //Hand grip action and reward 
         var handGripReward = 0f;
         if (DifferenceReward > 0.13f)
@@ -205,6 +207,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 {
                     var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * vectorAction[0];
                     handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+                    ragdollManager.gripForce = vectorAction[0];
                 }
                 else
                     timerGrip = 0f;
@@ -214,6 +217,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 handGripReward = 0.1f;
             }
         }
+        // print("Total action " + vectorAction.Length);
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
         var rotationDistance = _master.RotationDistance / 16f;
@@ -366,11 +370,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 _scoreHistogramData.SetItem(column, AverageReward);
         }
 
+        //random spawn agent position
         targetAttackTransform = targetAttackTransformContainer;
         var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
         var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
         transform.position = randomSpawn;
+
+
+        //set target ragdoll to kinematic and default position
+        ragdollManager.spineRb.isKinematic = true;
+        ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        ragdollManager.gameObject.transform.position = ragdollManager.defaultPosition;
 
 
     }
