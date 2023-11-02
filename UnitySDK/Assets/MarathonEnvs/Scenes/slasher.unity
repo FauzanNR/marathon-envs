@@ -1096,6 +1096,7 @@ MonoBehaviour:
   ShowMonitor: 1
   torsoBodyAncor: {fileID: 4041107916953272}
   targetAttackTransform: {fileID: 6179833679212792754}
+  ragdollManager: {fileID: 6811972963664466185}
   handTarget: {fileID: 22989792}
   agentHand: {fileID: 4293933284913628}
   rightFoot: {fileID: 4296209007503408}
@@ -11444,6 +11445,7 @@ MonoBehaviour:
   ShowMonitor: 0
   torsoBodyAncor: {fileID: 0}
   targetAttackTransform: {fileID: 0}
+  ragdollManager: {fileID: 0}
   handTarget: {fileID: 0}
   agentHand: {fileID: 0}
   rightFoot: {fileID: 0}
@@ -11627,6 +11629,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6179833679212792754}
+  - component: {fileID: 6811972963664466185}
   m_Layer: 0
   m_Name: TargetCharacter
   m_TagString: Untagged
@@ -11634,6 +11637,23 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &6811972963664466185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6811972963664466184}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c3fe95a1df4a28f4eae7acaf68054bfd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  spineRb: {fileID: 5929433663630533021}
+  gripForce: 0
+  totalWeight: 0
+  heaviestBodyPart: 
+  defaultPosition: {x: 0, y: 0, z: 0}
 --- !u!1 &6944629167608340048
 GameObject:
   m_ObjectHideFlags: 0

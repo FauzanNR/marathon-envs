@@ -132,7 +132,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(SensorIsInTouch);
         sensor.AddObservation(targetAttackTransform.position);
         sensor.AddObservation(handTarget.transform.position);
-
+        var statsRecorder = Academy.Instance.StatsRecorder;
+        statsRecorder.Add("Rotation Different", _master.AngularMomentDistance);
 
     }
 

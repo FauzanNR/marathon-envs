@@ -220,7 +220,7 @@ public class StyleTransfer002Master : MonoBehaviour
             {
                 bodyPart.UpdateObservations();
 
-                var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;
+                var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;//angle or difference between bodypart rotation and animation rotation
                 var squareRotDistance = Mathf.Pow(rotDistance, 2);
                 RotationDistance += squareRotDistance;
 
@@ -289,6 +289,10 @@ public class StyleTransfer002Master : MonoBehaviour
         if (IgnorRewardUntilObservation)
             IgnorRewardUntilObservation = false;
         ObsPhase = _muscleAnimator.AnimationSteps[AnimationIndex].NormalizedTime % 1f;
+
+
+        //Calculate MAPE
+    
         return animStep;
     }
 

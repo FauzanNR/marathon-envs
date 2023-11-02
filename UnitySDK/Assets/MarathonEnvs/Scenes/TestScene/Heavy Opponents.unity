@@ -5531,6 +5531,7 @@ GameObject:
   - component: {fileID: 107393861541535674}
   - component: {fileID: 1502390692417677977}
   - component: {fileID: 3402631901234056494}
+  - component: {fileID: 3402631901234056495}
   m_Layer: 0
   m_Name: MarathonMan
   m_TagString: Untagged
@@ -14805,6 +14806,22 @@ MonoBehaviour:
   m_UseChildSensors: 1
   m_UseChildActuators: 1
   m_ObservableAttributeHandling: 0
+--- !u!114 &3402631901234056495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 66758755598810640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
 --- !u!1 &3440078947623875634
 GameObject:
   m_ObjectHideFlags: 0
@@ -17253,6 +17270,7 @@ GameObject:
   - component: {fileID: 6199451765195643126}
   - component: {fileID: 6199451765195643123}
   - component: {fileID: 6199451765195643125}
+  - component: {fileID: 6199451765195643128}
   m_Layer: 0
   m_Name: MarathonMan
   m_TagString: Agent
@@ -18044,6 +18062,22 @@ Transform:
   m_Father: {fileID: 6199304949163650261}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6199451765195643128
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6197184150803005327}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 88b6042bc9a5d4aa58d931eae49442e5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  agentParameters:
+    maxStep: 0
+  hasUpgradedFromAgentParameters: 1
+  MaxStep: 0
 --- !u!4 &6199490302510108589
 Transform:
   m_ObjectHideFlags: 0

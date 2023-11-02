@@ -143,7 +143,7 @@ public class BodyPart002
         }
 
         var dt = Time.fixedDeltaTime * _decisionRequester.DecisionPeriod;
-
+        //it's velocity because of it have time and direction factor in it.
         var velocity = (position - _lastLocalPosition) / dt;
         var velocityWorld = (Transform.position - _lastWorldPosition) / dt;
         var angularVelocity = JointHelper002.CalcDeltaRotationNormalizedEuler(_lastObsRotation, rotation) / dt;
@@ -184,6 +184,7 @@ public class BodyPart002
         ObsDeltaFromAnimationPosition = _animationPositionWorld - Transform.position;
 
         ObsAngleDeltaFromAnimationRotation = Quaternion.Angle(_animationRotation, rotation);
+        Debug.Log("Rotation angle " + ObsAngleDeltaFromAnimationRotation);
         ObsAngleDeltaFromAnimationRotation = JointHelper002.NormalizedAngle(ObsAngleDeltaFromAnimationRotation);
 
         ObsDeltaFromAnimationVelocity = _animationVelocityWorld - velocityWorld;
