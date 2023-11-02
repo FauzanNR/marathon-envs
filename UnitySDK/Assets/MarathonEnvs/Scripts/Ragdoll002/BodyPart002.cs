@@ -184,7 +184,7 @@ public class BodyPart002
         ObsDeltaFromAnimationPosition = _animationPositionWorld - Transform.position;
 
         ObsAngleDeltaFromAnimationRotation = Quaternion.Angle(_animationRotation, rotation);
-        Debug.Log("Rotation angle " + ObsAngleDeltaFromAnimationRotation);
+        // Debug.Log("Rotation angle " + ObsAngleDeltaFromAnimationRotation);
         ObsAngleDeltaFromAnimationRotation = JointHelper002.NormalizedAngle(ObsAngleDeltaFromAnimationRotation);
 
         ObsDeltaFromAnimationVelocity = _animationVelocityWorld - velocityWorld;
