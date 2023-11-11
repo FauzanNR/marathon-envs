@@ -55,8 +55,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float targetDistance = 1.02f;
     private float rewardScale50Perent = 0.5f;
     private float reward;
-    private float timerGrip = 0f;
+    public float timerGrip = 0f;
     public float gripDuration = 3f;
+    public float gripForce;
+    public bool isHandGrip;
+    public int seconds;
 
     // Use this for initialization
     void Start()
@@ -199,25 +202,31 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //Hand grip action and reward 
         var handGripReward = 0f;
-        if (DifferenceReward > 0.13f)
+        // if (DifferenceReward > 0.13f)
+        // {
+        isHandGrip = handTarget.isTouch;
+        if (handTarget.isTouch)
         {
-            if (handTarget.isTouch)
+            handGripReward = 0.06f;
+            timerGrip += Time.deltaTime;
+            // seconds = Mathf.FloorToInt(timerGrip % 60); get the exact seconds
+            if (timerGrip < gripDuration)
             {
-                timerGrip += Time.fixedDeltaTime;
-                if (timerGrip < gripDuration)
-                {
-                    var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * vectorAction[0];
-                    handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
-                    ragdollManager.gripForce = vectorAction[0];
-                }
-                else
-                    timerGrip = 0f;
+                // print("Start griping");
+                var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * gripForce;
+                handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+                ragdollManager.gripForce = vectorAction[0];
+                if (timerGrip >= gripDuration)
+                    handGripReward = 0.1f;
             }
             else
-            {
-                handGripReward = 0.1f;
-            }
+                timerGrip = 0f;
         }
+        else
+        {
+            timerGrip = 0f;
+        }
+        // }
         // print("Total action " + vectorAction.Length);
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
@@ -280,19 +289,19 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // }
 
         if (reward < 0.15)
-            EndEpisode();
-        if (!_isDone)
-        {
-            if (_master.IsDone())
+            // EndEpisode();
+            if (!_isDone)
             {
-                EndEpisode();
-                if (_master.StartAnimationIndex > 0)
-                    _master.StartAnimationIndex--;
+                if (_master.IsDone())
+                {
+                    // EndEpisode();
+                    if (_master.StartAnimationIndex > 0)
+                        _master.StartAnimationIndex--;
+                }
+                FrameReward = reward;
+                var stepCount = StepCount > 0 ? StepCount : 1;
+                AverageReward = GetCumulativeReward() / (float)stepCount;
             }
-            FrameReward = reward;
-            var stepCount = StepCount > 0 ? StepCount : 1;
-            AverageReward = GetCumulativeReward() / (float)stepCount;
-        }
     }
 
     // A helper function that calculates a fraction of joints at their limit positions
@@ -376,13 +385,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
         var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
-        transform.position = randomSpawn;
+        // transform.position = randomSpawn;
 
 
         //set target ragdoll to kinematic and default position
         ragdollManager.spineRb.isKinematic = true;
         ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        ragdollManager.gameObject.transform.position = ragdollManager.defaultPosition;
+        ragdollManager.hipsRbTr.position = ragdollManager.defaultPosition;
+        ragdollManager.hipsRbTr.rotation = ragdollManager.defaultRotation;
+
 
 
     }
@@ -412,7 +423,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             default:
                 {
                     // print("part end " + bodyPart.Group);
-                    EndEpisode();
+                    // EndEpisode();
                 }
                 break;
         }

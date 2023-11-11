@@ -8,10 +8,12 @@ public class RagdollManager : MonoBehaviour
 
   // List<Rigidbody> rbs;
   public Rigidbody spineRb;
+  public Transform hipsRbTr;
   public float gripForce;
   public float totalWeight = 0;
   public string heaviestBodyPart;
   public Vector3 defaultPosition;
+  public Quaternion defaultRotation;
 
   float weightTmpt = 0;
 
@@ -34,13 +36,14 @@ public class RagdollManager : MonoBehaviour
   void Start()
   {
     CountRagdollWeight();
-    defaultPosition = transform.position;
+    defaultPosition = hipsRbTr.position;
+    defaultRotation = hipsRbTr.rotation;
   }
 
 
   void FixedUpdate()
   {
-    if (gripForce > 1f)
+    if (gripForce > 50f)
     {
       spineRb.isKinematic = false;
       spineRb.constraints = RigidbodyConstraints.None;
