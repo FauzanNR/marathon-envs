@@ -1040,8 +1040,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1702640404891808}
-  m_LocalRotation: {x: -0, y: 0.7273718, z: -0, w: 0.68624365}
-  m_LocalPosition: {x: -5.379, y: -0.19999999, z: -0.298}
+  m_LocalRotation: {x: -0, y: 0.024138963, z: -0, w: 0.99970865}
+  m_LocalPosition: {x: -2.4, y: -0.19999999, z: 0.225}
   m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1060,7 +1060,7 @@ Transform:
   - {fileID: 4543444023552120}
   m_Father: {fileID: 4087631875988474}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 93.333, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 2.766, z: 0}
 --- !u!114 &4008977141542873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1106,8 +1106,11 @@ MonoBehaviour:
   leftFoot: {fileID: 4531544094516206}
   handCollosion: 0
   distanceReward: 0
+  actionsValue: []
+  timerGrip: 0
   gripDuration: 3
   gripForce: 100
+  isHandGrip: 0
 --- !u!114 &4008977141542875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1132,7 +1135,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 5022602860645237092, guid: 2717099f6c9de344b972b3a984fad169, type: 3}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: MarathonManBackflip-v0
   TeamId: 0
   m_UseChildSensors: 1
@@ -2863,7 +2866,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 126
+  m_Constraints: 0
   m_CollisionDetection: 0
 --- !u!54 &54186116558598586
 Rigidbody:
@@ -11530,8 +11533,11 @@ MonoBehaviour:
   leftFoot: {fileID: 0}
   handCollosion: 0
   distanceReward: 0
+  actionsValue: []
+  timerGrip: 0
   gripDuration: 3
   gripForce: 0
+  isHandGrip: 0
 --- !u!114 &6303771693497470871
 MonoBehaviour:
   m_ObjectHideFlags: 0

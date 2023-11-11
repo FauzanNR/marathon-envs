@@ -55,11 +55,12 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float targetDistance = 1.02f;
     private float rewardScale50Perent = 0.5f;
     private float reward;
+    public float[] actionsValue;
     public float timerGrip = 0f;
     public float gripDuration = 3f;
     public float gripForce;
     public bool isHandGrip;
-    public int seconds;
+
 
     // Use this for initialization
     void Start()
@@ -204,6 +205,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var handGripReward = 0f;
         // if (DifferenceReward > 0.13f)
         // {
+        actionsValue = vectorAction;
         isHandGrip = handTarget.isTouch;
         if (handTarget.isTouch)
         {
@@ -283,25 +285,32 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                              // jointsNotAtLimitReward;
                              // jointAngularVelocityRewardWorld +
         if (!_master.IgnorRewardUntilObservation)
+        {
             AddReward(reward);
-        // }else{
-        //     AddReward(-0.1f);
-        // }
+        }
+        else
+        {
+            AddReward(-0.1f);
+        }
 
         if (reward < 0.15)
-            // EndEpisode();
-            if (!_isDone)
+        {
+            EndEpisode();
+            print("End of bellow reward standar");
+        }
+        if (!_isDone)
+        {
+            if (_master.IsDone())
             {
-                if (_master.IsDone())
-                {
-                    // EndEpisode();
-                    if (_master.StartAnimationIndex > 0)
-                        _master.StartAnimationIndex--;
-                }
-                FrameReward = reward;
-                var stepCount = StepCount > 0 ? StepCount : 1;
-                AverageReward = GetCumulativeReward() / (float)stepCount;
+                print("Master Done");
+                EndEpisode();
+                if (_master.StartAnimationIndex > 0)
+                    _master.StartAnimationIndex--;
             }
+            FrameReward = reward;
+            var stepCount = StepCount > 0 ? StepCount : 1;
+            AverageReward = GetCumulativeReward() / (float)stepCount;
+        }
     }
 
     // A helper function that calculates a fraction of joints at their limit positions
@@ -385,7 +394,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
         var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
-        // transform.position = randomSpawn;
+        transform.position = randomSpawn;
 
 
         //set target ragdoll to kinematic and default position
@@ -422,8 +431,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 break;
             default:
                 {
-                    // print("part end " + bodyPart.Group);
-                    // EndEpisode();
+                    print("part end " + bodyPart.Group);
+                    EndEpisode();
                 }
                 break;
         }
