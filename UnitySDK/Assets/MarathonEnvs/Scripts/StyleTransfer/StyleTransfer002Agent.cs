@@ -14,6 +14,9 @@ using System;
 using UnityEngine.Animations;
 using System.Windows.Forms;
 using UnityEditor;
+using System.Runtime.InteropServices;
+using System.IO;
+
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
 {
@@ -43,7 +46,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public Transform targetAttackTransform;
 
     public RagdollManager ragdollManager;
-    public HandTarget handTarget;
+    public HandTarget targetHand;
     public Transform agentHand;
     public Transform rightFoot;
     public Transform leftFoot;
@@ -53,7 +56,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float faceDirectionReward;
     public float distanceReward;
     private float targetDistance = 1.02f;
-    private float rewardScale50Perent = 0.5f;
+    private float rewardScale50Percent = 0.5f;
     private float reward;
     public float[] actionsValue;
     public float timerGrip = 0f;
@@ -61,10 +64,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public float gripForce;
     public bool isHandGrip;
 
+    public List<RotationRecord> rotationRecords;
+    private int recordPoint = 0;
+
 
     // Use this for initialization
     void Start()
     {
+        rotationRecords = new List<RotationRecord>();
         targetAttackTransformContainer = targetAttackTransform;
         _master = GetComponent<StyleTransfer002Master>();
         _decisionRequester = GetComponent<DecisionRequester>();
@@ -90,64 +97,109 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
         //direction and distance to target observation
-        var faceDirection = (rewardScale50Perent * FaceDirectionTowardTarget()) + (rewardScale50Perent * FaceDirection);
+        var faceDirection = (rewardScale50Percent * AngleTowardTarget()) + (rewardScale50Percent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
-        sensor.AddObservation(faceDirection);
-        sensor.AddObservation(distanceToTarget);
+        sensor.AddObservation(faceDirection);//1
+        sensor.AddObservation(distanceToTarget);//1
         // leg distance observatoin
         var legDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
-        sensor.AddObservation(legDistance);
-        sensor.AddObservation(rightFoot.position);
-        sensor.AddObservation(leftFoot.position);
+        sensor.AddObservation(legDistance);//1
+        sensor.AddObservation(rightFoot.position);//3
+        sensor.AddObservation(leftFoot.position);//3
 
-        sensor.AddObservation(_master.ObsPhase);
+        //target position
+        sensor.AddObservation(targetAttackTransform.position);//3
+        sensor.AddObservation(targetHand.transform.position);//3
+
+        //hand grip
+        sensor.AddObservation(targetHand.isTouch);
+
+        //animation phase
+        sensor.AddObservation(_master.ObsPhase);//1
+        // print("direction+distances+animation phase " + GetObservations().Count);
+
         var a = 0;
         foreach (var bodyPart in _master.BodyParts)
         {
             a += 1;
-            sensor.AddObservation(bodyPart.ObsLocalPosition);
-            sensor.AddObservation(bodyPart.ObsRotation);
-            sensor.AddObservation(bodyPart.ObsRotationVelocity);
-            sensor.AddObservation(bodyPart.ObsVelocity);
-        }
+            sensor.AddObservation(bodyPart.ObsLocalPosition);//3 = 51
+            sensor.AddObservation(bodyPart.ObsRotation);//4 = 68
+            sensor.AddObservation(bodyPart.ObsRotationVelocity);//3 = 51
+            sensor.AddObservation(bodyPart.ObsVelocity);//3 = 51
+        }// times by 17 body part = 221
+        // print("body part " + GetObservations().Count);
 
         foreach (var muscle in _master.Muscles)
         {
             if (muscle.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked)
             {
 
-                sensor.AddObservation(muscle.TargetNormalizedRotationX);
+                sensor.AddObservation(muscle.TargetNormalizedRotationX);//1
             }
             if (muscle.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked)
             {
                 // a += 1;
                 // print(" actiooon" + muscle.ConfigurableJoint.gameObject.name);
-                sensor.AddObservation(muscle.TargetNormalizedRotationY);
+                sensor.AddObservation(muscle.TargetNormalizedRotationY);//1
             }
             if (muscle.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked)
             {
-                sensor.AddObservation(muscle.TargetNormalizedRotationZ);
+                sensor.AddObservation(muscle.TargetNormalizedRotationZ);//1
             }
-        }
+        }//21, the muscle is not the same like action value, but most of muscle are using action value except one, the handgrip.
 
-        sensor.AddObservation(_master.ObsCenterOfMass);
-        sensor.AddObservation(_master.ObsVelocity);
-        sensor.AddObservation(_master.ObsAngularMoment);
-        sensor.AddObservation(SensorIsInTouch);
-        sensor.AddObservation(targetAttackTransform.position);
-        sensor.AddObservation(handTarget.transform.position);
+        // print("body part muscles " + GetObservations().Count);
+        sensor.AddObservation(_master.ObsCenterOfMass);//3
+        sensor.AddObservation(_master.ObsVelocity);//3
+        sensor.AddObservation(_master.ObsAngularMoment);//3
+        sensor.AddObservation(SensorIsInTouch);//8
+
+        // print("mass sensor, target " + GetObservations().Count);
+        // data to text to be commented for a while
+        // var rotationData = new RotationRecord(recordPoint, _master.AngularMomentDistance);
+        // rotationRecords.Add(rotationData);
+        // recordPoint++;
+        // CreateDataRotation(rotationRecords, UnityEngine.Application.dataPath + "/Results/Rotation_record/data_rotation.txt");
+
+
+        // data to tensorboard. Record the rotation differences between simulation and reference
         var statsRecorder = Academy.Instance.StatsRecorder;
         statsRecorder.Add("Rotation Different", _master.AngularMomentDistance);
 
     }
 
-    //Method to calculate face direction
-    float FaceDirectionTowardTarget()
+
+    //Write data rotation
+    void CreateDataRotation(List<RotationRecord> rotationRecords, string dataPath)
     {
+        try
+        {
+            using (StreamWriter dataWriter = new StreamWriter(dataPath))
+            {
+                foreach (var data in rotationRecords)
+                {
+                    dataWriter.WriteLine($"{data.recordPoints}, {data.rotationRecord}");
+                }
+            }
+        }
+        catch (System.Exception error)
+        {
+            Debug.Log("Errorr to write file " + error.Message);
+        }
+    }
+
+
+    //Method to calculate face direction
+    float AngleTowardTarget()
+    {
+        //Get target direction
         var directionToTarget = targetAttackTransform.position - torsoBodyAncor.position;
+        // Calculate the angular difference in degrees
         var angleDifference = Vector3.Angle(-transform.right, directionToTarget);
         return Mathf.Exp(-angleDifference / 45f);
     }
+
+    //DOT Product to observe the agent-target direction in space. We use agent(torsoBodyAncor) -Right Direction(equal to Left direction) is because the agent orientation is not common
     float FaceDirection => Vector3.Dot(-targetAttackTransform.forward, -torsoBodyAncor.right);
     float DistanceToTarget => Vector3.Distance(targetAttackTransform.position, torsoBodyAncor.position);
 
@@ -191,23 +243,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             }
         }
 
-        //Reward for agent to get closer to target, next reward will be ignored until the agent satisfied this task
-        var faceDirectionToTarget = FaceDirectionTowardTarget();
-        var faceToFaceDirection = FaceDirection;
-        faceDirectionReward = 0.05f * ((rewardScale50Perent * faceDirectionToTarget) + (rewardScale50Perent * faceToFaceDirection));
-        distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));
-        var DifferenceReward = faceDirectionReward + distanceReward;
-        // print("Distance debug: " + DifferenceReward);
-        // print("faceDirectionReward: " + faceDirectionReward);
-        // print("distanceReward: " + distanceReward);
 
         //Hand grip action and reward 
         var handGripReward = 0f;
         // if (DifferenceReward > 0.13f)
         // {
         actionsValue = vectorAction;
-        isHandGrip = handTarget.isTouch;
-        if (handTarget.isTouch)
+        isHandGrip = targetHand.isTouch;
+        if (targetHand.isTouch)
         {
             handGripReward = 0.06f;
             timerGrip += Time.deltaTime;
@@ -215,8 +258,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             if (timerGrip < gripDuration)
             {
                 // print("Start griping");
-                var handGripDirection = (agentHand.position - handTarget.transform.position).normalized * gripForce;
-                handTarget.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+                var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
+                targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
                 ragdollManager.gripForce = vectorAction[0];
                 if (timerGrip >= gripDuration)
                     handGripReward = 0.1f;
@@ -229,6 +272,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             timerGrip = 0f;
         }
         // }
+
+        //Reward factor for agent to get closer to target
+        var faceDirectionToTarget = AngleTowardTarget();
+        var faceToFaceDirection = FaceDirection < 0 ? 0 : FaceDirection;//pluging to variable with minus prevention
+        faceDirectionReward = 0.05f * ((rewardScale50Percent * faceDirectionToTarget) + (rewardScale50Percent * faceToFaceDirection));
+        //Distance reward factor
+        distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));// target distance, zeroing distance before its actual zero
+        var DifferenceReward = faceDirectionReward + distanceReward;
+        // print("Distance debug: " + DifferenceReward);
+        // print("faceDirectionReward: " + faceDirectionReward);
+        // print("distanceReward: " + distanceReward);
+
         // print("Total action " + vectorAction.Length);
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
@@ -272,18 +327,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //tune the reward amount above
         reward =
             distanceReward +//5% distance to target
-            endEffectorVelocityReward +//5% effector velocity          
+            faceDirectionReward + //5% face direction
             handGripReward + // 10% grip opponent hand
+            endEffectorVelocityReward +//5% effector velocity          
             rotationReward +//20% joint rotation
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//15% effector
             jointAngularVelocityReward +//10% each joint Velocity
             angularMomentReward +//10%
-            faceDirectionReward + //5% face direction
-            centerMassReward;//10%
-                             // sensorReward +
-                             // jointsNotAtLimitReward;
-                             // jointAngularVelocityRewardWorld +
+            centerMassReward; //10% 
+                              // sensorReward +
+                              // jointsNotAtLimitReward;
+                              // jointAngularVelocityRewardWorld +
         if (!_master.IgnorRewardUntilObservation)
         {
             AddReward(reward);
@@ -295,14 +350,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         if (reward < 0.15)
         {
+            AddReward(0);
             EndEpisode();
-            print("End of bellow reward standar");
+            // print("End of bellow reward standar");
         }
         if (!_isDone)
         {
             if (_master.IsDone())
             {
-                print("Master Done");
+                // print("Master Done");
                 EndEpisode();
                 if (_master.StartAnimationIndex > 0)
                     _master.StartAnimationIndex--;
@@ -431,7 +487,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                 break;
             default:
                 {
-                    print("part end " + bodyPart.Group);
+                    // print("part end " + bodyPart.Group);
                     EndEpisode();
                 }
                 break;
