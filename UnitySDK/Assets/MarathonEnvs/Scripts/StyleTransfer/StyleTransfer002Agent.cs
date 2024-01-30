@@ -63,7 +63,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         foreach (var bodyPart in _master.BodyParts)
         {
             a += 1;
-            print(" act " + a);
+            // print(" act " + a);
             sensor.AddObservation(bodyPart.ObsLocalPosition);
             sensor.AddObservation(bodyPart.ObsRotation);
             sensor.AddObservation(bodyPart.ObsRotationVelocity);
@@ -95,7 +95,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(_master.ObsVelocity);
         sensor.AddObservation(_master.ObsAngularMoment);
         sensor.AddObservation(SensorIsInTouch);
-        print(SensorIsInTouch.Count);
+        // print(SensorIsInTouch.Count);
     }
 
     // A method that applies the vectorAction to the muscles, and calculates the rewards. 
@@ -142,11 +142,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
-        // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
+        var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
-        // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
-        // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
+        var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
+        var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
 
         // Debug.Log("---------------");
         // Debug.Log("rotation reward: " + rotationReward);
@@ -165,11 +165,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             endEffectorReward +
             endEffectorVelocityReward +
             jointAngularVelocityReward +
-            // jointAngularVelocityRewardWorld +
+            jointAngularVelocityRewardWorld +
             centerMassReward +
-            angularMomentReward;
-        // sensorReward +
-        // jointsNotAtLimitReward;
+            angularMomentReward +
+        sensorReward +
+        jointsNotAtLimitReward;
 
         if (!_master.IgnorRewardUntilObservation)
             AddReward(reward);
