@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using UnityEditor;
 using System.Runtime.InteropServices;
 using System.IO;
+using System.Data.OleDb;
 
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
@@ -252,20 +253,27 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         isHandGrip = targetHand.isTouch;
         if (targetHand.isTouch)
         {
-            handGripReward = 0.06f;
+            // handGripReward = 0.06f;
             timerGrip += Time.deltaTime;
             // seconds = Mathf.FloorToInt(timerGrip % 60); get the exact seconds
-            if (timerGrip < gripDuration)
-            {
-                // print("Start griping");
-                var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
-                targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
-                ragdollManager.gripForce = vectorAction[0];
-                if (timerGrip >= gripDuration)
-                    handGripReward = 0.1f;
-            }
-            else
-                timerGrip = 0f;
+            // if (timerGrip < gripDuration)
+            // {
+            var gripDurationDIfferent = gripDuration - timerGrip;
+            handGripReward = 0.1f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
+            // print("Start griping");
+            var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
+            targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+            ragdollManager.gripForce = vectorAction[0];
+            // if (timerGrip >= gripDuration)
+            //     handGripReward = 0.1f;
+            // }
+            // else
+            //     timerGrip = 0f;
+
+            // it was...
+            // using Old  way to get the specific amount of holding time reward. 
+            // and then, I move to the generative way to generate adaptive reward based on 
+            // how long the agent holding the target hand with exponential decay.
         }
         else
         {
@@ -297,13 +305,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         var sensorDistance = _master.SensorDistance / 1f;
 
-        var rotationReward = 0.2f * Mathf.Exp(-rotationDistance);
+        var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
+        var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-        var centerMassReward = 0.1f * Mathf.Exp(-centerOfMassDistance);
+        var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
         // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
@@ -326,15 +334,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //tune the reward amount above
         reward =
-            distanceReward +//5% distance to target
-            faceDirectionReward + //5% face direction
+            // distanceReward +//5% distance to target
+            // faceDirectionReward + //5% face direction
             handGripReward + // 10% grip opponent hand
-            endEffectorVelocityReward +//5% effector velocity          
-            rotationReward +//20% joint rotation
+            endEffectorVelocityReward +//5% effector velocity + 5         
+            rotationReward +//20% joint rotation +5
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//15% effector
-            jointAngularVelocityReward +//10% each joint Velocity
-            angularMomentReward +//10%
+            endEffectorReward +//15% effector -5
+            jointAngularVelocityReward +//10% each joint Velocity 
+            angularMomentReward +//10% + 5
             centerMassReward; //10% 
                               // sensorReward +
                               // jointsNotAtLimitReward;
@@ -446,11 +454,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         }
 
         //random spawn agent position
-        targetAttackTransform = targetAttackTransformContainer;
-        var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
-        var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
-        var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
-        transform.position = randomSpawn;
+        // targetAttackTransform = targetAttackTransformContainer;
+        // var randomSphere = UnityEngine.Random.insideUnitSphere.normalized;
+        // var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
+        // var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
+        // transform.position = randomSpawn;
 
 
         //set target ragdoll to kinematic and default position
