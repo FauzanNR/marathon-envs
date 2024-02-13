@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class HandTarget : MonoBehaviour
 {
-    Transform handTransform;
+
     public bool isTouch;
 
     public Rigidbody getRigidBody => GetComponent<Rigidbody>();
@@ -22,6 +22,6 @@ public class HandTarget : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
-         isTouch = false;
+        isTouch = false;
     }
 }

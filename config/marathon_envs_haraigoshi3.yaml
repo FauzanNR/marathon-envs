@@ -5,7 +5,7 @@ behaviors:
       batch_size: 2048  # Increased for faster training
       beta: 1.0e-4  # Reduced for more exploration
       buffer_size: 20480  # Increased for more training samples
-      epsilon: 0.1  # Reduced for faster convergence
+      epsilon: 0.2  # Reduced for faster convergence
       lambd: 0.95
       learning_rate: 5.0e-4  # Increased for faster learning
       num_epoch: 6
@@ -56,7 +56,7 @@ behaviors:
     hyperparameters:
       num_epoch: 6  # Reduced for faster training
       beta: 1.0e-5  # Adjusted for more exploration
-      epsilon: 0.1  # Reduced for faster convergence
+      epsilon: 0.2  # Reduced for faster convergence
       lambd: 0.95
       learning_rate: 2.0e-4  # Increased for faster learning
       batch_size: 8192  # Increased for faster training

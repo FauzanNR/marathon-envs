@@ -59,6 +59,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float targetDistance = 1.02f;
     private float rewardScale50Percent = 0.5f;
     private float reward;
+    private float handGripReward = 0f;
     public float[] actionsValue;
     public float timerGrip = 0f;
     public float gripDuration = 3f;
@@ -98,9 +99,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             OnEpisodeBegin();
         }
         //direction and distance to target observation
-        var faceDirection = (rewardScale50Percent * AngleTowardTarget()) + (rewardScale50Percent * FaceDirection);
+        //var faceDirection = (rewardScale50Percent * AngleTowardTarget()) + (rewardScale50Percent * FaceDirection);
         distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
-        sensor.AddObservation(faceDirection);//1
+        var agentHandtoTargetHandDistance = Vector3.Distance(targetHand.transform.position, agentHand.position);
+
+        sensor.AddObservation(agentHandtoTargetHandDistance);//1
         sensor.AddObservation(distanceToTarget);//1
         // leg distance observatoin
         var legDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
@@ -246,7 +249,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
 
         //Hand grip action and reward 
-        var handGripReward = 0f;
         // if (DifferenceReward > 0.13f)
         // {
         actionsValue = vectorAction;
@@ -259,7 +261,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             // if (timerGrip < gripDuration)
             // {
             var gripDurationDIfferent = gripDuration - timerGrip;
-            handGripReward = 0.1f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
+            handGripReward = 0.15f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
             // print("Start griping");
             var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
             targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
@@ -278,6 +280,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         else
         {
             timerGrip = 0f;
+            handGripReward = 0f;
         }
         // }
 
@@ -306,15 +309,15 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var sensorDistance = _master.SensorDistance / 1f;
 
         var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
-        var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
+        var centerOfMassVelocityReward = 0.05f * Mathf.Exp(-centerOfMassvelocityDistance);
         var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
-        // var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
+        var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
-        // var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
-        // var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
+        var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
+        var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
         #region 
         // Debug.Log("---------------");
         // Debug.Log("rotation reward: " + rotationReward);
@@ -336,32 +339,49 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         reward =
             // distanceReward +//5% distance to target
             // faceDirectionReward + //5% face direction
-            handGripReward + // 10% grip opponent hand
-            endEffectorVelocityReward +//5% effector velocity + 5         
-            rotationReward +//20% joint rotation +5
+            handGripReward + // 15% grip opponent hand
+            endEffectorVelocityReward +//10% effector velocity  
+            rotationReward +//35% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//15% effector -5
+            endEffectorReward +//10% effector
             jointAngularVelocityReward +//10% each joint Velocity 
-            angularMomentReward +//10% + 5
-            centerMassReward; //10% 
-                              // sensorReward +
-                              // jointsNotAtLimitReward;
-                              // jointAngularVelocityRewardWorld +
+            angularMomentReward +//10%
+            centerMassReward + //5% 
+                              sensorReward +
+                              jointsNotAtLimitReward +
+                              jointAngularVelocityRewardWorld;
+        // if (!_master.IgnorRewardUntilObservation)
+        // {
+        //     AddReward(reward);
+        // }
+        // else
+        // {
+        //     AddReward(-0.1f);
+        // }
+
+        // if (reward < 0.15)
+        // {
+        //     AddReward(0);
+        //     EndEpisode();
+        //     // print("End of bellow reward standar");
+        // }
+
         if (!_master.IgnorRewardUntilObservation)
-        {
             AddReward(reward);
-        }
-        else
+
+        if (reward < 0.4)
+            EndEpisode();
+
+        if (!_isDone)
         {
-            AddReward(-0.1f);
+            if (_master.IsDone())
+            {
+                EndEpisode();
+                if (_master.StartAnimationIndex > 0)
+                    _master.StartAnimationIndex--;
+            }
         }
 
-        if (reward < 0.15)
-        {
-            AddReward(0);
-            EndEpisode();
-            // print("End of bellow reward standar");
-        }
         if (!_isDone)
         {
             if (_master.IsDone())
