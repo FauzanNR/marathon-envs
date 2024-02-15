@@ -261,7 +261,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             // if (timerGrip < gripDuration)
             // {
             var gripDurationDIfferent = gripDuration - timerGrip;
-            handGripReward = 0.15f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
+            handGripReward = 0.25f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
             // print("Start griping");
             var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
             targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
@@ -310,8 +310,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
         var centerOfMassVelocityReward = 0.05f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.1f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
+        var endEffectorReward = 0.05f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
@@ -339,11 +339,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         reward =
             // distanceReward +//5% distance to target
             // faceDirectionReward + //5% face direction
-            handGripReward + // 15% grip opponent hand
-            endEffectorVelocityReward +//10% effector velocity  
+            handGripReward + // 25% grip opponent hand
+            endEffectorVelocityReward +//5% effector velocity  
             rotationReward +//35% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//10% effector
+            endEffectorReward +//5% effector
             jointAngularVelocityReward +//10% each joint Velocity 
             angularMomentReward +//10%
             centerMassReward + //5% 
