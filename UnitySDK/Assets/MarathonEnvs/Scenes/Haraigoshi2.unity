@@ -1133,7 +1133,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 85203482c04e3f843b792dc4b9184409, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: MarathonManHaraigoshi-v2
@@ -7217,7 +7217,7 @@ Rigidbody:
   m_Mass: 7.8125
   m_Drag: 0
   m_AngularDrag: 0.05
-  m_UseGravity: 0
+  m_UseGravity: 1
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 126
@@ -11742,6 +11742,7 @@ MonoBehaviour:
   heaviestBodyPart: 
   defaultPosition: {x: 0, y: 0, z: 0}
   defaultRotation: {x: 0, y: 0, z: 0, w: 0}
+  handMagnitude: 0
 --- !u!1 &6944629167608340048
 GameObject:
   m_ObjectHideFlags: 0

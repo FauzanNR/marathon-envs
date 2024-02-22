@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Sprites;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -15,6 +16,10 @@ public class RagdollManager : MonoBehaviour
   public string heaviestBodyPart;
   public Vector3 defaultPosition;
   public Quaternion defaultRotation;
+  // [SerializeField]
+  // private Vector3 handTargetVelocityChange;
+  [SerializeField]
+  private float handMagnitude;
 
   Vector3 handPreviousVelocity;
 
@@ -50,10 +55,12 @@ public class RagdollManager : MonoBehaviour
   {
     var handCurrentVelocityy = handRb.velocity;
     var handTargetVelocityChange = handCurrentVelocityy - handPreviousVelocity;
+    handMagnitude = handTargetVelocityChange.magnitude;
     // Debug.Log("hand magnitude " + handTargetVelocityChange.magnitude);
-    if (handTargetVelocityChange.magnitude > 8)
+    if (handTargetVelocityChange.magnitude > 3)
     {
       spineRb.isKinematic = false;
+      spineRb.useGravity = true;
       spineRb.constraints = RigidbodyConstraints.None;
     }
     handPreviousVelocity = handCurrentVelocityy;

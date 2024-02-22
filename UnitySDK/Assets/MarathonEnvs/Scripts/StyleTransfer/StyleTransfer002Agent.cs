@@ -261,7 +261,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             // if (timerGrip < gripDuration)
             // {
             var gripDurationDIfferent = gripDuration - timerGrip;
-            handGripReward = 0.25f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
+            handGripReward = 0.2f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
             // print("Start griping");
             var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
             targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
@@ -315,7 +315,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-        var angularMomentReward = 0.1f * Mathf.Exp(-angularMomentDistance);
+        var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
         var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
         #region 
@@ -339,13 +339,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         reward =
             // distanceReward +//5% distance to target
             // faceDirectionReward + //5% face direction
-            handGripReward + // 25% grip opponent hand
+            handGripReward + // 20% grip opponent hand
             endEffectorVelocityReward +//5% effector velocity  
             rotationReward +//35% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity
             endEffectorReward +//5% effector
             jointAngularVelocityReward +//10% each joint Velocity 
-            angularMomentReward +//10%
+            angularMomentReward +//15%
             centerMassReward + //5% 
                               sensorReward +
                               jointsNotAtLimitReward +
@@ -482,6 +482,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
 
         //set target ragdoll to kinematic and default position
+        ragdollManager.spineRb.useGravity = false;
         ragdollManager.spineRb.isKinematic = true;
         ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
         ragdollManager.hipsRbTr.position = ragdollManager.defaultPosition;
