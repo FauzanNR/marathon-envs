@@ -17,6 +17,8 @@ using UnityEditor;
 using System.Runtime.InteropServices;
 using System.IO;
 using System.Data.OleDb;
+using System.Web.UI.WebControls.Expressions;
+using UnityEngine.TextCore.Text;
 
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
@@ -51,7 +53,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public Transform agentHand;
     public Transform rightFoot;
     public Transform leftFoot;
-
+    public CharacterJoint joint;
     public bool handCollosion;
     private float distanceToTarget;
     private float faceDirectionReward;
@@ -68,6 +70,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public List<RotationRecord> rotationRecords;
     private int recordPoint = 0;
+    [SerializeField]
+    private float chekcReward = 0f;
 
 
     // Use this for initialization
@@ -226,7 +230,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         if (_styleAnimator == _localStyleAnimator)
             _styleAnimator.OnAgentAction();
         _master.OnAgentAction();
-
+        chekcReward = vectorAction[0];
         int i = 0;
         foreach (var muscle in _master.Muscles)
         {
@@ -255,27 +259,43 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         isHandGrip = targetHand.isTouch;
         if (targetHand.isTouch)
         {
-            // handGripReward = 0.06f;
-            timerGrip += Time.deltaTime;
-            // seconds = Mathf.FloorToInt(timerGrip % 60); get the exact seconds
-            // if (timerGrip < gripDuration)
-            // {
-            var gripDurationDIfferent = gripDuration - timerGrip;
-            handGripReward = 0.2f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
-            // print("Start griping");
-            var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * vectorAction[0];
-            targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
-            ragdollManager.gripForce = vectorAction[0];
-            // if (timerGrip >= gripDuration)
-            //     handGripReward = 0.1f;
-            // }
-            // else
-            //     timerGrip = 0f;
+            handGripReward = 0.05f;
+            if (agentHand.GetComponents<CharacterJoint>().Count() <= 1)
+            {
+                // print("is touch");
+                joint = agentHand.gameObject.AddComponent(typeof(CharacterJoint)) as CharacterJoint;
+                // joint = agentHand.GetComponents<CharacterJoint>().Last();
+                joint.connectedMassScale = 10000;
+                joint.connectedBody = targetHand.getRigidBody;
+            }
+
+
+            //// Grip With Force....
+            /// handGripReward = 0.06f;
+            // timerGrip += Time.deltaTime;
+            /// seconds = Mathf.FloorToInt(timerGrip % 60); get the exact seconds
+            /// if (timerGrip < gripDuration)
+            /// {
+            // var gripDurationDIfferent = gripDuration - timerGrip;
+            // handGripReward = 0.15f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
+            /// print("Start griping");
+            // var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * (vectorAction[0] + 150);
+            // targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+            // ragdollManager.gripForce = vectorAction[0] + 50;
+            /// if (timerGrip >= gripDuration)
+            ///     handGripReward = 0.1f;
+            /// }
+            /// else
+            ///     timerGrip = 0f;
 
             // it was...
             // using Old  way to get the specific amount of holding time reward. 
             // and then, I move to the generative way to generate adaptive reward based on 
             // how long the agent holding the target hand with exponential decay.
+            //
+            //Update...
+            // using ForceMode seem imposible right now, because we have alot of moving part in agent properties
+            // Then I change it to using Character joint component, 
         }
         else
         {
@@ -309,9 +329,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var sensorDistance = _master.SensorDistance / 1f;
 
         var rotationReward = 0.35f * Mathf.Exp(-rotationDistance);
-        var centerOfMassVelocityReward = 0.05f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.05f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.05f * Mathf.Exp(-endEffectorVelocityDistance);
+        var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
+        var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
@@ -339,11 +359,11 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         reward =
             // distanceReward +//5% distance to target
             // faceDirectionReward + //5% face direction
-            handGripReward + // 20% grip opponent hand
-            endEffectorVelocityReward +//5% effector velocity  
+            handGripReward + // 5% grip opponent hand
+            endEffectorVelocityReward +//10% effector velocity  
             rotationReward +//35% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//5% effector
+            endEffectorReward +//15% effector
             jointAngularVelocityReward +//10% each joint Velocity 
             angularMomentReward +//15%
             centerMassReward + //5% 
@@ -485,8 +505,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         ragdollManager.spineRb.useGravity = false;
         ragdollManager.spineRb.isKinematic = true;
         ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().isKinematic = true;
+        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        var targetVelocities = ragdollManager.GetComponentsInChildren<Rigidbody>();
+        foreach (var rb in targetVelocities)
+        {
+            rb.velocity = Vector3.zero;
+
+        }
         ragdollManager.hipsRbTr.position = ragdollManager.defaultPosition;
         ragdollManager.hipsRbTr.rotation = ragdollManager.defaultRotation;
+        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().isKinematic = false;
 
 
 
