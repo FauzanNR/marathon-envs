@@ -502,23 +502,36 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
 
         //set target ragdoll to kinematic and default position
-        ragdollManager.spineRb.useGravity = false;
-        ragdollManager.spineRb.isKinematic = true;
-        ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().isKinematic = true;
-        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        var targetVelocities = ragdollManager.GetComponentsInChildren<Rigidbody>();
-        foreach (var rb in targetVelocities)
-        {
-            rb.velocity = Vector3.zero;
+        // ragdollManager.resetRadoll2();
+        // ragdollManager.spineRb.useGravity = false;
+        // ragdollManager.spineRb.isKinematic = true;
+        // ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        // ragdollManager.hipsTr.GetComponent<Rigidbody>().isKinematic = true;
+        // ragdollManager.hipsTr.GetComponent<Rigidbody>().velocity = Vector3.zero;
+        // ragdollManager.hipsTr.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+        // var targetVelocities = ragdollManager.rbs;
+        // var targetTr = ragdollManager.trBodyDefault;
+        // for (var i = 0; i < targetVelocities.Count; i++)
+        // {
+        //     // targetVelocities[i].gameObject.SetActive(false);
+        //     targetVelocities[i].velocity = Vector3.zero;
+        //     targetVelocities[i].angularVelocity = Vector3.zero;
+        //     targetVelocities[i].transform.position = targetTr[i].transform.position;
+        //     targetVelocities[i].transform.localPosition = targetTr[i].transform.localPosition;
+        //     targetVelocities[i].transform.rotation = targetTr[i].transform.rotation;
+        //     targetVelocities[i].transform.localRotation = targetTr[i].transform.localRotation;
 
-        }
-        ragdollManager.hipsRbTr.position = ragdollManager.defaultPosition;
-        ragdollManager.hipsRbTr.rotation = ragdollManager.defaultRotation;
-        ragdollManager.hipsRbTr.GetComponent<Rigidbody>().isKinematic = false;
+        // }
+        // ragdollManager.handRb.transform.position = ragdollManager.handDefaultPosition;
+        // ragdollManager.hipsTr.SetPositionAndRotation(ragdollManager.hipsDefaultPosition, ragdollManager.hipsDefaultRotation);
+        // ragdollManager.spineRb.transform.SetPositionAndRotation(ragdollManager.spineDefaultPosition, ragdollManager.spineDefaultRotation);
+        // ragdollManager.hipsTr.GetComponent<Rigidbody>().isKinematic = false;
 
 
+        // foreach (var rb in ragdollManager.rbs)
+        // {
+        //     rb.gameObject.SetActive(true);
+        // }
 
     }
 
