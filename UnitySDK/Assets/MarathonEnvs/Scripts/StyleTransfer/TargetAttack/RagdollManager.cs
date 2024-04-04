@@ -11,6 +11,7 @@ using UnityEngine.UIElements;
 public class RagdollManager : MonoBehaviour
 {
 
+  public bool isRagdolled = false;
   public List<Transform> trBodyDefault;
   public List<Rigidbody> rbs;
   public List<CharacterJoint> charJoints;
@@ -27,7 +28,8 @@ public class RagdollManager : MonoBehaviour
   public string heaviestBodyPart;
   public Vector3 hipsDefaultPosition;
   public Quaternion hipsDefaultRotation;
-
+  public Vector3 hipsDefaultLocalPosition;
+  public Quaternion hipsDefaultLocalRotation;
   public Vector3 spineDefaultPosition;
   public Quaternion spineDefaultRotation;
   public Vector3 handDefaultPosition;
@@ -48,7 +50,7 @@ public class RagdollManager : MonoBehaviour
   {
     CountRagdollWeight();
 
-    rbs = this.GetComponentsInChildren<Rigidbody>().ToList();
+    rbs = GetComponentsInChildren<Rigidbody>().ToList();
     ragdollAnimator = GetComponent<Animator>();
     charJoints = GetComponentsInChildren<CharacterJoint>().ToList();
     colliders = GetComponentsInChildren<Collider>().ToList();
@@ -57,6 +59,9 @@ public class RagdollManager : MonoBehaviour
       // print("one time only");
       hipsDefaultPosition = hipsTr.position;
       hipsDefaultRotation = hipsTr.rotation;
+      hipsDefaultLocalPosition = hipsTr.localPosition;
+      hipsDefaultLocalRotation = hipsTr.localRotation;
+
       spineDefaultPosition = spineRb.transform.position;
       spineDefaultRotation = spineRb.transform.rotation;
       handPreviousVelocity = handRb.velocity;
@@ -68,9 +73,10 @@ public class RagdollManager : MonoBehaviour
     }
   }
 
-
+  public float hipDistance = 0;
   void FixedUpdate()
   {
+    hipDistance = Vector3.Distance(hipsDefaultLocalPosition, hipsTr.localPosition);
     var handCurrentVelocityy = handRb.velocity;
     var handTargetVelocityChange = handCurrentVelocityy - handPreviousVelocity;
     handMagnitude = handTargetVelocityChange.magnitude;
@@ -81,6 +87,7 @@ public class RagdollManager : MonoBehaviour
       // spineRb.isKinematic = false;
       // spineRb.useGravity = true;
       // spineRb.constraints = RigidbodyConstraints.None;
+      isRagdolled = true;
       hipsRb.isKinematic = false;
       hipsRb.constraints = RigidbodyConstraints.None;
       var agentsScript = agent.GetComponent<StyleTransfer002Agent>();
@@ -88,13 +95,20 @@ public class RagdollManager : MonoBehaviour
       {
         Destroy(agentsScript.joint);
       }
+    }
 
-      StartCoroutine(resetRadoll2());
-      // StartCoroutine(resetRagdoll());
-      // foreach (var rb in rbs)
-      // {
-      //   rb.gameObject.SetActive(false);
-      // }
+    if (hipDistance > 50.0f)
+    {
+      // print("more than threshold FX");
+      var a = 0;
+      foreach (var rb in rbs)
+      {
+        rb.velocity = Vector3.zero;
+        rb.useGravity = false;
+        rb.transform.position = trBodyDefault[a].position;
+        a++;
+      }
+      resetRadoll2();
     }
     handPreviousVelocity = handCurrentVelocityy;
   }
@@ -145,11 +159,18 @@ public class RagdollManager : MonoBehaviour
     // }
   }
 
-  public IEnumerator resetRadoll2()
+  public void resetRadoll2()
   {
-    yield return new WaitForSeconds(2f);
-    ragdollAnimator.enabled = true;
+    isRagdolled = false;
 
+    // yield return new WaitForSeconds(2f);
+    foreach (var rb in rbs)
+    {
+      rb.velocity = Vector3.zero;
+      rb.detectCollisions = false;
+      rb.useGravity = false;
+      rb.isKinematic = true;
+    }
     foreach (var cldr in colliders)
     {
       cldr.enabled = false;
@@ -158,20 +179,19 @@ public class RagdollManager : MonoBehaviour
     {
       cj.enableCollision = false;
     }
+
+    ragdollAnimator.enabled = true;
+
+
+    // yield return new WaitForSeconds(0.5f);
+
     foreach (var rb in rbs)
     {
-      rb.detectCollisions = false;
-      rb.useGravity = false;
+      rb.detectCollisions = true;
+      rb.useGravity = true;
+      rb.velocity = Vector3.zero;
+      rb.isKinematic = false;
     }
-
-
-    hipsTr.GetComponent<Rigidbody>().isKinematic = true;
-    hipsTr.GetComponent<Rigidbody>().velocity = Vector3.zero;
-    hipsTr.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-    hipsTr.SetPositionAndRotation(hipsDefaultPosition, hipsDefaultRotation);
-    ragdollAnimator.enabled = false;
-
-
     foreach (var cj in charJoints)
     {
       cj.enableCollision = true;
@@ -180,13 +200,17 @@ public class RagdollManager : MonoBehaviour
     {
       cldr.enabled = true;
     }
-    foreach (var rb in rbs)
-    {
-      rb.detectCollisions = true;
-      rb.useGravity = true;
-      rb.velocity = Vector3.zero;
-    }
-    print("Ragdoll resetd");
+
+
+
+    hipsRb.isKinematic = true;
+    hipsRb.velocity = Vector3.zero;
+    hipsRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
+    hipsTr.SetPositionAndRotation(hipsDefaultPosition, hipsDefaultRotation);
+    hipsTr.localPosition = hipsDefaultLocalPosition;
+
+    ragdollAnimator.enabled = false;
+    // print("Ragdoll resetd");
   }
 
 }

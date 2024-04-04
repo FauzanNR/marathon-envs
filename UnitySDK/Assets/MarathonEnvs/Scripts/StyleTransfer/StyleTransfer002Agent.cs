@@ -115,10 +115,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(rightFoot.position);//3
         sensor.AddObservation(leftFoot.position);//3
 
+        if (ragdollManager.hipDistance > 50.0f)
+        {
+            targetHand.transform.position = ragdollManager.handDefaultPosition * 50;
+
+        }
         //target position
         sensor.AddObservation(targetAttackTransform.position);//3
         sensor.AddObservation(targetHand.transform.position);//3
-
         //hand grip
         sensor.AddObservation(targetHand.isTouch);
 
@@ -501,37 +505,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // transform.position = randomSpawn;
 
 
-        //set target ragdoll to kinematic and default position
-        // ragdollManager.resetRadoll2();
-        // ragdollManager.spineRb.useGravity = false;
-        // ragdollManager.spineRb.isKinematic = true;
-        // ragdollManager.spineRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        // ragdollManager.hipsTr.GetComponent<Rigidbody>().isKinematic = true;
-        // ragdollManager.hipsTr.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        // ragdollManager.hipsTr.GetComponent<Rigidbody>().constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
-        // var targetVelocities = ragdollManager.rbs;
-        // var targetTr = ragdollManager.trBodyDefault;
-        // for (var i = 0; i < targetVelocities.Count; i++)
-        // {
-        //     // targetVelocities[i].gameObject.SetActive(false);
-        //     targetVelocities[i].velocity = Vector3.zero;
-        //     targetVelocities[i].angularVelocity = Vector3.zero;
-        //     targetVelocities[i].transform.position = targetTr[i].transform.position;
-        //     targetVelocities[i].transform.localPosition = targetTr[i].transform.localPosition;
-        //     targetVelocities[i].transform.rotation = targetTr[i].transform.rotation;
-        //     targetVelocities[i].transform.localRotation = targetTr[i].transform.localRotation;
-
-        // }
-        // ragdollManager.handRb.transform.position = ragdollManager.handDefaultPosition;
-        // ragdollManager.hipsTr.SetPositionAndRotation(ragdollManager.hipsDefaultPosition, ragdollManager.hipsDefaultRotation);
-        // ragdollManager.spineRb.transform.SetPositionAndRotation(ragdollManager.spineDefaultPosition, ragdollManager.spineDefaultRotation);
-        // ragdollManager.hipsTr.GetComponent<Rigidbody>().isKinematic = false;
+        //Reset taget state
+        if (ragdollManager.isRagdolled)
+        {
+            ragdollManager.resetRadoll2();
+        }
 
 
-        // foreach (var rb in ragdollManager.rbs)
-        // {
-        //     rb.gameObject.SetActive(true);
-        // }
 
     }
 
