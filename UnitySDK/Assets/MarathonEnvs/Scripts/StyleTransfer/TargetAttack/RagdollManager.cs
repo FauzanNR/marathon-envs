@@ -90,16 +90,22 @@ public class RagdollManager : MonoBehaviour
       isRagdolled = true;
       hipsRb.isKinematic = false;
       hipsRb.constraints = RigidbodyConstraints.None;
-      var agentsScript = agent.GetComponent<StyleTransfer002Agent>();
-      if (agentsScript.joint != null && agentsScript.joint.connectedBody != null)
+
+      foreach (var rb in rbs)
       {
-        Destroy(agentsScript.joint);
+        rb.interpolation = RigidbodyInterpolation.Interpolate;
       }
+      //PART OF CHAR JOINT HAND GRIP
+      // var agentsScript = agent.GetComponent<StyleTransfer002Agent>();
+      // if (agentsScript.joint != null && agentsScript.joint.connectedBody != null)
+      // {
+      //   Destroy(agentsScript.joint);
+      // }
     }
 
     if (hipDistance > 50.0f)
     {
-      // print("more than threshold FX");
+      print("more than threshold FX" + hipDistance);
       var a = 0;
       foreach (var rb in rbs)
       {
@@ -180,13 +186,14 @@ public class RagdollManager : MonoBehaviour
       cj.enableCollision = false;
     }
 
-    ragdollAnimator.enabled = true;
+    // ragdollAnimator.enabled = true;
 
 
     // yield return new WaitForSeconds(0.5f);
 
     foreach (var rb in rbs)
     {
+      rb.interpolation = RigidbodyInterpolation.None;
       rb.detectCollisions = true;
       rb.useGravity = true;
       rb.velocity = Vector3.zero;
@@ -209,7 +216,7 @@ public class RagdollManager : MonoBehaviour
     hipsTr.SetPositionAndRotation(hipsDefaultPosition, hipsDefaultRotation);
     hipsTr.localPosition = hipsDefaultLocalPosition;
 
-    ragdollAnimator.enabled = false;
+    // ragdollAnimator.enabled = false;
     // print("Ragdoll resetd");
   }
 

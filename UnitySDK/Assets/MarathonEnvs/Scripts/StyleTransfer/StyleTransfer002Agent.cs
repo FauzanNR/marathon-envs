@@ -65,7 +65,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public float[] actionsValue;
     public float timerGrip = 0f;
     public float gripDuration = 3f;
-    public float gripForce;
+    public float gripForce = 50;
     public bool isHandGrip;
 
     public List<RotationRecord> rotationRecords;
@@ -115,11 +115,12 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         sensor.AddObservation(rightFoot.position);//3
         sensor.AddObservation(leftFoot.position);//3
 
-        if (ragdollManager.hipDistance > 50.0f)
-        {
-            targetHand.transform.position = ragdollManager.handDefaultPosition * 50;
+        // var targetHandDistanceFromOrigin = Vector3.Distance(ragdollManager.handDefaultPosition, targetHand.transform.position);
+        // if (targetHandDistanceFromOrigin > 50.0f)
+        // {
+        //     targetHand.transform.position = ragdollManager.handDefaultPosition * 50;
 
-        }
+        // }
         //target position
         sensor.AddObservation(targetAttackTransform.position);//3
         sensor.AddObservation(targetHand.transform.position);//3
@@ -161,6 +162,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         }//21, the muscle is not the same like action value, but most of muscle are using action value except one, the handgrip.
 
         // print("body part muscles " + GetObservations().Count);
+
         sensor.AddObservation(_master.ObsCenterOfMass);//3
         sensor.AddObservation(_master.ObsVelocity);//3
         sensor.AddObservation(_master.ObsAngularMoment);//3
@@ -264,17 +266,19 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         if (targetHand.isTouch)
         {
             handGripReward = 0.05f;
-            if (agentHand.GetComponents<CharacterJoint>().Count() <= 1)
-            {
-                // print("is touch");
-                joint = agentHand.gameObject.AddComponent(typeof(CharacterJoint)) as CharacterJoint;
-                // joint = agentHand.GetComponents<CharacterJoint>().Last();
-                joint.connectedMassScale = 10000;
-                joint.connectedBody = targetHand.getRigidBody;
-            }
+
+            //USING CHARACTER JOINT AS THE CONNECTOR (HAND GRIP)
+            // if (agentHand.GetComponents<CharacterJoint>().Count() <= 1)
+            // {
+            //     // print("is touch");
+            //     joint = agentHand.gameObject.AddComponent(typeof(CharacterJoint)) as CharacterJoint;
+            //     // joint = agentHand.GetComponents<CharacterJoint>().Last();
+            //     joint.connectedMassScale = 10000;
+            //     joint.connectedBody = targetHand.getRigidBody;
+            // }
 
 
-            //// Grip With Force....
+            //// USING FORCE AS THE HAND GRIP
             /// handGripReward = 0.06f;
             // timerGrip += Time.deltaTime;
             /// seconds = Mathf.FloorToInt(timerGrip % 60); get the exact seconds
@@ -283,14 +287,25 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             // var gripDurationDIfferent = gripDuration - timerGrip;
             // handGripReward = 0.15f * Mathf.Exp(-Mathf.Abs(gripDurationDIfferent));
             /// print("Start griping");
-            // var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * (vectorAction[0] + 150);
-            // targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
+            var handGripDirection = (agentHand.position - targetHand.transform.position).normalized * gripForce;//used to be with (vectorAction[0] + 150)
+            targetHand.getRigidBody.AddForceAtPosition(handGripDirection, agentHand.position, ForceMode.Force);
             // ragdollManager.gripForce = vectorAction[0] + 50;
             /// if (timerGrip >= gripDuration)
             ///     handGripReward = 0.1f;
             /// }
             /// else
             ///     timerGrip = 0f;
+
+
+            //USING LINEAR INTERPOLATION AS THE HAND GRIP
+
+            // var foreceNeeded = agentHand.position.magnitude * ragdollManager.handRb.mass * 10f;
+            // targetHand.getRigidBody.isKinematic = true;
+            // Vector3 newPosition = Vector3.Lerp(targetHand.transform.position, agentHand.position, foreceNeeded * Time.deltaTime);
+            // targetHand.transform.position = newPosition;
+            // gripForce = foreceNeeded;
+
+
 
             // it was...
             // using Old  way to get the specific amount of holding time reward. 
@@ -305,6 +320,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             timerGrip = 0f;
             handGripReward = 0f;
+            //PART OF HAND GRIP LERP
+            targetHand.getRigidBody.isKinematic = false;
         }
         // }
 

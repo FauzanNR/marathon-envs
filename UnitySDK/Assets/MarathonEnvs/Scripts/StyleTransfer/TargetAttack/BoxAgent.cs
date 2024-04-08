@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class BoxAgent : Agent
 {
-
+    public RagdollManager ragdollManager;
     public HandTarget handTarget;
     public Transform agentHand;
     public Transform agentHandPointer;
@@ -27,16 +27,16 @@ public class BoxAgent : Agent
 
         if (handTarget.isTouch)
         {
-            if (agentHand.GetComponents<CharacterJoint>().Count() <= 1)
-            {
-                print("is touch");
-                joint = agentHandPointer.gameObject.AddComponent(typeof(CharacterJoint)) as CharacterJoint;
-                // joint = agentHand.GetComponents<CharacterJoint>().Last();
-                joint.connectedMassScale = 10000;
-                joint.connectedBody = handTarget.getRigidBody;
-            }
+            // if (agentHand.GetComponents<CharacterJoint>().Count() <= 1)
+            // {
+            //     print("is touch");
+            //     joint = agentHandPointer.gameObject.AddComponent(typeof(CharacterJoint)) as CharacterJoint;
+            //     // joint = agentHand.GetComponents<CharacterJoint>().Last();
+            //     joint.connectedMassScale = 10000;
+            //     joint.connectedBody = handTarget.getRigidBody;
+            // }
 
-            timerGrip += Time.fixedDeltaTime;
+            // timerGrip += Time.fixedDeltaTime;
             // if (timerGrip < gripDuration)
             // {
             // var gripDirection = (agentHand.position - handTarget.transform.position).normalized * gripForce;
@@ -46,7 +46,15 @@ public class BoxAgent : Agent
             // {
             //     timerGrip = 0f;
             // }
+            handTarget.getRigidBody.isKinematic = true;
+
         }
+        var foreceNeeded = agentHand.position.magnitude * ragdollManager.handRb.mass * 3f * 10f;
+        Vector3 newPosition = Vector3.Lerp(handTarget.transform.position, agentHand.position, gripForce * Time.deltaTime);
+        // gripForce = agentHand.position.magnitude;
+        // Update the object's position
+        handTarget.transform.position = newPosition;
+        handTarget.getRigidBody.isKinematic = false;
     }
 
     public override void Initialize()
