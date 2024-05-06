@@ -102,13 +102,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             OnEpisodeBegin();
         }
-        //direction and distance to target observation
-        //var faceDirection = (rewardScale50Percent * AngleTowardTarget()) + (rewardScale50Percent * FaceDirection);
-        distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
-        var agentHandtoTargetHandDistance = Vector3.Distance(targetHand.transform.position, agentHand.position);
 
-        sensor.AddObservation(agentHandtoTargetHandDistance);//1
-        sensor.AddObservation(distanceToTarget);//1
         // leg distance observatoin
         var legDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
         sensor.AddObservation(legDistance);//1
@@ -121,11 +115,19 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         //     targetHand.transform.position = ragdollManager.handDefaultPosition * 50;
 
         // }
+
+        //direction and distance to target observation
+        //var faceDirection = (rewardScale50Percent * AngleTowardTarget()) + (rewardScale50Percent * FaceDirection);
+        distanceToTarget = Vector3.Distance(transform.position, targetAttackTransform.position);
+        var agentHandtoTargetHandDistance = Vector3.Distance(targetHand.transform.position, agentHand.position);
+
+        // sensor.AddObservation(agentHandtoTargetHandDistance);//1
+        // sensor.AddObservation(distanceToTarget);//1
         //target position
-        sensor.AddObservation(targetAttackTransform.position);//3
-        sensor.AddObservation(targetHand.transform.position);//3
+        // sensor.AddObservation(targetAttackTransform.position);//3
+        // sensor.AddObservation(targetHand.transform.position);//3
         //hand grip
-        sensor.AddObservation(targetHand.isTouch);
+        // sensor.AddObservation(targetHand.isTouch);
 
         //animation phase
         sensor.AddObservation(_master.ObsPhase);//1
@@ -353,7 +355,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
         var endEffectorReward = 0.15f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
-        var jointAngularVelocityReward = 0.1f * Mathf.Exp(-jointAngularVelocityDistance);
+        var jointAngularVelocityReward = 0.15f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
@@ -380,7 +382,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         reward =
             // distanceReward +//5% distance to target
             // faceDirectionReward + //5% face direction
-            handGripReward + // 5% grip opponent hand
+            // handGripReward + // 5% grip opponent hand
             endEffectorVelocityReward +//10% effector velocity  
             rotationReward +//35% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity

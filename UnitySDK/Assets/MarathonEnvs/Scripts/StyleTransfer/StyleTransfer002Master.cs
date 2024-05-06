@@ -10,6 +10,8 @@ using UnityEngine;
 using Unity.MLAgents;
 using System;
 using ManyWorlds;
+using System.Windows.Forms;
+using Application = UnityEngine.Application;
 
 public class StyleTransfer002Master : MonoBehaviour
 {
@@ -123,10 +125,13 @@ public class StyleTransfer002Master : MonoBehaviour
 
         Muscles = new List<Muscle002>();
         var muscles = GetComponentsInChildren<ConfigurableJoint>();
+        // var muscles = transform.GetChild();
+        // print(muscles.Length);
         ConfigurableJoint rootConfigurableJoint = null;
         var ragDoll = GetComponent<RagDoll002>();
         foreach (var m in muscles)
         {
+            // print(m.name);
             var maximumForce = ragDoll.MusclePowers.First(x => x.Muscle == m.name).PowerVector;
             var muscle = new Muscle002
             {
@@ -292,7 +297,7 @@ public class StyleTransfer002Master : MonoBehaviour
 
 
         //Calculate MAPE
-    
+
         return animStep;
     }
 
