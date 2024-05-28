@@ -34,8 +34,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - agentThigh
+  - agentButt
   - invisible
   - ball
   - goalieWall
@@ -47,7 +47,7 @@ TagManager:
   - Ground
   - RagdollArm
   - Lowerbody
-  - 
+  - AgentLeg
   - 
   - 
   - 

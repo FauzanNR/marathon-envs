@@ -102,10 +102,10 @@ public class RagdollManager : MonoBehaviour
       //   Destroy(agentsScript.joint);
       // }
     }
-
+    //Prevent ragdoll target from flying over the arena, I also add physicalcage cage barrier(a.k.a collider)
     if (hipDistance > 50.0f)
     {
-      print("more than threshold FX" + hipDistance);
+      // print("more than threshold FX" + hipDistance);
       var a = 0;
       foreach (var rb in rbs)
       {
@@ -119,7 +119,6 @@ public class RagdollManager : MonoBehaviour
     handPreviousVelocity = handCurrentVelocityy;
   }
 
-  //    [ExecuteInEditMode]
   void CountRagdollWeight()
   {
     var rbs = this.GetComponentsInChildren<Rigidbody>();
@@ -169,7 +168,6 @@ public class RagdollManager : MonoBehaviour
   {
     isRagdolled = false;
 
-    // yield return new WaitForSeconds(2f);
     foreach (var rb in rbs)
     {
       rb.velocity = Vector3.zero;
@@ -185,11 +183,6 @@ public class RagdollManager : MonoBehaviour
     {
       cj.enableCollision = false;
     }
-
-    // ragdollAnimator.enabled = true;
-
-
-    // yield return new WaitForSeconds(0.5f);
 
     foreach (var rb in rbs)
     {
@@ -215,9 +208,6 @@ public class RagdollManager : MonoBehaviour
     hipsRb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionY | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY | RigidbodyConstraints.FreezeRotationZ;
     hipsTr.SetPositionAndRotation(hipsDefaultPosition, hipsDefaultRotation);
     hipsTr.localPosition = hipsDefaultLocalPosition;
-
-    // ragdollAnimator.enabled = false;
-    // print("Ragdoll resetd");
   }
 
 }

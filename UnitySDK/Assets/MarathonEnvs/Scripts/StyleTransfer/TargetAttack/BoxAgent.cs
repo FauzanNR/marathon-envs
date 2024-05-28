@@ -46,7 +46,7 @@ public class BoxAgent : Agent
             // {
             //     timerGrip = 0f;
             // }
-            handTarget.getRigidBody.isKinematic = true;
+            // handTarget.getRigidBody.isKinematic = true;
 
         }
         var foreceNeeded = agentHand.position.magnitude * ragdollManager.handRb.mass * 3f * 10f;
@@ -54,7 +54,7 @@ public class BoxAgent : Agent
         // gripForce = agentHand.position.magnitude;
         // Update the object's position
         handTarget.transform.position = newPosition;
-        handTarget.getRigidBody.isKinematic = false;
+        // handTarget.getRigidBody.isKinematic = false;
     }
 
     public override void Initialize()

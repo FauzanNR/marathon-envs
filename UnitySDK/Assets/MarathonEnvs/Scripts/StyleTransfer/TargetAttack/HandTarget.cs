@@ -6,13 +6,17 @@ public class HandTarget : MonoBehaviour
 {
 
     public bool isTouch;
+    public Material[] materials;
 
     public Rigidbody getRigidBody => GetComponent<Rigidbody>();
+    private Renderer render => GetComponent<Renderer>();
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.name == "left_hand")
         {
             isTouch = true;
+
+            render.sharedMaterial = materials[1];
         }
         else
         {
@@ -22,6 +26,7 @@ public class HandTarget : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
+        render.sharedMaterial = materials[0];
         isTouch = false;
     }
 }
