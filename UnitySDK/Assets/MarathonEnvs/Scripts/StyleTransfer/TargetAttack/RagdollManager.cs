@@ -48,12 +48,12 @@ public class RagdollManager : MonoBehaviour
 
   void Start()
   {
-    CountRagdollWeight();
-
     rbs = GetComponentsInChildren<Rigidbody>().ToList();
     ragdollAnimator = GetComponent<Animator>();
     charJoints = GetComponentsInChildren<CharacterJoint>().ToList();
     colliders = GetComponentsInChildren<Collider>().ToList();
+
+    CountRagdollWeight();
     if (trBodyDefault.Count == 0 && trBodyDefault != null)
     {
       // print("one time only");
@@ -80,7 +80,7 @@ public class RagdollManager : MonoBehaviour
     var handCurrentVelocityy = handRb.velocity;
     var handTargetVelocityChange = handCurrentVelocityy - handPreviousVelocity;
     handMagnitude = handTargetVelocityChange.magnitude;
-    // Debug.Log("hand magnitude " + handTargetVelocityChange.magnitude);
+    Debug.Log("hand magnitude " + handTargetVelocityChange.magnitude);
     if (handTargetVelocityChange.magnitude > handMagnitudeMax && !ragdollAnimator.isActiveAndEnabled)
     {
       // print("Velocity Limit");
@@ -91,10 +91,10 @@ public class RagdollManager : MonoBehaviour
       hipsRb.isKinematic = false;
       hipsRb.constraints = RigidbodyConstraints.None;
 
-      foreach (var rb in rbs)
-      {
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-      }
+      // foreach (var rb in rbs)
+      // {
+      //   rb.interpolation = RigidbodyInterpolation.Interpolate;
+      // }
       //PART OF CHAR JOINT HAND GRIP
       // var agentsScript = agent.GetComponent<StyleTransfer002Agent>();
       // if (agentsScript.joint != null && agentsScript.joint.connectedBody != null)
@@ -121,9 +121,12 @@ public class RagdollManager : MonoBehaviour
 
   void CountRagdollWeight()
   {
-    var rbs = this.GetComponentsInChildren<Rigidbody>();
+
+
+    // var rbs = this.GetComponentsInChildren<Rigidbody>();
     foreach (var rb in rbs)
     {
+      rb.interpolation = RigidbodyInterpolation.Interpolate;
       totalWeight += rb.mass;
       if (rb.mass >= weightTmpt)
       {
@@ -186,7 +189,7 @@ public class RagdollManager : MonoBehaviour
 
     foreach (var rb in rbs)
     {
-      rb.interpolation = RigidbodyInterpolation.None;
+      // rb.interpolation = RigidbodyInterpolation.None;
       rb.detectCollisions = true;
       rb.useGravity = true;
       rb.velocity = Vector3.zero;

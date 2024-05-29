@@ -7,6 +7,7 @@ public class HandTarget : MonoBehaviour
 
     public bool isTouch;
     public Material[] materials;
+    public bool jointBroke;
 
     public Rigidbody getRigidBody => GetComponent<Rigidbody>();
     private Renderer render => GetComponent<Renderer>();
@@ -28,5 +29,15 @@ public class HandTarget : MonoBehaviour
     {
         render.sharedMaterial = materials[0];
         isTouch = false;
+    }
+
+    void OnJointBreak()
+    {
+        jointBroke = true;
+    }
+
+    private void OnDisable()
+    {
+        Destroy(gameObject.GetComponent<FixedJoint>());
     }
 }

@@ -20,6 +20,7 @@ using System.Data.OleDb;
 using System.Web.UI.WebControls.Expressions;
 using UnityEngine.TextCore.Text;
 using Random = UnityEngine.Random;
+using static TaskSwitcher;
 
 
 public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollision
@@ -35,11 +36,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public StyleTransfer002Animator _localStyleAnimator;
     StyleTransfer002Animator _styleAnimator;
     DecisionRequester _decisionRequester;
-
     List<GameObject> _sensors;
-
     public bool ShowMonitor = false;
-
     static int _startCount;
     static ScoreHistogramData _scoreHistogramData;
     int _totalAnimFrames;
@@ -50,7 +48,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public Transform torsoBodyAncor;
     public Transform targetAttackTransform;
-
     public RagdollManager ragdollManager;
     private HandTarget targetHand;
     public HandTarget targetHandDummy;
@@ -63,20 +60,23 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     private float distanceToTarget;
     private float faceDirectionReward;
     public float distanceReward;
-    private float targetDistance = 1.02f;
+    private float targetDistance = 0.7f;
     private float rewardScale50Percent = 0.5f;
     private float reward;
     private float handGripReward = 0f;
-    public float[] actionsValue;
     public float timerGrip = 0f;
     public float gripDuration = 3f;
     public float gripForce = 50;
     public bool targetIsTouched;
     public SphereCollider areaTarget;
-
     public List<RotationRecord> rotationRecords;
     private int recordPoint = 0;
     private TaskSwitcher taskSwitcher;
+    private float endEffectorVelocityWeight = 0.15f;
+    public int breakPoint;
+
+    public List<TargetTask> targetTasks = new List<TargetTask>();
+
 
     // Use this for initialization
     void Start()
@@ -91,11 +91,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         _styleAnimator = _localStyleAnimator.GetFirstOfThisAnim();
         _startCount++;
 
-        taskSwitcher = new TaskSwitcher(new List<TaskSwitcher.TargetTask>{
-            new TaskSwitcher.TargetTask {targetReward = 0.7f, targetFrequence= 20},
-            new TaskSwitcher.TargetTask{targetReward = 0.9f, targetFrequence = 40},
-            new TaskSwitcher.TargetTask{targetReward = 1.0f, targetFrequence = 60}
-        });
+        taskSwitcher = new TaskSwitcher(targetTasks);
 
         // print("starararat");
     }
@@ -104,7 +100,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     {
         // var forwardNormalize = torsoBodyAncor.TransformDirection(-Vector3.right) * 5f;
         // Debug.DrawRay(torsoBodyAncor.position, forwardNormalize, Color.red);
-        SwitchTask();
         TaskState = taskSwitcher.taskState;
     }
 
@@ -234,27 +229,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public override void OnActionReceived(ActionBuffers actions)
     {
         float[] vectorAction = actions.ContinuousActions.Select(x => x).ToArray();
-        if (targetHand.isTouch)
-        {
-            TouchFrequence++;
-            targetIsTouched = true;
-            /** El Importante........................
-            // it was...
-            // using Old  way to get the specific amount of holding time reward. 
-            // and then, I move to the generative way to generate adaptive reward based on 
-            // how long the agent holding the target hand with exponential decay.
-            //
-            //Update...
-            // using ForceMode seem imposible right now, because we have alot of moving part in agent properties
-            // Then I change it to using Character joint component, 
-            //then I change it again to FixedJoint component.
-            ***/
-        }
-        else
-        {
-            timerGrip = 0f;
-            handGripReward = 0f;
-        }
 
         if (!_hasLazyInitialized)
         {
@@ -286,19 +260,37 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             }
         }
 
+
+        if (targetHand.isTouch)
+        {
+            TouchFrequence++;
+            targetIsTouched = true;
+            handGripReward = 0.25f;
+            /** El Importante........................
+            // it was...
+            // using Old  way to get the specific amount of holding time reward. 
+            // and then, I move to the generative way to generate adaptive reward based on 
+            // how long the agent holding the target hand with exponential decay.
+            //
+            //Update...
+            // using ForceMode seem imposible right now, because we have alot of moving part in agent properties
+            // Then I change it to using Character joint component, 
+            //then I change it again to FixedJoint component.
+            ***/
+        }
+        else
+        {
+            timerGrip = 0f;
+            handGripReward = 0f;
+        }
         //Hand grip action and reward 
-        // if (DifferenceReward > 0.13f)
-        // {
-        actionsValue = vectorAction;
-
-        // }
-
+        SwitchTask();
         //Reward factor for agent to get closer to target
         var faceDirectionToTarget = AngleTowardTarget();
         var faceToFaceDirection = FaceDirection < 0 ? 0 : FaceDirection;//pluging to variable with minus prevention
         faceDirectionReward = 0.05f * ((rewardScale50Percent * faceDirectionToTarget) + (rewardScale50Percent * faceToFaceDirection));
         //Distance reward factor
-        distanceReward = 0.05f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));// target distance, zeroing distance before its actual zero
+        distanceReward = 0.20f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));// target distance, zeroing distance before its actual zero
         var DifferenceReward = faceDirectionReward + distanceReward;
         // print("Distance debug: " + DifferenceReward);
         // print("faceDirectionReward: " + faceDirectionReward);
@@ -317,16 +309,16 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         var sensorDistance = _master.SensorDistance / 1f;
 
-        var rotationReward = 0.5f * Mathf.Exp(-rotationDistance);
-        var centerOfMassVelocityReward = 0.1f * Mathf.Exp(-centerOfMassvelocityDistance);
-        var endEffectorReward = 0.25f * Mathf.Exp(-endEffectorDistance);
-        var endEffectorVelocityReward = 0.1f * Mathf.Exp(-endEffectorVelocityDistance);
-        var jointAngularVelocityReward = 0.2f * Mathf.Exp(-jointAngularVelocityDistance);
+        var rotationReward = 0.10f * Mathf.Exp(-rotationDistance);
+        var centerOfMassVelocityReward = 0.10f * Mathf.Exp(-centerOfMassvelocityDistance);
+        var endEffectorReward = 0.10f * Mathf.Exp(-endEffectorDistance);
+        var endEffectorVelocityReward = endEffectorVelocityWeight * Mathf.Exp(-endEffectorVelocityDistance);
+        var jointAngularVelocityReward = 0.10f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
         var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
-        var angularMomentReward = 0.15f * Mathf.Exp(-angularMomentDistance);
-        var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
-        var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
+        var angularMomentReward = 0.10f * Mathf.Exp(-angularMomentDistance);
+        var sensorReward = 0.05f * Mathf.Exp(-sensorDistance);
+        var jointsNotAtLimitReward = 0.05f * Mathf.Exp(-JointsAtLimit());
         #region 
         // Debug.Log("---------------");
         // Debug.Log("rotation reward: " + rotationReward);
@@ -346,8 +338,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //tune the reward amount above
         reward =
-            // distanceReward +//5% distance to target
-            // faceDirectionReward + //5% face direction
+            distanceReward +//5% distance to target
+                            // faceDirectionReward + //5% face direction
             handGripReward + // 30% grip opponent hand || PERCENTAGE DOES NOT MATTER
             endEffectorVelocityReward +//10% effector velocity  
             rotationReward +//50% joint rotation 
@@ -359,6 +351,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
                               sensorReward +
                               jointsNotAtLimitReward +
                               jointAngularVelocityRewardWorld;
+
+        //     reward = (float)(distanceReward * 0.20 +  //Encourage approaching the ball
+        // handGripReward * 0.40 +  //Prioritize gripping the ball
+        // endEffectorVelocityReward * endEffectorVelocityWeight +  // Ensure velocity for throwing
+        // rotationReward * 0.10 +  //Correct joint rotations while grabbing
+        // centerOfMassVelocityReward * 0.10 + //Body motion for throwing
+        // endEffectorReward * 0.10 +  //Use correct end effector for touching and throwing
+        // jointAngularVelocityReward * 0.10 +  //Smooth and controlled joints
+        // angularMomentReward * 0.10 +  //Correct rotational movement
+        // centerMassReward * 0.05 +  //Maintain balance
+        // sensorReward * 0.05 +  //Proper sensor usage
+        // jointsNotAtLimitReward * 0.05);  //Prevent joints from reaching limits
 
 
         if (!_master.IgnorRewardUntilObservation)
@@ -441,8 +445,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         // var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
         // transform.position = randomSpawn;
+        SwitchTask();
         TouchFrequence = 0;
-        CatchTheBallRandomPositionInSphere();
+        CatchTheBallInRandomPositionSphere();
         //Reset taget state
     }
 
@@ -521,56 +526,98 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         switch (taskSwitcher.taskState)
         {
             case 0:
+                endEffectorVelocityWeight = 0.15f;
+
                 ragdollManager.gameObject.SetActive(false);
+                areaTarget.gameObject.SetActive(true);
                 targetHandDummy.gameObject.SetActive(true);
-                handGripReward = 0.2f;
                 targetHand = targetHandDummy;
-                CatchTheBallRandomPositionInSphere();
+                CatchTheBallInRandomPositionSphere();
                 break;
             case 1:
-                handGripReward = 0.25f;
+                endEffectorVelocityWeight = 0.20f;
                 targetHand = targetHandDummy;
                 ThrowTheBall();
                 break;
             case 2:
-                handGripReward = 0.35f;
-                ragdollManager.gameObject.SetActive(true);
+                endEffectorVelocityWeight = 0.15f;
                 targetHand = targetHandRagdoll;
-                targetHandDummy.gameObject.SetActive(false);
                 ThrowTheRagdoll();
                 break;
-
         }
     }
 
+    /**
+    transisi menuju state 3 harus bersih dari connected/assigned FIxedJoint remove saat transisi
+    cek the ragdoll apakah memiliki fixedjoint meski tidak touched dengan hand dan tidak ragdolled 
+    **/
+
     public void ThrowTheRagdoll()
     {
-        if (ragdollManager.isRagdolled)
+        FixedJoint fixedJoint = null;
+        if (targetHand.isTouch && !ragdollManager.isRagdolled)
         {
+            print("!ragdoled, has fixedJ");
+            fixedJoint = AddFixedJoint();
+        }
+
+        if (ragdollManager.isRagdolled && targetHand.jointBroke && fixedJoint == null)
+        {
+            handGripReward = 0.40f;
             ragdollManager.resetRadoll2();
         }
+        else if (!ragdollManager.isRagdolled && fixedJoint != null)
+        {
+
+            Destroy(fixedJoint);
+            // ragdollManager.resetRadoll2();
+        }
+    }
+
+    public FixedJoint AddFixedJoint()
+    {
+        var target = targetHand.getRigidBody;
+        var fixedJoint = targetHand.GetComponent<FixedJoint>();
+        if (fixedJoint != null)
+        {
+            breakPoint = 178;
+            fixedJoint.connectedBody = agentHand.GetComponent<Rigidbody>();
+            fixedJoint.enableCollision = false;
+            fixedJoint.breakForce = breakPoint;
+            fixedJoint.breakTorque = breakPoint;
+            targetHand.jointBroke = false;
+        }
+        else
+            targetHand.gameObject.AddComponent<FixedJoint>();
+        target.isKinematic = false;
+        target.useGravity = true;
+        return fixedJoint;
     }
 
     public void ThrowTheBall()  // USING CHARACTER JOINT AS THE CONNECTOR (HAND GRIP)
     {
-        CatchTheBallRandomPositionInSphere();
+        FixedJoint fixedJoint = null;
         if (targetHand.isTouch)
         {
-            var target = targetHand.getRigidBody;
-            target.isKinematic = false;
-            var fixedJoint = targetHand.GetComponent<FixedJoint>();
-            if (fixedJoint != null)
-            {
-                fixedJoint.connectedBody = agentHand.GetComponent<Rigidbody>();
-                fixedJoint.breakForce = 500;
-                fixedJoint.breakTorque = 500;
-            }
-            else
-                targetHand.gameObject.AddComponent<FixedJoint>();
+            fixedJoint = AddFixedJoint();
+        }
+
+        if (targetHand.jointBroke && fixedJoint == null)
+        {
+            handGripReward = 0.30f;
+            CatchTheBallInRandomPositionSphere();
+        }
+
+        if (taskSwitcher.ReportTask(reward, TouchFrequence))
+        {
+            taskSwitcher.UpdateTask();
+            ragdollManager.gameObject.SetActive(true);
+            areaTarget.gameObject.SetActive(false);
+            targetHandDummy.gameObject.SetActive(false);
         }
     }
 
-    public void CatchTheBallRandomPositionInSphere()
+    public void CatchTheBallInRandomPositionSphere()
     {
         if (targetIsTouched && _isDone)
         {
@@ -585,6 +632,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             targetHand.getRigidBody.isKinematic = true;
             targetHand.getRigidBody.useGravity = false;
             targetIsTouched = false;
+        }
+        if (taskSwitcher.ReportTask(reward, TouchFrequence) && TaskState == 0)
+        {
+            taskSwitcher.UpdateTask();
         }
     }
 

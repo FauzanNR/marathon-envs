@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -16,26 +17,28 @@ public class TaskSwitcher
         taskState = 0;
     }
 
-    public void ReportTask(float reward, float frequences)
+    public bool ReportTask(float reward, float frequences)
     {
         // Debug.Log($"Report\n target reward {reward}\n target freq {frequences}");
-        if (reward >= tasks[taskState].targetReward && frequences >= tasks[taskState].targetFrequence)
-        {
-            UpdateTask();
-        }
+        return (reward >= tasks[taskState].targetReward && frequences >= tasks[taskState].targetFrequence);
     }
 
 
     public void UpdateTask()
     {
         if (taskState < tasks.Count - 1)
+        {
             taskState++;
+        }
     }
+}
 
-    public class TargetTask
-    {
-        public float targetReward { get; set; }
-        public int targetFrequence { get; set; }
+[Serializable]
+public class TargetTask
+{
+    [field: SerializeField]
+    public float targetReward { get; set; }
+    [field: SerializeField]
+    public int targetFrequence { get; set; }
 
-    }
 }
