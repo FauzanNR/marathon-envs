@@ -80,7 +80,7 @@ public class RagdollManager : MonoBehaviour
     var handCurrentVelocityy = handRb.velocity;
     var handTargetVelocityChange = handCurrentVelocityy - handPreviousVelocity;
     handMagnitude = handTargetVelocityChange.magnitude;
-    Debug.Log("hand magnitude " + handTargetVelocityChange.magnitude);
+    // Debug.Log("hand magnitude " + handTargetVelocityChange.magnitude);
     if (handTargetVelocityChange.magnitude > handMagnitudeMax && !ragdollAnimator.isActiveAndEnabled)
     {
       // print("Velocity Limit");
@@ -169,8 +169,8 @@ public class RagdollManager : MonoBehaviour
 
   public void resetRadoll2()
   {
+    // print("ragdoll reset");
     isRagdolled = false;
-
     foreach (var rb in rbs)
     {
       rb.velocity = Vector3.zero;

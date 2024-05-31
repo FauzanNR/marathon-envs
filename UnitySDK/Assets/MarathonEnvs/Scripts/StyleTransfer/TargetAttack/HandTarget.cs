@@ -6,9 +6,13 @@ public class HandTarget : MonoBehaviour
 {
 
     public bool isTouch;
-    public Material[] materials;
+    public bool isGround;
     public bool jointBroke;
+    public Collider physicsCollider;
+    public Material[] materials;
 
+
+    public Collider getCollider => physicsCollider;
     public Rigidbody getRigidBody => GetComponent<Rigidbody>();
     private Renderer render => GetComponent<Renderer>();
     void OnTriggerEnter(Collider other)
@@ -19,8 +23,13 @@ public class HandTarget : MonoBehaviour
 
             render.sharedMaterial = materials[1];
         }
+        else if (other.gameObject.name == "Terrain" && other.gameObject.tag == "gound")
+        {
+            isGround = true;
+        }
         else
         {
+            isGround = false;
             isTouch = false;
         }
 
@@ -29,6 +38,7 @@ public class HandTarget : MonoBehaviour
     {
         render.sharedMaterial = materials[0];
         isTouch = false;
+        isGround = false;
     }
 
     void OnJointBreak()
@@ -38,6 +48,8 @@ public class HandTarget : MonoBehaviour
 
     private void OnDisable()
     {
+        isGround = false;
+        isTouch = false;
         Destroy(gameObject.GetComponent<FixedJoint>());
     }
 }

@@ -265,7 +265,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         {
             TouchFrequence++;
             targetIsTouched = true;
-            handGripReward = 0.25f;
+            handGripReward = 0.20f;
             /** El Importante........................
             // it was...
             // using Old  way to get the specific amount of holding time reward. 
@@ -338,14 +338,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //tune the reward amount above
         reward =
-            distanceReward +//5% distance to target
+            distanceReward +//20% distance to target
                             // faceDirectionReward + //5% face direction
             handGripReward + // 30% grip opponent hand || PERCENTAGE DOES NOT MATTER
-            endEffectorVelocityReward +//10% effector velocity  
-            rotationReward +//50% joint rotation 
+            endEffectorVelocityReward +//20% effector velocity  
+            rotationReward +//10% joint rotation 
             centerOfMassVelocityReward +//10% center of mass velocity
-            endEffectorReward +//25% effector
-            jointAngularVelocityReward +//20% each joint Velocity 
+            endEffectorReward +//10% effector
+            jointAngularVelocityReward +//10% each joint Velocity 
             angularMomentReward +//15%
             centerMassReward + //5% 
                               sensorReward +
@@ -367,7 +367,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         if (!_master.IgnorRewardUntilObservation)
         {
-            taskSwitcher.ReportTask(reward, TouchFrequence);
             AddReward(reward);
         }
 
@@ -445,10 +444,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // var randomDirection = new Vector3(randomSphere.x, 0, randomSphere.z).normalized;
         // var randomSpawn = targetAttackTransform.position + randomDirection * 3f;
         // transform.position = randomSpawn;
+
         SwitchTask();
         TouchFrequence = 0;
-        CatchTheBallInRandomPositionSphere();
-        //Reset taget state
+        if (TaskState == 0)
+        {
+            CatchTheBallInRandomPositionSphere();
+        }
     }
 
 
@@ -551,26 +553,34 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     transisi menuju state 3 harus bersih dari connected/assigned FIxedJoint remove saat transisi
     cek the ragdoll apakah memiliki fixedjoint meski tidak touched dengan hand dan tidak ragdolled 
     **/
-
+    FixedJoint fixedJoint = null;
     public void ThrowTheRagdoll()
     {
-        FixedJoint fixedJoint = null;
-        if (targetHand.isTouch && !ragdollManager.isRagdolled)
-        {
-            print("!ragdoled, has fixedJ");
+
+        if (targetHand.isTouch && !ragdollManager.isRagdolled && fixedJoint == null)
+        {//attach Fixed joint to target hand
+            // print("!ragdoled, hasn't fixedJ");
             fixedJoint = AddFixedJoint();
         }
 
         if (ragdollManager.isRagdolled && targetHand.jointBroke && fixedJoint == null)
-        {
+        {//reset when task complete
+            // print("Ragdoled");
             handGripReward = 0.40f;
             ragdollManager.resetRadoll2();
+            targetHand.jointBroke = false;
         }
-        else if (!ragdollManager.isRagdolled && fixedJoint != null)
-        {
-
+        else if (!ragdollManager.isRagdolled && fixedJoint != null && _isDone)
+        {//reset when episode end but won't able to lift the target to target velocity
+            // print("!ragdoled, has fixedJ");
+            targetHand.jointBroke = false;
             Destroy(fixedJoint);
-            // ragdollManager.resetRadoll2();
+            ragdollManager.resetRadoll2();
+        }
+
+        if (ragdollManager.isRagdolled && _isDone)
+        {//reset when ragdolled and episode begin
+            ragdollManager.resetRadoll2();
         }
     }
 
@@ -580,7 +590,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var fixedJoint = targetHand.GetComponent<FixedJoint>();
         if (fixedJoint != null)
         {
-            breakPoint = 178;
             fixedJoint.connectedBody = agentHand.GetComponent<Rigidbody>();
             fixedJoint.enableCollision = false;
             fixedJoint.breakForce = breakPoint;
@@ -588,7 +597,14 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             targetHand.jointBroke = false;
         }
         else
-            targetHand.gameObject.AddComponent<FixedJoint>();
+        {
+            fixedJoint = targetHand.gameObject.AddComponent<FixedJoint>();
+            fixedJoint.connectedBody = agentHand.GetComponent<Rigidbody>();
+            fixedJoint.enableCollision = false;
+            fixedJoint.breakForce = breakPoint;
+            fixedJoint.breakTorque = breakPoint;
+            targetHand.jointBroke = false;
+        }
         target.isKinematic = false;
         target.useGravity = true;
         return fixedJoint;
@@ -596,17 +612,24 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public void ThrowTheBall()  // USING CHARACTER JOINT AS THE CONNECTOR (HAND GRIP)
     {
-        FixedJoint fixedJoint = null;
         if (targetHand.isTouch)
         {
             fixedJoint = AddFixedJoint();
+            targetHand.getCollider.isTrigger = false;
+        }
+        if (!targetHand.isTouch && targetHand.jointBroke && fixedJoint == null && !_isDone)//reset when able to perform the task
+        {
+            targetHand.jointBroke = false;
+            handGripReward = 0.30f;
         }
 
-        if (targetHand.jointBroke && fixedJoint == null)
+        if ((_isDone && fixedJoint != null) || targetHand.isGround)
         {
-            handGripReward = 0.30f;
-            CatchTheBallInRandomPositionSphere();
+            // print("DOne but fxjn still there");
+            targetHand.jointBroke = false;
+            Destroy(fixedJoint);
         }
+        CatchTheBallInRandomPositionSphere();
 
         if (taskSwitcher.ReportTask(reward, TouchFrequence))
         {
@@ -619,8 +642,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     public void CatchTheBallInRandomPositionSphere()
     {
-        if (targetIsTouched && _isDone)
+        if ((targetIsTouched && _isDone) || targetHand.isGround)
         {
+            targetHand.getCollider.isTrigger = true;
             var coliderRadius = areaTarget.radius;
             var spawnPosition = new Vector3(Random.insideUnitSphere.x,
                                             Random.insideUnitSphere.y,
