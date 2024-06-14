@@ -1443,7 +1443,7 @@ MonoBehaviour:
   m_Model: {fileID: 5022602860645237092, guid: 7a58189c7d729ca42a8ce2b26e394544, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
-  m_BehaviorName: MarathonManHaraigoshi-v4
+  m_BehaviorName: MarathonManHaraigoshi-v5
   TeamId: 0
   m_UseChildSensors: 1
   m_UseChildActuators: 1

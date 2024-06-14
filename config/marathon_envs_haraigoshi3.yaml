@@ -135,7 +135,7 @@ behaviors:
     summary_freq: 50000
     checkpoint_interval: 200000
     threaded: true
-  MarathonManHaraigoshi-v4:
+  MarathonManHaraigoshi-v5:
     trainer_type: ppo
     hyperparameters:
       num_epoch: 8
