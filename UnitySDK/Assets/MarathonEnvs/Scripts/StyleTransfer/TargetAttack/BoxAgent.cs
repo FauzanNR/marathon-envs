@@ -14,7 +14,7 @@ public class BoxAgent : Agent
     public Transform target;
     public float gripDuration = 2f;
     public float gripForce = 15;
-    private float timerGrip = 0f;
+    // private float timerGrip = 0f;
     float rewardScale50Perent = 0.5f;
     Rigidbody rBody;
 

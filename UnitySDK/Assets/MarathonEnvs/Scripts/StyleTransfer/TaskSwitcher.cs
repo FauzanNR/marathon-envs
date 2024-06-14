@@ -8,6 +8,7 @@ public class TaskSwitcher
 {
 
     public int taskState { get; set; }
+    public TargetTask currentTargetTask => tasks[taskState];
 
     private List<TargetTask> tasks;
 
@@ -20,7 +21,7 @@ public class TaskSwitcher
     public bool ReportTask(float reward, float frequences)
     {
         // Debug.Log($"Report\n target reward {reward}\n target freq {frequences}");
-        return (reward >= tasks[taskState].targetReward && frequences >= tasks[taskState].targetFrequence);
+        return reward >= tasks[taskState].targetReward && frequences >= tasks[taskState].targetFrequence;
     }
 
 
