@@ -8,6 +8,7 @@ public class TaskSwitcher
 {
 
     public int taskState { get; set; }
+    public TargetTask previousTargetTask => tasks[taskState - 1];
     public TargetTask currentTargetTask => tasks[taskState];
 
     private List<TargetTask> tasks;
@@ -24,7 +25,11 @@ public class TaskSwitcher
         return reward >= tasks[taskState].targetReward && frequences >= tasks[taskState].targetFrequence;
     }
 
-
+    public void DownTask()
+    {
+        if (tasks.Count > 0)
+            taskState--;
+    }
     public void UpdateTask()
     {
         if (taskState < tasks.Count - 1)

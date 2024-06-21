@@ -27,8 +27,6 @@ public class StyleTransfer002Master : MonoBehaviour
     public Vector3 ObsAngularMoment;
     public Vector3 ObsVelocity;
 
-    public float PositionDistance;
-
     // model observations
     // i.e. model = difference between mocap and actual)
     // ideally we dont want to generate model at inference
@@ -41,8 +39,6 @@ public class StyleTransfer002Master : MonoBehaviour
     public float CenterOfMassDistance;
     public float AngularMomentDistance;
     public float SensorDistance;
-
-    public float MaxPositionDistance;
 
     public float MaxEndEffectorDistance; // feet, hands, head
     public float MaxEndEffectorVelocityDistance; // feet, hands, head
@@ -201,7 +197,6 @@ public class StyleTransfer002Master : MonoBehaviour
             }
             animStep = _muscleAnimator.AnimationSteps[AnimationIndex];
         }
-        PositionDistance = 0f;
         EndEffectorDistance = 0f;
         EndEffectorVelocityDistance = 0;
         JointAngularVelocityDistance = 0;
@@ -233,8 +228,6 @@ public class StyleTransfer002Master : MonoBehaviour
                 var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;//angle or difference between bodypart rotation and animation rotation
                 var squareRotDistance = Mathf.Pow(rotDistance, 2);
                 RotationDistance += squareRotDistance;
-
-                PositionDistance += bodyPart.ObsDeltaFromAnimationPosition.sqrMagnitude;
 
                 JointAngularVelocityDistance += bodyPart.ObsDeltaFromAnimationAngularVelocity.sqrMagnitude;
                 JointAngularVelocityDistanceWorld += bodyPart.ObsDeltaFromAnimationAngularVelocityWorld.sqrMagnitude;
@@ -277,6 +270,7 @@ public class StyleTransfer002Master : MonoBehaviour
             var sensorDistanceStep = 1.0f / _agent.SensorIsInTouch.Count;
             for (int i = 0; i < _agent.SensorIsInTouch.Count; i++)
             {
+                // print(animStep.SensorIsInTouch[i]);
                 if (animStep.SensorIsInTouch[i] != _agent.SensorIsInTouch[i])
                 {
                     SensorDistance += sensorDistanceStep;
@@ -286,7 +280,6 @@ public class StyleTransfer002Master : MonoBehaviour
 
         if (!IgnorRewardUntilObservation)
         {
-            MaxPositionDistance = Mathf.Max(MaxPositionDistance, PositionDistance);
             MaxEndEffectorDistance = Mathf.Max(MaxEndEffectorDistance, EndEffectorDistance);
             MaxEndEffectorVelocityDistance = Mathf.Max(MaxEndEffectorVelocityDistance, EndEffectorVelocityDistance);
             MaxRotationDistance = Mathf.Max(MaxRotationDistance, RotationDistance);
@@ -446,7 +439,6 @@ public class StyleTransfer002Master : MonoBehaviour
         JointAngularVelocityDistance = 0;
         JointAngularVelocityDistanceWorld = 0;
         RotationDistance = 0f;
-        PositionDistance = 0f;
         CenterOfMassVelocityDistance = 0f;
         IgnorRewardUntilObservation = true;
         _resetCenterOfMassOnLastUpdate = true;
