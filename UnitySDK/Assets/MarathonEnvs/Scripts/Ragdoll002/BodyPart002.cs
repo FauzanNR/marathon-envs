@@ -13,10 +13,11 @@ using Unity.MLAgents;
 [System.Serializable]
 public class BodyPart002
 {
-
+    public GameObject theObject;
     public string Name;
     public BodyHelper002.BodyPartGroup Group;
 
+    public Vector3 myLoco;
     public Vector3 ObsLocalPosition;
     public Quaternion ObsRotation;
     public Quaternion ObsRotationFromBase;
@@ -50,6 +51,7 @@ public class BodyPart002
 
     Quaternion _lastObsRotation;
     Quaternion _lastWorldRotation;
+    public Vector3 TheObsLocalPosition;
     Vector3 _lastLocalPosition;
     Vector3 _lastWorldPosition;
     Vector3 _animationAngularVelocity;
@@ -175,7 +177,7 @@ public class BodyPart002
         //    Debug.Log("animation position world: " + _animationPositionWorld);
         //    Debug.Log("dt:" + dt);
         //}
-
+        TheObsLocalPosition = theObject.transform.localPosition;
         ObsLocalPosition = position;
         ObsRotation = rotation;
         ObsRotationVelocity = angularVelocity;

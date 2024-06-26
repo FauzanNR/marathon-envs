@@ -139,7 +139,7 @@ behaviors:
     trainer_type: ppo
     hyperparameters:
       num_epoch: 8
-      beta: 8e-4
+      beta: 5e-3
       epsilon: 0.2
       lambd: 0.95
       learning_rate: 7e-5

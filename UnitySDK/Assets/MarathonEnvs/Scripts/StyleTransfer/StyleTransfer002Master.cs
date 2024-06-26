@@ -27,9 +27,12 @@ public class StyleTransfer002Master : MonoBehaviour
     public Vector3 ObsAngularMoment;
     public Vector3 ObsVelocity;
 
+
+
     // model observations
     // i.e. model = difference between mocap and actual)
     // ideally we dont want to generate model at inference
+    public float JointDistance;
     public float EndEffectorDistance; // feet, hands, head
     public float EndEffectorVelocityDistance; // feet, hands, head
     public float JointAngularVelocityDistance;
@@ -40,11 +43,12 @@ public class StyleTransfer002Master : MonoBehaviour
     public float AngularMomentDistance;
     public float SensorDistance;
 
+    public float MaxJointDistance;
+    public float MaxRotationDistance;
     public float MaxEndEffectorDistance; // feet, hands, head
     public float MaxEndEffectorVelocityDistance; // feet, hands, head
     public float MaxJointAngularVelocityDistance;
     public float MaxJointAngularVelocityDistanceWorld;
-    public float MaxRotationDistance;
     public float MaxCenterOfMassVelocityDistance;
     public float MaxCenterOfMassDistance;
     public float MaxAngularMomentDistance;
@@ -60,6 +64,7 @@ public class StyleTransfer002Master : MonoBehaviour
     public int DebugAnimOffset;
 
     public float TimeStep;
+
     public int AnimationIndex;
     public int EpisodeAnimationIndex;
     public int StartAnimationIndex;
@@ -117,6 +122,7 @@ public class StyleTransfer002Master : MonoBehaviour
             };
             if (bodyPart.Group == BodyConfig.GetRootBodyPart())
                 root = bodyPart;
+            bodyPart.theObject = t.gameObject;///////////////////////
             bodyPart.Root = root;
             bodyPart.Init(_decisionRequester);
             BodyParts.Add(bodyPart);
@@ -163,6 +169,10 @@ public class StyleTransfer002Master : MonoBehaviour
     {
     }
 
+    public float calculateJointPositionDifference(Transform agentJoint, Transform animatorJoint)
+    {
+        return Vector3.Distance(animatorJoint.localPosition, agentJoint.localPosition);
+    }
     public void OnAgentAction()
     {
         if (_waitingForAnimation && _styleAnimator.AnimationStepsReady)
@@ -197,6 +207,7 @@ public class StyleTransfer002Master : MonoBehaviour
             }
             animStep = _muscleAnimator.AnimationSteps[AnimationIndex];
         }
+        JointDistance = 0f;
         EndEffectorDistance = 0f;
         EndEffectorVelocityDistance = 0;
         JointAngularVelocityDistance = 0;
@@ -224,6 +235,10 @@ public class StyleTransfer002Master : MonoBehaviour
             if (_phaseIsRunning)
             {
                 bodyPart.UpdateObservations();
+                var bodyPartFromAnimation = _styleAnimator.BodyParts.FirstOrDefault(b => b.Name == bodyPart.Name);
+                var jointDistance = calculateJointPositionDifference(bodyPart.Transform, bodyPartFromAnimation.Transform);
+                var jointSqrDistance = Mathf.Pow(jointDistance, 2);
+                JointDistance += jointSqrDistance;
 
                 var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;//angle or difference between bodypart rotation and animation rotation
                 var squareRotDistance = Mathf.Pow(rotDistance, 2);
@@ -280,9 +295,10 @@ public class StyleTransfer002Master : MonoBehaviour
 
         if (!IgnorRewardUntilObservation)
         {
+            MaxJointDistance = Mathf.Max(MaxJointDistance, JointDistance);
+            MaxRotationDistance = Mathf.Max(MaxRotationDistance, RotationDistance);
             MaxEndEffectorDistance = Mathf.Max(MaxEndEffectorDistance, EndEffectorDistance);
             MaxEndEffectorVelocityDistance = Mathf.Max(MaxEndEffectorVelocityDistance, EndEffectorVelocityDistance);
-            MaxRotationDistance = Mathf.Max(MaxRotationDistance, RotationDistance);
             MaxCenterOfMassVelocityDistance = Mathf.Max(MaxCenterOfMassVelocityDistance, CenterOfMassVelocityDistance);
             MaxEndEffectorVelocityDistance = Mathf.Max(MaxEndEffectorVelocityDistance, EndEffectorVelocityDistance);
             MaxJointAngularVelocityDistance = Mathf.Max(MaxJointAngularVelocityDistance, JointAngularVelocityDistance);
@@ -439,6 +455,7 @@ public class StyleTransfer002Master : MonoBehaviour
         JointAngularVelocityDistance = 0;
         JointAngularVelocityDistanceWorld = 0;
         RotationDistance = 0f;
+        JointDistance = 0f;
         CenterOfMassVelocityDistance = 0f;
         IgnorRewardUntilObservation = true;
         _resetCenterOfMassOnLastUpdate = true;

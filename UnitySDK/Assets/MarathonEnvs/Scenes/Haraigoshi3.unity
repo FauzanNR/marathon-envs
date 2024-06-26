@@ -1412,11 +1412,11 @@ MonoBehaviour:
   areaTarget: {fileID: 1981800566}
   breakPoint: 512
   targetTasks:
-  - <targetReward>k__BackingField: 0.8
-    <targetFrequence>k__BackingField: 12
-  - <targetReward>k__BackingField: 0.8
+  - <targetReward>k__BackingField: 0.5
+    <targetFrequence>k__BackingField: 10
+  - <targetReward>k__BackingField: 0.7
     <targetFrequence>k__BackingField: 16
-  - <targetReward>k__BackingField: 1
+  - <targetReward>k__BackingField: 0.9
     <targetFrequence>k__BackingField: 24
   - <targetReward>k__BackingField: 1.5
     <targetFrequence>k__BackingField: 250
@@ -1433,7 +1433,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 274
+    VectorObservationSize: 285
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 22
@@ -1442,7 +1442,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 5022602860645237092, guid: 15437931ff272f84682c47e61d1d2709, type: 3}
+  m_Model: {fileID: 0}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: MarathonManHaraigoshi-v5
@@ -1465,35 +1465,12 @@ MonoBehaviour:
   FixedDeltaTime: 0.005
   visualizeAnimator: 0
   Muscles: []
-  BodyParts:
-  - Name: 
-    Group: 0
-    ObsLocalPosition: {x: 0, y: 0, z: 0}
-    ObsRotation: {x: 0, y: 0, z: 0, w: 0}
-    ObsRotationFromBase: {x: 0, y: 0, z: 0, w: 0}
-    ObsRotationVelocity: {x: 0, y: 0, z: 0}
-    ObsVelocity: {x: 0, y: 0, z: 0}
-    ObsAngleDeltaFromAnimationRotation: 0
-    ObsDeltaFromAnimationPosition: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationVelocity: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationAngularVelocity: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationAngularVelocityWorld: {x: 0, y: 0, z: 0}
-    DebugMaxRotationVelocity: {x: 0, y: 0, z: 0}
-    DebugMaxVelocity: {x: 0, y: 0, z: 0}
-    DefaultLocalRotation: {x: 0, y: 0, z: 0, w: 0}
-    ToJointSpaceInverse: {x: 0, y: 0, z: 0, w: 0}
-    ToJointSpaceDefault: {x: 0, y: 0, z: 0, w: 0}
-    Rigidbody: {fileID: 0}
-    Transform: {fileID: 0}
-    InitialRootRotation: {x: 0, y: 0, z: 0, w: 0}
-    InitialRootPosition: {x: 0, y: 0, z: 0}
-    BaseRotation: {x: 0, y: 0, z: 0, w: 0}
-    BasePosition: {x: 0, y: 0, z: 0}
-    ToFocalRoation: {x: 0, y: 0, z: 0, w: 0}
+  BodyParts: []
   ObsPhase: 0
   ObsCenterOfMass: {x: 0, y: 0, z: 0}
   ObsAngularMoment: {x: 0, y: 0, z: 0}
   ObsVelocity: {x: 0, y: 0, z: 0}
+  JointDistance: 0
   EndEffectorDistance: 0
   EndEffectorVelocityDistance: 0
   JointAngularVelocityDistance: 0
@@ -1503,11 +1480,12 @@ MonoBehaviour:
   CenterOfMassDistance: 0
   AngularMomentDistance: 0
   SensorDistance: 0
+  MaxJointDistance: 0
+  MaxRotationDistance: 0
   MaxEndEffectorDistance: 0
   MaxEndEffectorVelocityDistance: 0
   MaxJointAngularVelocityDistance: 0
   MaxJointAngularVelocityDistanceWorld: 0
-  MaxRotationDistance: 0
   MaxCenterOfMassVelocityDistance: 0
   MaxCenterOfMassDistance: 0
   MaxAngularMomentDistance: 0
@@ -9309,6 +9287,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3543848243544424b5503dcdc34970c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rFoot: {fileID: 0}
+  lFoot: {fileID: 0}
   SensorIsInTouch: []
   AnimationSteps: []
   AnimationStepsReady: 0
@@ -16975,8 +16955,10 @@ MonoBehaviour:
   visualizeAnimator: 1
   Muscles: []
   BodyParts:
-  - Name: 
+  - theObject: {fileID: 0}
+    Name: 
     Group: 0
+    myLoco: {x: 0, y: 0, z: 0}
     ObsLocalPosition: {x: 0, y: 0, z: 0}
     ObsRotation: {x: 0, y: 0, z: 0, w: 0}
     ObsRotationFromBase: {x: 0, y: 0, z: 0, w: 0}
@@ -16999,10 +16981,12 @@ MonoBehaviour:
     BaseRotation: {x: 0, y: 0, z: 0, w: 0}
     BasePosition: {x: 0, y: 0, z: 0}
     ToFocalRoation: {x: 0, y: 0, z: 0, w: 0}
+    TheObsLocalPosition: {x: 0, y: 0, z: 0}
   ObsPhase: 0
   ObsCenterOfMass: {x: 0, y: 0, z: 0}
   ObsAngularMoment: {x: 0, y: 0, z: 0}
   ObsVelocity: {x: 0, y: 0, z: 0}
+  JointDistance: 0
   EndEffectorDistance: 0
   EndEffectorVelocityDistance: 0
   JointAngularVelocityDistance: 0
@@ -17012,11 +16996,12 @@ MonoBehaviour:
   CenterOfMassDistance: 0
   AngularMomentDistance: 0
   SensorDistance: 0
+  MaxJointDistance: 0
+  MaxRotationDistance: 0
   MaxEndEffectorDistance: 0
   MaxEndEffectorVelocityDistance: 0
   MaxJointAngularVelocityDistance: 0
   MaxJointAngularVelocityDistanceWorld: 0
-  MaxRotationDistance: 0
   MaxCenterOfMassVelocityDistance: 0
   MaxCenterOfMassDistance: 0
   MaxAngularMomentDistance: 0
@@ -21170,37 +21155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3543848243544424b5503dcdc34970c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rFoot: {fileID: 8590870370143092135}
+  lFoot: {fileID: 8585658282313983029}
   SensorIsInTouch: []
   AnimationSteps: []
   AnimationStepsReady: 0
   IsLoopingAnimation: 1
   NormalizedTime: 0
   Lenght: 0
-  BodyParts:
-  - Name: 
-    Group: 0
-    ObsLocalPosition: {x: 0, y: 0, z: 0}
-    ObsRotation: {x: 0, y: 0, z: 0, w: 0}
-    ObsRotationFromBase: {x: 0, y: 0, z: 0, w: 0}
-    ObsRotationVelocity: {x: 0, y: 0, z: 0}
-    ObsVelocity: {x: 0, y: 0, z: 0}
-    ObsAngleDeltaFromAnimationRotation: 0
-    ObsDeltaFromAnimationPosition: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationVelocity: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationAngularVelocity: {x: 0, y: 0, z: 0}
-    ObsDeltaFromAnimationAngularVelocityWorld: {x: 0, y: 0, z: 0}
-    DebugMaxRotationVelocity: {x: 0, y: 0, z: 0}
-    DebugMaxVelocity: {x: 0, y: 0, z: 0}
-    DefaultLocalRotation: {x: 0, y: 0, z: 0, w: 0}
-    ToJointSpaceInverse: {x: 0, y: 0, z: 0, w: 0}
-    ToJointSpaceDefault: {x: 0, y: 0, z: 0, w: 0}
-    Rigidbody: {fileID: 0}
-    Transform: {fileID: 0}
-    InitialRootRotation: {x: 0, y: 0, z: 0, w: 0}
-    InitialRootPosition: {x: 0, y: 0, z: 0}
-    BaseRotation: {x: 0, y: 0, z: 0, w: 0}
-    BasePosition: {x: 0, y: 0, z: 0}
-    ToFocalRoation: {x: 0, y: 0, z: 0, w: 0}
+  BodyParts: []
   toePositionOffset: 0.3
   toeRotationOffset: 0.7
 --- !u!114 &8548548391990317293

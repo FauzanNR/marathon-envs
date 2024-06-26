@@ -13,6 +13,9 @@ using UnityEngine;
 
 public class StyleTransfer002Animator : MonoBehaviour, IOnSensorCollision
 {
+    public float FootDistanceBetween => Vector3.Distance(rFoot.position, lFoot.position);//distance between foot
+    public Transform rFoot;
+    public Transform lFoot;
 
     internal Animator anim;
 
@@ -128,6 +131,7 @@ public class StyleTransfer002Animator : MonoBehaviour, IOnSensorCollision
             };
             if (bodyPart.Group == BodyConfig.GetRootBodyPart())
                 root = bodyPart;
+            bodyPart.theObject = t.gameObject;///////////////////////
             bodyPart.Root = root;
             bodyPart.Init(_decisionRequester);
             BodyParts.Add(bodyPart);
