@@ -235,10 +235,14 @@ public class StyleTransfer002Master : MonoBehaviour
             if (_phaseIsRunning)
             {
                 bodyPart.UpdateObservations();
-                var bodyPartFromAnimation = _styleAnimator.BodyParts.FirstOrDefault(b => b.Name == bodyPart.Name);
-                var jointDistance = calculateJointPositionDifference(bodyPart.Transform, bodyPartFromAnimation.Transform);
-                var jointSqrDistance = Mathf.Pow(jointDistance, 2);
-                JointDistance += jointSqrDistance;
+                // var bodyPartFromAnimation = _styleAnimator.BodyParts.FirstOrDefault(b => b.Name == bodyPart.Name);
+                // var jointDistance = calculateJointPositionDifference(bodyPart.Transform, bodyPartFromAnimation.Transform);
+                // var jointSqrDistance = Mathf.Pow(jointDistance, 2);
+                // JointDistance += jointSqrDistance;
+
+                var jointDistance = bodyPart.ObsDeltaFromAnimationPosition.sqrMagnitude;
+                // var jointSqrDistance = Mathf.Pow(jointDistance, 2);
+                JointDistance += jointDistance;
 
                 var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;//angle or difference between bodypart rotation and animation rotation
                 var squareRotDistance = Mathf.Pow(rotDistance, 2);

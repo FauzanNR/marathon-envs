@@ -13,7 +13,7 @@ using UnityEngine;
 
 public class StyleTransfer002Animator : MonoBehaviour, IOnSensorCollision
 {
-    public float FootDistanceBetween => Vector3.Distance(rFoot.position, lFoot.position);//distance between foot
+    public float FootDistanceBetween => Vector3.Distance(rFoot.localPosition, lFoot.localPosition);//distance between foot
     public Transform rFoot;
     public Transform lFoot;
 

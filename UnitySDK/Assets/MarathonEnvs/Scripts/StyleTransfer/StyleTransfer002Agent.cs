@@ -109,7 +109,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
     float AgentAnimatorFeetDistanceDifference()
     {
-        var agentFeetDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
+        var agentFeetDistance = Vector3.Distance(rightFoot.localPosition, leftFoot.localPosition);
         return Mathf.Abs(_localStyleAnimator.FootDistanceBetween - agentFeetDistance);
     }
     // Collect observations that are used by the Neural Network for training and inference.
@@ -121,18 +121,17 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         }
 
         //animator feet
-        sensor.AddObservation(_styleAnimator.rFoot.transform.localPosition);
-        sensor.AddObservation(_styleAnimator.lFoot.transform.localPosition);
+        // sensor.AddObservation(_styleAnimator.rFoot.transform.localPosition);
+        // sensor.AddObservation(_styleAnimator.lFoot.transform.localPosition);
 
         //animator leg distance observation
         sensor.AddObservation(_localStyleAnimator.FootDistanceBetween);//1
+
         // agent leg distance observatoin
-        var legDistance = Vector3.Distance(rightFoot.position, leftFoot.position);
-        sensor.AddObservation(legDistance);//1
-        sensor.AddObservation(rightFoot.position);//3
-        sensor.AddObservation(leftFoot.position);//3
-
-
+        var feetDistance = Vector3.Distance(rightFoot.localPosition, leftFoot.localPosition);
+        sensor.AddObservation(feetDistance);//1
+        // sensor.AddObservation(rightFoot.localPosition);//3
+        // sensor.AddObservation(leftFoot.localPosition);//3
         //Agent-Animator-Feet-Distance Difference
         sensor.AddObservation(AgentAnimatorFeetDistanceDifference());
 
@@ -165,8 +164,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         foreach (var bodyPart in _master.BodyParts)
         {
             a += 1;
-            sensor.AddObservation(bodyPart.TheObsLocalPosition);//3 = 51
-            // sensor.AddObservation(bodyPart.ObsLocalPosition);//3 = 51
+            // sensor.AddObservation(bodyPart.TheObsLocalPosition);//3 = 51
+            sensor.AddObservation(bodyPart.ObsLocalPosition);//3 = 51
             sensor.AddObservation(bodyPart.ObsRotation);//4 = 68
             sensor.AddObservation(bodyPart.ObsRotationVelocity);//3 = 51
             sensor.AddObservation(bodyPart.ObsVelocity);//3 = 51
@@ -214,8 +213,8 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         var statsRecorder = Academy.Instance.StatsRecorder;
         statsRecorder.Add("Rotation Different", _master.RotationDistance);
         //record task state
-        statsRecorder.Add("Curriculum State", TaskState);
-        statsRecorder.Add("Touch Frequences", MaxTouchFrequence);
+        statsRecorder.Add("Curriculum State", TaskState, StatAggregationMethod.MostRecent);
+        statsRecorder.Add("Touch Frequences", MaxTouchFrequence, StatAggregationMethod.MostRecent);
         MaxTouchFrequence = 0;
         // if (episodeEnd)
         // {
@@ -274,6 +273,9 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             _styleAnimator.OnAgentAction();
         _master.OnAgentAction();
 
+        // print(_master.Muscles.Where(x => x.ConfigurableJoint.angularXMotion != ConfigurableJointMotion.Locked).Count());
+        // print(_master.Muscles.Where(x => x.ConfigurableJoint.angularYMotion != ConfigurableJointMotion.Locked).Count());
+        // print(_master.Muscles.Where(x => x.ConfigurableJoint.angularZMotion != ConfigurableJointMotion.Locked).Count());
         int i = 0;
         foreach (var muscle in _master.Muscles)
         {
@@ -306,13 +308,13 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             // Calculate the hand reward
             if (difference > 0)
             {
-                handGripReward = 0.04f * Mathf.Exp(-lambda * difference);
-            }
-            else
-            {
-                handGripReward = 0.04f;
+                handGripReward = 0.05f * Mathf.Exp(-lambda * difference);
             }
 
+            if (difference >= 25)
+            {
+                handGripReward = 0.05f;
+            }
             /** El Importante........................
             // it was...
             // using Old  way to get the specific amount of holding time reward. 
@@ -342,16 +344,17 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // print("Total action " + vectorAction.Length);
 
         // the scaler factors are picked empirically by calculating the MaxRotationDistance, MaxVelocityDistance achieved for an untrained agent. 
-        var jointDistance = _master.JointDistance / 116.3525f;
-        var rotationDistance = _master.RotationDistance / 77.50927f;
-        var endEffectorDistance = _master.EndEffectorDistance / 35.26054f;
-        var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 371.0116f;
-        var jointAngularVelocityDistance = _master.JointAngularVelocityDistance / 24550.83f;
-        var jointAngularVelocityDistanceWorld = _master.JointAngularVelocityDistanceWorld / 27340.9f;
-        var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 18.33644f;
-        var centerOfMassDistance = _master.CenterOfMassDistance / 7.408746f;
-        var angularMomentDistance = _master.AngularMomentDistance / 2604.004f;
+        var jointDistance = _master.JointDistance / 61.52003f;
+        var rotationDistance = _master.RotationDistance / 74.59405f;
+        var endEffectorDistance = _master.EndEffectorDistance / 17.62833f;
+        var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 245.4562f;
+        var jointAngularVelocityDistance = _master.JointAngularVelocityDistance / 20084.36f;
+        var jointAngularVelocityDistanceWorld = _master.JointAngularVelocityDistanceWorld / 26239.51f;
+        var centerOfMassVelocityDistance = _master.CenterOfMassVelocityDistance / 12.84404f;
+        var centerOfMassDistance = _master.CenterOfMassDistance / 3.406138f;
+        var angularMomentDistance = _master.AngularMomentDistance / 2494.821f;
         var sensorDistance = _master.SensorDistance / 1f;
+        ////////////////////////////////////////
         // var rotationDistance = _master.RotationDistance / 39.70084f;
         // var endEffectorDistance = _master.EndEffectorDistance / 20.19985f;
         // var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 234.8643f;
@@ -360,16 +363,6 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 3.255913f;
         // var centerOfMassDistance = _master.CenterOfMassDistance / 4.39303f;
         // var angularMomentDistance = _master.AngularMomentDistance / 2325.659f;
-        // var sensorDistance = _master.SensorDistance / 1f;
-
-        // var rotationDistance = _master.RotationDistance / 16f;
-        // var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
-        // var endEffectorDistance = _master.EndEffectorDistance / 1f;
-        // var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 170f;
-        // var jointAngularVelocityDistance = _master.JointAngularVelocityDistance / 7000f;
-        // var jointAngularVelocityDistanceWorld = _master.JointAngularVelocityDistanceWorld / 7000f;
-        // var centerOfMassDistance = _master.CenterOfMassDistance / 0.3f;
-        // var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
         // var sensorDistance = _master.SensorDistance / 1f;
         /////////////////////////////////////////
         // var rotationDistance = _master.RotationDistance / 65.652f;
@@ -381,6 +374,17 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // var centerOfMassDistance = _master.CenterOfMassDistance / 1.62f;
         // var angularMomentDistance = _master.AngularMomentDistance / 722f;
         // var sensorDistance = _master.SensorDistance / 1f;
+        /////////////////////////////////////////
+        // var rotationDistance = _master.RotationDistance / 16f;
+        // var centerOfMassvelocityDistance = _master.CenterOfMassVelocityDistance / 6f;
+        // var endEffectorDistance = _master.EndEffectorDistance / 1f;
+        // var endEffectorVelocityDistance = _master.EndEffectorVelocityDistance / 170f;
+        // var jointAngularVelocityDistance = _master.JointAngularVelocityDistance / 7000f;
+        // var jointAngularVelocityDistanceWorld = _master.JointAngularVelocityDistanceWorld / 7000f;
+        // var centerOfMassDistance = _master.CenterOfMassDistance / 0.3f;
+        // var angularMomentDistance = _master.AngularMomentDistance / 150.0f;
+        // var sensorDistance = _master.SensorDistance / 1f;
+
 
         //Reward factor for agent to get closer to target
         var faceDirectionToTarget = AngleTowardTarget();
@@ -390,16 +394,16 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         distanceReward = 0.02f * Mathf.Exp(-Mathf.Abs(DistanceToTarget - targetDistance));// target distance, zeroing distance before its actual zero
         var DifferenceReward = faceDirectionReward + distanceReward;
         //FeetDistance Reward
-        var feetDistanceReward = 0.05f * Mathf.Exp(-AgentAnimatorFeetDistanceDifference());
+        var feetDistanceReward = 0.04f * Mathf.Exp(-AgentAnimatorFeetDistanceDifference());
 
-        var jointDistanceReward = 0.10f * Mathf.Exp(-jointDistance);
+        var jointDistanceReward = 0.04f * Mathf.Exp(-jointDistance);
         var rotationReward = 0.20f * Mathf.Exp(-rotationDistance);
-        var centerOfMassVelocityReward = 0.08f * Mathf.Exp(-centerOfMassvelocityDistance);
+        var centerOfMassVelocityReward = 0.12f * Mathf.Exp(-centerOfMassVelocityDistance);
         var endEffectorReward = 0.06f * Mathf.Exp(-endEffectorDistance);
         var endEffectorVelocityReward = 0.10f * Mathf.Exp(-endEffectorVelocityDistance);
         var jointAngularVelocityReward = 0.14f * Mathf.Exp(-jointAngularVelocityDistance);
         var jointAngularVelocityRewardWorld = 0.0f * Mathf.Exp(-jointAngularVelocityDistanceWorld);
-        var centerMassReward = 0.05f * Mathf.Exp(-centerOfMassDistance);
+        var centerMassReward = 0.08f * Mathf.Exp(-centerOfMassDistance);
         var angularMomentReward = 0.10f * Mathf.Exp(-angularMomentDistance);
         var sensorReward = 0.0f * Mathf.Exp(-sensorDistance);
         var jointsNotAtLimitReward = 0.0f * Mathf.Exp(-JointsAtLimit());
@@ -422,18 +426,18 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
 
         //tune the reward amount above
         reward =
-            jointDistanceReward +//10%
+            jointDistanceReward +//4%
+            feetDistanceReward +//4%
             distanceReward +//2% distance to target
                             // faceDirectionReward + //5% face direction
             handGripReward + // 10% grip opponent hand || PERCENTAGE DOES NOT MATTER
             endEffectorVelocityReward +//10% effector velocity  
             rotationReward +//20% joint rotation 
-            centerOfMassVelocityReward +//8% center of mass velocity
+            centerOfMassVelocityReward +//12% center of mass velocity
             endEffectorReward +//6% effector
             jointAngularVelocityReward +//14% each joint Velocity 
             angularMomentReward +//10%
-            centerMassReward + //5% 
-            feetDistanceReward +//5%
+            centerMassReward + //8% 
                               sensorReward +
                               jointsNotAtLimitReward +
                               jointAngularVelocityRewardWorld;
@@ -676,7 +680,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         if (ragdollManager.isRagdolled && targetHand.jointBroke && fixedJoint == null)
         {//reset when task complete
             // print("Ragdoled");
-            handGripReward += 0.14f;
+            handGripReward += 0.10f;
             AddReward(handGripReward);
             ragdollManager.resetRadoll2();
             targetHand.jointBroke = false;
@@ -731,7 +735,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         if (!targetHand.isTouch && targetHand.jointBroke && fixedJoint == null && !_isDone)//reset when able to perform the task
         {
             targetHand.jointBroke = false;
-            handGripReward += 0.12f;
+            handGripReward += 0.08f;
             AddReward(handGripReward);
         }
 
@@ -778,7 +782,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             }
             else if (TaskState == 1)
             {
-                handGripReward += 0.09f;
+                handGripReward += 0.07f;
                 taskSwitcher.UpdateTask();
             }
 
