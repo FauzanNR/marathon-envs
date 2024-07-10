@@ -138,11 +138,11 @@ behaviors:
   MarathonManHaraigoshi-v5:
     trainer_type: ppo
     hyperparameters:
-      num_epoch: 8
-      beta: 5e-3
+      num_epoch: 10
+      beta: 1e-3
       epsilon: 0.2
       lambd: 0.95
-      learning_rate: 7e-5
+      learning_rate: 5e-5
       batch_size: 4096
       buffer_size: 16384 # 4096 * 4
       # entropy_coef: 0.01

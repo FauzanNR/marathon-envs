@@ -1413,11 +1413,11 @@ MonoBehaviour:
   breakPoint: 512
   targetTasks:
   - <targetReward>k__BackingField: 0.5
-    <targetFrequence>k__BackingField: 10
+    <targetFrequence>k__BackingField: 6
   - <targetReward>k__BackingField: 0.7
-    <targetFrequence>k__BackingField: 16
+    <targetFrequence>k__BackingField: 10
   - <targetReward>k__BackingField: 0.9
-    <targetFrequence>k__BackingField: 24
+    <targetFrequence>k__BackingField: 15
   - <targetReward>k__BackingField: 1.5
     <targetFrequence>k__BackingField: 250
 --- !u!114 &4008977141542875
@@ -1442,7 +1442,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 1
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: d5abf0fd17ea72347a633bd338fd2d00, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: MarathonManHaraigoshi-v5
@@ -6359,7 +6359,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7467933789331055937}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -73.1, y: 0, z: -100}
+  m_LocalPosition: {x: -101.7, y: 0, z: -100}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -22234,7 +22234,7 @@ GameObject:
   m_Icon: {fileID: 3936346786652291628, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &8588878638313846985
 GameObject:
   m_ObjectHideFlags: 0
