@@ -20,10 +20,12 @@ public class BodyPart002
     public Vector3 myLoco;
     public Vector3 ObsLocalPosition;
     public Quaternion ObsRotation;
+    public Quaternion AnimatorRotation => _animationRotation;
     public Quaternion ObsRotationFromBase;
     public Vector3 ObsRotationVelocity;
     public Vector3 ObsVelocity;
     public float ObsAngleDeltaFromAnimationRotation;
+    public float ObsAngleDeltaFromAnimationRotation2;
     public Vector3 ObsDeltaFromAnimationPosition;
 
     public Vector3 ObsDeltaFromAnimationVelocity;
@@ -188,6 +190,10 @@ public class BodyPart002
         ObsAngleDeltaFromAnimationRotation = Quaternion.Angle(_animationRotation, rotation);
         // Debug.Log("Rotation angle " + ObsAngleDeltaFromAnimationRotation);
         ObsAngleDeltaFromAnimationRotation = JointHelper002.NormalizedAngle(ObsAngleDeltaFromAnimationRotation);
+
+
+        ObsAngleDeltaFromAnimationRotation2 = Quaternion.Angle(_animationRotation, rotation);
+
 
         ObsDeltaFromAnimationVelocity = _animationVelocityWorld - velocityWorld;
         ObsDeltaFromAnimationAngularVelocity = (_animationAngularVelocity - angularVelocity);

@@ -14,6 +14,7 @@ public class ProjectileManager : MonoBehaviour
     public float orbitRadius = 30f;
     public float orbitHeight = 1f;
     public float projectileForce = 5f;
+    public bool drawRey;
 
     void Start()
     {
@@ -32,11 +33,12 @@ public class ProjectileManager : MonoBehaviour
     void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
-        Gizmos.DrawSphere(agent.transform.position, 1);
+        if (drawRey)
+            Gizmos.DrawSphere(agent.transform.position, 1);
     }
     void launcherMovement()
     {
-        var agentPosition = agent.GetComponent<Transform>().localPosition;
+        var agentPosition = agent.GetComponent<Transform>().position;
 
         // Calculate the new position for the object in a circular orbit
         float angle = Time.time * orbitSpeed;
@@ -55,7 +57,7 @@ public class ProjectileManager : MonoBehaviour
             for (var i = 0; i < 5; i++)
             {
                 var projectile = Instantiate(projectilePref, transform.position, Quaternion.identity);
-                projectile.transform.localScale = new Vector3(Random.Range(0.5f, 1), Random.Range(0.5f, 1), Random.Range(0.5f, 1));
+                projectile.transform.localScale = new Vector3(Random.Range(0.2f, 0.7f), Random.Range(0.2f, 0.7f), Random.Range(0.2f, 0.7f));
                 projectile.gameObject.SetActive(false);
                 projectile.GetComponent<ProjectileControler>().parent = this;
                 projectileContainer.Add(projectile);

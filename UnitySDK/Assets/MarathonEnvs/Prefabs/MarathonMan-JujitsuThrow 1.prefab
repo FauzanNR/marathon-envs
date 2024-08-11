@@ -9300,7 +9300,7 @@ GameObject:
   - component: {fileID: 4264221814711944669}
   - component: {fileID: 8008550276282052701}
   m_Layer: 0
-  m_Name: MarathonMan-JujitsuThrow
+  m_Name: MarathonMan-JujitsuThrow 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

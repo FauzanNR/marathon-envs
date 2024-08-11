@@ -12,6 +12,7 @@ using System;
 using ManyWorlds;
 using System.Windows.Forms;
 using Application = UnityEngine.Application;
+using Cinemachine.Utility;
 
 public class StyleTransfer002Master : MonoBehaviour
 {
@@ -38,6 +39,9 @@ public class StyleTransfer002Master : MonoBehaviour
     public float JointAngularVelocityDistance;
     public float JointAngularVelocityDistanceWorld;
     public float RotationDistance;
+    public float RotationDistance2;
+    public float AgentBodyRotation;
+    public float AnimatorBodyRotation;
     public float CenterOfMassVelocityDistance;
     public float CenterOfMassDistance;
     public float AngularMomentDistance;
@@ -213,6 +217,9 @@ public class StyleTransfer002Master : MonoBehaviour
         JointAngularVelocityDistance = 0;
         JointAngularVelocityDistanceWorld = 0;
         RotationDistance = 0f;
+        RotationDistance2 = 0f;
+        AgentBodyRotation = 0f;
+        AnimatorBodyRotation = 0f;
         CenterOfMassVelocityDistance = 0f;
         CenterOfMassDistance = 0f;
         AngularMomentDistance = 0f;
@@ -244,9 +251,27 @@ public class StyleTransfer002Master : MonoBehaviour
                 // var jointSqrDistance = Mathf.Pow(jointDistance, 2);
                 JointDistance += jointDistance;
 
-                var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;//angle or difference between bodypart rotation and animation rotation
+                //angle or difference between bodypart rotation and animation rotation
+                var rotDistance = bodyPart.ObsAngleDeltaFromAnimationRotation;
                 var squareRotDistance = Mathf.Pow(rotDistance, 2);
                 RotationDistance += squareRotDistance;
+
+
+                var rotDistance2 = bodyPart.ObsAngleDeltaFromAnimationRotation2;
+                var squareRotDistance2 = Mathf.Pow(rotDistance2, 2);
+                RotationDistance2 += squareRotDistance2;
+
+                // var bodyRotation = bodyPart.ObsRotation.eulerAngles.magnitude;
+                // var squaredBodyRotation = Mathf.Pow(bodyRotation, 2);
+                var bodyRotation = Quaternion.Angle(Quaternion.identity, bodyPart.ObsRotation);
+                var normalizeBodyRotation = JointHelper002.NormalizedAngle(bodyRotation);
+                AgentBodyRotation += bodyRotation;
+
+                // var animatorRotation = bodyPart.AnimatorRotation.eulerAngles.magnitude;
+                // var squaredAnimatorRotation = Mathf.Pow(animatorRotation, 2);
+                var animatorRotation = Quaternion.Angle(Quaternion.identity, bodyPart.AnimatorRotation);
+                var normalizeAnimatorRotation = JointHelper002.NormalizedAngle(animatorRotation);
+                AnimatorBodyRotation += animatorRotation;
 
                 JointAngularVelocityDistance += bodyPart.ObsDeltaFromAnimationAngularVelocity.sqrMagnitude;
                 JointAngularVelocityDistanceWorld += bodyPart.ObsDeltaFromAnimationAngularVelocityWorld.sqrMagnitude;
@@ -459,6 +484,9 @@ public class StyleTransfer002Master : MonoBehaviour
         JointAngularVelocityDistance = 0;
         JointAngularVelocityDistanceWorld = 0;
         RotationDistance = 0f;
+        RotationDistance2 = 0f;
+        AgentBodyRotation = 0f;
+        AnimatorBodyRotation = 0f;
         JointDistance = 0f;
         CenterOfMassVelocityDistance = 0f;
         IgnorRewardUntilObservation = true;

@@ -80,6 +80,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     public int breakPoint;
     FixedJoint fixedJoint = null;
     public List<TargetTask> targetTasks = new List<TargetTask>();
+    private int episodeCountForTest = 0;
 
 
     // Use this for initialization
@@ -207,10 +208,19 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
         // data to text to be commented for a while
         if (_styleAnimator.AnimationStepsReady)
         {
-            var rotationData = new RotationRecord(recordPoint, _master.RotationDistance, FrameReward);
-            rotationRecords.Add(rotationData);
-            recordPoint++;
-            CreateDataRotation(rotationRecords, UnityEngine.Application.dataPath + $"/Results/Rotation_record/{DataName}_data_rotation.csv");
+            if (episodeCountForTest < 11)
+            {
+                print(episodeCountForTest);
+                var rotationData = new RotationRecord(recordPoint, _master.RotationDistance2, _master.AnimatorBodyRotation, _master.AgentBodyRotation, FrameReward);
+                rotationRecords.Add(rotationData);
+                recordPoint++;
+                CreateDataRotation(rotationRecords, UnityEngine.Application.dataPath + $"/Results/Rotation_record/{DataName}_data_rotation.csv");
+            }
+            else
+            {
+
+                EditorApplication.isPlaying = false;
+            }
         }
 
         // data to tensorboard. Record the rotation differences between simulation and reference
@@ -238,7 +248,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
             {
                 foreach (var data in rotationRecords)
                 {
-                    dataWriter.WriteLine($"{data.recordPoints}, {data.rotationRecord}");
+                    dataWriter.WriteLine($"{data.recordPoints}, {data.rotationDifferenceRecord}, {data.animatorBodyRotation}, {data.agentBodyRotation}, {data.rewardRecord}");
                 }
             }
         }
@@ -252,10 +262,10 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     float AngleTowardTarget()
     {
         //Get target direction
-        var directionToTarget = targetAttackTransform.position - torsoBodyAncor.position;
-        // Calculate the angular difference in degrees
-        var angleDifference = Vector3.Angle(-transform.right, directionToTarget);
-        return Mathf.Exp(-angleDifference / 45f);
+        var directionToTarget =( targetAttackTransform.position - torsoBodyAncor.position).normalized;
+         // Calculate the angular difference in degrees with respect to forward direction
+        var dotProduct = Vector3.Dot(transform.forward, directionToTarget);
+        return Mathf.Exp(-(Mathf.Acos(dotProduct)));
     }
 
     //DOT Product to observe the agent-target direction in space. We use agent(torsoBodyAncor) -Right Direction(equal to Left direction) is because the agent orientation is not common
@@ -513,6 +523,7 @@ public class StyleTransfer002Agent : Agent, IOnSensorCollision, IOnTerrainCollis
     // Resets the agent. Initialize the style animator and master if not initialized. 
     public override void OnEpisodeBegin()
     {
+        episodeCountForTest += 1;
         if (!_hasLazyInitialized)
         {
             _master = GetComponent<StyleTransfer002Master>();

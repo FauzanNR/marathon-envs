@@ -492,7 +492,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1245515620
 MonoBehaviour:
@@ -709,50 +709,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1981800564}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
---- !u!1 &2099271760
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2099271762}
-  - component: {fileID: 2099271761}
-  m_Layer: 0
-  m_Name: UnityMainThreadDispatcher
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &2099271761
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099271760}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -1842700439, guid: 42c3f40ad0520e442aa80842ab9748a9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &2099271762
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2099271760}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 6
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1046193590756040
 GameObject:
   m_ObjectHideFlags: 0
@@ -1385,7 +1341,7 @@ MonoBehaviour:
     maxStep: 1000
   hasUpgradedFromAgentParameters: 1
   MaxStep: 5000
-  DataName: puncher
+  DataName: the_throw_in_original
   FrameReward: 0
   AverageReward: 0
   TouchFrequence: 0
@@ -1477,6 +1433,9 @@ MonoBehaviour:
   JointAngularVelocityDistance: 0
   JointAngularVelocityDistanceWorld: 0
   RotationDistance: 0
+  RotationDistance2: 0
+  AgentBodyRotation: 0
+  AnimatorBodyRotation: 0
   CenterOfMassVelocityDistance: 0
   CenterOfMassDistance: 0
   AngularMomentDistance: 0
@@ -6406,7 +6365,7 @@ Transform:
   - {fileID: 1981800565}
   - {fileID: 6260983384481651301}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1253837929987169227
 GameObject:
@@ -8425,7 +8384,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &3083355246024346154
 Rigidbody:
@@ -14218,7 +14177,7 @@ Transform:
   - {fileID: 6351520469285079821}
   - {fileID: 1842956523365935910}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 9.505, y: -90, z: 0}
 --- !u!4 &6188925715889154623
 Transform:
@@ -16967,6 +16926,7 @@ MonoBehaviour:
     ObsRotationVelocity: {x: 0, y: 0, z: 0}
     ObsVelocity: {x: 0, y: 0, z: 0}
     ObsAngleDeltaFromAnimationRotation: 0
+    ObsAngleDeltaFromAnimationRotation2: 0
     ObsDeltaFromAnimationPosition: {x: 0, y: 0, z: 0}
     ObsDeltaFromAnimationVelocity: {x: 0, y: 0, z: 0}
     ObsDeltaFromAnimationAngularVelocity: {x: 0, y: 0, z: 0}
@@ -16994,6 +16954,9 @@ MonoBehaviour:
   JointAngularVelocityDistance: 0
   JointAngularVelocityDistanceWorld: 0
   RotationDistance: 0
+  RotationDistance2: 0
+  AgentBodyRotation: 0
+  AnimatorBodyRotation: 0
   CenterOfMassVelocityDistance: 0
   CenterOfMassDistance: 0
   AngularMomentDistance: 0
@@ -21936,7 +21899,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8589679966028271287}
   m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
-  m_LocalPosition: {x: 3.02, y: -0.07, z: 0}
+  m_LocalPosition: {x: 3.02, y: -0.03, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

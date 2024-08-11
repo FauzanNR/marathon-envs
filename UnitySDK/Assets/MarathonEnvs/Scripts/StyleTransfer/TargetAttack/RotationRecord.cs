@@ -6,13 +6,17 @@ using UnityEngine;
 public class RotationRecord
 {
     public int recordPoints;
-    public float rotationRecord;
+    public float rotationDifferenceRecord;
+    public float animatorBodyRotation;
+    public float agentBodyRotation;
     public float rewardRecord;
 
-    public RotationRecord(int recordPoints, float rotationRecord, float rewardRecord)
+    public RotationRecord(int recordPoints, float rotationDifferenceRecord, float animatorBodyRotation, float agentBodyRotation, float rewardRecord)
     {
         this.recordPoints = recordPoints;
-        this.rotationRecord = rotationRecord;
+        this.rotationDifferenceRecord = rotationDifferenceRecord;
+        this.animatorBodyRotation = animatorBodyRotation;
+        this.agentBodyRotation = agentBodyRotation;
         this.rewardRecord = rewardRecord;
     }
 }
